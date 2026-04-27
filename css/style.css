@@ -196,6 +196,9 @@ a:hover {
 
 .landing-nav {
   padding: 2rem 2.5rem;
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
   display: flex;
   justify-content: flex-end;
 }
