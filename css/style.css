@@ -267,6 +267,30 @@ a:hover {
 
 /* ---- Projects Page ---- */
 
+.initiative-category {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+  margin-top: 3rem;
+  margin-bottom: 0;
+}
+
+.initiative-category:first-of-type {
+  margin-top: 0;
+}
+
+.project-item--empty {
+  padding: 1.5rem 0;
+}
+
+.project-item--empty .project-description {
+  color: #ABABAB;
+  font-style: italic;
+}
+
 .projects-intro {
   color: #5A5A5A;
   font-style: italic;
