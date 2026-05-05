@@ -435,7 +435,7 @@ a:hover {
     display: block;
   }
 
-  .nav-links {
+  .site-nav .nav-links {
     display: none;
     flex-direction: column;
     gap: 0;
@@ -449,16 +449,23 @@ a:hover {
     z-index: 100;
   }
 
-  .nav-links.open {
+  .site-nav .nav-links.open {
     display: flex;
   }
 
-  .nav-links li {
+  .landing-nav .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .site-nav .nav-links li {
     padding: 0.6rem 0;
     border-bottom: 1px solid #F0EDE8;
   }
 
-  .nav-links li:last-child {
+  .site-nav .nav-links li:last-child {
     border-bottom: none;
   }
 
