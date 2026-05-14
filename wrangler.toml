@@ -1,0 +1,9 @@
+# Cloudflare Pages configuration
+# https://developers.cloudflare.com/pages/
+
+name = "protocol-institute-website"
+pages_build_output_dir = "."
+compatibility_date = "2025-01-01"
+
+# No build step — files are served as-is from the repo root.
+# The _redirects file (already present) is natively supported by CF Pages.
