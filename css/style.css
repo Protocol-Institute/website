@@ -563,6 +563,21 @@ a:hover {
   text-decoration: none;
 }
 
+/* ---- Draft Banner ---- */
+
+.draft-banner {
+  background-color: #FFF8E7;
+  border: 1px solid #E8D48A;
+  color: #7A5C00;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.55em 1em;
+  margin-bottom: 2.5rem;
+}
+
 /* ---- Responsive ---- */
 
 @media (max-width: 768px) {
