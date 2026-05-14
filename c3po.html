@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C3PO — The Protocol Institute</title>
+  <meta name="description" content="C3PO is the Protocol Institute's conversational research assistant, trained on the full protocol research corpus.">
+  <link rel="icon" href="assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="index.html" class="nav-brand"><img src="assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">≡</button>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="projects.html" class="active">Initiatives</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="support.html">Support Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>C3PO</h1>
+      </div>
+
+      <div class="about-body">
+
+        <p><strong>C3PO</strong> is the Protocol Institute's conversational research assistant — an AI agent trained on the Institute's full research corpus. Named for the <em>Star Wars</em> protocol droid, which is explicitly described as devoted to smooth communication and protocol operation between parties, C3PO lets researchers, practitioners, and curious readers query, synthesize, and explore the protocol research library through natural language.</p>
+
+        <p>The Protocol Institute has assembled over 285 research resources spanning academic papers, working papers, essays, talks, datasets, games, interviews, and fiction — the majority originating from the <a href="https://web.archive.org/web/20260421142108/https://summerofprotocols.com/" target="_blank" rel="noopener noreferrer">Summer of Protocols</a> program (2023–2024), and growing continuously through <a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a>. C3PO makes that corpus conversationally accessible: ask it a question about protocol theory, a specific paper, a design problem, or a cross-domain connection, and it will draw on the corpus to respond — with citations.</p>
+
+        <h2>What C3PO does</h2>
+
+        <p>C3PO is a RAG (retrieval-augmented generation) system. When you ask a question, it searches the embedded research corpus for the most relevant passages, then generates a response grounded in those sources. It always cites what it found. It does not answer general knowledge questions outside the corpus, and it is transparent about the limits of what it knows.</p>
+
+        <p>Intended uses include:</p>
+        <ul style="margin-bottom: 1.6rem; padding-left: 1.5rem; color: #2C2C2C;">
+          <li style="margin-bottom: 0.5rem;">Finding relevant research on a specific protocol domain (medical, diplomatic, software, financial, urban)</li>
+          <li style="margin-bottom: 0.5rem;">Synthesizing what the corpus says about a theoretical question (hardness, formalization, enforcement, capture)</li>
+          <li style="margin-bottom: 0.5rem;">Discovering connections across papers and disciplines that are hard to find by browsing alone</li>
+          <li style="margin-bottom: 0.5rem;">Getting oriented in the literature before diving into primary sources</li>
+        </ul>
+
+        <h2>Status</h2>
+
+        <p>C3PO is currently in development. The first version will index the full PDF research archive from the Protocolized library and the complete Protocolized Substack archive. When deployed, it will be integrated into the <a href="https://protocolized.io/resources/" target="_blank" rel="noopener noreferrer">Protocolized research library</a> — accessible directly alongside the existing filterable resource catalog.</p>
+
+        <p>Planned future additions include ingestion of Protocol Institute Discord discussions and a submission mechanism allowing researchers to contribute URLs, PDFs, or GitHub pull requests to expand the corpus.</p>
+
+        <h2>Technical approach</h2>
+
+        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings, <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude</a> as the underlying language model. It will be deployed on Cloudflare Workers and integrated with Protocolized once protocolized.io completes its migration to Cloudflare Pages. The source code is being developed at <a href="https://github.com/vgururao/c3po" target="_blank" rel="noopener noreferrer">github.com/vgururao/c3po</a> and will be transferred to the <a href="https://github.com/Protocol-Institute" target="_blank" rel="noopener noreferrer">Protocol-Institute GitHub organization</a> on release.</p>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="team.html">Team</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
