@@ -70,6 +70,22 @@ See the notes in [Protocol-Institute/protocolized-website#2](https://github.com/
 
 This branch (`feat/cloudflare-migration`) adds only `wrangler.toml` and this file. Merge to `main` after the CF Pages project is confirmed working.
 
+## Developing in Personal Account → Migrating to PI Account
+
+The Pages project can be created and tested in a personal CF account before the PI org account exists. Migration is a reconnection, not a transfer.
+
+**Why this works cleanly:** the site has no stateful CF resources (no D1, no R2, no KV). `wrangler.toml` intentionally omits `account_id` — Wrangler picks it up from the `CLOUDFLARE_ACCOUNT_ID` env var at deploy time, so the config file is account-neutral.
+
+### Migration steps (personal → PI account)
+
+1. **Pages project**: in the PI CF dashboard, create a new Pages project connected to `Protocol-Institute/website` with the same settings as Step 2 above. The old personal-account project can be deleted after the custom domain is verified in the PI account.
+
+2. **Custom domain**: re-add `protocol-institute.org` in the PI Pages project. Because the DNS zone is already Cloudflare-managed (and will be in the PI account by this point), the DNS record updates automatically.
+
+3. **No data to migrate**: this site has no D1, R2, or KV. Nothing else to transfer.
+
+4. **`wrangler.toml` stays the same**: no account-specific values are committed. No file changes required.
+
 ## Rollback
 
 If something goes wrong: reconnect the repo in Netlify and it will redeploy from the latest `main`. The DNS records currently point to Netlify's servers via Cloudflare proxy — restoring them is a one-record edit in the CF DNS dashboard.
