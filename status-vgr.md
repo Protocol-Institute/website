@@ -11,6 +11,7 @@
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-05-14** — Added devlog system (data/devlog.json, devlog_session.py, devlog_render.py). Backfilled Sessions 1–2 from git history. Added startup and wrap-up rituals to CLAUDE.md. CLAUDE.md now references PI admin repo (Protocol-Institute/admin) for key and security policy.
 - **2026-05-14** — Added Protocol Institute Network page (`network.html`, DRAFT) with stub text and contact links. Improved footer nav across all pages to include Team, Network, and Contact links. Added `.draft-banner` CSS.
 - **2026-05-14** — Added C3PO page (`c3po.html`) with description, intended uses, status, and technical approach. Added C3PO entry to initiatives listing in `projects.html`.
 - **2026-05-14** — Added GitHub org profile README (`Protocol-Institute/.github/profile/README.md`) describing the Institute, repos, and maintainers.

@@ -1,0 +1,128 @@
+{
+  "project": "protocol-institute-website",
+  "display_name": "Protocol Institute Website — Build Log",
+  "description": "A build log for protocol-institute.org — how the static site was built, what infrastructure decisions were made, and where things stand. Written for contributors curious about the process and for future maintainers.",
+  "tracks": {
+    "static-site": "HTML/CSS/JS page builds, navigation, layout, and design",
+    "cloudflare-migration": "Moving from GitHub Pages to Cloudflare Pages; wrangler config, Workers, CF resources",
+    "member-directory": "Phase 2 member directory — D1, KV, PIN auth, R2 profile photos",
+    "content": "Copy, team bios, initiative descriptions, and editorial content",
+    "operations": "Session rituals, expense tracking, devlog system, org admin infrastructure"
+  },
+  "sessions": [
+    {
+      "id": 1,
+      "sort_key": 1.0,
+      "label": "Session 1",
+      "title": "Initial Site Build",
+      "date": "2026-04-26",
+      "time_pt": "",
+      "tracks": ["static-site", "content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Starting point:",
+          "html": "<strong>Starting point:</strong> The Protocol Institute had no web presence. The goal was a minimal, credible static HTML site at <code>protocol-institute.org</code> — not a CMS, not a framework, just well-structured HTML/CSS/JS that any contributor could read and edit without a build step."
+        },
+        {
+          "title": "Initial commit:",
+          "html": "<strong>Initial commit (2026-04-26):</strong> <code>index.html</code> with landing page — hero section, initiative categories, footer nav. Substack newsletter link. The landing page uses a sticky nav that hides on interior pages (different scroll behavior needed for a longer landing vs short interior pages)."
+        },
+        {
+          "title": "Nav fix:",
+          "html": "<strong>Nav alignment fix (2026-04-27):</strong> Landing page nav position was misaligned with interior pages — the sticky behavior was scoping incorrectly. Fixed by separating the landing-page nav rule from the interior nav rule. The landing nav keeps all links visible (no collapse); interior nav hides on scroll down, reveals on scroll up."
+        },
+        {
+          "title": "README and CLAUDE.md (2026-05-05):",
+          "html": "<strong>README and CLAUDE.md (2026-05-05):</strong> Added contributor onboarding docs. <code>README.md</code> is public-facing (for GitHub visitors). <code>CLAUDE.md</code> is LLM-facing — explains the owner/contributor workflow, links to <code>Code/CLAUDE.md</code> for environment and key management policy. A second personal file <code>claude-vgr.md</code> tracks VGR-specific context (fork policy, PR workflow) that does not belong in the org-visible CLAUDE.md."
+        },
+        {
+          "title": "Initiative categories (2026-05-05):",
+          "html": "<strong>Initiative categories (2026-05-05):</strong> Added structured initiative listings to <code>index.html</code> — four categories: Research SIGs, Publications, Events, and Infrastructure. Added <em>Protocols for the Long Now</em> collaboration under Research. The category structure is loose enough to absorb new initiatives without redesign."
+        },
+        {
+          "title": "Mobile nav (2026-05-05):",
+          "html": "<strong>Mobile nav fix (2026-05-05):</strong> The landing page nav was hiding on mobile when the viewport was narrow enough to trigger the interior-nav collapse logic. Fixed by scoping the hide-on-scroll behavior to a <code>.interior-page</code> class that is not present on the landing page."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "sort_key": 2.0,
+      "label": "Session 2",
+      "title": "Pages Build-Out and Cloudflare Migration",
+      "date": "2026-05-14",
+      "time_pt": "",
+      "tracks": ["static-site", "cloudflare-migration", "content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Support Us page:",
+          "html": "<strong>Support Us page:</strong> <code>support.html</code> — donor contact info and partner contact info. Intentionally minimal: no payment buttons yet (those come in Phase 1c of the CF roadmap, once Stripe Payment Links are wired up). The page establishes the URL and nav slot; content will be upgraded when the donation infrastructure is ready."
+        },
+        {
+          "title": "Team page:",
+          "html": "<strong>Team page:</strong> <code>team.html</code> — bios and photo boxes for Venkat Rao (founder) and Timber Stinson-Schroff (co-editor/co-founder). Photo boxes are placeholder boxes (no photos yet) using CSS aspect-ratio to reserve space. Timber's location was corrected to Whitehorse, Yukon in a follow-up fix — had been set to Vancouver from an earlier draft."
+        },
+        {
+          "title": "Network page:",
+          "html": "<strong>Network page:</strong> <code>network.html</code> — a draft directory of network participants, collaborators, and affiliated individuals. Marked as draft; the authoritative member directory will be built in Phase 2 (CF Workers + D1 + PIN auth). This page is a static placeholder that establishes the URL and nav structure."
+        },
+        {
+          "title": "C3PO initiative page:",
+          "html": "<strong>C3PO initiative page:</strong> <code>c3po.html</code> — describes C3PO as a Protocol Institute initiative; explains what it is (RAG research assistant), what corpus it covers, and how it will eventually be accessible. Added entry to <code>projects.html</code>. The page intentionally does not link to the C3PO Worker endpoint yet — that comes when the Worker is deployed in Phase 2 of the C3PO roadmap."
+        },
+        {
+          "title": "Cloudflare Pages migration branch:",
+          "html": "<strong>Cloudflare Pages migration branch (<code>feat/cloudflare-migration</code>):</strong> Added <code>wrangler.toml</code> (no-build static config, <code>pages_build_output_dir = \".\"</code>) and <code>MIGRATION.md</code>. The site is pure static HTML — no build step, so CF Pages treats the repo root as the output directory. <code>_redirects</code> already in repo root; CF Pages reads it identically to Netlify. No code changes were needed for the migration itself."
+        },
+        {
+          "title": "Migration path — personal to PI account:",
+          "html": "<strong>Migration path — personal → PI account:</strong> The CF Pages project was created under VGR's personal CF account (the only CF account currently active). <code>MIGRATION.md</code> now includes the explicit migration path: once a Protocol Institute CF org account is created, transfer the Pages project and the <code>protocol-institute.org</code> DNS zone to it. This is a future step — the site goes live on the personal account first."
+        },
+        {
+          "title": "Branch sync strategy:",
+          "html": "<strong>Branch sync strategy:</strong> <code>MIGRATION.md</code> documents the branch relationship: <code>feat/cloudflare-migration</code> is kept up to date with <code>main</code> via periodic merges (not rebases). CF Pages deploys only from <code>feat/cloudflare-migration</code> until the migration is verified — at that point the branch is merged to <code>main</code> and CF Pages is switched to track <code>main</code>."
+        },
+        {
+          "title": "Feature roadmap:",
+          "html": "<strong>Feature roadmap:</strong> <code>ROADMAP.md</code> — five-phase plan for CF-powered features: Phase 0 (CF Pages migration), Phase 1 (quick wins: symposium page, events calendar, donation buttons), Phase 2 (member directory — D1 + KV + R2 + PIN email auth), Phase 3 (Stripe + ETH donations), Phase 4 (SIWE — Sign-In with Ethereum), Phase 5 (Protocol Symposium system). CF resources needed: D1, KV, R2, Resend, Stripe, and optionally Dynamic.xyz or Privy for wallet auth."
+        },
+        {
+          "title": "Open questions logged:",
+          "html": "<strong>Open questions logged in ROADMAP.md:</strong> Which CF account currently holds the <code>protocol-institute.org</code> DNS zone (Timber's personal account or a PI org account)? This blocks Phase 0. Resend vs Mailgun for PIN emails (Phase 2). Dynamic.xyz vs Privy vs DIY ethers.js for SIWE (Phase 4). Whether PI member data should live in a unified D1 database shared between .org and .io."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "sort_key": 3.0,
+      "label": "Session 3",
+      "title": "Devlog System, Session Rituals, and Org Admin Infrastructure",
+      "date": "2026-05-14",
+      "time_pt": "14:30–18:56 PT",
+      "tracks": ["operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Devlog system:",
+          "html": "<strong>Devlog system:</strong> Added <code>data/devlog.json</code> (source of truth), <code>devlog_session.py</code> (writes ISO timestamp to <code>/tmp/pi_website_devlog_session_start.txt</code>), and <code>devlog_render.py</code> (renders <code>DEVLOG.md</code> from JSON). Backfilled Sessions 1 and 2 from git history and status log. The JSON-first approach keeps the record machine-readable and consistent with the C3PO and Protocolized devlog pattern."
+        },
+        {
+          "title": "Session rituals:",
+          "html": "<strong>Session rituals (added to CLAUDE.md):</strong> Startup: timestamp → <code>track.py status</code> → read status-vgr.md → check CF migration branch divergence → check GitHub Issues #1/#2 → summarize. Wrap-up: devlog entry + devlog_render.py → status-vgr.md → CLAUDE.md updates → verify HTML in browser → git commit/push → <code>track.py end</code> → fill log-{id}.json → expenses render → Claude memory."
+        },
+        {
+          "title": "PI admin repo reference:",
+          "html": "<strong>PI admin repo reference:</strong> CLAUDE.md updated to point to <code>../admin/keys.md</code> and <code>../admin/security.md</code> for key and security policy. When CF Workers are added (Phase 1+), all PI keys will be provisioned via <code>../.env.keys</code> and registered in <code>../admin/keys.md</code> — not in <code>Code/.env.keys</code>, which is personal scope only. The admin repo (<code>Protocol-Institute/admin</code>, private) holds the expense tracker, key registry, and security policy for all PI contributors."
+        }
+      ]
+    }
+  ]
+}

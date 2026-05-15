@@ -1,5 +1,7 @@
 # CLAUDE.md — Protocol Institute Website
 
+> **PI key registry & security policy:** see [`../admin/keys.md`](../admin/keys.md) and [`../admin/security.md`](../admin/security.md) . Do not register PI keys in `Code/.env.keys`.
+
 This file provides guidance for LLMs working on this codebase.
 
 ## What this is
@@ -65,6 +67,48 @@ Writing should be measured, institutional, and precise. Avoid marketing language
 - Community Discord: https://discord.gg/Aj5FbGsNYV
 - Contact email: team@protocol-institute.org
 
+## Keys
+
+No keys are currently in use for this repo. When CF Workers are added (Phase 1+), keys will be provisioned via `../.env.keys` and inventoried in `../admin/keys.md`. Do not use `Code/.env.keys` for PI keys.
+
 ## Deployment
 
 The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.`.
+
+## At Session Start
+
+**Always do this first before any other work:**
+
+1. Run `python3 devlog_session.py start` — records session start time to `/tmp/pi_website_devlog_session_start.txt`.
+2. Run `python3 ../admin/expenses/track.py status` — shows all active PI project sessions and flags any overlap. If another project session is already running, no action needed; overlap is tracked automatically.
+3. Read `status-vgr.md` — review active and upcoming items from the last session.
+4. Check branch state — how far has `feat/cloudflare-migration` drifted from `main`?
+   ```bash
+   git log main..feat/cloudflare-migration --oneline   # on CF branch, not yet on main
+   git log feat/cloudflare-migration..main --oneline   # on main, not yet merged into CF branch
+   ```
+5. Check GitHub Issues for CF migration blockers (Issues #1 and #2 track nameserver transfer and Pages project setup). Are the blockers still open, or has Timber unblocked them?
+6. Briefly summarize to Venkat: migration status (blocked/unblocked), branch divergence, and any active items from `status-vgr.md` that are ready to work on.
+
+---
+
+## After Each Session
+
+**Documentation (always):**
+1. `data/devlog.json` — add session entry with items in HTML. Run `python3 devlog_session.py end` for the timestamp. Run `python3 devlog_render.py` to regenerate `DEVLOG.md`. The devlog is the primary record of architectural decisions and infrastructure choices — write for a public technical audience.
+2. `status-vgr.md` — add a dated log entry with PT start–end times and a one-line summary of what changed.
+3. `CLAUDE.md` — update roadmap status or file structure notes if anything changed.
+
+**Verify (if HTML/CSS/JS changed):**
+4. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
+
+**Repo:**
+5. `git add` relevant files; `git commit`; `git push`. If on `feat/cloudflare-migration`, also merge `main` into the branch to keep it current.
+
+**Expenses (always):**
+6. `python3 ../admin/expenses/track.py end` — computes billable hours from all active session start files; detects overlap; prints a pre-filled log entry.
+7. Paste the entry into `../admin/expenses/log-{your-id}.json` sessions array; fill in `api_costs` (any API charges incurred this session) and `notes`.
+8. `python3 ../admin/expenses/render.py` — regenerates `EXPENSES.md` and `expenses.csv`.
+
+**Memory:**
+9. Update Claude memory (`/Users/Venkat/.claude/projects/.../memory/`) — save anything non-obvious about site structure, CF migration state, or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
