@@ -672,6 +672,80 @@ a:hover {
     width: 160px;
     height: 200px;
   }
+
+  .network-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Network Page ---- */
+
+.network-intro {
+  margin-bottom: 3rem;
+}
+
+.network-intro p {
+  font-size: 1.05rem;
+  color: #2C2C2C;
+  margin-bottom: 1.6rem;
+}
+
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.network-card {
+  border: 1px solid #E0DDD8;
+  padding: 1.5rem;
+}
+
+.network-logo {
+  width: 72px;
+  height: 72px;
+  background-color: #F0EDE8;
+  border: 1px solid #E0DDD8;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.network-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+  display: block;
+}
+
+.network-org {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+
+.network-contact {
+  font-size: 0.82rem;
+  color: #5A5A5A;
+  letter-spacing: 0.01em;
+}
+
+.network-join {
+  padding-top: 2.5rem;
+  border-top: 1px solid #E0DDD8;
+}
+
+.network-join p {
+  font-size: 0.95rem;
+  color: #5A5A5A;
+  font-style: italic;
 }
 
 @media (max-width: 480px) {
