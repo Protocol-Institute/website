@@ -73,3 +73,25 @@ A build log for protocol-institute.org — how the static site was built, what i
 - **Timber headshot on /team:** Replaced the placeholder photo box in `team.html` with `assets/timber.jpg` (480×600 JPEG, ~67 KB). Source was a 4284×5712 portrait, cropped to 4:5 from the top to keep the face well-positioned and resized with Lanczos. The team page now shows two of four headshots — James Langdon and Tim Beiko remain placeholders.
 
 ---
+
+## Session 5: Network, Consulting, Symposium, Nav Redesign, Landing Page Overhaul
+
+*2026-05-19*
+
+**Tracks:** static-site, content
+
+- **Network page (`network.html`):** Built out from stub. Member data lives in `protocol-institute-network/partners.md` (Markdown source of truth); page copy in `protocol-institute-network/intro.md`. Single-column card grid, alphabetical order, variable-aspect-ratio logos rendered with `max-height: 56px; width: auto` to handle rectangular and square logos consistently. Contact prefix and links configurable per-member. Google Form link for directory applications. This establishes the pattern used for consulting and symposium: per-section folders with `intro.md` (copy) and a data file (member/directory/submissions), editable in Markdown with HTML synced on request.
+
+- **Consulting page (`consulting.html`):** Individual consultant cards with headshot, name, expertise tags (dot-separated), and contact link (mailto or external). Data in `protocol-institute-consulting/directory.md`. Four entries: Benny, Fernandez, Rao, Stinson-Schroff (alphabetical by last name). Photos: placeholders for Benny and Fernandez; live photos for Rao (external URL) and Stinson-Schroff (`assets/timber.jpg`). No Role field — expertise only. Google Form for directory applications.
+
+- **Protocol Symposium 2026 page (`symposium-2026.html`):** Announces the September 2026 symposium with CFP for 20-min presentations (200–400 word abstracts) and 60–90 min workshops (400–600 word proposals). Submission form placeholder pending Google Form URL. Empty accepted submissions index at bottom — will be populated as program is confirmed. Data in `protocol-symposium-2026/`.
+
+- **Nav redesign:** Replaced the inline single-row nav with a two-row stacked layout — logo/brand on top row, nav links on the bottom row separated by a hairline border. Achieved entirely in CSS using `flex-wrap: wrap` + `flex-basis: 100%` on `.nav-links`, no HTML changes across the 12 pages. Left-justified links create room for additional nav items. Compacted whitespace between nav bottom border and page title by reducing `.page-header` padding.
+
+- **Initiatives page restructure (`projects.html`):** Removed In-House / Sponsored / Collaboration section dividers (`h2.initiative-category`). Dropped the empty Sponsored section entirely. Merged all five initiatives into a single flat `ul.project-list`. Each item now carries both a status badge (`.project-status`) and a category tag (`.project-category`) as inline pills. Worldbuilding re-tagged from Active to In Development.
+
+- **Landing page overhaul (`index.html`):** Replaced the bespoke `.landing-nav` (right-justified links, no logo, no mobile toggle) and `.landing-footer` (inline dot-separated paragraph) with the standard `.site-nav` header and `.site-footer` used on all interior pages. The landing page now has the logo in the nav, the mobile hamburger toggle, and the same footer nav structure as every other page. Removed all `.landing-nav` and `.landing-footer` CSS. Updated the landing blurb to: *The Protocol Institute is a research, education, media, and scene-making organization dedicated to advancing protocols and protocolization worldwide.* with a link to the About page.
+
+- **Magazine nav link:** Added Magazine → `https://protocolized.io` (opens in new tab) to the primary nav on all 12 pages, positioned after Initiatives. One perl one-liner across all HTML files.
+
+---

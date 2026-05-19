@@ -141,6 +141,48 @@
           "html": "<strong>Timber headshot on /team:</strong> Replaced the placeholder photo box in <code>team.html</code> with <code>assets/timber.jpg</code> (480×600 JPEG, ~67 KB). Source was a 4284×5712 portrait, cropped to 4:5 from the top to keep the face well-positioned and resized with Lanczos. The team page now shows two of four headshots — James Langdon and Tim Beiko remain placeholders."
         }
       ]
+    },
+    {
+      "id": 5,
+      "sort_key": 5.0,
+      "label": "Session 5",
+      "title": "Network, Consulting, Symposium, Nav Redesign, Landing Page Overhaul",
+      "date": "2026-05-19",
+      "time_pt": "",
+      "tracks": ["static-site", "content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Network page:",
+          "html": "<strong>Network page (<code>network.html</code>):</strong> Built out from stub. Member data lives in <code>protocol-institute-network/partners.md</code> (Markdown source of truth); page copy in <code>protocol-institute-network/intro.md</code>. Single-column card grid, alphabetical order, variable-aspect-ratio logos rendered with <code>max-height: 56px; width: auto</code> to handle rectangular and square logos consistently. Contact prefix and links configurable per-member. Google Form link for directory applications. This establishes the pattern used for consulting and symposium: per-section folders with <code>intro.md</code> (copy) and a data file (member/directory/submissions), editable in Markdown with HTML synced on request."
+        },
+        {
+          "title": "Consulting page:",
+          "html": "<strong>Consulting page (<code>consulting.html</code>):</strong> Individual consultant cards with headshot, name, expertise tags (dot-separated), and contact link (mailto or external). Data in <code>protocol-institute-consulting/directory.md</code>. Four entries: Benny, Fernandez, Rao, Stinson-Schroff (alphabetical by last name). Photos: placeholders for Benny and Fernandez; live photos for Rao (external URL) and Stinson-Schroff (<code>assets/timber.jpg</code>). No Role field — expertise only. Google Form for directory applications."
+        },
+        {
+          "title": "Symposium page:",
+          "html": "<strong>Protocol Symposium 2026 page (<code>symposium-2026.html</code>):</strong> Announces the September 2026 symposium with CFP for 20-min presentations (200–400 word abstracts) and 60–90 min workshops (400–600 word proposals). Submission form placeholder pending Google Form URL. Empty accepted submissions index at bottom — will be populated as program is confirmed. Data in <code>protocol-symposium-2026/</code>."
+        },
+        {
+          "title": "Nav redesign:",
+          "html": "<strong>Nav redesign:</strong> Replaced the inline single-row nav with a two-row stacked layout — logo/brand on top row, nav links on the bottom row separated by a hairline border. Achieved entirely in CSS using <code>flex-wrap: wrap</code> + <code>flex-basis: 100%</code> on <code>.nav-links</code>, no HTML changes across the 12 pages. Left-justified links create room for additional nav items. Compacted whitespace between nav bottom border and page title by reducing <code>.page-header</code> padding."
+        },
+        {
+          "title": "Initiatives page restructure:",
+          "html": "<strong>Initiatives page restructure (<code>projects.html</code>):</strong> Removed In-House / Sponsored / Collaboration section dividers (<code>h2.initiative-category</code>). Dropped the empty Sponsored section entirely. Merged all five initiatives into a single flat <code>ul.project-list</code>. Each item now carries both a status badge (<code>.project-status</code>) and a category tag (<code>.project-category</code>) as inline pills. Worldbuilding re-tagged from Active to In Development."
+        },
+        {
+          "title": "Landing page overhaul:",
+          "html": "<strong>Landing page overhaul (<code>index.html</code>):</strong> Replaced the bespoke <code>.landing-nav</code> (right-justified links, no logo, no mobile toggle) and <code>.landing-footer</code> (inline dot-separated paragraph) with the standard <code>.site-nav</code> header and <code>.site-footer</code> used on all interior pages. The landing page now has the logo in the nav, the mobile hamburger toggle, and the same footer nav structure as every other page. Removed all <code>.landing-nav</code> and <code>.landing-footer</code> CSS. Updated the landing blurb to: <em>The Protocol Institute is a research, education, media, and scene-making organization dedicated to advancing protocols and protocolization worldwide.</em> with a link to the About page."
+        },
+        {
+          "title": "Magazine nav link:",
+          "html": "<strong>Magazine nav link:</strong> Added Magazine → <code>https://protocolized.io</code> (opens in new tab) to the primary nav on all 12 pages, positioned after Initiatives. One perl one-liner across all HTML files."
+        }
+      ]
     }
   ]
 }
