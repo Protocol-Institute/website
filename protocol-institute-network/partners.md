@@ -8,11 +8,12 @@ This file is the source of truth for the network page (`network.html`).
 ```
 ## Full Unit Name, Parent Organization
 
-**Contact:** First Last, Title
+**Contact:** [First Last](https://personal-page-url), Title
 **Website:** https://... (optional)
 
 ![Logo](./slug.png)   ← omit if no logo yet
 ```
+If no link yet, omit the brackets: `**Contact:** First Last, Title`
 
 ---
 
@@ -24,12 +25,12 @@ This file is the source of truth for the network page (`network.html`).
 
 ---
 
-## Trust Experience Lab, NYU Shanghai
-
-**Contact:** Prof. Helena Rong
-
----
-
 ## IoT Lab, University of Messina
 
 **Contact:** Prof. Giovanni Merlino
+
+---
+
+## Trust Experience Lab, NYU Shanghai
+
+**Contact:** Prof. Helena Rong
