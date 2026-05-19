@@ -8,12 +8,14 @@ This file is the source of truth for the network page (`network.html`).
 ```
 ## Full Unit Name, Parent Organization
 
-**Contact:** [First Last](https://personal-page-url), Title
+**Contact:** [Name](https://personal-page-url), Title
 **Website:** https://... (optional)
 
 ![Logo](./slug.png)   ← omit if no logo yet
 ```
-If no link yet, omit the brackets: `**Contact:** First Last, Title`
+Name can be any of: `First Last`, `Prof. First Last`, `Dr. First Last`, etc.
+Title (`, Title`) is optional — omit if the name alone is sufficient.
+If no link yet, omit the brackets: `**Contact:** Prof. First Last`
 
 ---
 
