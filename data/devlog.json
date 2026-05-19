@@ -123,6 +123,24 @@
           "html": "<strong>PI admin repo reference:</strong> CLAUDE.md updated to point to <code>../admin/keys.md</code> and <code>../admin/security.md</code> for key and security policy. When CF Workers are added (Phase 1+), all PI keys will be provisioned via <code>../.env.keys</code> and registered in <code>../admin/keys.md</code> — not in <code>Code/.env.keys</code>, which is personal scope only. The admin repo (<code>Protocol-Institute/admin</code>, private) holds the expense tracker, key registry, and security policy for all PI contributors."
         }
       ]
+    },
+    {
+      "id": 4,
+      "sort_key": 4.0,
+      "label": "Session 4",
+      "title": "Timber Headshot on Team Page",
+      "date": "2026-05-15",
+      "time_pt": "",
+      "tracks": ["content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Timber headshot on /team:",
+          "html": "<strong>Timber headshot on /team:</strong> Replaced the placeholder photo box in <code>team.html</code> with <code>assets/timber.jpg</code> (480×600 JPEG, ~67 KB). Source was a 4284×5712 portrait, cropped to 4:5 from the top to keep the face well-positioned and resized with Lanczos. The team page now shows two of four headshots — James Langdon and Tim Beiko remain placeholders."
+        }
+      ]
     }
   ]
 }
