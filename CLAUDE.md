@@ -6,7 +6,18 @@ This file provides guidance for LLMs working on this codebase.
 
 ## What this is
 
-A simple static website for the Protocol Institute, an independent research organization focused on protocol technologies. It is plain HTML, CSS, and JavaScript — no build step, no framework.
+A plain HTML/CSS/JS website for the Protocol Institute at **protocol-institute.org**. No build step, no framework, no dependencies — just static files served directly by Netlify.
+
+**Do not confuse this with `protocolized-website/`**, which is the separate Astro site for Protocolized magazine at protocolized.io.
+
+### Two branches, two purposes
+
+| Branch | Purpose | Deployed at |
+|--------|---------|-------------|
+| `main` | Live production site — plain HTML, edit and push directly | protocol-institute.org via Netlify |
+| `feat/cloudflare-migration` | Future rebuild as a static site for Cloudflare Pages — development only, do not merge | (not yet live) |
+
+All content work happens on `main`. The `feat/cloudflare-migration` branch is a long-running dev branch; never merge it into main and never push main work there.
 
 ## File structure
 
@@ -82,13 +93,8 @@ The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main
 1. Run `python3 devlog_session.py start` — records session start time to `/tmp/pi_website_devlog_session_start.txt`.
 2. Run `python3 ../admin/expenses/track.py status` — shows all active PI project sessions and flags any overlap. If another project session is already running, no action needed; overlap is tracked automatically.
 3. Read `status-vgr.md` — review active and upcoming items from the last session.
-4. Check branch state — how far has `feat/cloudflare-migration` drifted from `main`?
-   ```bash
-   git log main..feat/cloudflare-migration --oneline   # on CF branch, not yet on main
-   git log feat/cloudflare-migration..main --oneline   # on main, not yet merged into CF branch
-   ```
-5. Check GitHub Issues for CF migration blockers (Issues #1 and #2 track nameserver transfer and Pages project setup). Are the blockers still open, or has Timber unblocked them?
-6. Briefly summarize to Venkat: migration status (blocked/unblocked), branch divergence, and any active items from `status-vgr.md` that are ready to work on.
+4. Confirm you are on `main` (`git branch --show-current`). Never work on `feat/cloudflare-migration` during content sessions.
+5. Briefly summarize to Venkat: any active items from `status-vgr.md` that are ready to work on.
 
 ---
 
@@ -103,7 +109,7 @@ The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main
 4. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
 
 **Repo:**
-5. `git add` relevant files; `git commit`; `git push`. If on `feat/cloudflare-migration`, also merge `main` into the branch to keep it current.
+5. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main` — never to the fork or the CF branch.
 
 **Expenses (always):**
 6. `python3 ../admin/expenses/track.py end` — computes billable hours from all active session start files; detects overlap; prints a pre-filled log entry.
