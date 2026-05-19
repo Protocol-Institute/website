@@ -22,8 +22,7 @@ to sync `consulting.html`.
 
 ## Sachin Benny
 
-**Role:** TBD
-**Expertise:** TBD
+**Expertise:** AI adoption models, infrastructure ethnography
 **Contact:** TBD
 **Photo:** sachin-benny.jpg   ← placeholder; drop headshot here when available
 
@@ -31,8 +30,7 @@ to sync `consulting.html`.
 
 ## Rafael Fernandez
 
-**Role:** TBD
-**Expertise:** TBD
+**Expertise:** Swarm intelligence, marketplaces, robotics
 **Contact:** TBD
 **Photo:** rafael-fernandez.jpg   ← placeholder; drop headshot here when available
 
@@ -40,7 +38,6 @@ to sync `consulting.html`.
 
 ## Venkatesh Rao
 
-**Role:** Director of Research, Protocol Institute
 **Expertise:** Protocol theory · Organizational dynamics · Strategy · Technical writing · Robotics applications
 **Contact:** [venkat@protocol-institute.org](mailto:venkat@protocol-institute.org)
 **Photo:** https://venkateshrao.com/headshotVGR800.JPG   ← external URL; can replace with local file
@@ -49,7 +46,6 @@ to sync `consulting.html`.
 
 ## Timber Stinson-Schroff
 
-**Role:** Managing Director, Protocol Institute
 **Expertise:** Safety protocols · Business protocolization · Editorial consulting · Operations
 **Contact:** [timber@protocol-institute.org](mailto:timber@protocol-institute.org)
 **Photo:** ../assets/timber.jpg   ← shared with team page; can replace with consulting-specific headshot
