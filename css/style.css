@@ -725,17 +725,6 @@ a:hover {
   letter-spacing: 0.01em;
 }
 
-.network-join {
-  padding-top: 2.5rem;
-  border-top: 1px solid #E0DDD8;
-}
-
-.network-join p {
-  font-size: 0.95rem;
-  color: #5A5A5A;
-  font-style: italic;
-}
-
 @media (max-width: 480px) {
   .landing-content h1 {
     font-size: 2.2rem;
