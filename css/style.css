@@ -201,18 +201,6 @@ a:hover {
   flex-direction: column;
 }
 
-.landing-nav {
-  padding: 2rem 2.5rem;
-  max-width: 760px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.landing-nav .nav-links {
-  gap: 2rem;
-}
 
 .landing-center {
   flex: 1;
@@ -248,19 +236,6 @@ a:hover {
   letter-spacing: 0.01em;
 }
 
-.landing-footer {
-  padding: 1.5rem 2.5rem;
-  text-align: center;
-  border-top: 1px solid #E0DDD8;
-}
-
-.landing-footer p {
-  font-size: 0.8rem;
-  color: #ABABAB;
-  letter-spacing: 0.03em;
-  margin: 0;
-  max-width: none;
-}
 
 /* ---- Interior Page Wrapper ---- */
 
@@ -570,16 +545,6 @@ a:hover {
   text-decoration: none;
 }
 
-.landing-footer a {
-  color: #ABABAB;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.landing-footer a:hover {
-  color: #8A8A8A;
-  text-decoration: none;
-}
 
 /* ---- Draft Banner ---- */
 
@@ -633,12 +598,6 @@ a:hover {
     display: flex;
   }
 
-  .landing-nav .nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 1rem;
-  }
 
   .site-nav .nav-links li {
     padding: 0.6rem 0;
@@ -657,16 +616,8 @@ a:hover {
     padding: 0 1.5rem;
   }
 
-  .landing-nav {
-    padding: 1.25rem 1.5rem;
-  }
-
   .landing-center {
     padding: 3rem 1.5rem;
-  }
-
-  .landing-footer {
-    padding: 1.25rem 1.5rem;
   }
 
   .page-header {
