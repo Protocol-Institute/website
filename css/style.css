@@ -725,6 +725,120 @@ a:hover {
   letter-spacing: 0.01em;
 }
 
+/* ---- Consulting Page ---- */
+
+.consulting-intro {
+  margin-bottom: 3rem;
+}
+
+.consulting-intro p {
+  font-size: 1.05rem;
+  color: #2C2C2C;
+  margin-bottom: 1.6rem;
+}
+
+.consulting-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.consulting-card {
+  border: 1px solid #E0DDD8;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.consulting-photo {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  background-color: #F0EDE8;
+  border: 1px solid #E0DDD8;
+  overflow: hidden;
+}
+
+.consulting-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.consulting-photo--placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.consulting-photo--placeholder span {
+  font-size: 0.7rem;
+  color: #C0BCBA;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.consulting-photo-hint {
+  font-size: 0.62rem !important;
+  color: #D0CDC9 !important;
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+}
+
+.consulting-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.consulting-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+}
+
+.consulting-role {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+  margin-bottom: 0.75rem;
+}
+
+.consulting-expertise {
+  font-size: 0.92rem;
+  color: #3A3A3A;
+  line-height: 1.6;
+  margin-bottom: 0.65rem;
+}
+
+.consulting-contact {
+  font-size: 0.82rem;
+  color: #5A5A5A;
+}
+
+@media (max-width: 768px) {
+  .consulting-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .consulting-photo {
+    width: 88px;
+    height: 88px;
+  }
+}
+
 @media (max-width: 480px) {
   .landing-content h1 {
     font-size: 2.2rem;
