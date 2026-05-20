@@ -12,6 +12,7 @@
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-05-19** — Session 6: updated C3PO to live/beta — `projects.html` status badge → "Live · Beta", description updated (RAG, 12k+ vectors, MCP, Claude Sonnet), direct "Open C3PO →" link added; `c3po.html` Status and Technical sections rewritten present-tense, corpus size updated, MCP server paragraph added, "Try it →" link at top.
 - **2026-05-19** — Session 5: built Network, Consulting, and Symposium pages; redesigned nav (stacked two-row with separator); restructured Initiatives page to inline category tags; standardized landing page nav/footer to match interior pages; updated landing blurb; added Magazine → protocolized.io to nav on all pages.
 - **2026-05-14** — Added devlog system (data/devlog.json, devlog_session.py, devlog_render.py). Backfilled Sessions 1–2 from git history. Added startup and wrap-up rituals to CLAUDE.md. CLAUDE.md now references PI admin repo (Protocol-Institute/admin) for key and security policy.
 - **2026-05-14** — Added Protocol Institute Network page (`network.html`, DRAFT) with stub text and contact links. Improved footer nav across all pages to include Team, Network, and Contact links. Added `.draft-banner` CSS.
