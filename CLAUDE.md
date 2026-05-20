@@ -88,33 +88,23 @@ The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main
 
 ## At Session Start
 
-**Always do this first before any other work:**
-
-1. Run `python3 devlog_session.py start` — records session start time to `/tmp/pi_website_devlog_session_start.txt`.
-2. Run `python3 ../admin/expenses/track.py status` — shows all active PI project sessions and flags any overlap. If another project session is already running, no action needed; overlap is tracked automatically.
-3. Read `status-vgr.md` — review active and upcoming items from the last session.
-4. Confirm you are on `main` (`git branch --show-current`). Never work on `feat/cloudflare-migration` during content sessions.
-5. Briefly summarize to Venkat: any active items from `status-vgr.md` that are ready to work on.
+1. Read `status-vgr.md` — review active and upcoming items from the last session.
+2. Confirm you are on `main` (`git branch --show-current`). Never work on `feat/cloudflare-migration` during content sessions.
+3. Briefly summarize to Venkat: any active items from `status-vgr.md` that are ready to work on.
 
 ---
 
 ## After Each Session
 
 **Documentation (always):**
-1. `data/devlog.json` — add session entry with items in HTML. Run `python3 devlog_session.py end` for the timestamp. Run `python3 devlog_render.py` to regenerate `DEVLOG.md`. The devlog is the primary record of architectural decisions and infrastructure choices — write for a public technical audience.
-2. `status-vgr.md` — add a dated log entry with PT start–end times and a one-line summary of what changed.
-3. `CLAUDE.md` — update roadmap status or file structure notes if anything changed.
+1. `status-vgr.md` — add a dated log entry with PT start–end times and a one-line summary of what changed.
+2. `CLAUDE.md` — update roadmap status or file structure notes if anything changed.
 
 **Verify (if HTML/CSS/JS changed):**
-4. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
+3. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
 
 **Repo:**
-5. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main` — never to the fork or the CF branch.
-
-**Expenses (always):**
-6. `python3 ../admin/expenses/track.py end` — computes billable hours from all active session start files; detects overlap; prints a pre-filled log entry.
-7. Paste the entry into `../admin/expenses/log-{your-id}.json` sessions array; fill in `api_costs` (any API charges incurred this session) and `notes`.
-8. `python3 ../admin/expenses/render.py` — regenerates `EXPENSES.md` and `expenses.csv`.
+4. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main` — never to the fork or the CF branch.
 
 **Memory:**
-9. Update Claude memory (`/Users/Venkat/.claude/projects/.../memory/`) — save anything non-obvious about site structure, CF migration state, or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
+5. Update Claude memory (`/Users/Venkat/.claude/projects/.../memory/`) — save anything non-obvious about site structure, CF migration state, or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
