@@ -9,9 +9,11 @@
 - Add actual team photos for James Langdon, Tim Beiko, Timber
 - Migrate hosting from Netlify to Cloudflare Pages (see GitHub Issue #1/#2)
 - Add Events page with Google Calendar embed (calendar location TBD — hold until calendar is finalized)
+- Symposium page: add Google Form URL when ready; set submission deadline and exact dates
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-05-26** — Session 7 (~3:05–3:20 PT): diagnosed iPad "Site not found" issue — fixed by enabling HTTPS enforcement in GitHub Pages settings. Merged main into feat/cloudflare-migration (17 commits, 36 files, clean). Reviewed symposium page status.
 - **2026-05-19** — Session 6: updated C3PO to live/beta — `projects.html` status badge → "Live · Beta", description updated (RAG, 12k+ vectors, MCP, Claude Sonnet), direct "Open C3PO →" link added; `c3po.html` Status and Technical sections rewritten present-tense, corpus size updated, MCP server paragraph added, "Try it →" link at top.
 - **2026-05-19** — Session 5: built Network, Consulting, and Symposium pages; redesigned nav (stacked two-row with separator); restructured Initiatives page to inline category tags; standardized landing page nav/footer to match interior pages; updated landing blurb; added Magazine → protocolized.io to nav on all pages.
 - **2026-05-14** — Added devlog system (data/devlog.json, devlog_session.py, devlog_render.py). Backfilled Sessions 1–2 from git history. Added startup and wrap-up rituals to CLAUDE.md. CLAUDE.md now references PI admin repo (Protocol-Institute/admin) for key and security policy.
