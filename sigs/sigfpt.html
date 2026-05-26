@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formal Protocol Theory — The Protocol Institute</title>
+  <meta name="description" content="Mathematical and logical modeling of protocols, developing the underlying formal sciences with applications across fields including cryptography, distributed systems, and healthcare.">
+  <link rel="icon" href="../assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+    .no-meetings { color: #8A8A8A; font-style: italic; padding: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="../index.html" class="nav-brand"><img src="../assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="../projects.html">Initiatives</a></li>
+        <li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Magazine</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../support.html">Support Us</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Formal Protocol Theory</h1>
+      </div>
+
+      <div class="about-body">
+        <p>Mathematical and logical modeling of protocols, developing the underlying formal sciences with applications across fields including cryptography, distributed systems, and healthcare.</p>
+        <p class="sig-meta">Led by Venkatesh Rao and Patrick Nast &mdash; Biweekly Fridays, 10am Pacific</p>
+        <p style="margin-top:1rem"><a href="../sigs.html" class="back-link">&#8592; All Special Interest Groups</a></p>
+      </div>
+
+      <h2 class="section-label">Meeting Archive &mdash; 31 sessions, 28 dated</h2>
+
+      <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">May 15, 2026</div>
+  <div class="meeting-title">SIGFPT: Stigmergy Part II - Real-World Applications and Framework Analysis</div>
+  <div class="meeting-topics"><span class="meeting-topic">Applying Heylighen's agent/action/medium/trace/condition framework to real-world systems</span><span class="meeting-topic">Stigmergic patterns in diverse domains: swarm robotics, garage sales, legislation, version control, and historiography</span><span class="meeting-topic">Distinction between stigmergic systems (low-coordination, trace-based) and verbose/anti-stigmergic systems (explicit communication)</span><span class="meeting-topic">Stigmergy as a Schelling point for bio-inspired design and the 'New Nature' research agenda</span><span class="meeting-topic">Technical analysis of lock-based vs. distributed (git-based) version control as stigmergic design choices</span></div>
+  <p class="meeting-participants">Participants: ediblebadger, anurajenp, _vgr, sachbenny, senthil_d1sc0rd, maparent, timber1997, zoesh, giovanni.merlino, .unipuff, promptrotator, mtraven</p>
+  <p class="meeting-summary">The SIGFPT group continued their stigmergy discussion by applying Heylighen's agent/action/medium/trace/condition framework to concrete real-world examples. Participants mapped diverse systems to this framework, including swarm robotics, a West Seattle garage sale map, legislative grifting cycles, electric agents architecture, historical documentation, and version control systems. A key observation emerged that the 'condition' component of the framework often remained underspecified in practice. The discussion revealed that git-based version control represents a stigmergic solution to coordination problems previously handled through locks, trading resolution costs for better emergent behavior.</p>
+  <p class="meeting-summary">The group debated whether stigmergy should become a summer-long focus area, with _vgr proposing SIGFPT become a &quot;stigmergy revival group for the agentic AI era.&quot; .unipuff suggested stigmergy's narrowness makes it valuable as a Schelling point for bio-inspired design conversations. A significant meta-discussion emerged around the necessary and sufficient conditions for choosing between stigmergic systems (low coordination overhead, high conflict potential) and verbose systems (explicit communication, higher coordination costs). The consensus positioned stigmergy as both analytically useful and strategically aligned with the Protocol Institute's broader &quot;New Nature&quot; research roadmap.</p>
+  <ul class="meeting-insights">
+    <li>The garage sale map and legislative grift examples demonstrate how stigmergy operates across social scales: traces (location pins, news stories) trigger emergent behavior without central coordination.</li>
+    <li>Git's superiority over lock-based version control stems from solving coordination through better stigmergy rather than imposing constraints, though this trades merge conflict resolution costs.</li>
+    <li>The group identified 'Condition' as frequently underspecified in Heylighen's framework when applied to real systems, suggesting the framework needs refinement for practical analysis.</li>
+    <li>Stigmergy is narrow enough to be analytically useful as a Schelling point while opening conversations about broader bio-mimetic design patterns applicable to agentic AI systems.</li>
+    <li>A fundamental tradeoff exists between stigmergic systems (lower utilization, fewer conflicts) and verbose systems (explicit communication, higher coordination costs).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.nature.com/articles/s44172-024-00175-7" target="_blank" rel="noopener noreferrer">www.nature.com</a></li>
+      <li><a href="https://electric.ax/blog/2026/04/29/introducing-electric-agents" target="_blank" rel="noopener noreferrer">electric.ax</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Preferential_attachment" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1503893322362785822" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">May 1, 2026</div>
+  <div class="meeting-title">SIGFPT 01May26: Stigmergy and Protocol Design</div>
+  <div class="meeting-topics"><span class="meeting-topic">Stigmergy as a decentralized coordination mechanism in biological and digital systems</span><span class="meeting-topic">Application of stigmergy to protocol engineering and distributed systems design</span><span class="meeting-topic">Environmental state persistence and durable streams as stigmergic substrates</span><span class="meeting-topic">Stigmergy's resolution of the culture-vs-institutions debate in political theory</span><span class="meeting-topic">Agent coordination through shared environmental traces rather than direct communication</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, .unipuff, maparent, stevebeans., kylemathews</p>
+  <p class="meeting-summary">The SIGFPT group examined stigmergy—a decentralized coordination mechanism observed in eusocial insects and applicable to human and machine systems—as a lens for understanding and designing protocols. The discussion centered on how stigmergy reframes coordination: instead of centralized control or direct agent communication, systems achieve coherence through agents modifying and responding to shared environmental state. Participants identified blockchains and durable streams (agent activity logs) as modern implementations of stigmergic substrates, and noted that the Electric Agents platform independently converged on this insight: design the medium, not the behavior.</p>
+  <p class="meeting-summary">A significant theoretical contribution emerged around protocol theory itself. Stigmergy was shown to dissolve a longstanding debate in political science between those emphasizing culture-driven institutions (Almond &amp; Verba's civic culture) and those emphasizing institution-driven culture (Acemoglu &amp; Robinson's inclusive institutions). Both frameworks gain explanatory power when institutions are understood as stigmergic spirals—recursive feedback loops between agents and environmental structures—rather than as one-directional causation.</p>
+  <p class="meeting-summary">The group concluded that protocol engineering should be reframed as the discipline of designing stigmergic media: the shared surfaces through which agents and environments co-modify each other. This principle connects entomology (termite mound-building), computer science (distributed systems), and political theory into a unified framework for understanding how large, decentralized populations achieve coordination without top-down control.</p>
+  <ul class="meeting-insights">
+    <li>Blockchains and durable streams are stigmergic data substrates where public state persistence enables coordination without centralized control.</li>
+    <li>Protocol design should focus on engineering the shared medium (the stigmergic surface) rather than prescribing agent behavior, allowing coherent system-level emergence.</li>
+    <li>Stigmergy dissolves the 60-year stalemate between 'civic culture' and 'inclusive institutions' frameworks by reframing institutions as environmentally mediated coordination spirals.</li>
+    <li>Agent memory should be reconceptualized as environmental traces left in shared logs rather than internal capacity, enabling future agents to detect and respond without direct communication.</li>
+    <li>Threshold effects (around 25-person groups) and group cognition constraints define when stigmergic mechanisms become viable for human coordination.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.researchgate.net/publication/12680033_A_Brief_History_of_Stigmergy" target="_blank" rel="noopener noreferrer">www.researchgate.net</a></li>
+      <li><a href="https://www.abcresearch.org/abc/papers/E4MAS05HHS.pdf" target="_blank" rel="noopener noreferrer">www.abcresearch.org</a></li>
+      <li><a href="https://electric.ax/blog/2026/04/29/introducing-electric-agents" target="_blank" rel="noopener noreferrer">electric.ax</a></li>
+      <li><a href="https://www.journal.media-culture.org.au/index.php/mcjournal/article/view/2599" target="_blank" rel="noopener noreferrer">www.journal.media-culture.org.au</a></li>
+      <li><a href="https://testprepshsat.com/wp-content/uploads/2020/01/Tramp-Abroad_2018-2019A.pdf" target="_blank" rel="noopener noreferrer">testprepshsat.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1498379036009828525" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">April 17, 2026</div>
+  <div class="meeting-title">Protocolizing Agent Space: Rules, Observation, and Regulation</div>
+  <div class="meeting-topics"><span class="meeting-topic">Defining rules and abstractions for agent-dominated digital spaces across multiple layers (model latent spaces, OS, MCP marketplaces, GitHub)</span><span class="meeting-topic">Observability and monitoring mechanisms for agent activities in colonized digital spaces</span><span class="meeting-topic">Regulation frameworks to prevent anarchic 'dark forest' dynamics while unlocking agent capabilities</span><span class="meeting-topic">Tension between managing complex stochastic systems with simple deterministic tools</span><span class="meeting-topic">Operational principles: speed optimization, clarity of intent, and generalist approaches</span></div>
+  <p class="meeting-participants">Participants: _vgr, ananth9921, ediblebadger, senthil_d1sc0rd, sachbenny, zoesh, mtraven, biggiespells, .cyberscribe</p>
+  <p class="meeting-summary">The SIGFPT group convened to address how to establish formal protocols for the increasingly complex digital spaces occupied and created by AI agents. _vgr framed the problem: agents now operate across multiple abstraction layers—from model internals to operating systems to open collaboration platforms—yet lack coherent observational and regulatory frameworks. The group discussed transforming these spaces from ungovcrned 'dark forests' into high-energy civilized domains through proper protocolization.</p>
+  <p class="meeting-summary">The discussion emphasized several key tensions and principles. Participants noted that current management approaches often apply simple deterministic systems to fundamentally stochastic phenomena, driven by comfort rather than correctness. The group exchanged aphorisms emphasizing the importance of articulate generalism, tight feedback loops, clarity of intent ('if you don't know where you are going, any tool will do'), and maintaining operational discipline ('keep your shoelaces tied').</p>
+  <p class="meeting-summary">_vgr indicated plans to synthesize the discussion into a newsletter issue and published a summary and transcript on the Protocol Theory Roam page for further asynchronous development.</p>
+  <ul class="meeting-insights">
+    <li>Agents have colonized multiple layers of digital infrastructure (from processor latent spaces to MCP marketplaces), creating a need for coherent protocols and rules across these heterogeneous spaces.</li>
+    <li>Current approaches often manage complex stochastic agent behavior through simple deterministic tools out of comfort rather than correctness, suggesting fundamental misalignment in governance philosophy.</li>
+    <li>Successful agent space governance requires balancing iteration speed ('loop as fast as possible but no faster') with clear directional intent to avoid tool proliferation without purpose.</li>
+  </ul>
+  <a href="https://discord.com/channels/1082444651946049567/1494143047385223188" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">April 3, 2026</div>
+  <div class="meeting-title">Autocurricula and Multi-Agent Intelligence: Game Theory and Emergent Innovation</div>
+  <div class="meeting-topics"><span class="meeting-topic">Autocurricula as a lens for understanding social generativity</span><span class="meeting-topic">Game theory and multi-agent reinforcement learning applications</span><span class="meeting-topic">Emergent tool use and innovation from agent interaction</span><span class="meeting-topic">Common law as large-scale path-paving and emergent systems</span><span class="meeting-topic">Mortal computation and bounded rationality</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, anurajenp, mtraven, giovanni.merlino</p>
+  <p class="meeting-summary">The SIGFPT group convened to explore autocurricula as a framework for understanding how innovation emerges from multi-agent interaction. Ediblebadger led a 15-minute overview of game theory and multi-agent reinforcement learning before diving into the core paper on autocurricula and social generativity. The discussion drew on OpenAI's emergent tool-use demonstrations and DeepMind's research on agent cooperation.</p>
+  <p class="meeting-summary">Participants extended the conversation into several cross-disciplinary directions. Mtraven engaged with Herb Gintis's work on bounded rationality and behavioral economics as theoretical foundations. Giovanni.merlino connected concepts to mortal computation and resource constraints in adaptive systems. Most notably, mtraven drew an analogy between the meeting's discussion of path-paving and common law as a large-scale emergent system built through iterative precedent and social interaction.</p>
+  <p class="meeting-summary">The group maintained a Roam Research page for ongoing reference, consolidating the transcript, readings, and discussion materials for future engagement with these topics.</p>
+  <ul class="meeting-insights">
+    <li>Autocurricula demonstrate how innovation and complex behaviors emerge naturally from multi-agent interaction, with OpenAI's tool-use examples providing concrete demonstrations of this principle.</li>
+    <li>Common law functions as a large-scale instantiation of path-paving dynamics, where established practices become formalized through iterative social processes.</li>
+    <li>Agent cooperation and bounded rationality frameworks (drawing on Herb Gintis's work) provide theoretical grounding for understanding how constraints enable rather than limit emergent complexity.</li>
+    <li>Mortality and computational constraints are fundamental features of adaptive systems, not merely limitations to overcome.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://arxiv.org/pdf/1903.00742" target="_blank" rel="noopener noreferrer">arxiv.org</a></li>
+      <li><a href="https://openai.com/index/emergent-tool-use/" target="_blank" rel="noopener noreferrer">openai.com</a></li>
+      <li><a href="https://deepmind.google/blog/understanding-agent-cooperation/" target="_blank" rel="noopener noreferrer">deepmind.google</a></li>
+      <li><a href="https://arxiv.org/pdf/2012.08630" target="_blank" rel="noopener noreferrer">arxiv.org</a></li>
+      <li><a href="https://github.com/karpathy/autoresearch" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://hyperphor.com/ammdi/Herb-Gintis" target="_blank" rel="noopener noreferrer">hyperphor.com</a></li>
+      <li><a href="https://www.amazon.com/Bounds-Reason-Unification-Behavioral-Sciences/dp/0691160848/" target="_blank" rel="noopener noreferrer">www.amazon.com</a></li>
+      <li><a href="https://www.youtube.com/watch?v=sghvwkXV3VU" target="_blank" rel="noopener noreferrer">www.youtube.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1488377785255727367" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">March 20, 2026</div>
+  <div class="meeting-title">SIGFPT: Homework Problem Sets for Protocol Theory Textbooks</div>
+  <div class="meeting-topics"><span class="meeting-topic">Bottom-up textbook authoring approach starting with homework problems</span><span class="meeting-topic">Design of effective homework problem sets for protocol theory education</span><span class="meeting-topic">Clustering and organization of protocol theory problems</span><span class="meeting-topic">Analysis of pedagogical characteristics of classic problem-set oriented texts</span><span class="meeting-topic">Chapter-level problem set development for introductory protocol theory</span></div>
+  <p class="meeting-participants">Participants: _vgr, ananth9921</p>
+  <p class="meeting-summary">The SIGFPT meeting focused on initiating a novel approach to creating a protocol theory textbook by starting with carefully designed homework problem sets rather than traditional chapter content. _vgr presented the conviction that technical subjects are best learned through high-quality homework problems and proposed building a textbook collaboratively by first workshopping complete problem sets, clustering them thematically, and then authoring content chapters to match those clusters. This bottom-up methodology represents a departure from conventional textbook development. During this session, the group planned to workshop a full homework problem set suitable for an introductory chapter (approximately Chapter 2 or 3) of a hypothetical textbook, using classic problem-set oriented mathematics texts as pedagogical models. The meeting aimed to both produce concrete problem materials and analyze the characteristics that make homework problems effective teaching tools.</p>
+  <ul class="meeting-insights">
+    <li>Technical subjects are most effectively taught through well-designed homework problem sets, making them the optimal starting point for collaborative textbook authoring.</li>
+    <li>A bottom-up approach—where content chapters are written to match clustered homework problems—may be more effective than traditional top-down textbook structure.</li>
+    <li>The SIGFPT group aims to model their pedagogy after classic problem-set oriented mathematics texts like S. L. Loney's works on algebra and geometry.</li>
+    <li>The group has reached sufficient foundational preparation to begin workshopping a complete homework problem set for an introductory chapter (Chapter 2 or 3) of a hypothetical protocol theory textbook.</li>
+  </ul>
+  <a href="https://discord.com/channels/1082444651946049567/1484253828122411094" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">March 6, 2026</div>
+  <div class="meeting-title">SIGFPT Meeting: AFP Vibe Coding and Atomic Protocol Questions</div>
+  <div class="meeting-topics"><span class="meeting-topic">Live research methodology for Atomic Protocol Questions (APQs) with AI assistance</span><span class="meeting-topic">Disciplinary breadth and context/dimension selection for APQs</span><span class="meeting-topic">NotebookLM as primary tool for exploration, search, and RAG workflows</span><span class="meeting-topic">Integration of MCP/skills with NotebookLM for customized outputs</span><span class="meeting-topic">Building a reusable basic APQ notebook template with foundational materials</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, anurajenp, unapologeticshenanigans, zoesh, senthil_d1sc0rd</p>
+  <p class="meeting-summary">The SIGFPT group conducted a live research session focused on developing methodology for creating and exploring Atomic Protocol Questions (APQs) through AI-assisted vibe coding. Led by ediblebadger, the session involved discussing the breadth of disciplines applicable to APQs, selecting relevant context/dimension pairs, and identifying interesting research angles. The group emphasized the importance of human expertise in spotting hallucinations during the AI-assisted research process. Participants decided that NotebookLM would serve as the primary tool for exploration and RAG-based research, though they acknowledged limitations in customization that could be addressed through MCP/skills integration. To facilitate future work, ediblebadger created a basic APQ notebook template containing key foundational materials including FPT essays, the unreasonable sufficiency essay, protocol watching materials, and the Timbers ETTO article, with the intent that this notebook could be forked for specific research applications.</p>
+  <ul class="meeting-insights">
+    <li>NotebookLM is the preferred tool for APQ exploration due to superior search and RAG capabilities, but MCP/skills provide a necessary bridge for generating customized outputs like code or styled prose.</li>
+    <li>The group created a basic APQ notebook template populated with foundational essays (FPT essays, unreasonable sufficiency essay, protocol watching, and Timbers ETTO article) to enable forking for specific research contexts.</li>
+    <li>The live research session will involve collaborative discipline exploration and problem selection, with participants expected to contribute domain expertise to identify and catch AI hallucinations.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://protocolized.summerofprotocols.com/p/theorizing-protocolization-ii-atomic" target="_blank" rel="noopener noreferrer">protocolized.summerofprotocols.com</a></li>
+      <li><a href="https://github.com/PleasePrompto/notebooklm-skill" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://notebooklm.google.com/notebook/452d451d-365d-43f9-8725-b98b8db89e7f" target="_blank" rel="noopener noreferrer">notebooklm.google.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1478488454345003008" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">February 20, 2026</div>
+  <div class="meeting-title">Claude + Observability Atomic Protocol Problem</div>
+  <div class="meeting-topics"><span class="meeting-topic">Modeling coding agents (Claude Code) as protocol processes with filesystem observability</span><span class="meeting-topic">Building observability and tracing mechanisms into agentic systems</span><span class="meeting-topic">Skills-based architecture as a protocol for agent capability composition</span><span class="meeting-topic">Configurancy: explicit behavioral contracts for safe agent system co-evolution</span><span class="meeting-topic">Human-machine interoperability and the limits of 'vibe coding' without understanding</span><span class="meeting-topic">Abstraction layers and the epistemological shift from symbolic to data distribution thinking</span></div>
+  <p class="meeting-participants">Participants: _vgr, senthil_d1sc0rd, ediblebadger, giovanni.merlino, simpalaxy, kylemathews, rafa_0x, mtraven, ananth9921</p>
+  <p class="meeting-summary">The SIGFPT group examined how to model coding agents like Claude Code as formal protocols, specifically addressing the observability challenge when agents have access to system state like filesystems. Participants shared experiences with agent visibility and control, discussing how Dropbox monitoring revealed Claude Code's actions at an unexpectedly high event volume. The conversation evolved toward designing 'AI-forward' protocols with built-in observability—including proposed tools like a Claude Watcher daemon and trace skills that log agent actions with timestamps.</p>
+  <p class="meeting-summary">A central theme emerged around 'configurancy,' formalized as the minimal set of explicit behavioral commitments allowing agents to safely modify systems. This contrasts with the 'vibe coding' approach, where humans outsource understanding to agents. While participants acknowledged abstraction enables progress, several voiced concern that excessive opacity prevents humans from understanding system behavior, especially as agent autonomy increases. The group suggested future work should focus on experiments that advance atomic protocol theory and surprise-yielding discoveries about agent coordination.</p>
+  <p class="meeting-summary">The discussion also touched on broader philosophical shifts: from thinking in symbols to data distributions, from reading code (now 'low status') to observing agent behavior traces, and from individual human authorship to distributed responsibility where legitimacy shifts to the platforms distributing agent-generated software.</p>
+  <ul class="meeting-insights">
+    <li>Agents operate at orders of magnitude higher event volume than humans, requiring new observability paradigms beyond human-readable logs—digital twins and semantic Kalman filters offer promising models.</li>
+    <li>Configurancy defines the minimal set of explicit behavioral commitments needed for bounded agents to safely modify systems without rediscovering invariants; incomplete configurancy manifests as repeated invariant violations.</li>
+    <li>Vibe coding abstracts away human understanding, raising critical questions about how humans will manage, debug, and modify systems whose internals are outsourced to opaque machinery.</li>
+    <li>Skills function as protocols themselves, enabling persistent state and installation management through container mounting and update mechanisms that overcome ephemeral environment limitations.</li>
+    <li>The SICP-inspired 'structure of knowledge' approach becomes hyperrelevant in the agentic age, suggesting thinking in data distributions rather than symbols may better capture emergent system behavior.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://github.com/why-not/container-skill" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://github.com/why-not/container-skill/blob/main/Skill.md" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://electric-sql.com/blog/2026/02/19/amdahls-law-for-ai-agents" target="_blank" rel="noopener noreferrer">electric-sql.com</a></li>
+      <li><a href="https://electric-sql.com/blog/2026/02/02/configurancy" target="_blank" rel="noopener noreferrer">electric-sql.com</a></li>
+      <li><a href="https://factory.strongdm.ai/techniques/gene-transfusion" target="_blank" rel="noopener noreferrer">factory.strongdm.ai</a></li>
+      <li><a href="https://steve-yegge.medium.com/welcome-to-gas-town-4f25ee16dd04" target="_blank" rel="noopener noreferrer">steve-yegge.medium.com</a></li>
+      <li><a href="https://www.inkandswitch.com/keyhive/notebook/" target="_blank" rel="noopener noreferrer">www.inkandswitch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1474112488718205091" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">February 6, 2026</div>
+  <div class="meeting-title">SIGFPT 6Feb26: Atomic Protocols — 2</div>
+  <div class="meeting-topics"><span class="meeting-topic">Atomic Protocol Questions specification and goals</span><span class="meeting-topic">Categorization theory and prototype/exemplar models</span><span class="meeting-topic">Testing protocols: process character vs outcome testing</span><span class="meeting-topic">Wikipedia governance and credibility assessment</span><span class="meeting-topic">Interactive framework development for protocol questions</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, mtraven, suspencer_nit, simpalaxy, doriantaylor</p>
+  <p class="meeting-summary">The SIGFPT group held the second meeting on Atomic Protocols, led by ediblebadger. The main focus was reviewing and improving the specification of Atomic Protocol Questions through a new interactive framework to replace the current Roam page. The group discussed theoretical foundations for categorization, drawing on cognitive science literature around prototype and exemplar theory—moving beyond traditional necessary/sufficient condition models. References to Eleanor Rosch and Robert Nosofsky were highlighted as key theorists. The discussion also touched on practical methodological questions around testing protocols, distinguishing between testing process characteristics versus outcomes. Additionally, the group explored applying these concepts to real-world domains, with mtraven contributing research on Wikipedia governance and credibility assessment as a potential case study, noting the field already has substantial existing literature.</p>
+  <ul class="meeting-insights">
+    <li>The group is transitioning from a Roam page to a more interactive system for triaging individual Atomic Protocol Questions with greater detail and engagement.</li>
+    <li>Prototype theory and exemplar theory from cognitive science (Eleanor Rosch, Robert Nosofsky) provide theoretical frameworks for understanding how to define and categorize protocols beyond traditional set-theoretic models.</li>
+    <li>A significant distinction exists between testing the character/process of protocols versus testing their outcomes, which has implications for protocol validation.</li>
+    <li>Existing work on Wikipedia governance is extensive, creating both opportunities and challenges for applying collaborative knowledge frameworks to protocol development.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/gTOXGkLWv" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+      <li><a href="https://direct.mit.edu/books/monograph/2683/The-Big-Book-of-Concepts" target="_blank" rel="noopener noreferrer">direct.mit.edu</a></li>
+      <li><a href="https://api.pageplace.de/preview/DT0400.9781108804905_A49236452/preview-9781108804905_A49236452.pdf" target="_blank" rel="noopener noreferrer">api.pageplace.de</a></li>
+      <li><a href="https://claude.ai/share/728553cc-1f48-4e37-b48c-42baa87c28b9" target="_blank" rel="noopener noreferrer">claude.ai</a></li>
+      <li><a href="https://books.openedition.org/pressesmines/595" target="_blank" rel="noopener noreferrer">books.openedition.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1468287334696095774" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">January 23, 2026</div>
+  <div class="meeting-title">Linear Logic and Pi Calculus: Formal Protocol Theory Discussion</div>
+  <div class="meeting-topics"><span class="meeting-topic">Linear logic semantics and proof structures</span><span class="meeting-topic">Interaction nets and their relationship to pi calculus</span><span class="meeting-topic">Constructivism and intuitionistic logic in protocol theory</span><span class="meeting-topic">Linear types for expressing liveness properties</span><span class="meeting-topic">Applications of linear logic to protocol specification and processor behavior modeling</span></div>
+  <p class="meeting-participants">Participants: _vgr, simpalaxy, _ergod, anurajenp, senthil_d1sc0rd, artemishelios, austinjacobs_33961, plague_year, maparent, ediblebadger, mtraven</p>
+  <p class="meeting-summary">The SIGFPT group convened to explore linear logic and pi calculus as formal frameworks for protocol theory. Simpalaxy provided preparatory reading materials on linear logic semantics, interaction nets, and their relationships to established logical systems. The discussion touched on foundational concepts including constructivism, Brouwer's intuitionism, and the rejection of excluded middle, establishing that linear logic operates within a purely constructionist paradigm with interesting computational properties. A significant portion of the meeting focused on practical applications, particularly how linear logic and linear types can model real-world systems. The kitchen metaphor for processor behavior emerged as a compelling application area, where concepts like maximizing throughput and speculative execution map naturally onto linear logic operations, with exception handling modeled as time-reversal contradictions. The group also discussed probabilistic reasoning within the formalism and potential connections to industrial protocol questions, suggesting a structured approach moving from atomic protocol questions upward through pi calculus, interaction nets, and linear logic frameworks.</p>
+  <ul class="meeting-insights">
+    <li>Linear logic can be understood as a constructionist formalism with graph-reduction/transformation grammars that function like a physics engine for protocol behavior.</li>
+    <li>Interaction nets generalize proof structures in linear logic and serve as a bridge between intuitionistic logic and pi calculus, similar to how lambda calculus relates to intuitionistic logic.</li>
+    <li>Linear types can effectively express liveness properties and model processor behavior, including speculative execution as exception handling through time-reversal semantics.</li>
+    <li>The group identified a potential research direction connecting linear logic/linear types to atomic protocol questions, with connections to temporal logic frameworks (LTL/TLA).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="http://adelelopez.com/visual-linear-logic" target="_blank" rel="noopener noreferrer">adelelopez.com</a></li>
+      <li><a href="https://lfcps.org/course/constlog20/20-linear.pdf" target="_blank" rel="noopener noreferrer">lfcps.org</a></li>
+      <li><a href="https://ryanbrewer.dev/posts/linear-logic" target="_blank" rel="noopener noreferrer">ryanbrewer.dev</a></li>
+      <li><a href="https://www.sciencedirect.com/science/article/pii/S0890540197926432" target="_blank" rel="noopener noreferrer">www.sciencedirect.com</a></li>
+      <li><a href="https://verdagon.dev/blog/higher-raii-uses-linear-types" target="_blank" rel="noopener noreferrer">verdagon.dev</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1462869018699366470" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">January 9, 2026</div>
+  <div class="meeting-title">SIGFPT 2026 Kickoff Meeting</div>
+  <div class="meeting-topics"><span class="meeting-topic">Simplifying the definition of protocolization for broader accessibility</span><span class="meeting-topic">The concept of 'tangles' and their relationship to Kafka protocols</span><span class="meeting-topic">Atomic protocols versus protocol molecules and interface interactions</span><span class="meeting-topic">Protocol invisibility as a framework for understanding formal systems</span><span class="meeting-topic">Data-driven approaches to studying protocol emergence and evolution</span><span class="meeting-topic">Practical applications of protocol theory (concrete/water utilities, digital administrative surfaces)</span></div>
+  <p class="meeting-participants">Participants: _vgr, rafa_0x, nattfrosten, maparent, brianskinner3057, velitchkov.eu, ediblebadger, timber1997, plague_year, simpalaxy, senthil_d1sc0rd</p>
+  <p class="meeting-summary">The SIGFPT group convened for their 2026 kickoff to orient new and returning members and brainstorm research directions. The group discussed simplifying how protocolization is communicated, with participants noting that existing definitions are unnecessarily complex. A key insight emerged around protocol 'invisibility'—the idea that protocols are most effective when they operate as reliable, repeatable structures in the background, enabling visible creative/emergent activity on top. The group engaged with the tension between studying atomic protocols versus the more interesting interactions at protocol interfaces (molecules), with participants like maparent arguing the richer research space lies in how protocols compose. Several domain-specific applications were raised, including green concrete specifications in water utilities and digital administrative systems. The group identified a strategic goal for 2026: developing data-driven approaches to protocol analysis, including quantifying maintenance requirements and understanding how protocols emerge and evolve empirically, thereby grounding formal protocol theory in measurable outcomes.</p>
+  <ul class="meeting-insights">
+    <li>A simpler micro-definition of protocols—'reliably repeatable behavior'—may be more intuitive than existing formulations, with the 'tangle' concept resonating as particularly approachable.</li>
+    <li>Protocol invisibility frames the distinction between what's organizationally possible 'off-protocol' (visible) versus the formal constraints (invisible), bridging the tension between formality and emergent/creative systems.</li>
+    <li>Protocol interactions of greatest interest occur at interfaces between protocols ('molecules') rather than at atomic levels, suggesting focus should shift from isolated protocols to their compositional relationships.</li>
+    <li>Quantifying minimum practice requirements for protocol maintenance (e.g., through fire drills) and developing data-driven methods to analyze protocol evolution could ground formal protocol theory in empirical validation.</li>
+    <li>Power asymmetries between agents with unequal leverage can create Kafka protocols, where high-leverage agents cannot exit despite imbalance when low-leverage agents operate collectively.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/QkhwWAjDo" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1457824035449602048" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">December 12, 2025</div>
+  <div class="meeting-title">SIGFPT Meeting: Actor Models and Protocol Theory</div>
+  <div class="meeting-topics"><span class="meeting-topic">Actor model fundamentals and comparison with object-oriented programming</span><span class="meeting-topic">Asynchronous vs. synchronous communication as design primitives</span><span class="meeting-topic">Agent-based modeling and emergence in complex systems</span><span class="meeting-topic">Ideological and philosophical foundations of distributed systems research</span><span class="meeting-topic">Applications to population health simulation and policy analysis</span></div>
+  <p class="meeting-participants">Participants: _vgr, mtraven, giovanni.merlino, simpalaxy, milieu.us, ediblebadger, zoesh</p>
+  <p class="meeting-summary">The SIGFPT group held a session on actor models, exploring their theoretical foundations, relationships to other computational paradigms, and applications. The discussion centered on whether asynchronous communication should be the primitive with synchrony built on top (actor model approach) or vice versa (process calculi). Multiple participants argued that asynchrony is more fundamental, with zoesh framing this through a Coasean economic lens where synchrony emerges when coordination costs of asynchrony become too high. The group reviewed classical papers including Gul Agha's actor language overview and Kornfeld &amp; Hewitt's scientific community metaphor. Practical applications were discussed, including ediblebadger's work on probabilistic microsimulations for population health policy analysis using the vivarium framework, and broader interest in agent-based modeling for capturing emergence and complex dynamics. The conversation touched on ideological dimensions of this research tradition, with participants noting both anarchist and market-oriented (Agoric Systems) influences that appeal across ideological lines.</p>
+  <ul class="meeting-insights">
+    <li>Actor models requiring explicit synchronization construction represent a design choice with tradeoffs compared to process calculi with built-in synchrony, with asynchrony arguably being more fundamental to how the world operates.</li>
+    <li>The natural world defaults to asynchronous states, with synchrony emerging only when the coordination costs of asynchrony become prohibitively high, suggesting actor-based approaches better reflect reality than synchronous-first models.</li>
+    <li>Bottom-up, agent-based modeling approaches enable exploration of emergence and complex dynamics, though computational burden has traditionally limited scaling to real-world system fidelity.</li>
+    <li>Protocols can emerge as mechanisms for negotiating between individuals with mixed viewpoints by defining starting states, processes, and end states that establish agreement.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://dl.acm.org/doi/pdf/10.1145/323648.323743" target="_blank" rel="noopener noreferrer">dl.acm.org</a></li>
+      <li><a href="https://bitsavers.trailing-edge.com/pdf/mit/ai/aim/AIM-641.pdf" target="_blank" rel="noopener noreferrer">bitsavers.trailing-edge.com</a></li>
+      <li><a href="https://www.healthdata.org" target="_blank" rel="noopener noreferrer">www.healthdata.org</a></li>
+      <li><a href="https://github.com/ihmeuw/vivarium?tab=readme-ov-file" target="_blank" rel="noopener noreferrer">github.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1447806659027009616" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">November 14, 2025</div>
+  <div class="meeting-title">Coasean and Transaction Cost Approaches to Protocol Theory</div>
+  <div class="meeting-topics"><span class="meeting-topic">Applying Coase theorem and transaction cost economics to protocol design</span><span class="meeting-topic">Information asymmetry, perfect information assumptions, and their failures in real systems</span><span class="meeting-topic">Protocols as institutions that front-load bargaining costs to reduce ongoing coordination costs</span><span class="meeting-topic">The role of friction and transaction costs in creating desirable constraints</span><span class="meeting-topic">Information clearinghouses, disinformation economies, and who bears the cost of reliable information</span></div>
+  <p class="meeting-participants">Participants: _vgr, anurajenp, mtraven, simpalaxy, amitashu, maparent, sachbenny, stevebeans., ananth9921, plague_year, zoesh, .unipuff</p>
+  <p class="meeting-summary">The SIGFPT group explored how Coasean transaction cost economics applies to protocol design and governance. Participants reviewed foundational ideas from 'The Firm, The Market and the Law,' establishing that externalities can be resolved through clear property rights and bargaining—but only when transaction costs and information asymmetries are low, which rarely occurs in practice. The group identified protocols themselves as institutional mechanisms that reduce ongoing coordination costs by front-loading expensive design work (standardization, specification), functioning similarly to traffic systems, academic journals, and network protocols. A critical theme emerged: the conventional goal of minimizing transaction costs is neither achievable nor desirable. Friction and constraints provide valuable affordances, preventing certain behaviors while enabling stable coordination. The discussion highlighted a new wrinkle in information economics where reliable information is expensive while disinformation is free, creating novel institutional design challenges around information clearinghouses and evaluation costs—a problem the group argued protocols are uniquely suited to address. Finally, participants stressed that real-world externality problems with dispersed parties require collective institutions (NGOs, public broadcasters, Pigouvian mechanisms) rather than assuming bilateral Coasean bargaining will resolve conflicts.</p>
+  <ul class="meeting-insights">
+    <li>Protocols function as boundary institutions that pre-assign property rights and constrain action spaces, essentially front-loading expensive design and standardization work upfront to avoid repeated bargaining costs in operation.</li>
+    <li>The ideal conditions of the Coase theorem (zero transaction costs, perfect information, few parties) almost never hold in practice; real externality problems require collective institutions like NGOs, public broadcasters, and information clearinghouses rather than just bilateral bargaining.</li>
+    <li>Zero transaction costs are not actually optimal—some friction on behavior provides value across multiple axes and prevents undesirable outcomes, making the goal of eliminating all costs both naive and undesirable.</li>
+    <li>Modern information economies reverse classical assumptions: reliable information now carries costs while disinformation/propaganda is free, creating a new institutional design challenge for protocols around who bears the cost of information evaluation and dissemination.</li>
+    <li>Protocols structure time and predictability (horizons, trust, adaptation) as much as they structure action spaces, affecting how externalities can be resolved and bargaining can occur.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://chatgpt.com/share/6906679a-f510-8002-baa6-4c226f4e5b76" target="_blank" rel="noopener noreferrer">chatgpt.com</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Commons-based_peer_production" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+      <li><a href="https://www.jstor.org/stable/1562247" target="_blank" rel="noopener noreferrer">www.jstor.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1434277767050170461" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">October 31, 2025</div>
+  <div class="meeting-title">SIGFPT 31Oct25: Atomic Protocol Questions</div>
+  <div class="meeting-topics"><span class="meeting-topic">Atomic Protocol Questions as a research framework inspired by Hilbert's problems</span><span class="meeting-topic">The 'unreasonable sufficiency' of protocols and their dimensional properties</span><span class="meeting-topic">Quality morphisms: relationships between protocol legitimacy, learnability, and generativity</span><span class="meeting-topic">Sovereignty and exception-handling in protocol design</span><span class="meeting-topic">Governance protocols and mechanisms for consensus when protocols fail</span></div>
+  <p class="meeting-participants">Participants: ediblebadger, _vgr, plague_year, bah.eth, mtraven, maparent, .unipuff, giovanni.merlino, ananth9921, timber1997</p>
+  <p class="meeting-summary">The SIGFPT group convened to discuss 'Atomic Protocol Questions,' a research framework inspired by Hilbert's 23 mathematical problems. The session explored what makes protocols fundamentally sufficient and effective, building from an earlier brainstorm about 'unreasonable sufficiency.' A major focus was understanding quality morphisms—whether protocols with high legitimacy or legibility also tend to be more learnable or generative. The discussion turned philosophical, engaging Schmitt's definition of sovereignty as the power to decide exceptions. The group identified a critical design challenge: protocols cannot comprehensively address all exceptional cases without either implementing rigid 'doomsday machine' logic or inevitably concentrating authoritarian decision-making power in some actor or voting cartel. Members emphasized that robust protocols must include explicit mechanisms allowing all stakeholders to signal when the protocol is failing, with maparent raising the provocative example of fascist takeover protocols to illustrate why exit/voice mechanisms are essential. The tension between rule-of-law constraint and necessary flexibility remained unresolved, with mtraven noting that in political contexts, violence often functions as the ultimate metaprotocol.</p>
+  <ul class="meeting-insights">
+    <li>The group framed their research agenda around 'unreasonable sufficiency of protocols,' analogous to Wigner's essay on mathematics, exploring what makes protocols fundamentally effective.</li>
+    <li>A core tension exists between constrained rule-of-law approaches and necessary exceptional decision-making: protocols cannot exhaustively cover all escalations without either creating 'doomsday machine' logic or concentrating authoritarian power.</li>
+    <li>Quality morphisms between protocol properties remain unmapped—it's unclear whether legitimacy, learnability, and generativity are correlated or operate independently.</li>
+    <li>Protocols require built-in mechanisms for stakeholders to signal dysfunction, especially as a safeguard against capture (using fascist protocols as a reductio example).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.aemea.org/math/Hilbert_23_Mathematical_Problems_1900.pdf" target="_blank" rel="noopener noreferrer">www.aemea.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1426004932602892449" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">October 17, 2025</div>
+  <div class="meeting-title">SIGFPT 17Oct25: Maneuver Automata - Robotics Protocols and Dynamics</div>
+  <div class="meeting-topics"><span class="meeting-topic">Maneuver automata from robotics applied to protocol theory</span><span class="meeting-topic">Differential game theory and pursuit-evasion dynamics</span><span class="meeting-topic">Negotiation dynamics and goal compatibility in protocols</span><span class="meeting-topic">Unsupervised reinforcement learning in robotics</span><span class="meeting-topic">Interpretability and human interaction in AI-controlled systems</span></div>
+  <p class="meeting-participants">Participants: _vgr, anurajenp, ediblebadger, mtraven, zoesh, waveywaves., giovanni.merlino, maparent, timber1997</p>
+  <p class="meeting-summary">The SIGFPT group explored maneuver automata—a concept from robotics—as a formal framework for modeling protocols with natural dynamics. Participants reviewed the Frazzoli 2005 paper and related references to understand how maneuvers (non-equilibrium dynamics) could be systematically applied to protocol design. The discussion covered differential game theory's relevance to protocol sequences, particularly in scenarios like pursuit-evasion, and how negotiation dynamics could be formalized using state machines tracking proposal acceptance, conformance, and goal compatibility.</p>
+  <p class="meeting-summary">A significant theme emerged around the tension between optimization and interpretability: while deep learning can produce effective control systems, the inscrutability of such systems poses problems for human-interactive applications. Participants noted that existing AI-robot systems employ hybrid approaches rather than unconstrained learning. The group also discussed how unsupervised RL-based robotics could inform protocol theory, and emphasized the need for breaking down complex AI behaviors to reduce uncanny effects and maintain human trustworthiness.</p>
+  <ul class="meeting-insights">
+    <li>Maneuver automata can model protocols with natural dynamics by treating trim states as equilibria and maneuvers as non-equilibrium dynamics, with connections to game theory as a subset of negotiation dynamics.</li>
+    <li>Differential game theory provides a mathematical framework for analyzing protocol sequences like pursuit-evasion, where specific maneuver sequences (e.g., 'double maneuver') can prove effective.</li>
+    <li>Protocol negotiation involves states tracking proposal acceptance, conformance, goal compatibility, and the ability to withdraw unilaterally, forming a structured model of human interaction.</li>
+    <li>There is tension between AI systems optimized through deep learning (which may be inscrutable) and the need for interpretability in systems involving human interaction to avoid uncanny or harmful effects.</li>
+    <li>Practical AI-controlled robot systems use hybrid strategies combining LLM control with other approaches rather than pure unconstrained AI.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/WMgoNn7uF" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+      <li><a href="https://claude.ai/share/7db969de-822f-4249-ad91-7b6b603a0c11" target="_blank" rel="noopener noreferrer">claude.ai</a></li>
+      <li><a href="https://claude.ai/share/b73df66a-d87b-4564-adc7-f498965e7401" target="_blank" rel="noopener noreferrer">claude.ai</a></li>
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/gTOXGkLWv" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1427027124468060231" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">October 3, 2025</div>
+  <div class="meeting-title">SIGFPT Process Calculi 3: Labeled Transition Systems and Structural Operational Semantics</div>
+  <div class="meeting-topics"><span class="meeting-topic">Labeled Transition Systems (LTS) and their role in formalizing CCS processes</span><span class="meeting-topic">Structural Operational Semantics (SOS) as inductive rules for valid transitions</span><span class="meeting-topic">Bisimulation as a core equivalence notion in process calculi</span><span class="meeting-topic">Notation challenges in process calculus (+ for choice, | for parallelism)</span><span class="meeting-topic">Actor model as alternative concurrent system framework</span><span class="meeting-topic">Relationship between process calculi and state diagrams/FSMs</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, mtraven, heterotic, .unipuff, timber1997, maparent</p>
+  <p class="meeting-summary">The SIGFPT group continued its deep dive into process calculi with a focus on how CCS processes are formalized as Labeled Transition Systems and governed by Structural Operational Semantics. Ediblebadger led the session with multiple presentations of related concepts, laying groundwork for future discussion of bisimulation as a key equivalence notion. The group discussed notation challenges, particularly around the use of '+' for nondeterministic choice and '|' for parallelism, with some participants finding the mathematical notation unintuitive despite its standardness in formal semantics. The conversation also touched on alternative approaches like the actor model and connections to conversation analysis. Discussion of broader SIG organizational questions emerged regarding BDFQ (presumably facilitators) roles and writing audiences, with acknowledgment that the material's abstractness is justified as a trade-off favoring mathematical precision over accessibility.</p>
+  <ul class="meeting-insights">
+    <li>Labeled Transition Systems provide a precise mathematical foundation for CCS processes, with Structural Operational Semantics formalizing valid transitions through inductive rules.</li>
+    <li>The notation used in process calculi (particularly + for nondeterministic choice and | for parallelism) presents usability challenges for designers despite being mathematically standard.</li>
+    <li>Abstractness in formal systems may be less exclusionary than prerequisite material requirements; the group compared this favorably to category theory adoption in other SIG channels.</li>
+    <li>Process calculi can be interpreted as directed graphs or state diagrams, making them tractable for understanding concurrent systems without requiring extensive background knowledge.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://healthdata.org" target="_blank" rel="noopener noreferrer">healthdata.org</a></li>
+      <li><a href="https://miro.com/online-whiteboard/board/uXjVJ_DTDs4=/?boardAccessToken=UptLGlABEzz3imgiMBXgcZ6Xpm5ckdDg" target="_blank" rel="noopener noreferrer">miro.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1422644720961720542" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 19, 2025</div>
+  <div class="meeting-title">SIGFPT Landscape Theory Discussion &amp; Tan Paper Project Pitches</div>
+  <div class="meeting-topics"><span class="meeting-topic">Landscape theory of aggregation and ensemble modeling approaches for protocol behavior</span><span class="meeting-topic">Axelrod-Bennett model critique and physics analogy limitations</span><span class="meeting-topic">Cultural and semantic shifts in system dynamics beyond fixed propensities</span><span class="meeting-topic">Formal methods applicability to protocol studies</span><span class="meeting-topic">Tan paper project pitches and BDFQ proposal coordination</span></div>
+  <p class="meeting-participants">Participants: _vgr, bah.eth, .unipuff, mtraven, anurajenp, maparent, simpalaxy, va3bhav., summersaahn, ediblebadger, heterotic, stevebeans.</p>
+  <p class="meeting-summary">The SIGFPT meeting focused on discussing Axelrod and Bennett's landscape theory of aggregation and its application to protocol behavior modeling. After a 20-minute silent reading period, participants engaged in critical analysis of the paper's use of physics analogies, with ediblebadger noting that while the core insight about physical model analogies to social systems is valid, the execution lacks formal rigor. brianskinner3057 highlighted a specific missed opportunity: the paper didn't leverage magnetic phase transition theory (paramagnetic, ferromagnetic, and glass phases) as useful analogies for understanding different system regimes.</p>
+  <p class="meeting-summary">Key discussion points included austinjacobs_33961's insight that cultural and protocol systems differ fundamentally from fixed biological systems because propensities themselves shift through narrative and semantic reframing—the example of Microsoft-Apple rivalry realigning around open standards illustrated how the terrain itself changes. The group also debated the role of formal methods in protocol studies, with simpalaxy noting the tension between proof-theoretic approaches and practical skepticism about their applicability, citing parallels to software verification debates (Dependent Type Theory vs. TLA+ camps).</p>
+  <p class="meeting-summary">The meeting concluded with coordination around the Tan paper project pitches, including discussion of project management approaches, scope definitions (distinguishing micro vs. meso-scale through procedural rather than structural terms), and potential collaboration between participants with overlapping research interests. ediblebadger emphasized the appeal of doing private, loosely-centralized research with low barriers to entry.</p>
+  <ul class="meeting-insights">
+    <li>The Axelrod-Bennett landscape model provides a useful analogy but lacks rigor in applying physics concepts; a missed opportunity was not discussing magnetic phase transitions (paramagnet, ferromagnet, glass phases) as analogies for different system behaviors.</li>
+    <li>Protocol systems differ from biological ones because propensities and values shift through meaning and narrative changes—the 'valleys' themselves move when semantics change, not just agents rolling into fixed valleys.</li>
+    <li>There is tension between applying formal methods (logic, proof theory, dependent types) and the skepticism about their practical applicability to protocol movement problems, though both approaches have research value.</li>
+    <li>The group is adopting a non-hierarchical, low-barrier-to-entry research model for deep-tech investigation with careful attention to scope boundaries (micro vs. meso-scale procedural definitions, excluding macro 'world history').</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.joelonsoftware.com/2002/06/12/strategy-letter-v/" target="_blank" rel="noopener noreferrer">www.joelonsoftware.com</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/The_Complexity_of_Cooperation" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+      <li><a href="https://www.foreignaffairs.com/reviews/capsule-review/1998-03-01/complexity-cooperation-agent-based-models-competition-and" target="_blank" rel="noopener noreferrer">www.foreignaffairs.com</a></li>
+      <li><a href="http://ccs.mit.edu/peyman/pubs/AAAI-FallSymposium.pdf" target="_blank" rel="noopener noreferrer">ccs.mit.edu</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1418615107503784068" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 13, 2025</div>
+  <div class="meeting-title">PFW Session 4: Roadmapping - SIGFPT Formal Protocol Theory</div>
+  <div class="meeting-topics"><span class="meeting-topic">Woodenman group representative reports on outlines and mindmaps</span><span class="meeting-topic">All-hands townhall discussion</span><span class="meeting-topic">Scaffolding for opt-in next steps</span></div>
+  <p class="meeting-participants">Participants: _vgr</p>
+  <p class="meeting-summary">This was a roadmapping session for the SIGFPT (Formal Protocol Theory) group at the Protocol Institute. The meeting agenda included gathering reports from Woodenman group representatives on their outlines and mindmaps, conducting an all-hands townhall discussion, and discussing scaffolding mechanisms for opt-in next steps. However, the transcript provided contains only the agenda items without substantive discussion content, outcomes, or conclusions from the meeting itself.</p>
+  <a href="https://discord.com/channels/1082444651946049567/1416488709381161190" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 13, 2025</div>
+  <div class="meeting-title">PFW Session 3: SYNTHESIS - Formal Protocol Theory Group Assembly</div>
+  <div class="meeting-topics"><span class="meeting-topic">Assembling preliminary framework for small group paper development</span><span class="meeting-topic">Related work on unprotocolized knowledge and knowledge graphs</span><span class="meeting-topic">Ontological frameworks and knowledge representation systems</span><span class="meeting-topic">Integration of existing research from Summer of Protocols Year 1</span></div>
+  <p class="meeting-participants">Participants: _vgr, maparent, jamesgiammona, boredgargoyle, brianskinner3057</p>
+  <p class="meeting-summary">The SIGFPT group convened for a synthesis session to consolidate their discussions into a preliminary picture for a smaller working group. The meeting focused on identifying where sub-topics and proposed contributions should be documented on their collaborative platform (Woodenman/Roam). Participants referenced relevant prior work, including Mike's &quot;Unprotocolized Knowledge Web&quot; from the Summer of Protocols Year 1 initiative and a knowledge graph framework piece. The discussion touched on ontological shifts as a lens for understanding knowledge system transformations, using Pluto's reclassification as a conceptual example. The group discussed how knowledge representation systems build upon existing frameworks and structures.</p>
+  <ul class="meeting-insights">
+    <li>The group aims to synthesize previous discussions into a cohesive preliminary framework that a 4-6 person breakout group can develop over several months.</li>
+    <li>Ontological changes (referenced through Pluto's demotion example) relate to how knowledge systems fundamentally categorize and restructure understanding.</li>
+    <li>Knowledge graphs and shoulders-of-giants frameworks provide relevant conceptual foundations for the formal protocol theory work being pursued.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://summerofprotocols.com/unprotocolized-knowledge-web" target="_blank" rel="noopener noreferrer">summerofprotocols.com</a></li>
+      <li><a href="https://aneeshsathe.com/2024/05/10/dancing-on-the-shoulders-of-giants/" target="_blank" rel="noopener noreferrer">aneeshsathe.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1416422497959674050" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 12, 2025</div>
+  <div class="meeting-title">PFW Session 2: Sensemaking - SIGFPT Lightning Talks</div>
+  <div class="meeting-topics"><span class="meeting-topic">Lightning talk format and structure (7-minute talks on single concepts)</span><span class="meeting-topic">Whitehead automaticity as a candidate concept for protocol theory</span><span class="meeting-topic">Liveness as a first-class property of protocols</span><span class="meeting-topic">Distinguishing protocols from norms, algorithms, rituals, and institutions</span><span class="meeting-topic">Technical presentation methods (Roam pages, diagrams, LaTeX notation)</span></div>
+  <p class="meeting-participants">Participants: _vgr, maparent, timber1997, amitashu, wevin_64764, .unipuff</p>
+  <p class="meeting-summary">The SIGFPT group held their second session focused on sensemaking through lightning talks. The organizer established a specific format: 7-minute talks on single useful concepts, diagrams, or operations, presented via Roam pages or visual/mathematical notation rather than traditional slides. One participant requested scheduling accommodation for a 2PM Pacific conflict. During the session, key discussions emerged around identifying foundational concepts in formal protocol theory, with 'whitehead automaticity' highlighted as a promising area of focus. A significant insight from the discussion was the recognition that 'liveness' should be elevated to a first-class property distinguishing protocols from related but distinct categories like norms, algorithms, rituals, and institutions. The group emphasized condensing protocol theory into its most essential, communicable components.</p>
+  <ul class="meeting-insights">
+    <li>The group is focusing on identifying and elevating key concepts in formal protocol theory through short, focused lightning talks emphasizing clarity over slides.</li>
+    <li>Liveness emerged as a critical property that should be formally recognized as a distinguishing characteristic of protocols, particularly macroprotocols, setting them apart from similar constructs.</li>
+    <li>The concept of 'whitehead automaticity' was identified as a promising candidate for protocol formalization, though specific details remain undeveloped in the transcript.</li>
+    <li>There is an intentional move toward distilling protocol theory into its most essential concepts and visual representations rather than relying on traditional presentation formats.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/ZmE_lzqSr" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1416100323432595456" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 12, 2025</div>
+  <div class="meeting-title">Protocol Foundations Workshop Session 1: Orientation - Handshake Protocol Analysis</div>
+  <div class="meeting-topics"><span class="meeting-topic">Formal decomposition of handshake protocol parameters</span><span class="meeting-topic">Cultural and contextual variables in physical greeting protocols</span><span class="meeting-topic">Signal medium and agent recognition in protocol execution</span><span class="meeting-topic">Disease transmission dynamics through repeated handshake interactions</span><span class="meeting-topic">Individual variation in protocol implementation across participants</span></div>
+  <p class="meeting-participants">Participants: _vgr, heterotic, maparent, anurajenp, brianskinner3057, smith_36609_95392, boredgargoyle, mtraven, austinjacobs_33961, va3bhav., sirish_aditya, radni</p>
+  <p class="meeting-summary">The Protocol Foundations Workshop began with an orientation session focused on analyzing the handshake as a formal protocol system. Participants were prompted to identify the key variables and parameters that govern successful handshake execution. The group collectively identified dozens of factors including grip strength, duration, eye contact, hand positioning, initiation signals, cultural context, physical distance, and emotional valence. Notably, participants recognized that handshake protocols are context-dependent, varying based on cultural background, relative age/seniority, physical build, and the presence of observers. One participant noted that from an epidemiological perspective, the frequency of handshake turnover may be a more significant factor than the specific characteristics of individual handshakes.</p>
+  <ul class="meeting-insights">
+    <li>Handshake protocols involve multiple independent variables spanning physical (grip strength, duration, distance), social (eye contact, initiation), and cultural (standardization, appropriateness) dimensions.</li>
+    <li>Context parameters like cultural background, age/seniority relationships, and shared observer presence significantly influence which handshake variant is executed.</li>
+    <li>The epidemiological impact of handshakes may depend more on turnover frequency (how many handshakes occur) than on internal handshake parameters themselves.</li>
+    <li>Protocol execution requires pre-negotiation of signal medium and mutual agent recognition before the physical interaction can proceed successfully.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/8WlUCckpc" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1415864861073735680" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 5, 2025</div>
+  <div class="meeting-title">Process Calculi II: Modeling Handshaking and Handwashing Protocols in CCS</div>
+  <div class="meeting-topics"><span class="meeting-topic">Formalizing handshaking protocols in CCS with state transitions and safety properties</span><span class="meeting-topic">Modeling handwashing as a multi-agent system with different initial states (dirty, oily, clean)</span><span class="meeting-topic">π-calculus approach to partner selection and dynamic rendezvous in protocols</span><span class="meeting-topic">CSP formalism for modeling refusals and consent as first-class entities</span><span class="meeting-topic">Compliance and hidden assumptions in protocol formalization using process calculi</span><span class="meeting-topic">Temporal aspects and duration modeling in protocol specifications</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, timber1997, plague_year, zoesh, nattfrosten, giovanni.merlino, .unipuff, ananth9921</p>
+  <p class="meeting-summary">The SIGFPT group continued their process calculi track by applying CCS formalism to model real-world protocols: handshaking and handwashing. The session began with a recap of previous material and leveraged LLMs to generate notation references and worked examples. Participants brainstormed relevant modeling dimensions and then independently developed formal specifications, with several novel approaches emerging.</p>
+  <p class="meeting-summary">Key contributions included: _vgr's basic CCS handshake model; nattfrosten's three-agent handwashing system (NEED, POSTER, HUMAN) capturing the cognitive reminder loop; giovanni.merlino's π-calculus variant using name passing for partner selection in crowds and CSP variant for explicit refusal/consent modeling; and .unipuff's detailed handwashing specification accounting for different initial states (dirty, oily, clean) with corresponding action sequences. Participants identified interesting safety, liveness, and mutual exclusion properties to investigate further.</p>
+  <p class="meeting-summary">The group highlighted compliance as a critical formalization challenge—protocol correctness depends on hidden assumptions and expectations not always explicit in the specification. Future work includes applying Allen's temporal interval calculus to add duration semantics and further composing simple protocols into larger systems to identify interesting trace behaviors.</p>
+  <ul class="meeting-insights">
+    <li>CCS provides a tractable framework for modeling prototypical protocols like handshaking and handwashing by explicitly representing agents, states, and transitions, though some participants found the notation unintuitive initially.</li>
+    <li>π-calculus with name passing enables elegant modeling of dynamic partner selection in crowd scenarios by using public channels for rendezvous and private channels for actual interaction.</li>
+    <li>Handwashing can be naturally modeled as a multi-state system with different initial conditions (dirty, oily, clean) requiring different action sequences, capturing real-world complexity beyond simple protocols.</li>
+    <li>Compliance in protocols relates to hidden expectations and assumptions that may need to be formalized as hidden events in CSP, raising questions about what constitutes correct protocol adherence.</li>
+    <li>LLMs proved valuable for quickly generating notation cheat sheets and simple examples, reducing cognitive overhead in technical skill acquisition.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://chatgpt.com/share/68bb14c6-10c0-8002-874f-b5de40d1863b" target="_blank" rel="noopener noreferrer">chatgpt.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1410118590522462270" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 22, 2025</div>
+  <div class="meeting-title">Impossibilities and Symmetries in Decentralized Protocol Design</div>
+  <div class="meeting-topics"><span class="meeting-topic">Witsenhausen counterexample and decentralized stochastic control</span><span class="meeting-topic">Impossibility results and conserved quantities in protocols</span><span class="meeting-topic">Focal points, Schelling points, and agent coordination without pre-agreement</span><span class="meeting-topic">Efficiency-thoroughness trade-offs in protocol design</span><span class="meeting-topic">Signaling requirements for protocol adherence and equilibrium maintenance</span></div>
+  <p class="meeting-participants">Participants: _vgr, _ergod, simpalaxy, timber1997, sachbenny, rafa_0x, jdbb, nattfrosten, osm4n_29082, heterotic, ediblebadger, anurajenp</p>
+  <p class="meeting-summary">The SIGFPT group examined the Witsenhausen counterexample as a lens for understanding fundamental constraints in decentralized protocol design. The counterexample illustrates why traditional control theory and game theory frameworks inadequately capture the challenges of decentralized, non-sequential decision-making. Participants explored various impossibility results and conserved quantities, including efficiency-thoroughness trade-offs (exemplified by comparing different handwashing protocols), the necessity of Schelling points for coordination, and the role of signaling in maintaining protocol equilibria. A key theme emerged: protocols inherently require agents to signal adherence visibly, which constrains their design—human-comprehensible but suboptimal behaviors may be necessary in mixed human-machine systems. The group concluded that successful protocol design involves balancing centralization and decentralization pragmatically, and that apparent 'universal' coordination mechanisms often smuggle in culturally or contextually specific assumptions.</p>
+  <ul class="meeting-insights">
+    <li>Most protocols face fundamental decentralization and non-sequentiality challenges that traditional game theory frameworks struggle to express, making the Witsenhausen counterexample particularly relevant to protocol design.</li>
+    <li>Protocols represent a fundamental compromise: a set of signals and responses enabling reliable outcomes when computing optimal solutions is impossible, subject to efficiency-thoroughness trade-offs that cap how well they can map to uneven problem spaces.</li>
+    <li>Focal points and Schelling points require implicit agent symmetry and shared assumptions; achieving coordination without pre-negotiation necessitates sneaking in universal assumptions rather than discovering them organically.</li>
+    <li>Protocol adherence requires visible signaling of compliance to maintain equilibria, favoring protocols that balance demonstration of protocol-following over pure work optimization, particularly in mixed human-machine systems.</li>
+    <li>The tension between decentralization and functionality suggests an iterative principle: 'decentralize till it hurts, re-centralize till it works.'</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://cermics.enpc.fr/~delara/exposes/Game_models_with_information.pdf" target="_blank" rel="noopener noreferrer">cermics.enpc.fr</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Witsenhausen%27s_counterexample" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+      <li><a href="https://web.mit.edu/6.454/www/papers/mitter_sahai_info_and_control.pdf" target="_blank" rel="noopener noreferrer">web.mit.edu</a></li>
+      <li><a href="https://www.honest-broker.com/p/the-importance-of-counter-clockwise" target="_blank" rel="noopener noreferrer">www.honest-broker.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1406387753876193331" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 8, 2025</div>
+  <div class="meeting-title">SIGFPT Process Calculi: CCS, Pi Calculus, and Protocol Formalization</div>
+  <div class="meeting-topics"><span class="meeting-topic">Calculus of Communicating Systems (CCS) as foundational formalism for concurrent processes</span><span class="meeting-topic">Relationship between linear logic, typed pi calculus, and resource-sensitive communication</span><span class="meeting-topic">Interaction nets and bigraphical reactive systems as graphical formalisms for process modeling</span><span class="meeting-topic">Handwashing and handshakes as minimal examples for testing protocol theory</span><span class="meeting-topic">Expressivity, primitives, and syntax sugar in formalizing protocols</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, simpalaxy, timber1997, giovanni.merlino, plague_year, sachbenny, stevebeans., nattfrosten</p>
+  <p class="meeting-summary">The SIGFPT group studied process calculi as formal tools for protocol theory, focusing on the Calculus of Communicating Systems (CCS) by Mantis Cheng as the primary reading. The discussion connected CCS to lambda calculus as the concurrent analogue, explored how linear logic's resource-sensitive semantics map onto typed pi calculus communication primitives, and examined more expressive formalisms like interaction nets and bigraphs that enable channel sharing and protocol evolution. Members worked through handwashing and handshakes as minimal model systems to test their formalization approaches, discovering a tension between modeling low-level automata versus capturing the higher-level protocol structure involving resource exhaustion and causality ordering.</p>
+  <p class="meeting-summary">Key tensions emerged around expressivity versus tractability: while CCS is limited, adding features like channel sharing enables richer protocols but requires substantial syntactic sugar (analogous to how Haskell is built on lambda calculus). The group questioned whether handwashing definitions should be necessary-and-sufficient or merely sufficient (like a family of equivalent paths in homotopy theory), and recognized that their current CCS models were capturing mimicked actions rather than the essential protocol semantics of state transitions and resource constraints. The conversation highlighted the need for multiple future sessions to fully grasp the material and develop more sophisticated formalizations incorporating temporal/causal ordering.</p>
+  <ul class="meeting-insights">
+    <li>Pi calculus relates to concurrent systems as lambda calculus relates to sequential computation; linearly typed pi calculus enforces one-to-one channel communication as a resource restriction.</li>
+    <li>Linear logic's negative/positive formula distinction maps directly onto pi calculus send/receive primitives, enabling both server and client perspectives with different notions of choice and control.</li>
+    <li>CCS provides a limited but tractable foundation; more expressive formalisms (pi calculus with channel sharing, interaction nets, bigraphs) enable protocol evolution but require syntactic sugar for practical use.</li>
+    <li>Handwashing protocols are best modeled as families of behavioral paths rather than necessary-and-sufficient definitions, similar to homotopy equivalence classes of solutions to reaching the same goal state.</li>
+    <li>The distinction between modeling automata that mimic actions versus capturing the essential resource-sensitive and causality-ordered aspects of protocolization remains a key open question.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=d6566bd1026125a09cf928d2d6de9d6ca6c32529" target="_blank" rel="noopener noreferrer">citeseerx.ist.psu.edu</a></li>
+      <li><a href="https://www.sciencedirect.com/science/article/pii/S0890540197926432" target="_blank" rel="noopener noreferrer">www.sciencedirect.com</a></li>
+      <li><a href="https://ptolemy.berkeley.edu/books/leeseshia/releases/LeeSeshia_DigitalV2_3.pdf" target="_blank" rel="noopener noreferrer">ptolemy.berkeley.edu</a></li>
+      <li><a href="https://citeseerx.ist.psu.edu/document?repid=rep1&amp;type=pdf&amp;doi=f2e0ae7d516fe47a95395bea16a13809ab7489cf" target="_blank" rel="noopener noreferrer">citeseerx.ist.psu.edu</a></li>
+      <li><a href="https://benjaminrosshoffman.com/wait-vs-interrupt-culture/" target="_blank" rel="noopener noreferrer">benjaminrosshoffman.com</a></li>
+      <li><a href="https://www.youtube.com/watch?v=43XaZEn2aLc" target="_blank" rel="noopener noreferrer">www.youtube.com</a></li>
+      <li><a href="https://crypto.stanford.edu/~blynn/lambda/" target="_blank" rel="noopener noreferrer">crypto.stanford.edu</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1401796807498928210" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">July 25, 2025</div>
+  <div class="meeting-title">Paper-Napkin Protocol Math: Fermi Estimation and Dimensionless Design Parameters</div>
+  <div class="meeting-topics"><span class="meeting-topic">Fermi estimation and back-of-envelope calculation techniques for protocol design</span><span class="meeting-topic">Dimensionless quantities as fundamental design parameters (Reynolds number, Mach number analogs)</span><span class="meeting-topic">Self-driving car intersection management as a protocol design case study</span><span class="meeting-topic">Phase transitions and regime shifts in protocol behavior (El Farol bar problem, congestion pricing)</span><span class="meeting-topic">Attack surface scaling and equilibrium dynamics in protocol security</span></div>
+  <p class="meeting-participants">Participants: _vgr, plague_year, timber1997, ediblebadger, mtraven, stevebeans., ananth9921</p>
+  <p class="meeting-summary">The SIGFPT group convened to explore how paper-napkin protocol mathematics—grounded in Fermi estimation and dimensional analysis—can inform formal protocol theory. After reading Venkat Rao's essay on Fermi estimates and Dyson designs, participants worked through a warmup exercise on self-driving car intersection protocols, exploring state-space reduction through symmetry and safety constraints. The discussion evolved toward identifying dimensionless quantities as the key lever for protocol design: just as aerospace engineers use thrust-to-weight ratios and fluid dynamicists use Reynolds numbers to characterize regimes, protocol designers should seek analogous dimensionless parameters that reveal design constraints and phase transitions.</p>
+  <p class="meeting-summary">Participants drew connections between various protocol phenomena and phase-shift models like the El Farol bar problem, noting that congestion pricing, Ethereum gas markets, and TCP/IP all operate within regime-dependent equilibria. A central tension emerged: successful protocols deform their operational domains and shift equilibria in ways the original design didn't anticipate, but this very scaling generates attack surface area that eventually outpaces defensive investment. The group concluded that foundations work should focus on discovering these critical dimensionless parameters and understanding how protocols can be nudged across regime boundaries—maintaining empirical grounding while avoiding abstract mathematical detachment.</p>
+  <ul class="meeting-insights">
+    <li>Dimensionless parameters (like thrust-to-weight ratio in aerospace) are crucial for identifying design constraints and determining how to shift systems from unfavorable to favorable regimes.</li>
+    <li>Many protocol problems exhibit phase transitions similar to fluid dynamics (Reynolds, Mach numbers) or game-theoretic models (El Farol bar), where identifying the critical dimensionless parameter enables systematic design intervention.</li>
+    <li>As protocols scale, attack surface area grows faster than defensive capabilities, creating an equilibrium problem where the protocol must continuously deform its operating domain to avoid becoming indefensible.</li>
+    <li>Keeping analysis empirically grounded through Fermi-style estimation prevents abstract mathematical spiraling while maintaining connection to testable predictions and real-world constraints.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.ribbonfarm.com/2022/03/30/fermi-estimates-and-dyson-designs/" target="_blank" rel="noopener noreferrer">www.ribbonfarm.com</a></li>
+      <li><a href="https://ocw.mit.edu/courses/res-6-011-the-art-of-insight-in-science-and-engineering-mastering-complexity-fall-2014/3bca850386a3005c22134fa62fb3bad5_MITRES_6-011F14_art_insfin.pdf" target="_blank" rel="noopener noreferrer">ocw.mit.edu</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1398346502413352993" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">July 11, 2025</div>
+  <div class="meeting-title">SIGFPT Notation for Protocols: Iverson Paper Review and Handshake/Handwashing Notation Design</div>
+  <div class="meeting-topics"><span class="meeting-topic">Notation design principles and suggestivity in formal systems</span><span class="meeting-topic">Iverson paper review on mathematical notation</span><span class="meeting-topic">Petri nets and knot theory applications to protocol notation</span><span class="meeting-topic">Collaborative notation scheme for handshakes and handwashing protocols</span><span class="meeting-topic">Symbol design constraints: balancing axioms with expressivity</span><span class="meeting-topic">Historical connections between notation systems and mechanical/computational processes</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, akkartik, benzucker., timber1997, arseniy.eth, rafa_0x, brtrx_</p>
+  <p class="meeting-summary">The SIGFPT group convened to discuss notation systems for formal protocols, with particular focus on Kenneth Iverson's work on mathematical notation and the concept of 'suggestivity'—how notation can intuitively convey meaning. After reviewing the Iverson paper, participants shared favorite notation systems and then engaged in a collaborative brainstorming exercise to design a formal notation for handshakes and handwashing protocols. Rafa_0x generated a comprehensive symbol scheme using specialized characters (⊃, ⊂, ■, ✚, ∩, ×, ⇄, etc.) to represent hand positions, orientations, contact types, and actions, created with assistance from an LLM (o3) and refined through axiom-based constraints. The group recognized that without clear axioms governing symbol usage, notation rapidly becomes intractable. The discussion also connected notation design to broader historical themes: the relationship between weaving machines and computing, the application of knot theory to protocol representation, and Petri nets as alternative formal systems for capturing protocol behavior.</p>
+  <ul class="meeting-insights">
+    <li>Notation design must be constrained by a mix of axioms and expressivity emphasis on particular concepts to avoid intractable complexity.</li>
+    <li>Axioms function as symbol usage constraints that prevent notational systems from becoming messy or undefined.</li>
+    <li>Suggestivity in notation (as Iverson describes it) is essential for effective formal systems, exemplified by 3Blue1Brown's Triangle of Power video.</li>
+    <li>There are deep historical parallels between notation systems, weaving machines (Jacquard looms), and early computing, suggesting notation itself is a form of protocol.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://github.com/kai-qu/notation" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://news.ycombinator.com/item?id=25249563" target="_blank" rel="noopener noreferrer">news.ycombinator.com</a></li>
+      <li><a href="https://www.youtube.com/watch?v=sULa9Lc4pck" target="_blank" rel="noopener noreferrer">www.youtube.com</a></li>
+      <li><a href="https://arxiv.org/abs/1906.07629" target="_blank" rel="noopener noreferrer">arxiv.org</a></li>
+      <li><a href="https://stockhausenspace.blogspot.com/search?q=+prozession" target="_blank" rel="noopener noreferrer">stockhausenspace.blogspot.com</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Floral_formula" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1389626057195257979" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">June 27, 2025</div>
+  <div class="meeting-title">SIGFPT Meeting: Observability for Protocols</div>
+  <div class="meeting-topics"><span class="meeting-topic">Observability frameworks and methodologies across domains (software, cloud, AI)</span><span class="meeting-topic">Climate and environmental protocol observability challenges</span><span class="meeting-topic">Low-cost and alternative sensing approaches (computer vision, citizen science, remote sensing)</span><span class="meeting-topic">Randomization and adversarial resistance in monitoring systems</span><span class="meeting-topic">Multi-layered imperfect observations as practical alternatives to perfect measurement systems</span></div>
+  <p class="meeting-participants">Participants: _vgr, plague_year, ediblebadger, thewanderingeditor, timber1997, .unipuff, stevebeans.</p>
+  <p class="meeting-summary">The SIGFPT group convened to explore observability principles for protocols, drawing parallels from software engineering, cloud systems, and AI monitoring. The discussion ranged across environmental and climate applications, with members sharing concrete examples like Landsat satellite imagery for solar development tracking, methane remote sensing, and citizen science approaches to waste composition estimation. A central theme emerged around the tension between engineering ideals of comprehensive perfect observation and practical realities: multiple overlapping imperfect observations, combined with randomized monitoring (preventing gaming through unpredictability), may be more effective and cost-efficient than attempting to achieve complete measurement coverage.</p>
+  <p class="meeting-summary">Participants highlighted how primitive random variables (initial conditions, disturbances, and model parameters) serve as diagnostic anchors for observability design. Inspiration was drawn from polycentric governance models like California's groundwater adjudication, which manages through patchwork jurisdictions rather than centralized perfect control. The group also discussed technical challenges, such as rapidly processing voluminous documents for state observers, and broader feedback loops where climate events influence public opinion and policy. The conversation suggested that protocol observability design requires balancing measurement precision, cost, political feasibility, and adversarial robustness.</p>
+  <ul class="meeting-insights">
+    <li>Computer vision and low-cost sensing methods (cameras on wheels, analogue meter imaging) offer alternatives to specialized sensors for observability, though real-world deployment remains challenging.</li>
+    <li>Perfect observability systems are often impractical; multiple overlapping imperfect observations with randomized inspection protocols (inspired by polycentric governance models) may be more effective for climate and environmental protocols.</li>
+    <li>Randomization is a key design principle to prevent actors from gaming monitoring systems, successfully implemented in blockchain data availability sampling and unannounced inspection regimes.</li>
+    <li>The cost of observability itself is a critical practical constraint in domains like climate protocols, requiring interdisciplinary thinking between engineering precision and political/financial feasibility.</li>
+    <li>Key system diagnostics involve identifying primitive random variables (initial conditions, external disturbances, and model parameters) that must be estimated through observations.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://en.wikipedia.org/wiki/Observability_(software)" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+      <li><a href="https://www.ibm.com/think/topics/observability" target="_blank" rel="noopener noreferrer">www.ibm.com</a></li>
+      <li><a href="https://azure.github.io/AI-in-Production-Guide/chapters/chapter_12_keeping_log_observability" target="_blank" rel="noopener noreferrer">azure.github.io</a></li>
+      <li><a href="https://docs.dynatrace.com/docs/analyze-explore-automate/dynatrace-for-ai-observability" target="_blank" rel="noopener noreferrer">docs.dynatrace.com</a></li>
+      <li><a href="https://gist.github.com/vgururao/5f28be9f8adcbc450ca74ed8063f47bc" target="_blank" rel="noopener noreferrer">gist.github.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1387142362937032714" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">June 13, 2025</div>
+  <div class="meeting-title">SIGFPT Soft Launch: Modeling Handshakes and Handwashing Protocols</div>
+  <div class="meeting-topics"><span class="meeting-topic">Formal mathematical modeling of simple micro-protocols (handshakes and handwashing)</span><span class="meeting-topic">State machine and Markov chain approaches to protocol representation</span><span class="meeting-topic">Protocol failures and incompatibility ('protocol miss' scenarios)</span><span class="meeting-topic">Asymmetric vs. symmetric greeting protocols across cultures</span><span class="meeting-topic">Discretizing continuous motions into formal state spaces</span><span class="meeting-topic">Observability and measurement costs in system modeling</span></div>
+  <p class="meeting-participants">Participants: _vgr, amitashu, timber1997, jdbb, plague_year, stevebeans., ediblebadger, bah.eth</p>
+  <p class="meeting-summary">The SIGFPT group held its soft launch meeting to introduce members and explore formal modeling of two simple micro-protocols: handshakes and handwashing. Participants introduced varied mathematical backgrounds and brainstormed paper-napkin approaches. Key frameworks emerged: viewing handwashing as a probabilistic execution protocol with time-dependent compliance (modeled via Markov chains), and handshakes as synchronization events between agents. Several participants proposed representing humans as agents and bacteria as environment, with protocols either crossing or establishing boundaries. The group discussed protocol failures extensively, introducing the concept of 'protocol miss' for incompatible simultaneous initiations and noting the variety of deflection responses (bows, namaste, stop gestures).</p>
+  <p class="meeting-summary">Participants identified complementary protocols worth studying (military salutes, emoji-based handshakes, secret handshakes) and noted potential for horizontal generalization toward standardized representations. A key tension emerged between maintaining modeling simplicity and ensuring completeness, with modern tools like game engines potentially enabling greater complexity. The discussion included practical considerations about discretizing continuous motions into state machines using stable states defined by hand geometry and biomechanics, and whether information-theoretic frameworks might better capture handshake asymmetries and social meaning.</p>
+  <ul class="meeting-insights">
+    <li>Protocols can be modeled by representing the negative event they prevent: handshakes prevent violence while handwashing prevents disease, with protocol execution reducing the probability of that undesired outcome.</li>
+    <li>The choice between viewing a protocol as synchronization (handshake) versus execution (handwash) fundamentally influences the entire modeling approach and complexity.</li>
+    <li>Protocol failures ('protocol misses') create rich modeling space with multiple deflection types and refusal states that go beyond binary success/failure, including bows, namaste, and stop gestures.</li>
+    <li>Continuous physical interactions like handwashing can be discretized into stable states defined by hand orientation, surface contact area, symmetry, and biomechanical transitions rather than attempting to model continuous motion directly.</li>
+    <li>Information-theoretic constraints may be more appropriate for modeling handshakes than state machines, particularly when analyzing how asymmetric gestures convey shared social understanding.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://en.wikipedia.org/wiki/Secret_handshake" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+      <li><a href="https://www.youtube.com/watch?v=9G_CZRMWKPc&amp;pp=0gcJCdgAo7VqN5tD" target="_blank" rel="noopener noreferrer">www.youtube.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1383122240220172328" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">February 6, 2025</div>
+  <div class="meeting-title">SIGFPT Week 8 Protocol Study Group Discussion</div>
+  <p class="meeting-participants">Participants: timber1997</p>
+  <p class="meeting-summary">This transcript represents a meeting announcement for the Protocol Institute's SIGFPT (Formal Protocol Theory) group Week 8 discussion session. The meeting was scheduled for Thursday, February 6, 2025, from 1:00-2:00 PM EST with a Google Meet video call link provided. No substantive discussion content or topic details are present in the transcript provided.</p>
+  <a href="https://discord.com/channels/1082444651946049567/1336849116881223690" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-title">Week 6 Discussion Thread - SIGFPT</div>
+  <p class="meeting-participants">Participants: timber1997, valentingolev</p>
+  <p class="meeting-summary">This meeting thread shows minimal substantive content. The thread was activated by timber1997 on January 21, 2025, with a calendar invite link provided for participants. Valentingolev's only contribution was a GIF from The Simpsons on January 23, 2025, which appears to be a humorous response rather than substantive discussion content. No formal protocol theory topics were discussed or documented in the visible transcript.</p>
+  <a href="https://discord.com/channels/1082444651946049567/1331093429177815072" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-title">Week 5 Discussion Thread - SIGFPT Formal Protocol Theory</div>
+  <div class="meeting-topics"><span class="meeting-topic">Calendar coordination for group meetings</span><span class="meeting-topic">Thread protocol activation procedures</span></div>
+  <p class="meeting-participants">Participants: timber1997, valentingolev</p>
+  <p class="meeting-summary">This brief discussion thread from the Protocol Institute's SIGFPT group focuses on organizing meeting logistics for Week 5. The thread was initiated by timber1997 on January 13, 2025, with a thread protocol activation. Two days later, valentingolev requested a calendar link for the meeting. timber1997 responded promptly by sharing a Google Calendar link to facilitate scheduling and attendance coordination.</p>
+  <ul class="meeting-insights">
+    <li>The group uses thread protocols to structure asynchronous discussions within the SIGFPT working group.</li>
+    <li>Calendar sharing via Google Calendar is the standard method for coordinating meeting logistics among participants.</li>
+  </ul>
+  <a href="https://discord.com/channels/1082444651946049567/1328387251649908767" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-title">Week 7 Discussion: Legal Frameworks and Dispute Resolution Mechanisms in Trade Protocols</div>
+  <div class="meeting-topics"><span class="meeting-topic">NAFTA legal framework and structural design</span><span class="meeting-topic">Dispute resolution mechanisms in trade protocols</span><span class="meeting-topic">Prevention of unilateral action in international agreements</span><span class="meeting-topic">Court systems within trade protocols</span><span class="meeting-topic">Protocol enforcement mechanisms</span></div>
+  <p class="meeting-participants">Participants: timber1997</p>
+  <p class="meeting-summary">The Week 7 SIGFPT discussion focused on examining the legal and institutional framework underlying NAFTA as a case study in formal protocol design. A participant shared a Paul Krugman article discussing how trade protocols establish mechanisms—particularly court systems and dispute resolution procedures—to prevent unilateral action by member states. This discussion connected practical examples from real-world trade agreements to broader theoretical concerns within formal protocol theory about how protocols constrain behavior and maintain compliance through institutional design.</p>
+  <ul class="meeting-insights">
+    <li>Trade protocols like NAFTA incorporate formal legal frameworks and court systems designed to prevent participating nations from taking unilateral action.</li>
+    <li>The structural mechanisms within trade agreements serve as critical constraints on individual state behavior and enforce compliance through institutionalized dispute resolution.</li>
+    <li>Understanding the legal architecture of protocols is essential to formal protocol theory, as these systems embody practical implementations of constraint-based governance.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://open.substack.com/pub/paulkrugman/p/the-end-of-north-america?r=a8jrh&amp;utm_medium=ios" target="_blank" rel="noopener noreferrer">open.substack.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1333821175947591721" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+</ul>
+
+      <div class="sig-cta">
+        <p>Interested in joining? <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">Join the Discord community &#8594;</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="../team.html">Team</a>
+      <a href="../network.html">Network</a>
+      <a href="../consulting.html">Consulting</a>
+      <a href="../symposium-2026.html">Symposium</a>
+      <a href="../contact.html">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

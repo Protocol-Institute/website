@@ -18,6 +18,7 @@
       <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">≡</button>
       <ul class="nav-links" id="nav-links" role="list">
         <li><a href="projects.html" class="active">Initiatives</a></li>
+        <li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Magazine</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="support.html">Support Us</a></li>
         <li><a href="contact.html">Contact</a></li>
@@ -34,9 +35,9 @@
 
       <div class="about-body">
 
-        <p><strong>C3PO</strong> is the Protocol Institute's conversational research assistant — an AI agent trained on the Institute's full research corpus. Named for the <em>Star Wars</em> protocol droid, which is explicitly described as devoted to smooth communication and protocol operation between parties, C3PO lets researchers, practitioners, and curious readers query, synthesize, and explore the protocol research library through natural language.</p>
+        <p><strong>C3PO</strong> is the Protocol Institute's conversational research assistant — a RAG-based AI agent trained on the Institute's full research corpus. It lets researchers, practitioners, and curious readers query, synthesize, and explore the protocol research library through natural language, with citations. <strong><a href="https://c3po.vgr-702.workers.dev" target="_blank" rel="noopener noreferrer">Try it →</a></strong></p>
 
-        <p>The Protocol Institute has assembled over 285 research resources spanning academic papers, working papers, essays, talks, datasets, games, interviews, and fiction — the majority originating from the <a href="https://web.archive.org/web/20260421142108/https://summerofprotocols.com/" target="_blank" rel="noopener noreferrer">Summer of Protocols</a> program (2023–2024), and growing continuously through <a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a>. C3PO makes that corpus conversationally accessible: ask it a question about protocol theory, a specific paper, a design problem, or a cross-domain connection, and it will draw on the corpus to respond — with citations.</p>
+        <p>The corpus spans over 12,000 indexed passages from academic papers, working papers, essays, talks, datasets, games, interviews, fiction, Discord discussions, SIG meeting records, and Protocolized magazine content — the majority originating from the <a href="https://web.archive.org/web/20260421142108/https://summerofprotocols.com/" target="_blank" rel="noopener noreferrer">Summer of Protocols</a> program (2023–2024), and growing continuously. C3PO makes that corpus conversationally accessible: ask it a question about protocol theory, a specific paper, a design problem, or a cross-domain connection, and it will draw on the corpus to respond — with citations.</p>
 
         <h2>What C3PO does</h2>
 
@@ -52,13 +53,13 @@
 
         <h2>Status</h2>
 
-        <p>C3PO is currently in development. The first version will index the full PDF research archive from the Protocolized library and the complete Protocolized Substack archive. When deployed, it will be integrated into the <a href="https://protocolized.io/resources/" target="_blank" rel="noopener noreferrer">Protocolized research library</a> — accessible directly alongside the existing filterable resource catalog.</p>
+        <p>C3PO is live in public beta at <a href="https://c3po.vgr-702.workers.dev" target="_blank" rel="noopener noreferrer">c3po.vgr-702.workers.dev</a>. The index currently spans 12,000+ vectors across five namespaces: the Protocolized PDF library and Substack archive, Protocol Institute Discord discussions, SIG (Special Interest Group) meeting records, and video transcripts. The corpus grows as new content is published and ingested.</p>
 
-        <p>Planned future additions include ingestion of Protocol Institute Discord discussions and a submission mechanism allowing researchers to contribute URLs, PDFs, or GitHub pull requests to expand the corpus.</p>
+        <p>C3PO is also available as an MCP (Model Context Protocol) server, letting Claude Code and Claude Desktop users search the corpus and ask questions directly from their AI coding environment — without opening a browser. See the <a href="https://c3po.vgr-702.workers.dev/how-it-works" target="_blank" rel="noopener noreferrer">how it works</a> page for connection instructions.</p>
 
         <h2>Technical approach</h2>
 
-        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings, <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude</a> as the underlying language model. It will be deployed on Cloudflare Workers and integrated with Protocolized once protocolized.io completes its migration to Cloudflare Pages. The source code is being developed at <a href="https://github.com/vgururao/c3po" target="_blank" rel="noopener noreferrer">github.com/vgururao/c3po</a> and will be transferred to the <a href="https://github.com/Protocol-Institute" target="_blank" rel="noopener noreferrer">Protocol-Institute GitHub organization</a> on release.</p>
+        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings (voyage-3, 1024 dimensions), <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude Sonnet</a> as the language model. It runs as a Cloudflare Worker serving a web UI, a rate-limited REST API, and an MCP server endpoint from a single deployment. The source code is at <a href="https://github.com/vgururao/c3po" target="_blank" rel="noopener noreferrer">github.com/vgururao/c3po</a>.</p>
 
       </div>
 
@@ -69,6 +70,8 @@
     <nav class="footer-nav" aria-label="Footer navigation">
       <a href="team.html">Team</a>
       <a href="network.html">Network</a>
+      <a href="consulting.html">Consulting</a>
+      <a href="symposium-2026.html">Symposium</a>
       <a href="contact.html">Contact</a>
     </nav>
     <p>&copy; 2025 The Protocol Institute</p>

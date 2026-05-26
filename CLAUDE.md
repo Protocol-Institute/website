@@ -1,10 +1,23 @@
 # CLAUDE.md — Protocol Institute Website
 
+> **PI key registry & security policy:** see [`../admin/keys.md`](../admin/keys.md) and [`../admin/security.md`](../admin/security.md) . Do not register PI keys in `Code/.env.keys`.
+
 This file provides guidance for LLMs working on this codebase.
 
 ## What this is
 
-A simple static website for the Protocol Institute, an independent research organization focused on protocol technologies. It is plain HTML, CSS, and JavaScript — no build step, no framework.
+A plain HTML/CSS/JS website for the Protocol Institute at **protocol-institute.org**. No build step, no framework, no dependencies — just static files served directly by Netlify.
+
+**Do not confuse this with `protocolized-website/`**, which is the separate Astro site for Protocolized magazine at protocolized.io.
+
+### Two branches, two purposes
+
+| Branch | Purpose | Deployed at |
+|--------|---------|-------------|
+| `main` | Live production site — plain HTML, edit and push directly | protocol-institute.org via Netlify |
+| `feat/cloudflare-migration` | Future rebuild as a static site for Cloudflare Pages — development only, do not merge | (not yet live) |
+
+All content work happens on `main`. The `feat/cloudflare-migration` branch is a long-running dev branch; never merge it into main and never push main work there.
 
 ## File structure
 
@@ -65,6 +78,33 @@ Writing should be measured, institutional, and precise. Avoid marketing language
 - Community Discord: https://discord.gg/Aj5FbGsNYV
 - Contact email: team@protocol-institute.org
 
+## Keys
+
+No keys are currently in use for this repo. When CF Workers are added (Phase 1+), keys will be provisioned via `../.env.keys` and inventoried in `../admin/keys.md`. Do not use `Code/.env.keys` for PI keys.
+
 ## Deployment
 
 The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.`.
+
+## At Session Start
+
+1. Read `status-vgr.md` — review active and upcoming items from the last session.
+2. Confirm you are on `main` (`git branch --show-current`). Never work on `feat/cloudflare-migration` during content sessions.
+3. Briefly summarize to Venkat: any active items from `status-vgr.md` that are ready to work on.
+
+---
+
+## After Each Session
+
+**Documentation (always):**
+1. `status-vgr.md` — add a dated log entry with PT start–end times and a one-line summary of what changed.
+2. `CLAUDE.md` — update roadmap status or file structure notes if anything changed.
+
+**Verify (if HTML/CSS/JS changed):**
+3. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
+
+**Repo:**
+4. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main` — never to the fork or the CF branch.
+
+**Memory:**
+5. Update Claude memory (`/Users/Venkat/.claude/projects/.../memory/`) — save anything non-obvious about site structure, CF migration state, or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
