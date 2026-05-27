@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C3PO Monitoring Dashboard — Protocol Institute</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    .monitor-section { margin: 2.5rem 0; }
+    .monitor-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+    .monitor-table th, .monitor-table td { text-align: left; padding: 0.45rem 0.75rem; border-bottom: 1px solid #e0e0e0; }
+    .monitor-table th { background: #f5f5f5; font-weight: 600; }
+    .monitor-table.narrow { max-width: 480px; }
+    .monitor-table .center { text-align: center; }
+    .monitor-table .number { text-align: right; font-variant-numeric: tabular-nums; }
+    .status-active { color: #2a7a2a; font-weight: 600; }
+    .status-archived { color: #888; }
+    .run-day { margin: 1.5rem 0; }
+    .run-date { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; color: #333; }
+    .run-list { list-style: none; padding: 0; margin: 0; }
+    .run-list li { padding: 0.25rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.875rem; }
+    .run-label { display: inline-block; min-width: 160px; font-weight: 600; color: #444; }
+    .run-detail { color: #333; }
+    .run-ts { color: #999; font-size: 0.8rem; margin-left: 0.5rem; }
+    .muted { color: #888; font-style: italic; }
+    .meta-bar { font-size: 0.85rem; color: #666; margin: 0.5rem 0 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="site-nav" aria-label="Site navigation">
+      <a href="index.html" class="nav-brand"><img src="assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>
+      <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="projects.html">Initiatives</a></li>
+        <li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Magazine</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="support.html">Support Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="page-content">
+    <h1>C3PO Monitoring Dashboard</h1>
+    <p class="meta-bar">
+      Generated 27 May 2026 16:33 UTC
+      &nbsp;·&nbsp; Last run: 27 May 2026 16:31 UTC
+      &nbsp;·&nbsp; 6 active channels / 15 total
+    </p>
+
+    <section class="monitor-section">
+      <h2>Channel Registry</h2>
+      <p>All channels in the ingestion manifest. Active channels are polled daily; archived channels were swept once.</p>
+    <table class="monitor-table">
+      <thead><tr>
+        <th>Channel</th><th>Type</th><th>Status</th><th>Added</th><th>Backfill</th>
+      </tr></thead>
+      <tbody>
+      <tr><td>#idle-protocol-musings</td><td>general</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#protocol-watch</td><td>general</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>SIGFPT</td><td>sig</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>MRG</td><td>sig</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>ProtFiSIG</td><td>sig</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>SIGPfB</td><td>sig</td><td><span class="status-active">active</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#reading-room</td><td>forum</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#field-reports</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#built-environment</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#organizational-protocols</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#tech-standards</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#death-memory</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#credit-protocols</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#unconscious-protocols</td><td>general</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      <tr><td>#affiliate-chat</td><td>sig</td><td><span class="status-archived">archived</span></td><td>2026-05-20</td><td class="center">✓</td></tr>
+      </tbody>
+    </table>
+    </section>
+
+    <section class="monitor-section">
+      <h2>Recent Activity (last 14 days)</h2>
+    <div class="run-day">
+      <h3 class="run-date">27 May 2026</h3>
+      <ul class="run-list">
+        <li><span class="run-label">Discord harvest</span> <span class="run-detail">+15 vectors, +4 URLs (idle-protocol-musings +5v, protocol-watch +10v)</span> <span class="run-ts">27 May 2026 16:30 UTC</span></li>
+        <li><span class="run-label">Link fetch</span> <span class="run-detail">3 fetched, 1 failed, +23 vectors</span> <span class="run-ts">27 May 2026 16:31 UTC</span></li>
+        <li><span class="run-label">Link enrichment</span> <span class="run-detail">2 scored, 1 pruned — dist {'0': 1, '1': 0, '2': 1, '3': 1}</span> <span class="run-ts">27 May 2026 16:31 UTC</span></li>
+        <li><span class="run-label">SIG harvest</span> <span class="run-detail">+122 vectors, 2 meetings (SIGFPT +15v/1mtg, MRG +3v/0mtg, SIGPfB +45v/1mtg, ProtFiSIG +59v/0mtg)</span> <span class="run-ts">27 May 2026 16:31 UTC</span></li>
+      </ul>
+    </div>
+    <div class="run-day">
+      <h3 class="run-date">20 May 2026</h3>
+      <ul class="run-list">
+        <li><span class="run-label">YouTube transcripts</span> <span class="run-detail">0 fetched, 195 failed, +0 vectors</span> <span class="run-ts">20 May 2026 23:03 UTC</span></li>
+        <li><span class="run-label">YouTube transcripts</span> <span class="run-detail">6 fetched, 4 failed, +42 vectors</span> <span class="run-ts">20 May 2026 23:06 UTC</span></li>
+        <li><span class="run-label">YouTube transcripts</span> <span class="run-detail">18 fetched, 167 failed, +195 vectors</span> <span class="run-ts">20 May 2026 23:10 UTC</span></li>
+        <li><span class="run-label">Link enrichment</span> <span class="run-detail">208 scored, 106 pruned — dist {'0': 106, '1': 98, '2': 85, '3': 25}</span> <span class="run-ts">20 May 2026 23:25 UTC</span></li>
+        <li><span class="run-label">sync_lexicon</span> <span class="run-detail">{&quot;vectors&quot;: 560}</span> <span class="run-ts">20 May 2026 23:56 UTC</span></li>
+      </ul>
+    </div>
+    </section>
+
+    <section class="monitor-section">
+      <h2>Link Farming</h2>
+      <p>External URLs shared across all Discord channels, harvested into the <code>discord_links</code> corpus namespace.</p>
+    <table class="monitor-table narrow">
+      <tbody>
+      <tr><td>Total registered</td><td class="number">3859</td></tr>
+      <tr><td>Fetched OK</td><td class="number">1137</td></tr>
+      <tr><td>Enriched — irrelevant (pruned)</td><td class="number">592</td></tr>
+      <tr><td>Failed (paywall / timeout)</td><td class="number">1200</td></tr>
+      <tr><td>Deferred — YouTube</td><td class="number">419</td></tr>
+      <tr><td>Skipped (internal / GIFs)</td><td class="number">471</td></tr>
+      <tr><td>Rejected (injection filter)</td><td class="number">9</td></tr>
+      </tbody>
+    </table>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="team.html">Team</a>
+      <a href="network.html">Network</a>
+      <a href="consulting.html">Consulting</a>
+      <a href="symposium-2026.html">Symposium</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <p class="footer-copy">&copy; 2025 The Protocol Institute</p>
+  </footer>
+  <script src="assets/nav.js"></script>
+</body>
+</html>
