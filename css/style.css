@@ -567,6 +567,25 @@ a:hover {
   text-decoration: underline;
 }
 
+.team-photo-ai {
+  object-fit: contain;
+  padding: 2rem;
+  background: #F0EDEA;
+  opacity: 0.6;
+}
+
+.team-link {
+  display: inline-block;
+  font-size: 0.88rem;
+  color: #2A6B6B;
+  margin-top: 0.25rem;
+}
+
+.team-link:hover {
+  color: #1d4f4f;
+  text-decoration: underline;
+}
+
 /* ---- Footer Nav ---- */
 
 .footer-nav {
