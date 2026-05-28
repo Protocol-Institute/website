@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Initiatives — The Protocol Institute</title>
-  <meta name="description" content="Current and past research projects of the Protocol Institute.">
+  <title>Programs — The Protocol Institute</title>
+  <meta name="description" content="Programs and research activities of the Protocol Institute.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -17,7 +17,7 @@
       <a href="/" class="nav-brand"><img src="/assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>
       <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">≡</button>
       <ul class="nav-links" id="nav-links" role="list">
-        <li><a href="/projects" class="active" aria-current="page">Initiatives</a></li>
+        <li><a href="/programs" class="active" aria-current="page">Programs</a></li>
         <li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Magazine</a></li>
         <li><a href="/about">About</a></li>
         <li><a href="/support">Support Us</a></li>
@@ -30,7 +30,7 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Initiatives</h1>
+        <h1>Programs</h1>
       </div>
 
       <ul class="project-list" role="list">
@@ -42,29 +42,26 @@
             <span class="project-category">In-House</span>
           </div>
           <p class="project-description">The editorial and publishing arm of the protocol research community. Protocolized produces essays, science fiction, interviews, and research artifacts examining how protocols shape coordination, infrastructure, and institutional life.</p>
-          <a href="https://protocolized.io" class="project-link" target="_blank" rel="noopener noreferrer">Visit project →</a>
+          <ul class="program-tracks">
+            <li><a href="https://protocolized.summerofprotocols.com" target="_blank" rel="noopener noreferrer">Substack</a></li>
+            <li><a href="https://protocolized.io/resources/" target="_blank" rel="noopener noreferrer">Resource archive</a></li>
+            <li><a href="https://www.youtube.com/@protocol-institute" target="_blank" rel="noopener noreferrer">Youtube channel</a></li>
+            <li><span class="track-name">Books</span> <span class="track-soon">coming soon</span></li>
+            <li><span class="track-name">Worldbuilding</span> <span class="track-soon">coming soon</span></li>
+          </ul>
         </li>
 
         <li class="project-item">
           <div class="project-meta">
-            <span class="project-name">C3PO</span>
-            <span class="project-status status-active">Live · Beta</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">A RAG-based conversational research assistant trained on the Protocol Institute's full corpus — 12,000+ vectors spanning papers, essays, talks, Discord discussions, SIG meetings, and Protocolized magazine content. C3PO lets researchers and practitioners query, synthesize, and explore the library through natural language, with citations. Powered by Voyage AI embeddings, Pinecone, and Claude Sonnet. Also available as an MCP server for use with Claude Code and Claude Desktop.</p>
-          <a href="https://c3po.vgr-702.workers.dev" class="project-link" target="_blank" rel="noopener noreferrer">Open C3PO →</a>
-          <a href="/c3po" class="project-link" style="margin-left:1em;">Learn more →</a>
-        </li>
-
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Humboldt</span>
+            <span class="project-name">AI Infrastructure</span>
             <span class="project-status status-active">Active</span>
             <span class="project-category">In-House</span>
           </div>
-          <p class="project-description">An artificial researcher investigating the <em>new nature</em> — structural laws of protocolized and artificial systems that recur across domains with something approaching the force of natural law. Humboldt pursues its own research agenda: generating hypotheses, testing them against evidence across domains, and building a cumulative inventory of candidate laws. It publishes its field notes in a public lab notebook.</p>
-          <a href="/humboldt" class="project-link">Learn more →</a>
-          <a href="/humboldt-notebook" class="project-link" style="margin-left:1em;">Lab notebook →</a>
+          <p class="project-description">AI tools and agents that extend the Protocol Institute's research capacity — building the computational scaffolding for exploring, synthesizing, and growing the protocol corpus.</p>
+          <ul class="program-tracks">
+            <li><a href="/c3po">C3PO</a> <span class="track-sep">&mdash;</span> <a href="https://c3po.vgr-702.workers.dev" target="_blank" rel="noopener noreferrer">Open</a></li>
+            <li><a href="/humboldt">Humboldt</a> <span class="track-sep">&mdash;</span> <a href="/humboldt-notebook">Lab notebook</a></li>
+          </ul>
         </li>
 
         <li class="project-item">
@@ -74,17 +71,9 @@
             <span class="project-category">In-House</span>
           </div>
           <p class="project-description">Professional-led groups that meet biweekly to discuss, design, and theorize on topics relevant to protocolization — including memory, formal theory, organization, and storytelling.</p>
-          <a href="/sigs" class="project-link">Learn more →</a>
-        </li>
-
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Worldbuilding</span>
-            <span class="project-status">In Development</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">Coming soon.</p>
-          <a href="/worldbuilding" class="project-link">Learn more →</a>
+          <ul class="program-tracks">
+            <li><a href="/sigs">SIGs home</a></li>
+          </ul>
         </li>
 
         <li class="project-item">
@@ -94,7 +83,9 @@
             <span class="project-category">Collaboration</span>
           </div>
           <p class="project-description">A collaboration with the Long Now Foundation exploring how protocols can support long-term thinking, institutional continuity, and civilizational coordination across deep time.</p>
-          <a href="https://longnow.org/labs/001/" class="project-link" target="_blank" rel="noopener noreferrer">Visit project →</a>
+          <ul class="program-tracks">
+            <li><a href="https://longnow.org/labs/001/" target="_blank" rel="noopener noreferrer">Visit project</a></li>
+          </ul>
         </li>
 
       </ul>
