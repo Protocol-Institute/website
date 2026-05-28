@@ -311,6 +311,14 @@ a:hover {
   margin-bottom: 0;
 }
 
+.project-name-link {
+  text-decoration: none;
+  color: inherit;
+}
+.project-name-link:hover .project-name {
+  text-decoration: underline;
+}
+
 .project-status {
   font-size: 0.72rem;
   font-weight: 500;
