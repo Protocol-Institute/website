@@ -9,13 +9,12 @@ const SVG_COLLAPSE = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height=
 
 // ── Entry point ─────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', init);
-
-async function init() {
+document.addEventListener('DOMContentLoaded', () => {
   try {
-    const res = await fetch('deck.md');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
+    const el = document.getElementById('deck-content');
+    if (!el) throw new Error('deck-content element missing from deck.html');
+    const text = el.textContent.trim();
+    if (!text) throw new Error('deck-content is empty');
     ({ meta, slides } = parseDeck(text));
     renderDeck();
     goTo(0);
@@ -26,11 +25,11 @@ async function init() {
     document.getElementById('slides-wrapper').innerHTML =
       `<div class="slide slide-error active" style="opacity:1">
          <div class="slide-inner center">
-           <p>Could not load deck.md — ${err.message}</p>
+           <p>Deck error — ${err.message}</p>
          </div>
        </div>`;
   }
-}
+});
 
 // ── Parser ───────────────────────────────────────────────
 

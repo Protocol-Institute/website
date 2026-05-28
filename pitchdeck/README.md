@@ -7,18 +7,34 @@ Embedded at `support.html` as an iframe; directly accessible at `/pitchdeck/deck
 
 | File | Purpose |
 |------|---------|
-| `deck.md` | Slide content — edit this to update the deck |
-| `deck.html` | Renderer — load in browser or embed as iframe |
+| `deck.html` | Renderer **and** content — edit the `<script id="deck-content">` block inside |
 | `deck.css` | Styles — edit to change layout, colors, or fonts |
 | `deck.js` | Renderer logic — do not edit unless changing behavior |
-| `images/` | Image assets referenced from `deck.md` |
+| `deck.md` | Reference copy of current content (not used for rendering) |
+| `images/` | Image assets referenced from slide content |
 | `archive/` | Past versions, named `vX.Y.Z.md` |
 
 ---
 
 ## Editing the deck
 
-Open `deck.md` in any text editor. The file has two sections:
+Open `deck.html` in any text editor. Near the bottom, find the block:
+
+```html
+<script id="deck-content" type="text/plain">
+---
+title: ...
+---
+<!-- slide: cover -->
+...
+</script>
+```
+
+Edit the markdown inside that block. The renderer reads it directly from the DOM — no server or network request is involved, so the deck works in any context (local file, iframe, any hosting provider).
+
+The `deck.md` file is a reference copy you can use for editing with Markdown syntax highlighting, then paste back into the `<script>` block in `deck.html`.
+
+The file has two sections:
 
 ### 1. Frontmatter
 
@@ -192,12 +208,15 @@ The deck uses semantic versioning: `MAJOR.MINOR.PATCH`
 
 **Workflow for a new version:**
 
-1. Archive the current version:
+1. Archive the current content block:
    ```bash
+   # Copy the <script id="deck-content"> block text to archive
    cp pitchdeck/deck.md pitchdeck/archive/v0.1.0.md
    ```
-2. Edit `deck.md` and bump the `version:` field in the frontmatter.
-3. Commit both the updated `deck.md` and the new archive file.
+   (Or copy it manually from `deck.html` into `archive/vX.Y.Z.md`.)
+2. Edit the `<script id="deck-content">` block in `deck.html` and bump the `version:` field.
+3. Update `deck.md` to match (reference copy).
+4. Commit both files.
 
 Archived versions are stored as plain Markdown in `archive/` and are not served or linked anywhere.
 
@@ -222,7 +241,7 @@ The deck is embedded in `support.html` as an iframe:
 </div>
 ```
 
-**Note:** `deck.html` fetches `deck.md` at runtime via `fetch()`. This requires the page to be served over HTTP or HTTPS — it will not work when opened as a local file directly in the browser.
+The deck reads content from the embedded `<script id="deck-content">` block — no network request is made. It works when opened as a local file, in an iframe, or on any hosting provider.
 
 ---
 
