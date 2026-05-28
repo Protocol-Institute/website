@@ -1,0 +1,510 @@
+/*
+ * Protocol Institute — Pitch Deck Styles
+ *
+ * Fonts: set the Google Fonts import below to change typefaces.
+ * To use a self-hosted or purchased font instead, replace the @import with
+ * @font-face declarations and update the --font-heading / --font-body vars.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Variables ─────────────────────────────────────────── */
+
+:root {
+  --bg:            #FAFAF7;
+  --text:          #1A1A1A;
+  --accent:        #2A6B6B;
+  --accent-light:  #3d8c8c;
+  --accent-pale:   #e8f0f0;
+  --accent-inv:    #ffffff;
+  --muted:         #666666;
+  --border:        #dedede;
+
+  --font-heading:  'Cormorant Garamond', Georgia, serif;
+  --font-body:     'DM Sans', system-ui, sans-serif;
+
+  --nav-h:         44px;
+  --slide-pad-v:   clamp(1.5rem, 5%, 3.5rem);
+  --slide-pad-h:   clamp(2rem,   7%, 5.5rem);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Deck container ─────────────────────────────────────── */
+
+#deck-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#slides-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Slide base ─────────────────────────────────────────── */
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  background: var(--bg);
+  padding: var(--slide-pad-v) var(--slide-pad-h);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.slide.active {
+  display: flex;
+  opacity: 1;
+}
+
+.slide-inner {
+  max-width: min(860px, 100%);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.slide-inner.center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* ── Cover ──────────────────────────────────────────────── */
+
+.slide-cover {
+  background: var(--accent);
+  color: var(--accent-inv);
+  justify-content: center;
+}
+
+.slide-cover .slide-inner h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5.5vw, 4.2rem);
+  font-weight: 600;
+  color: var(--accent-inv);
+  line-height: 1.15;
+  margin-bottom: 0.6rem;
+}
+
+.slide-cover .slide-inner p,
+.slide-cover .slide-inner strong {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 2vw, 1.3rem);
+  color: rgba(255,255,255,0.82);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.slide-cover .slide-inner strong { color: rgba(255,255,255,0.95); }
+
+.slide-cover .slide-inner a {
+  color: rgba(255,255,255,0.9);
+  text-underline-offset: 3px;
+}
+
+/* ── Big Point ──────────────────────────────────────────── */
+
+.slide-big-point .slide-inner {
+  max-width: min(760px, 92%);
+}
+
+.slide-big-point .slide-inner h1,
+.slide-big-point .slide-inner h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 5vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.slide-big-point .slide-inner::after {
+  content: '';
+  display: block;
+  width: 3rem;
+  height: 3px;
+  background: var(--accent);
+  margin-top: 1.5rem;
+}
+
+/* ── Section break ──────────────────────────────────────── */
+
+.slide-section {
+  background: var(--accent);
+}
+
+.slide-section .slide-inner h1,
+.slide-section .slide-inner h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 400;
+  color: var(--accent-inv);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* ── Bullets & Numbered ─────────────────────────────────── */
+
+.slide-bullets h2,
+.slide-numbered h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.8vw, 2.1rem);
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: clamp(0.8rem, 2%, 1.4rem);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--accent-pale);
+}
+
+.slide-bullets ul,
+.slide-numbered ol {
+  font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+  line-height: 1.75;
+  padding-left: 1.4rem;
+  color: var(--text);
+}
+
+.slide-bullets li,
+.slide-numbered li {
+  margin-bottom: 0.35rem;
+}
+
+.slide-bullets em,
+.slide-numbered em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.slide-numbered strong,
+.slide-bullets strong {
+  font-weight: 500;
+}
+
+/* ── Quote ──────────────────────────────────────────────── */
+
+.slide-quote .slide-inner {
+  max-width: min(720px, 90%);
+}
+
+.slide-quote blockquote {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 2.1rem);
+  line-height: 1.55;
+  color: var(--text);
+  border: none;
+  padding: 0 0 1.2rem 0;
+  quotes: none;
+  position: relative;
+}
+
+.slide-quote blockquote::before {
+  content: '\201C';
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  color: var(--accent);
+  line-height: 0;
+  position: absolute;
+  top: 0.6rem;
+  left: -0.8rem;
+  opacity: 0.5;
+}
+
+.slide-quote blockquote p { margin: 0; padding-left: 0.5rem; }
+
+.slide-quote p:not(:first-child) {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 500;
+  margin-top: 0;
+  padding-left: 0.5rem;
+}
+
+/* ── Big Image ──────────────────────────────────────────── */
+
+.slide-big-image {
+  padding: var(--slide-pad-v) var(--slide-pad-h);
+}
+
+.slide-big-image .slide-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.slide-big-image img {
+  max-height: 75%;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.slide-big-image em {
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  color: var(--muted);
+  font-style: normal;
+  text-align: center;
+}
+
+/* ── Table ──────────────────────────────────────────────── */
+
+.slide-table .slide-inner {
+  overflow: auto;
+}
+
+.slide-table h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.8vw, 2.1rem);
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: clamp(0.8rem, 2%, 1.4rem);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--accent-pale);
+}
+
+.slide-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+}
+
+.slide-table thead th {
+  background: var(--accent);
+  color: var(--accent-inv);
+  padding: 0.55rem 0.9rem;
+  text-align: left;
+  font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.slide-table td {
+  padding: 0.5rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.slide-table tbody tr:nth-child(even) td { background: var(--accent-pale); }
+.slide-table tbody tr:hover td { background: #e0eaea; }
+
+/* ── Two Column ─────────────────────────────────────────── */
+
+.slide-two-column .two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4%, 3rem);
+  align-items: center;
+}
+
+.slide-two-column .two-col-heading h2,
+.slide-two-column .two-col-heading h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.8vw, 2.1rem);
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: clamp(0.8rem, 2%, 1.4rem);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--accent-pale);
+}
+
+.slide-two-column .col-left ul {
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  line-height: 1.75;
+  padding-left: 1.2rem;
+}
+
+.slide-two-column .col-left li { margin-bottom: 0.35rem; }
+.slide-two-column .col-left strong { font-weight: 500; }
+
+.slide-two-column .col-right img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+
+.slide-two-column .col-right em {
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 1.1vw, 0.8rem);
+  color: var(--muted);
+  font-style: normal;
+  display: block;
+  margin-top: 0.4rem;
+}
+
+/* Two-column: when both sides have text, share space evenly */
+.slide-two-column .col-right p {
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* ── Navigation bar ─────────────────────────────────────── */
+
+#deck-nav {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  height: var(--nav-h);
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 0 1rem;
+}
+
+#deck-nav button {
+  background: none;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.95rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+#deck-nav button:hover:not(:disabled) {
+  background: var(--accent);
+  color: #fff;
+}
+
+#deck-nav button:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+#slide-counter {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: #999;
+  min-width: 4.5rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ── Meta overlay (version + PDF button) ────────────────── */
+
+#deck-meta {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 20;
+  pointer-events: none;
+}
+
+#deck-meta > * { pointer-events: auto; }
+
+#deck-version {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: #aaa;
+  background: rgba(250,250,247,0.88);
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+#btn-pdf {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: var(--accent);
+  background: rgba(250,250,247,0.9);
+  border: 1px solid var(--accent);
+  padding: 0.18rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.03em;
+}
+
+#btn-pdf:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Loading / error states ─────────────────────────────── */
+
+.slide-loading,
+.slide-error {
+  background: var(--bg);
+}
+
+.slide-loading .slide-inner,
+.slide-error .slide-inner {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* ── Print / PDF export ─────────────────────────────────── */
+
+@media print {
+  @page { margin: 0; size: landscape; }
+
+  html, body {
+    height: auto !important;
+    overflow: auto !important;
+  }
+
+  #deck-container { height: auto !important; }
+
+  #slides-wrapper {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .slide {
+    position: static !important;
+    display: flex !important;
+    width: 100% !important;
+    height: 100vh !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  #deck-nav,
+  #deck-meta { display: none !important; }
+}

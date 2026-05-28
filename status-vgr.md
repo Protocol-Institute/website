@@ -1,7 +1,7 @@
 # Status — vgr (Venkat)
 
 ## Active
-<!-- current tasks or in-progress work -->
+- **pitchdeck/** scaffolding created (v0.1.0). Content in `deck.md` is placeholder — replace with real copy and images before publishing. See `pitchdeck/README.md` for editing guide.
 
 ## Upcoming
 <!-- planned changes or features -->
@@ -13,6 +13,7 @@
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-05-28** — Session 8: created `pitchdeck/` scaffolding — embeddable HTML presentation system for support.html. Slide types: cover, big-point, section, bullets, numbered, quote, big-image, table, two-column. PDF export, keyboard nav, semantic versioning with `archive/`. Content is placeholder v0.1.0.
 - **2026-05-26** — Session 7 (~3:05–3:20 PT): diagnosed iPad "Site not found" issue — fixed by enabling HTTPS enforcement in GitHub Pages settings. Merged main into feat/cloudflare-migration (17 commits, 36 files, clean). Reviewed symposium page status.
 - **2026-05-19** — Session 6: updated C3PO to live/beta — `projects.html` status badge → "Live · Beta", description updated (RAG, 12k+ vectors, MCP, Claude Sonnet), direct "Open C3PO →" link added; `c3po.html` Status and Technical sections rewritten present-tense, corpus size updated, MCP server paragraph added, "Try it →" link at top.
 - **2026-05-19** — Session 5: built Network, Consulting, and Symposium pages; redesigned nav (stacked two-row with separator); restructured Initiatives page to inline category tags; standardized landing page nav/footer to match interior pages; updated landing blurb; added Magazine → protocolized.io to nav on all pages.

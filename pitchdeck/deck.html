@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protocol Institute — Support Deck</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<div id="deck-container">
+
+  <div id="deck-meta">
+    <span id="deck-version"></span>
+    <button id="btn-pdf" onclick="window.print()" title="Export all slides as PDF">↓ PDF</button>
+  </div>
+
+  <div id="slides-wrapper" aria-live="polite">
+    <div class="slide slide-loading active" style="opacity:1">
+      <div class="slide-inner center">Loading…</div>
+    </div>
+  </div>
+
+  <nav id="deck-nav" aria-label="Slide navigation">
+    <button id="btn-prev" aria-label="Previous slide" disabled>&#8592;</button>
+    <span id="slide-counter" aria-live="polite">— / —</span>
+    <button id="btn-next" aria-label="Next slide">&#8594;</button>
+  </nav>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>
