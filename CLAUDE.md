@@ -21,23 +21,33 @@ All content work happens on `main`. The `feat/cloudflare-migration` branch is a 
 
 ## File structure
 
+All pages use clean URLs: `about/index.html` is served at `/about`, etc.
+
 ```
 index.html          Landing page
-about.html          About the Institute
-contact.html        Contact page
-projects.html       Initiatives listing page
-sigs.html           Special Interest Groups page
-worldbuilding.html  Worldbuilding initiative (stub)
+about/              /about
+contact/            /contact
+projects/           /projects
+sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
+  sigfpt/           /sigs/sigfpt — each SIG has a sub-index + one dir per session
+  mrg/
+  sigpfb/
+  protfisig/
+support/            /support (embeds pitchdeck iframe)
+pitchdeck/          Support deck (deck.html, deck.js, deck.css)
 assets/
   logo-animated.svg   Animated logo — used only on index.html
   logo-static.png     Static logo — used on all other pages
-  logo.svg            Original logo (favicon fallback)
 css/
   style.css           All styles — single stylesheet for the whole site
 js/
   main.js             Minimal JS for mobile nav toggle
 _redirects          Netlify redirect rules
 ```
+
+## SIG session pages
+
+Session URL scheme and HTML structure are specified in **[`sigs/CONVENTIONS.md`](sigs/CONVENTIONS.md)**. That file is also the reference for the c3po automated ingestion pipeline when writing new session pages.
 
 ## Design conventions
 
