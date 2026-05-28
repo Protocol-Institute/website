@@ -1,7 +1,7 @@
 # Status — vgr (Venkat)
 
 ## Active
-- **pitchdeck/** scaffolding created (v0.1.0). Content in `deck.md` is placeholder — replace with real copy and images before publishing. See `pitchdeck/README.md` for editing guide.
+- **pitchdeck/** v0.1.0 live. 11-slide "New Nature" deck on support.html. Review PDF export and then test version bump workflow. Images are SVG placeholders — replace with real assets later.
 
 ## Upcoming
 <!-- planned changes or features -->
