@@ -8,6 +8,8 @@ date: 2026-05-28
 
 # New Nature: Introducing the Protocol Institute
 
+## Building Context for the Protocol Age
+
 May 28, 2026
 
 <!-- slide: quote -->
@@ -71,7 +73,29 @@ May 28, 2026
 ![Protocolized magazine](images/lorem-portrait.svg)
 *Protocolized — open-access protocol research and analysis*
 
+<!-- slide: two-bullets -->
+
+## Two Perspectives on Protocols
+
+### As Infrastructure
+
+- Enables coordination without central control
+- Becomes invisible when functioning well
+- Requires active maintenance to remain effective
+- Accumulates technical and social debt over time
+
+<!-- split -->
+
+### As Design Problem
+
+- Must balance openness with constraint
+- Creates path dependencies over time
+- Encodes assumptions about users and uses
+- Can be reformed, deprecated, or replaced
+
 <!-- slide: big-image -->
+
+## The Protocol Research Network
 
 ![Protocol research network](images/lorem-landscape.svg)
 *A growing network of researchers, practitioners, and institutions studying the infrastructure of coordination*

@@ -1,9 +1,9 @@
 /*
  * Protocol Institute — Pitch Deck Styles
  *
- * Fonts: set the Google Fonts import below to change typefaces.
- * To use a self-hosted or purchased font instead, replace the @import with
- * @font-face declarations and update the --font-heading / --font-body vars.
+ * Fonts: set the @import below to change typefaces.
+ * To use a self-hosted font, replace the @import with @font-face declarations
+ * and update --font-heading / --font-body.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -11,21 +11,21 @@
 /* ── Variables ─────────────────────────────────────────── */
 
 :root {
-  --bg:            #FAFAF7;
-  --text:          #1A1A1A;
-  --accent:        #2A6B6B;
-  --accent-light:  #3d8c8c;
-  --accent-pale:   #e8f0f0;
-  --accent-inv:    #ffffff;
-  --muted:         #666666;
-  --border:        #dedede;
+  --bg:           #FAFAF7;
+  --text:         #1A1A1A;
+  --accent:       #2A6B6B;
+  --accent-light: #3d8c8c;
+  --accent-pale:  #e8f0f0;
+  --accent-inv:   #ffffff;
+  --muted:        #666666;
+  --border:       #dedede;
 
-  --font-heading:  'Cormorant Garamond', Georgia, serif;
-  --font-body:     'DM Sans', system-ui, sans-serif;
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
 
-  --nav-h:         44px;
-  --slide-pad-v:   clamp(1.5rem, 5%, 3.5rem);
-  --slide-pad-h:   clamp(2rem,   7%, 5.5rem);
+  --nav-h:        44px;
+  --pad-v:        clamp(1.5rem, 5%,  3.5rem);
+  --pad-h:        clamp(2rem,   7%,  5.5rem);
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
@@ -68,15 +68,12 @@ html, body {
   justify-content: center;
   align-items: stretch;
   background: var(--bg);
-  padding: var(--slide-pad-v) var(--slide-pad-h);
+  padding: var(--pad-v) var(--pad-h);
   opacity: 0;
   transition: opacity 0.25s ease;
 }
 
-.slide.active {
-  display: flex;
-  opacity: 1;
-}
+.slide.active { display: flex; opacity: 1; }
 
 .slide-inner {
   max-width: min(860px, 100%);
@@ -84,22 +81,19 @@ html, body {
   margin: 0 auto;
 }
 
+/* Center helper — used by cover, section, big-point (not quote) */
 .slide-inner.center {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 /* ── Cover ──────────────────────────────────────────────── */
 
-.slide-cover {
-  background: var(--accent);
-  color: var(--accent-inv);
-  justify-content: center;
-}
+.slide-cover { background: var(--accent); }
 
 .slide-cover .slide-inner h1 {
   font-family: var(--font-heading);
@@ -107,23 +101,57 @@ html, body {
   font-weight: 600;
   color: var(--accent-inv);
   line-height: 1.15;
-  margin-bottom: 0.6rem;
 }
 
-.slide-cover .slide-inner p,
-.slide-cover .slide-inner strong {
+/* Subtitle — use ## in slide content */
+.slide-cover .slide-inner h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 2.2vw, 1.6rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.70);
+  font-style: italic;
+  letter-spacing: 0.01em;
+  margin-top: -0.2rem;
+}
+
+.slide-cover .slide-inner p {
   font-family: var(--font-body);
-  font-size: clamp(0.9rem, 2vw, 1.3rem);
-  color: rgba(255,255,255,0.82);
+  font-size: clamp(0.85rem, 1.7vw, 1.1rem);
+  color: rgba(255,255,255,0.72);
   font-weight: 300;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
-.slide-cover .slide-inner strong { color: rgba(255,255,255,0.95); }
+.slide-cover .slide-inner p strong { color: rgba(255,255,255,0.95); font-weight: 500; }
+.slide-cover .slide-inner p br + * { color: rgba(255,255,255,0.60); }
+
+/* Version stamp injected by JS on first cover slide */
+.cover-version {
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
+  color: rgba(255,255,255,0.38);
+  display: block;
+  margin-top: -0.4rem;
+  letter-spacing: 0.1em;
+}
 
 .slide-cover .slide-inner a {
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.88);
   text-underline-offset: 3px;
+}
+
+/* ── Section break ──────────────────────────────────────── */
+
+.slide-section { background: var(--accent); }
+
+.slide-section .slide-inner h1,
+.slide-section .slide-inner h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 4vw, 2.8rem);
+  font-weight: 400;
+  color: var(--accent-inv);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 /* ── Big Point ──────────────────────────────────────────── */
@@ -141,6 +169,7 @@ html, body {
   color: var(--text);
 }
 
+/* Teal rule below the statement */
 .slide-big-point .slide-inner::after {
   content: '';
   display: block;
@@ -150,20 +179,38 @@ html, body {
   margin-top: 1.5rem;
 }
 
-/* ── Section break ──────────────────────────────────────── */
+/* ── Quote ──────────────────────────────────────────────── */
 
-.slide-section {
-  background: var(--accent);
+.slide-quote .slide-inner {
+  max-width: min(720px, 90%);
 }
 
-.slide-section .slide-inner h1,
-.slide-section .slide-inner h2 {
+.slide-quote blockquote {
   font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 4vw, 2.8rem);
-  font-weight: 400;
-  color: var(--accent-inv);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
+  font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 2.1rem);
+  line-height: 1.55;
+  color: var(--text);
+  border-left: 3px solid var(--accent);
+  padding: 0.2rem 0 0.2rem 1.5rem;
+  margin: 0;
+  quotes: none;
+}
+
+/* No giant opening quotation mark */
+.slide-quote blockquote::before { display: none; }
+
+.slide-quote blockquote p { margin: 0; }
+
+/* Attribution line — the paragraph after the blockquote */
+.slide-quote p:not(:first-child) {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 500;
+  margin-top: 0.75rem;
+  padding-left: 1.5rem;
 }
 
 /* ── Bullets & Numbered ─────────────────────────────────── */
@@ -184,102 +231,20 @@ html, body {
   font-size: clamp(0.9rem, 1.8vw, 1.15rem);
   line-height: 1.75;
   padding-left: 1.4rem;
-  color: var(--text);
 }
 
 .slide-bullets li,
-.slide-numbered li {
-  margin-bottom: 0.35rem;
-}
+.slide-numbered li { margin-bottom: 0.35rem; }
 
 .slide-bullets em,
-.slide-numbered em {
-  color: var(--accent);
-  font-style: italic;
-}
+.slide-numbered em { color: var(--accent); font-style: italic; }
 
 .slide-numbered strong,
-.slide-bullets strong {
-  font-weight: 500;
-}
-
-/* ── Quote ──────────────────────────────────────────────── */
-
-.slide-quote .slide-inner {
-  max-width: min(720px, 90%);
-}
-
-.slide-quote blockquote {
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-size: clamp(1.2rem, 3vw, 2.1rem);
-  line-height: 1.55;
-  color: var(--text);
-  border: none;
-  padding: 0 0 1.2rem 0;
-  quotes: none;
-  position: relative;
-}
-
-.slide-quote blockquote::before {
-  content: '\201C';
-  font-family: var(--font-heading);
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  color: var(--accent);
-  line-height: 0;
-  position: absolute;
-  top: 0.6rem;
-  left: -0.8rem;
-  opacity: 0.5;
-}
-
-.slide-quote blockquote p { margin: 0; padding-left: 0.5rem; }
-
-.slide-quote p:not(:first-child) {
-  font-family: var(--font-body);
-  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
-  font-style: normal;
-  color: var(--accent);
-  font-weight: 500;
-  margin-top: 0;
-  padding-left: 0.5rem;
-}
-
-/* ── Big Image ──────────────────────────────────────────── */
-
-.slide-big-image {
-  padding: var(--slide-pad-v) var(--slide-pad-h);
-}
-
-.slide-big-image .slide-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-.slide-big-image img {
-  max-height: 75%;
-  max-width: 100%;
-  object-fit: contain;
-  border-radius: 3px;
-}
-
-.slide-big-image em {
-  font-family: var(--font-body);
-  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
-  color: var(--muted);
-  font-style: normal;
-  text-align: center;
-}
+.slide-bullets strong { font-weight: 500; }
 
 /* ── Table ──────────────────────────────────────────────── */
 
-.slide-table .slide-inner {
-  overflow: auto;
-}
+.slide-table .slide-inner { overflow: auto; }
 
 .slide-table h2 {
   font-family: var(--font-heading);
@@ -316,17 +281,12 @@ html, body {
 .slide-table tbody tr:nth-child(even) td { background: var(--accent-pale); }
 .slide-table tbody tr:hover td { background: #e0eaea; }
 
-/* ── Two Column ─────────────────────────────────────────── */
+/* ── Shared: two-column heading hoisted above grid ──────── */
 
-.slide-two-column .two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(1.5rem, 4%, 3rem);
-  align-items: center;
-}
-
+.slide-two-column .two-col-heading h1,
 .slide-two-column .two-col-heading h2,
-.slide-two-column .two-col-heading h1 {
+.slide-two-bullets .two-col-heading h1,
+.slide-two-bullets .two-col-heading h2 {
   font-family: var(--font-heading);
   font-size: clamp(1.2rem, 2.8vw, 2.1rem);
   font-weight: 600;
@@ -334,6 +294,15 @@ html, body {
   margin-bottom: clamp(0.8rem, 2%, 1.4rem);
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--accent-pale);
+}
+
+/* ── Two Column (bullets + image) ───────────────────────── */
+
+.slide-two-column .two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 4%, 3rem);
+  align-items: center;
 }
 
 .slide-two-column .col-left ul {
@@ -361,12 +330,106 @@ html, body {
   margin-top: 0.4rem;
 }
 
-/* Two-column: when both sides have text, share space evenly */
 .slide-two-column .col-right p {
   font-size: clamp(0.85rem, 1.5vw, 1rem);
   line-height: 1.65;
-  color: var(--text);
 }
+
+/* ── Two Bullets (side-by-side bullet lists) ────────────── */
+
+.slide-two-bullets .two-bullets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 5%, 3.5rem);
+  align-items: start;
+}
+
+/* Column sub-headings (###) */
+.slide-two-bullets .two-bullets-grid h3 {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(0.8rem, 1.5vw, 0.95rem);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  border-bottom: 1px solid var(--accent-pale);
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.65rem;
+}
+
+.slide-two-bullets .two-bullets-grid ul {
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  line-height: 1.75;
+  padding-left: 1.2rem;
+}
+
+.slide-two-bullets .two-bullets-grid li { margin-bottom: 0.35rem; }
+
+/* ── Big Image ──────────────────────────────────────────── */
+
+.slide-big-image .big-image-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* Optional title above image */
+.slide-big-image .big-image-title {
+  width: 100%;
+  text-align: center;
+}
+
+.slide-big-image .big-image-title h1,
+.slide-big-image .big-image-title h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.5vw, 1.9rem);
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-pale);
+  padding-bottom: 0.5rem;
+}
+
+/* Image + caption wrapper */
+.slide-big-image .big-image-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.slide-big-image .big-image-img {
+  display: flex;
+  justify-content: center;
+}
+
+.slide-big-image img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  display: block;
+  border-radius: 3px;
+}
+
+/* Less image height when a title is present */
+.slide-big-image:has(.big-image-title) .big-image-img img {
+  max-height: 44vh;
+}
+
+/* Caption — one discrete line below image */
+.slide-big-image .big-image-cap {
+  font-family: var(--font-body);
+  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
+  color: var(--muted);
+  text-align: center;
+  font-style: italic;
+  margin: 0;
+  max-width: 72ch;
+  line-height: 1.4;
+}
+
+.slide-big-image .big-image-cap em { font-style: inherit; }
 
 /* ── Navigation bar ─────────────────────────────────────── */
 
@@ -379,7 +442,7 @@ html, body {
   height: var(--nav-h);
   background: #fff;
   border-top: 1px solid var(--border);
-  padding: 0 1rem;
+  padding: 0 0.75rem;
 }
 
 #deck-nav button {
@@ -387,7 +450,6 @@ html, body {
   border: 1.5px solid var(--accent);
   color: var(--accent);
   cursor: pointer;
-  font-size: 0.95rem;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -395,7 +457,7 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: background 0.15s, color 0.15s;
-  line-height: 1;
+  flex-shrink: 0;
 }
 
 #deck-nav button:hover:not(:disabled) {
@@ -410,6 +472,11 @@ html, body {
   color: var(--muted);
 }
 
+#btn-prev, #btn-next {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 #slide-counter {
   font-family: var(--font-body);
   font-size: 0.8rem;
@@ -419,7 +486,19 @@ html, body {
   letter-spacing: 0.05em;
 }
 
-/* ── Meta overlay (version + PDF button) ────────────────── */
+/* Fullscreen button — pushed to right end of nav */
+#btn-fullscreen {
+  margin-left: auto;
+  font-size: 0;
+  padding: 0;
+}
+
+#btn-fullscreen svg {
+  display: block;
+  pointer-events: none;
+}
+
+/* ── Meta overlay (version + PDF) ───────────────────────── */
 
 #deck-meta {
   position: absolute;
@@ -457,17 +536,9 @@ html, body {
   letter-spacing: 0.03em;
 }
 
-#btn-pdf:hover {
-  background: var(--accent);
-  color: #fff;
-}
+#btn-pdf:hover { background: var(--accent); color: #fff; }
 
-/* ── Loading / error states ─────────────────────────────── */
-
-.slide-loading,
-.slide-error {
-  background: var(--bg);
-}
+/* ── Loading / error ────────────────────────────────────── */
 
 .slide-loading .slide-inner,
 .slide-error .slide-inner {
@@ -481,10 +552,7 @@ html, body {
 @media print {
   @page { margin: 0; size: landscape; }
 
-  html, body {
-    height: auto !important;
-    overflow: auto !important;
-  }
+  html, body { height: auto !important; overflow: auto !important; }
 
   #deck-container { height: auto !important; }
 
@@ -505,6 +573,5 @@ html, body {
     transition: none !important;
   }
 
-  #deck-nav,
-  #deck-meta { display: none !important; }
+  #deck-nav, #deck-meta { display: none !important; }
 }
