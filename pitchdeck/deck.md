@@ -1,93 +1,85 @@
 ---
-title: Protocol Institute
-subtitle: Building Context for the Protocol Age
+title: New Nature: Introducing the Protocol Institute
 version: 0.1.0
 date: 2026-05-28
 ---
 
 <!-- slide: cover -->
 
-# Protocol Institute
+# New Nature: Introducing the Protocol Institute
 
-Building Context for the Protocol Age
-
-<!-- slide: big-point -->
-
-# The world runs on protocols. No one is studying them seriously.
-
-<!-- slide: section -->
-
-# Who We Are
-
-<!-- slide: bullets -->
-
-## A New Kind of Think Tank
-
-- A *context tank* focused on protocols as foundational infrastructure
-- Independent research, publication, and community-building
-- Home to *Protocolized* magazine and the Summer of Protocols archive
-- Grounded in organizational theory, governance, and infrastructure studies
+May 28, 2026
 
 <!-- slide: quote -->
 
-> "Protocols are the invisible infrastructure of coordinated action — ubiquitous, and nearly invisible to analysts."
+> "Civilization advances by the number of operations we can do without thinking about them."
 
-— Venkatesh Rao, Protocol Institute
+— Alfred North Whitehead
 
 <!-- slide: section -->
 
-# Our Programs
+# Part I: The Protocol Age
+
+<!-- slide: big-point -->
+
+# Every coordination breakthrough in history has been a protocol breakthrough.
+
+<!-- slide: bullets -->
+
+## What Is a Protocol?
+
+- A shared rule that enables coordination without requiring central control
+- Older than the internet: currencies, languages, and markets are all protocols
+- Most protocols are invisible until they break or need redesign
+- The protocol layer is now the primary site of institutional innovation
+
+<!-- slide: numbered -->
+
+## How Protocol Institute Works
+
+1. **Research** — Foundational theory: what protocols are, how they evolve, how they fail
+2. **Publish** — Original analysis through *Protocolized*, our open-access magazine
+3. **Build** — Tools like C3PO that make protocol research accessible to practitioners
+4. **Convene** — Annual symposia and a global network of protocol researchers and designers
+
+<!-- slide: section -->
+
+# Part II: Our Work
 
 <!-- slide: table -->
 
 ## Programs at a Glance
 
-| Program | Description | Stage |
-|---------|-------------|-------|
-| Protocolized | Research magazine + archive | Live |
-| C3PO | AI research assistant (12k+ vectors) | Live · Beta |
-| Summer of Protocols Archive | Resource library | Active |
-| Protocol Symposium 2026 | Annual research convening | Upcoming |
-| Protocol Research Network | Practitioner community | Building |
+| Program | Type | Stage | Access |
+|---------|------|-------|--------|
+| Protocolized | Research Magazine | Live | Open |
+| C3PO | AI Research Assistant | Live · Beta | Members |
+| Protocol Symposium 2026 | Annual Convening | Upcoming | Registration |
+| Protocol Research Network | Community | Building | Invite |
 
 <!-- slide: two-column -->
 
-## C3PO: AI Research Assistant
+## Protocolized: Our Magazine
 
-- Semantic search across 12,000+ protocol research documents
-- Built on Voyage AI embeddings and Pinecone vector database
-- Accessible via Claude through MCP server integration
-- First AI research assistant specialized in protocol studies
+- Published since 2023, building on the Summer of Protocols research sprint
+- Long-form analysis of protocols in technology, governance, and culture
+- Open-access archive with 100+ essays and research papers
+- 4,000+ subscribers: researchers, practitioners, and policy-makers
 
 <!-- split -->
 
-![C3PO research tool](images/placeholder.svg)
-*C3PO — semantic search across the Protocol Institute corpus*
-
-<!-- slide: section -->
-
-# How to Support Us
-
-<!-- slide: numbered -->
-
-## Ways to Support the Institute
-
-1. **Individual donor** — Direct philanthropic contribution to core operations and research
-2. **Research partner** — Fund a specific program, fellowship, or publication series
-3. **Institutional partner** — Ongoing partnership with co-branding and joint programming
-4. **In-kind support** — Technology infrastructure, workspace, or domain expertise
+![Protocolized magazine](images/lorem-portrait.svg)
+*Protocolized — open-access protocol research and analysis*
 
 <!-- slide: big-image -->
 
-![Protocol Institute Network](images/placeholder.svg)
-*A growing network of researchers, practitioners, and institutions*
+![Protocol research network](images/lorem-landscape.svg)
+*A growing network of researchers, practitioners, and institutions studying the infrastructure of coordination*
 
 <!-- slide: cover -->
 
-# Get in Touch
+# Contact
 
-**Timber Stinson-Schroff**, Managing Director
-timber@protocol-institute.org
+**Timber Stinson-Schroff**, Managing Director<br>timber@protocol-institute.org
 
-**Venkatesh Rao**, Director of Research
-venkat@protocol-institute.org
+**Venkatesh Rao**, Director of Research<br>venkat@protocol-institute.org
