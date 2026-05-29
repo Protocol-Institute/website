@@ -750,13 +750,36 @@ a:hover {
   font-weight: 600;
   color: #1A1A1A;
   line-height: 1.3;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.network-parent {
+  font-size: 0.85rem;
+  color: #5A5A5A;
+  margin-bottom: 0.9rem;
+}
+
+.network-desc {
+  font-size: 0.9rem;
+  color: #2C2C2C;
+  line-height: 1.6;
+  margin-bottom: 0.9rem;
 }
 
 .network-contact {
   font-size: 0.82rem;
   color: #5A5A5A;
   letter-spacing: 0.01em;
+}
+
+.network-org a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid #2A6B6B;
+}
+
+.network-org a:hover {
+  color: #2A6B6B;
 }
 
 /* ---- Consulting Page ---- */
