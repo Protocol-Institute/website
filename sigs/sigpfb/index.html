@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protocols for Business — The Protocol Institute</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+    .resource-list { list-style: none; }
+    .resource-item { padding: 2rem 0; border-bottom: 1px solid #E0DDD8; }
+    .resource-item:first-child { border-top: 1px solid #E0DDD8; }
+    .resource-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .resource-title a { color: inherit; text-decoration: none; }
+    .resource-title a:hover { text-decoration: underline; }
+    .resource-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .resource-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .resource-description { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .resource-c3po { font-size: 0.85rem; color: #2A6B6B; margin-top: 0.6rem; }
+    .resource-c3po a { color: inherit; }
+    .resource-c3po a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Protocols for Business</h1>
+      </div>
+
+      <div class="about-body">
+        <p>Business applications of protocols, including AI adoption and organizational coordination, with case studies and essays published in Protocolized.</p>
+        <p class="sig-meta">Led by Rafael Fernandez — Biweekly Mondays, 8am Pacific</p>
+        <p style="margin-top:1rem"><a href="/sigs" class="back-link">&#8592; All Special Interest Groups</a></p>
+      </div>
+
+      <h2 class="section-label">Resources</h2>
+
+      <ul class="resource-list" role="list">
+        <li class="resource-item">
+          <div class="resource-title"><a href="https://ai.protocolized.dev/" target="_blank" rel="noopener noreferrer">Durable AI Adoption</a></div>
+          <div class="resource-topics">
+            <span class="resource-topic">AI Adoption Maturity</span>
+            <span class="resource-topic">Governed &amp; Cultivated Tracks</span>
+            <span class="resource-topic">Organizational Protocols</span>
+            <span class="resource-topic">Case Studies</span>
+            <span class="resource-topic">Assessment Tool</span>
+          </div>
+          <p class="resource-description">A practical guide to AI adoption developed through SIGP4B's ongoing research into protocols for business. Presents a five-level maturity model—from Shadow (individual experimentation) to Planetary (civilization-scale coordination)—each with parallel governed and cultivated tracks. Draws on 14 case studies (Samsung, Klarna, Boom Supersonic, Walmart EDI, and more) and two Protocol Institute case studies to document why meaningful AI gains require architectural redesign, not just tool deployment. Includes a 24-question diagnostic assessment tool. Periodically updated as practice develops.</p>
+          <p class="resource-c3po">&#9900; <a href="https://c3po.vgr-702.workers.dev/" target="_blank" rel="noopener noreferrer">Chat with C3PO</a> to explore this guide alongside the broader PI corpus.</p>
+        </li>
+      </ul>
+
+      <h2 class="section-label">Meeting Archive — 28 sessions</h2>
+
+      <ul class="meeting-list" role="list">
+<li class="meeting-item">
+        <div class="meeting-date">May 18, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-05-18-protocols-for-business-protocol-fiction-aesthetics-and">Protocols for Business: Protocol Fiction Aesthetics and AI-Native Organization</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Etymology and origins of business terminology (vertical integration)</span><span class="meeting-topic">Protocol fiction aesthetics and visual metaphors for complex systems</span><span class="meeting-topic">Terraforming as unifying metaphor for factories, rooms, and agent spaces</span><span class="meeting-topic">Accessibility and communication strategy for mainstream audiences</span><span class="meeting-topic">AI-native companies and new technological layer of natural laws</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed the etymology of business terminology and explored why certain terms may not make intuitive sense upon scrutiny.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">May 4, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-05-04-sigpfb-study-group-ai-robotics-and-technology-adoption">SIGPfB Study Group: AI, Robotics, and Technology Adoption Patterns</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Robotics projects and hardware funding needs</span><span class="meeting-topic">LLM/AI adoption patterns and user behavior</span><span class="meeting-topic">Historical parallels between phreaking, telephone, and AI adoption</span><span class="meeting-topic">Machine behavior and robot autonomy</span><span class="meeting-topic">Robot design impact and local economic applications</span></div>
+        <p class="meeting-abstract">The SIGPfB study group discussed multiple interconnected topics centered on robotics and AI adoption.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">April 20, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-04-20-study-group-protocols-for-business-api-design-and-contr">Study Group: Protocols for Business - API Design and Control Models</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">One-way vs. bidirectional API control mechanisms</span><span class="meeting-topic">Evaluation of MCP (Model Control Protocol) viability</span><span class="meeting-topic">Spreadsheet-based auditability and discretion in analytical workflows</span><span class="meeting-topic">Role separation between analysts and data processing departments</span><span class="meeting-topic">Case-level residues and material decision documentation</span></div>
+        <p class="meeting-abstract">The study group examined API control architectures and protocol viability, with rafa_0x presenting a clarity pitch document for discussion.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">April 6, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-04-06-study-group-protocols-for-business-business-models-and">Study Group: Protocols for Business - Business Models and System Design</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Hardened systems vs. soft code-space: transition challenges</span><span class="meeting-topic">Agent deployment in game-like environments</span><span class="meeting-topic">Business launch economics and capital efficiency</span><span class="meeting-topic">Market expansion through right-sizing and accessibility</span><span class="meeting-topic">Autonomous worlds and protocol design</span></div>
+        <p class="meeting-abstract">The SIGPfB study group examined protocols for business with focus on system design philosophy and business economics.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">March 23, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-03-23-study-group-protocols-for-business-ai-models-world-simu">Study Group: Protocols for Business - AI Models, World Simulation, and Data Requirements</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Video as primary input for atomic AI systems versus text-based approaches</span><span class="meeting-topic">Computational and resource demands of video-anchored AI models</span><span class="meeting-topic">Specificity and precision in neural network architecture and world modeling</span><span class="meeting-topic">Data labeling challenges in large language model development</span><span class="meeting-topic">Professional versus retail user approaches to AI tool utilization</span></div>
+        <p class="meeting-abstract">The SIGPfB study group discussed emerging approaches to AI model architecture, particularly the shift toward video-anchored systems rather than text-based ones.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">March 9, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-03-09-sigpfb-study-group-water-data-management-protocols-tens">SIGPfB Study Group: Water Data Management Protocols & Tensions Analysis</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Speed vs. Defensibility tension as structural driver in protocol design</span><span class="meeting-topic">State-level standards adoption through funding conditions rather than direct regulation</span><span class="meeting-topic">Water data management in California: governance structures, reporting requirements, and groundwater complexity</span><span class="meeting-topic">Building reusable 'Tensions' framework and LLM-powered tools for protocol analysis</span><span class="meeting-topic">Case studies in data standardization: healthcare (HIPAA/Cures Act), transit (GTFS), water management</span></div>
+        <p class="meeting-abstract">The SIGPfB study group convened to develop protocols for water data management in California, with rafa_0x leading analysis of structural tensions in protocol design.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">February 16, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-02-16-sigpfb-orienteering-protocols-ai-agents-and-business-op">SIGPfB Orienteering: Protocols, AI Agents, and Business Optimization</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Installation vs. Deployment and Stabilization processes</span><span class="meeting-topic">AI Assistance versus True Autonomous Agents</span><span class="meeting-topic">Reproducibility in protocol implementation</span><span class="meeting-topic">Annealing Processes for optimization</span><span class="meeting-topic">User Generated Software</span><span class="meeting-topic">Runtime Procurement</span></div>
+        <p class="meeting-abstract">The SIGPfB group held an optional orienteering meeting to identify key themes for the protocols-for-business initiative.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">February 9, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-02-09-sigpfb-study-group-auction-protocols-and-transaction-me">SIGPfB Study Group: Auction Protocols and Transaction Mechanisms</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Auction protocols as transaction mechanisms between untrusted parties</span><span class="meeting-topic">Real-world applications of auctions (spectrum pricing, airport allocation, food distribution)</span><span class="meeting-topic">Interface design and power dynamics in auction participation</span><span class="meeting-topic">Scaling limitations and protocol robustness across different market conditions</span><span class="meeting-topic">Comparison between auction mechanisms and voting/policy mechanisms</span><span class="meeting-topic">Vibecoding experiments and community dashboard tools</span></div>
+        <p class="meeting-abstract">The SIGPfB study group convened to examine auction protocols as transaction mechanisms in business contexts.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">January 26, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-01-26-pfb-sig-january-26-2026-vibe-code-updates">PfB SIG January 26, 2026: Vibe Code Updates</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Vibe coding as failure delay and constraint-driven development</span><span class="meeting-topic">LLM-assisted coding as project management rather than traditional programming</span><span class="meeting-topic">Recognizing 'software-shaped problems' to avoid overengineering non-software issues</span><span class="meeting-topic">Agent setup and subagent workflows as emerging development patterns</span><span class="meeting-topic">Open source sustainability under AI-generated contribution pressure</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed advances in 'vibe coding'—using LLMs to generate code through constraint-driven, iterative workflows.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">January 12, 2026</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2026-01-12-sigpfb-meeting-enterprise-ai-protocols-data-curation-an">SIGPfB Meeting: Enterprise AI Protocols, Data Curation, and Research Archetypes</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Data curation complexity and costs in enterprise AI systems</span><span class="meeting-topic">Risk of economic disruption from poorly integrated AI models at scale</span><span class="meeting-topic">SIGPfB framework positioning: Protocol Consulting, Design, and Engineering</span><span class="meeting-topic">AI agents as analysts and researchers</span><span class="meeting-topic">Research archetypes and cognitive modes (Naturalists, Engineers, Managers)</span></div>
+        <p class="meeting-abstract">The SIGPfB group convened to discuss enterprise AI protocols and business applications.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">December 29, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-12-29-sigpfb-dec-29th-meeting-protocol-thinking-as-design-fra">SIGPfB Dec 29th Meeting: Protocol Thinking as Design Framework</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Protocols as design objects and trade-off engines in business contexts</span><span class="meeting-topic">Speed/time as an oblique axis for understanding protocol strain under new conditions</span><span class="meeting-topic">Audience identification and messaging strategy for protocol-thinking content</span><span class="meeting-topic">Case study positioning: Boom Supersonic as anchor example of protocol failure</span><span class="meeting-topic">Shift from abstract protocol theory to embodied, visible protocol literacy</span></div>
+        <p class="meeting-abstract">The SIGPfB group met to refine their framing of protocols in business contexts.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">December 8, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-12-08-protocols-for-business-llm-impact-on-version-control-an">Protocols for Business: LLM Impact on Version Control and Business Processes</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">LLM limitations with sequences and version control</span><span class="meeting-topic">Core business protocols resistant to AI adoption (traceability, historical narrative, undo functionality)</span><span class="meeting-topic">Impact of near-zero reproduction costs on traditional undo mechanisms</span><span class="meeting-topic">Code auditing policy changes needed due to LLM usage</span><span class="meeting-topic">Organizational LLM usage policies and governance</span><span class="meeting-topic">Employee training and LLM literacy in organizations</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed fundamental challenges LLMs present to core business protocols, particularly around version control, traceability, and historical record-keeping.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">December 1, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-12-01-protocols-for-business-llm-governance-and-organizationa">Protocols for Business: LLM Governance and Organizational Decision-Making</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Multisig protocols as tempo-management tools for high-risk decisions</span><span class="meeting-topic">Mandatory vs. prohibited LLM usage patterns in organizations</span><span class="meeting-topic">LLM-in-the-loop review processes and their enforcement mechanisms</span><span class="meeting-topic">Confidentiality policies for LLM deployment in business contexts</span><span class="meeting-topic">Distinguishing between LLM processing and production deployment</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed emerging protocols for managing LLM usage in organizations, building on the conceptual framework of multisig governance.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">November 24, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-11-24-sigpfb-optional-discussion-time-estimation-chaos-protoc">SIGPfB Optional Discussion: Time Estimation Chaos & Protocol Development Approach</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Time Estimation Chaos problem revisited from basics</span><span class="meeting-topic">Fat vs. Lean business structure concepts and adoption barriers</span><span class="meeting-topic">Protocol definition and solution discussion methodology</span><span class="meeting-topic">PBR (Protocol-Based Reference) series format and execution</span><span class="meeting-topic">Visual communication standards for diagrams and documentation</span><span class="meeting-topic">Case study development as prioritized next step</span></div>
+        <p class="meeting-abstract">Rafa opened the discussion by proposing a return to basics on the Time Estimation Chaos topic to enable meaningful analysis and protocol development.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">November 17, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-11-17-fat-vs-lean-tempo-management-and-organizational-protoco">Fat vs Lean: Tempo Management and Organizational Protocols</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Definition and necessity of organizational 'fat' (surplus disorganization) versus lean structures</span><span class="meeting-topic">Tempo tensions between different business functions (e.g., marketing vs. AI model building)</span><span class="meeting-topic">Self-awareness of organizational state and risk of unintended leanness</span><span class="meeting-topic">Stability of client bases as enabler of fat/volatility-resistant firms</span><span class="meeting-topic">Ontological frameworks for managing AI adoption and trustworthiness</span><span class="meeting-topic">Hidden ontologies in business protocols (accounting structures, legal numbering)</span></div>
+        <p class="meeting-abstract">The SIGPfB group convened to discuss how organizations manage the tension between 'fat' (high-entropy organizational surplus with undirected potential) and 'lean' (streamlined, directed efficiency).</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">November 3, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-11-03-forward-deployed-engineers-fdes-business-model-role-evo">Forward-Deployed Engineers (FDEs): Business Model, Role Evolution, and Market Implications</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Forward-Deployed Engineer (FDE) role definition and responsibilities</span><span class="meeting-topic">FDE as a return to customer-driven business models vs. product-driven approaches</span><span class="meeting-topic">Information processing and data collection as core FDE work vs. interface customization</span><span class="meeting-topic">Comparison of FDE model to historical development methodologies (Waterfall, Agile)</span><span class="meeting-topic">FDE emergence as a consulting service and potential business model evolution</span><span class="meeting-topic">Challenges and limitations of scaling the FDE approach</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed the emerging role of Forward-Deployed Engineers (FDEs) and its implications for software business models.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">October 20, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-10-20-protocols-for-business-discussion-ai-adoption-and-proto">SIGPfB: Protocols for Business Discussion - AI Adoption and Protocol Design</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Protocol design as constraint and impossibility management in technology systems</span><span class="meeting-topic">LLM adoption protocols and the need for sincere disclosure in AI use</span><span class="meeting-topic">Distinguishing chronic vs. acute risks in AI implementation and over-reaction prevention</span><span class="meeting-topic">Case study development for HBR-style articles on protocolized business practices</span><span class="meeting-topic">Management vulnerability to low-quality LLM outputs and downward communication risks</span><span class="meeting-topic">Workplace norms and coaching as primary mechanisms for responsible AI adoption</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed the intersection of protocol design and AI adoption in business contexts.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">October 6, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-10-06-boom-case-study-innovation-speed-supply-chain-friction">Boom Case Study: Innovation Speed, Supply Chain Friction, and AI-Generated Content</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Speed mismatch between R&amp;D innovation and manufacturing supply chain capabilities</span><span class="meeting-topic">Risk propagation when removing friction and diffusion in business processes</span><span class="meeting-topic">Regulatory frameworks and legal definitions evolving with technological change</span><span class="meeting-topic">Characteristics and detection of AI-generated content in business communication</span><span class="meeting-topic">Management behavior shifts in response to rapid technological change</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed the Boom case study, focusing on tensions between rapid innovation cycles and slower traditional supply chains.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">September 22, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-09-22-ai-s-impact-on-individual-vs-organizational-capability">AI's Impact on Individual vs. Organizational Capability and Business Scaling</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">AI's effect on individual capability relative to organizations and institutions</span><span class="meeting-topic">Scaling dynamics: competence, mediocrity, and the 'slopsunami' problem</span><span class="meeting-topic">Sustainable business models with natural scaling caps versus VC-driven growth</span><span class="meeting-topic">Organizational instability when superstars vastly outpace teams</span><span class="meeting-topic">Legacy systems and protected labor markets as moats against AI disruption</span><span class="meeting-topic">Task estimation and coordination challenges in distributed teams</span></div>
+        <p class="meeting-abstract">The group discussed a reading about how AI empowers individuals to rival collective organizations.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">September 8, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-09-08-ai-s-sacred-cow-technology-s-challenge-to-pre-ai-knowle">AI's Sacred Cow: Technology's Challenge to Pre-AI Knowledge Work</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Sacred cows slain by technology adoption across domains (spreadsheets, email, procedural generation, air conditioning)</span><span class="meeting-topic">Shift from effort-based to editorial work: production becomes cheap, curation becomes valuable</span><span class="meeting-topic">Craftmanship and power dynamics as central to resistance against disruptive technologies</span><span class="meeting-topic">Quality signals dilution when low-resolution output becomes trivial to produce</span><span class="meeting-topic">Role transformation from 'doing the work' to 'choosing among options'</span></div>
+        <p class="meeting-abstract">The SIGPfB group explored which core commitments of pre-AI knowledge work are most directly challenged by AI adoption—what constitutes AI's 'sacred cow.' Through case studies spanning spreadsheets, PowerPoint, procedural generation in games, and even air conditioning, participants identified recurring patterns: technologies systematically overturn beliefs about what requires human effort, specialized skill, or centralized control.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">August 27, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-08-27-sigpfb-august-27-29-llm-failure-modes-and-business-stra">SIGPfB August 27-29: LLM Failure Modes and Business Strategy</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">LLM failure modes in business contexts (context loss, bug overload, recursive errors)</span><span class="meeting-topic">Parallels between LLM failures and traditional team dysfunction</span><span class="meeting-topic">Machine-readability as a competitive business strategy</span><span class="meeting-topic">AI replacement risk and worker skill overlap with LLM capabilities</span><span class="meeting-topic">GTM strategies: illegibility vs. hyper-legibility in response to AI</span></div>
+        <p class="meeting-abstract">The SIGPfB group conducted a working session exploring failure modes of large language models in business applications.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">August 25, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-08-25-planetary-thinking-for-cmms-llm-maturity-levels-and-pol">Planetary Thinking for CMMs: LLM Maturity Levels and Political Frameworks</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Five-level maturity framework for LLMs (from toys to planetary intelligence)</span><span class="meeting-topic">Politics of AI adoption across different maturity levels</span><span class="meeting-topic">Historical analogies (containerization, nuclear energy, cloud computing) for technology maturation</span><span class="meeting-topic">Commons versus monopoly dynamics in LLM development and governance</span><span class="meeting-topic">Shadow AI adoption in organizations and policy implications</span><span class="meeting-topic">Legal personhood and entity status for AI systems at advanced maturity levels</span></div>
+        <p class="meeting-abstract">The SIGPfB group applied Yuk Hui's philosophical framework to understand how Large Language Models mature through five distinct levels, from toys to planetary-scale intelligence infrastructure.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">August 11, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-08-11-llm-adoption-capability-maturity-models-and-protocol-ev">SIGPfB: LLM Adoption Capability Maturity Models and Protocol Evolution</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Developing a Capability Maturity Model (CMM++) for LLM adoption in organizations</span><span class="meeting-topic">How business protocols change in response to LLM capabilities</span><span class="meeting-topic">LLM-native vs. LLM-resistant vs. LLM-mutated protocols and organizational practices</span><span class="meeting-topic">Political and geopolitical dimensions of AI adoption across different state/law regulatory environments</span><span class="meeting-topic">Job market disruption and organizational resource utilization strategies with AI</span><span class="meeting-topic">Unbundling and rebuilding of legacy businesses through AI-driven operational changes</span></div>
+        <p class="meeting-abstract">The SIGPfB group engaged in an extended discussion about developing a comprehensive Capability Maturity Model (CMM++) specifically designed to describe how organizations mature in their adoption and integration of Large Language Models.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">July 28, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-07-28-sigpfb-async-discussion-in-stream-vs-in-structure-tensi">SIGPfB Async Discussion: In-Stream vs. In-Structure Tension Management</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Distinction between in-stream and in-structure protocols for managing organizational tensions</span><span class="meeting-topic">How tension management approaches differ in crypto/blockchain contexts due to rigid permission structures</span><span class="meeting-topic">The role of informal practices (coaching, apprenticeships) versus formal documented procedures</span><span class="meeting-topic">Continuous vs. discrete enactment of protocols and their evolution patterns</span><span class="meeting-topic">Category failure risks when implementing technologies (like LLMs) as structures instead of tools</span></div>
+        <p class="meeting-abstract">The SIGPfB group held an async discussion on a preprint paper about managing tensions in business protocols.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">July 14, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-07-14-sigpfb-meeting-collaborative-book-project-on-organizati">SIGPfB Meeting: Collaborative Book Project on Organizational Tensions</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Using LLMs for collective writing and documentation</span><span class="meeting-topic">Creating a 'sloptraption' (intermediate project) combining loose writings and prompts</span><span class="meeting-topic">Building organizational case studies through tensions analysis</span><span class="meeting-topic">NotebookLM preparation for content synthesis</span><span class="meeting-topic">Narrowing project scope by limiting initial case study rows</span></div>
+        <p class="meeting-abstract">The SIGPfB group discussed an ambitious collaborative book project on organizational tensions and protocols for business.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">June 30, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-06-30-sigpfb-warm-up-call-tensions-metrics-and-non-events">SIGPfB Warm-up Call: Tensions, Metrics, and Non-Events</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Definition of done and ETTO sub-tensions in business protocols</span><span class="meeting-topic">Metrics optimization and unintended consequences (e.g., square footage in construction)</span><span class="meeting-topic">Actively contested tradeoffs versus temporary compromises</span><span class="meeting-topic">Psychological asymmetry: positive metrics trending upward versus negative metrics staying low</span><span class="meeting-topic">Accounting for non-events and absent harms</span></div>
+        <p class="meeting-abstract">This warm-up call for the SIGPfB group introduced a working document exploring protocols for business, focusing on tensions, metrics, and decision-making tradeoffs.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">March 16, 2025</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2025-03-16-sigpfb-optional-meeting-water-protocols-and-agent-frame">SIGPfB Optional Meeting - Water Protocols and Agent Framework Discussion</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">Water data management protocols (Version 3)</span><span class="meeting-topic">Agent framework conceptualization</span><span class="meeting-topic">Agents as 'lenses' for perspective and interaction</span><span class="meeting-topic">Diagram analysis and documentation</span><span class="meeting-topic">Bonus article potential</span></div>
+        <p class="meeting-abstract">The SIGPfB group convened on March 16, 2025 to discuss developments in water data management protocols and explore conceptual frameworks for agent-based systems.</p>
+</li>
+
+<li class="meeting-item">
+        <div class="meeting-date">February 26, 2023</div>
+        <div class="meeting-title"><a href="/sigs/sigpfb/2023-02-26-sigpfb-study-group-protocols-for-business-discussion">SIGPfB Study Group: Protocols for Business Discussion</a></div>
+        <div class="meeting-topics"><span class="meeting-topic">AI as utility infrastructure vs. traditional SaaS business models</span><span class="meeting-topic">Protocol literacy and knowledge dissemination strategy</span><span class="meeting-topic">Balance between group guidance and community-led development</span><span class="meeting-topic">Moving beyond theoretical claims toward concrete intervention tasks</span><span class="meeting-topic">Protocol engineering firm bootstrapping as group objective</span></div>
+        <p class="meeting-abstract">The SIGPfB study group convened to discuss protocols for business, with Rafa leading by sharing key resources on token economics, protocol consulting, and related tools.</p>
+</li>
+      </ul>
+
+      <div class="sig-cta">
+        <p>Interested in joining? <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">Join the Discord community &#8594;</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

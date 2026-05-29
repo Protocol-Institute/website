@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIGFPT: Stigmergy Part II - Real-World Applications and Framework Analysis — Formal Protocol Theory</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/sigs/sigfpt" class="back-link">&#8592; Formal Protocol Theory</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">May 15, 2026</p>
+        <h1>SIGFPT: Stigmergy Part II - Real-World Applications and Framework Analysis</h1>
+      </div>
+
+      <div class="meeting-detail">
+
+        <div class="meeting-topics"><span class="meeting-topic">Applying Heylighen's agent/action/medium/trace/condition framework to real-world systems</span><span class="meeting-topic">Stigmergic patterns in diverse domains: swarm robotics, garage sales, legislation, version control, and historiography</span><span class="meeting-topic">Distinction between stigmergic systems (low-coordination, trace-based) and verbose/anti-stigmergic systems (explicit communication)</span><span class="meeting-topic">Stigmergy as a Schelling point for bio-inspired design and New Nature research agenda</span><span class="meeting-topic">Technical analysis of lock-based vs. distributed (git-based) version control as stigmergic design choices</span></div>
+        <p class="meeting-participants">Participants: ediblebadger, anurajenp, _vgr, sachbenny, senthil_d1sc0rd, maparent, timber1997, zoesh, giovanni.merlino, .unipuff, promptrotator, mtraven</p>
+        <p class="meeting-summary">The SIGFPT group continued their stigmergy discussion by applying Heylighen's agent/action/medium/trace/condition framework to concrete real-world examples. Participants mapped diverse systems to this framework, including swarm robotics, a West Seattle garage sale map, legislative grifting cycles, electric agents architecture, historical documentation, and version control systems. A key observation emerged that the 'condition' component of the framework often remained underspecified in practice. The discussion revealed that git-based version control represents a stigmergic solution to coordination problems previously handled through locks, trading resolution costs for better emergent behavior.</p>
+        <p class="meeting-summary">The group debated whether stigmergy should become a summer-long focus area, with _vgr proposing SIGFPT become a "stigmergy revival group for the agentic AI era." .unipuff suggested stigmergy's narrowness makes it valuable as a Schelling point for bio-inspired design conversations. A significant meta-discussion emerged around the necessary and sufficient conditions for choosing between stigmergic systems (low coordination overhead, high conflict potential) and verbose systems (explicit communication, higher coordination costs). The consensus positioned stigmergy as both analytically useful and strategically aligned with the Protocol Institute's broader "New Nature" research roadmap.</p>
+        <ul class="meeting-insights">
+<li>The garage sale map and legislative grift examples demonstrate how stigmergy operates across social scales: traces (location pins, news stories) trigger emergent behavior without central coordination.</li>
+<li>Git's superiority over lock-based version control stems from solving coordination through better stigmergy rather than imposing constraints, though this trades merge conflict resolution costs.</li>
+<li>The group identified 'Condition' as frequently underspecified in Heylighen's framework when applied to real systems, suggesting the framework needs refinement for practical analysis.</li>
+<li>Stigmergy is narrow enough to be analytically useful as a Schelling point while opening conversations about broader bio-mimetic design patterns applicable to agentic AI systems.</li>
+<li>A fundamental tradeoff exists between stigmergic systems (lower utilization, fewer conflicts) and verbose systems (explicit communication, higher coordination costs).</li>
+</ul>
+        <div class="meeting-links">
+<div class="meeting-links-label">Links discussed</div>
+<ul class="meeting-links-list">
+<li><a href="https://www.nature.com/articles/s44172-024-00175-7" rel="noopener noreferrer" target="_blank">www.nature.com</a></li>
+<li><a href="https://electric.ax/blog/2026/04/29/introducing-electric-agents" rel="noopener noreferrer" target="_blank">electric.ax</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Preferential_attachment" rel="noopener noreferrer" target="_blank">en.wikipedia.org</a></li>
+</ul>
+</div>
+        <a class="meeting-discord" href="https://discord.com/channels/1082444651946049567/1503893322362785822" rel="noopener noreferrer" target="_blank">View discussion in Discord →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

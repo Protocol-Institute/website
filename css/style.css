@@ -311,6 +311,14 @@ a:hover {
   margin-bottom: 0;
 }
 
+.project-name-link {
+  text-decoration: none;
+  color: inherit;
+}
+.project-name-link:hover .project-name {
+  text-decoration: underline;
+}
+
 .project-status {
   font-size: 0.72rem;
   font-weight: 500;
@@ -352,6 +360,41 @@ a:hover {
 
 .project-link:hover {
   text-decoration: underline;
+}
+
+.program-tracks {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+}
+
+.program-tracks li {
+  font-size: 0.9rem;
+  padding: 0.15rem 0;
+  color: #3A3A3A;
+}
+
+.program-tracks a {
+  color: #2A6B6B;
+}
+
+.program-tracks a:hover {
+  text-decoration: underline;
+}
+
+.track-name {
+  color: #3A3A3A;
+}
+
+.track-soon {
+  font-size: 0.75rem;
+  color: #8A8A8A;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.track-sep {
+  color: #8A8A8A;
 }
 
 /* ---- SIGs Page ---- */
@@ -524,6 +567,25 @@ a:hover {
   text-decoration: underline;
 }
 
+.team-photo-ai {
+  object-fit: contain;
+  padding: 2rem;
+  background: #F0EDEA;
+  opacity: 0.6;
+}
+
+.team-link {
+  display: inline-block;
+  font-size: 0.88rem;
+  color: #2A6B6B;
+  margin-top: 0.25rem;
+}
+
+.team-link:hover {
+  color: #1d4f4f;
+  text-decoration: underline;
+}
+
 /* ---- Footer Nav ---- */
 
 .footer-nav {
@@ -688,13 +750,36 @@ a:hover {
   font-weight: 600;
   color: #1A1A1A;
   line-height: 1.3;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+
+.network-parent {
+  font-size: 0.85rem;
+  color: #5A5A5A;
+  margin-bottom: 0.9rem;
+}
+
+.network-desc {
+  font-size: 0.9rem;
+  color: #2C2C2C;
+  line-height: 1.6;
+  margin-bottom: 0.9rem;
 }
 
 .network-contact {
   font-size: 0.82rem;
   color: #5A5A5A;
   letter-spacing: 0.01em;
+}
+
+.network-org a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid #2A6B6B;
+}
+
+.network-org a:hover {
+  color: #2A6B6B;
 }
 
 /* ---- Consulting Page ---- */
@@ -833,31 +918,6 @@ a:hover {
   margin-bottom: 1.4rem;
 }
 
-.symposium-types {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
-  margin: 1.5rem 0 1.75rem;
-}
-
-.symposium-type {
-  border: 1px solid #E0DDD8;
-  padding: 1.25rem 1.4rem;
-}
-
-.symposium-type-label {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #1A1A1A;
-  margin-bottom: 0.6rem;
-}
-
-.symposium-type p {
-  font-size: 0.92rem;
-  color: #3A3A3A;
-  margin-bottom: 0;
-}
 
 .symposium-cta {
   border: 1px solid #E0DDD8;
@@ -872,9 +932,65 @@ a:hover {
   margin-bottom: 0;
 }
 
-.symposium-cta-note {
-  color: #8A8A8A;
-  font-style: italic;
+.symposium-deadline {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2A6B6B;
+  margin-bottom: 0.5rem;
+}
+
+.symposium-banner-wrap {
+  max-width: 760px;
+  margin: 0 auto 2.5rem;
+  padding: 0 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.symposium-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #E0DDD8;
+  border-left: 3px solid #2A6B6B;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.symposium-banner:hover {
+  background: #F3F3F0;
+}
+
+.symposium-banner-logo {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.symposium-banner-text {
+  flex: 1;
+}
+
+.symposium-banner-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 0.15rem;
+}
+
+.symposium-banner-sub {
+  font-size: 0.85rem;
+  color: #5A5A5A;
+}
+
+.symposium-banner-arrow {
+  color: #2A6B6B;
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
 .symposium-submissions {
@@ -933,11 +1049,6 @@ a:hover {
   color: #3A3A3A;
 }
 
-@media (max-width: 768px) {
-  .symposium-types {
-    grid-template-columns: 1fr;
-  }
-}
 
 @media (max-width: 480px) {
   .landing-content h1 {

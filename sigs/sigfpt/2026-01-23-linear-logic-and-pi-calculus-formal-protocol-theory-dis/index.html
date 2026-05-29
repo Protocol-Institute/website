@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear Logic and Pi Calculus: Formal Protocol Theory Discussion — Formal Protocol Theory</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/sigs/sigfpt" class="back-link">&#8592; Formal Protocol Theory</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">January 23, 2026</p>
+        <h1>Linear Logic and Pi Calculus: Formal Protocol Theory Discussion</h1>
+      </div>
+
+      <div class="meeting-detail">
+
+        <div class="meeting-topics"><span class="meeting-topic">Linear logic semantics and proof structures</span><span class="meeting-topic">Interaction nets and their relationship to pi calculus</span><span class="meeting-topic">Constructivism and intuitionistic logic in protocol theory</span><span class="meeting-topic">Linear types for expressing liveness properties</span><span class="meeting-topic">Applications of linear logic to protocol specification and processor behavior modeling</span></div>
+        <p class="meeting-participants">Participants: _vgr, simpalaxy, _ergod, anurajenp, senthil_d1sc0rd, artemishelios, austinjacobs_33961, plague_year, maparent, ediblebadger, mtraven</p>
+        <p class="meeting-summary">The SIGFPT group convened to explore linear logic and pi calculus as formal frameworks for protocol theory. Simpalaxy provided preparatory reading materials on linear logic semantics, interaction nets, and their relationships to established logical systems. The discussion touched on foundational concepts including constructivism, Brouwer's intuitionism, and the rejection of excluded middle, establishing that linear logic operates within a purely constructionist paradigm with interesting computational properties. A significant portion of the meeting focused on practical applications, particularly how linear logic and linear types can model real-world systems. The kitchen metaphor for processor behavior emerged as a compelling application area, where concepts like maximizing throughput and speculative execution map naturally onto linear logic operations, with exception handling modeled as time-reversal contradictions. The group also discussed probabilistic reasoning within the formalism and potential connections to industrial protocol questions, suggesting a structured approach moving from atomic protocol questions upward through pi calculus, interaction nets, and linear logic frameworks.</p>
+        <ul class="meeting-insights">
+<li>Linear logic can be understood as a constructionist formalism with graph-reduction/transformation grammars that function like a physics engine for protocol behavior.</li>
+<li>Interaction nets generalize proof structures in linear logic and serve as a bridge between intuitionistic logic and pi calculus, similar to how lambda calculus relates to intuitionistic logic.</li>
+<li>Linear types can effectively express liveness properties and model processor behavior, including speculative execution as exception handling through time-reversal semantics.</li>
+<li>The group identified a potential research direction connecting linear logic/linear types to atomic protocol questions, with connections to temporal logic frameworks (LTL/TLA).</li>
+</ul>
+        <div class="meeting-links">
+<div class="meeting-links-label">Links discussed</div>
+<ul class="meeting-links-list">
+<li><a href="http://adelelopez.com/visual-linear-logic" rel="noopener noreferrer" target="_blank">adelelopez.com</a></li>
+<li><a href="https://lfcps.org/course/constlog20/20-linear.pdf" rel="noopener noreferrer" target="_blank">lfcps.org</a></li>
+<li><a href="https://ryanbrewer.dev/posts/linear-logic" rel="noopener noreferrer" target="_blank">ryanbrewer.dev</a></li>
+<li><a href="https://www.sciencedirect.com/science/article/pii/S0890540197926432" rel="noopener noreferrer" target="_blank">www.sciencedirect.com</a></li>
+<li><a href="https://verdagon.dev/blog/higher-raii-uses-linear-types" rel="noopener noreferrer" target="_blank">verdagon.dev</a></li>
+</ul>
+</div>
+        <a class="meeting-discord" href="https://discord.com/channels/1082444651946049567/1462869018699366470" rel="noopener noreferrer" target="_blank">View discussion in Discord →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
