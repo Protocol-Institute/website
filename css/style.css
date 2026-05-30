@@ -78,6 +78,31 @@ a:hover {
   padding: 0 2.5rem;
 }
 
+/* ---- Top utility bar ---- */
+
+.site-topbar {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0.6rem 2.5rem 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.site-topbar-link {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5A5A5A;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.site-topbar-link:hover {
+  color: #2A6B6B;
+  text-decoration: none;
+}
+
 /* ---- Navigation ---- */
 
 .site-nav {
@@ -165,9 +190,6 @@ a:hover {
 /* ---- Page Header (interior pages) ---- */
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
   padding: 1.75rem 0 1.5rem;
   border-bottom: 1px solid #E0DDD8;
   margin-bottom: 2.5rem;
@@ -175,22 +197,6 @@ a:hover {
 
 .page-header h1 {
   font-size: clamp(2rem, 4vw, 3rem);
-}
-
-.page-header-action {
-  font-size: 0.875rem;
-  color: #2A6B6B;
-  text-decoration: none;
-  border: 1px solid #2A6B6B;
-  padding: 0.35rem 0.8rem;
-  border-radius: 3px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.page-header-action:hover {
-  background: #2A6B6B;
-  color: #fff;
 }
 
 /* ---- Footer ---- */
@@ -647,6 +653,10 @@ a:hover {
 @media (max-width: 768px) {
   html {
     font-size: 17px;
+  }
+
+  .site-topbar {
+    padding: 0.5rem 1.5rem 0;
   }
 
   .site-nav {
