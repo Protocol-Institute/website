@@ -20,8 +20,9 @@ CREATE TABLE IF NOT EXISTS members (
   tag_datus_nusas    INTEGER DEFAULT 0,
   tag_khlongs_subaks INTEGER DEFAULT 0,
   tag_town_hall      INTEGER DEFAULT 0,
-  tag_sig            INTEGER DEFAULT 0,
-  tag_protocol_kit   INTEGER DEFAULT 0,
+  tag_sig                  INTEGER DEFAULT 0,
+  tag_protocol_kit         INTEGER DEFAULT 0,
+  tag_protocolized_writer  INTEGER DEFAULT 0,
   -- Consultant fields
   consulting_expertise TEXT,
   consulting_contact   TEXT,

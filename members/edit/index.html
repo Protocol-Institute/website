@@ -105,6 +105,7 @@
             <div class="form-group">
               <label class="form-label" for="contact-input">Contact preference <span class="optional">(email or URL)</span></label>
               <input class="form-input" type="text" id="contact-input">
+              <p class="form-hint">Will be shown publicly on your consulting card.</p>
             </div>
 
             <div class="form-group">
@@ -134,9 +135,24 @@
           </div>
 
           <div id="tags-display-group">
-            <p class="form-section-title">Qualifying events</p>
-            <p style="font-size:0.88rem;color:#8A8A8A;margin-bottom:0.75rem;">Set by the PI team based on your participation history. Contact <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a> if anything is missing.</p>
-            <div id="tags-display" class="member-tags" style="margin-bottom:1rem;"></div>
+            <p class="form-section-title">Events &amp; credentials</p>
+            <p style="font-size:0.88rem;color:#5A5A5A;margin-bottom:1rem;">Check everything that applies. These appear as badges on your profile. Contact <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a> if a qualifying event is missing.</p>
+            <div class="form-checkbox-group" style="margin-bottom:1rem;">
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_sop23"> Summer of Protocols 2023 cohort</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_sop24"> Summer of Protocols 2024 cohort</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_sop25"> Summer of Protocols 2025 cohort</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_ps25"> Protocol School 2025 graduate</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_datus_nusas"> Datus and Nusas attendee</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_khlongs_subaks"> Khlongs and Subaks attendee</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_town_hall"> Town Hall speaker</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_sig"> SIG participant</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_protocol_kit"> Protocol Kit recipient</label>
+              <label class="form-checkbox"><input type="checkbox" name="edit-tag" value="tag_protocolized_writer"> Protocolized writer</label>
+            </div>
+            <div id="team-tag-display" style="display:none;">
+              <span class="member-tag member-tag--team">Team</span>
+              <span style="font-size:0.78rem;color:#8A8A8A;margin-left:0.5rem;">Set by PI leadership</span>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -215,13 +231,6 @@
     });
   }
 
-  const TAG_LABELS = {
-    tag_sop23: "SoP '23", tag_sop24: "SoP '24", tag_sop25: "SoP '25",
-    tag_ps25: "Protocol School '25", tag_datus_nusas: 'Datus & Nusas',
-    tag_khlongs_subaks: 'Khlongs & Subaks', tag_town_hall: 'Town Hall',
-    tag_sig: 'SIG Participant', tag_protocol_kit: 'Protocol Kit',
-  };
-
   function photoSrc(key) {
     if (!key) return null;
     if (key.startsWith('http://') || key.startsWith('https://')) return key;
@@ -253,12 +262,12 @@
       placeholder.style.display = 'flex';
     }
 
-    // Qualifying tags (read-only)
-    const tagsEl = document.getElementById('tags-display');
-    const activeTags = Object.keys(TAG_LABELS).filter(k => profile[k]);
-    tagsEl.innerHTML = activeTags.length
-      ? activeTags.map(k => `<span class="member-tag">${TAG_LABELS[k]}</span>`).join('')
-      : '<span style="font-size:0.88rem;color:#ABABAB;font-style:italic;">No qualifying events on record yet.</span>';
+    // Event/credential tag checkboxes
+    document.querySelectorAll('input[name="edit-tag"]').forEach(cb => {
+      cb.checked = !!(profile[cb.value]);
+    });
+    // Team tag: read-only badge, shown only if is_team
+    document.getElementById('team-tag-display').style.display = profile.is_team ? '' : 'none';
 
     const showConsulting = !!(profile.is_consultant);
     document.getElementById('consulting-fields').style.display = showConsulting ? '' : 'none';
@@ -406,6 +415,12 @@
 
   // Save changes
   document.getElementById('save-btn').addEventListener('click', async function () {
+    // Collect tag checkbox values
+    const tagFields = {};
+    document.querySelectorAll('input[name="edit-tag"]').forEach(cb => {
+      tagFields[cb.value] = cb.checked ? 1 : 0;
+    });
+
     const fields = {
       name: document.getElementById('name-input').value.trim(),
       bio: document.getElementById('bio-input').value.trim(),
@@ -415,6 +430,7 @@
       consulting_expertise: document.getElementById('expertise-input').value.trim() || '',
       consulting_contact: document.getElementById('contact-input').value.trim() || '',
       consulting_portfolio: document.getElementById('portfolio-input').value.trim() || '',
+      ...tagFields,
     };
 
     if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }

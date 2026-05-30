@@ -5,7 +5,7 @@
 const VALID_TAGS = [
   'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
   'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
-  'tag_sig', 'tag_protocol_kit'
+  'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer'
 ];
 
 export async function onRequestPost({ request, env }) {

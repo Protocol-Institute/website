@@ -6,6 +6,11 @@
 const SELF_EDITABLE = new Set([
   'name', 'bio', 'website', 'photo_r2_key',
   'city', 'discord_handle',
+  // Event/credential tags — self-service (team tags excluded)
+  'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
+  'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
+  'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer',
+  // Consulting fields
   'consulting_expertise', 'consulting_contact', 'consulting_portfolio',
 ]);
 

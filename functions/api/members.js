@@ -6,7 +6,7 @@ const VALID_TAGS = [
   'is_team', 'is_consultant',
   'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
   'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
-  'tag_sig', 'tag_protocol_kit'
+  'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer'
 ];
 
 const TAG_ALIASES = {
@@ -33,7 +33,7 @@ export async function onRequestGet({ request, env }) {
            city, discord_handle,
            tag_sop23, tag_sop24, tag_sop25, tag_ps25,
            tag_datus_nusas, tag_khlongs_subaks, tag_town_hall,
-           tag_sig, tag_protocol_kit,
+           tag_sig, tag_protocol_kit, tag_protocolized_writer,
            consulting_expertise, consulting_contact, consulting_portfolio
     FROM members
     WHERE is_public = 1
