@@ -1,4 +1,8 @@
 # Claude Notes — vgr (Venkat)
+
+> **SoP migration tasks for this site:** see [`sop-migration.md`](sop-migration.md) —
+> content from summerofprotocols.com that belongs on protocol-institute.org once the
+> domain redirects. Check this file before starting any About, Consulting, or Programs work.
 > **Environment rules, keys & safety policies:** see [Code/CLAUDE.md](../../CLAUDE.md) — read before starting work.
 
 Venkat is org admin (owner) on Protocol-Institute and has admin on all repos. Direct push to `main` is fine for this repo.
