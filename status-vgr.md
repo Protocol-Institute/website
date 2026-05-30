@@ -5,15 +5,16 @@
 
 ## Upcoming
 <!-- planned changes or features -->
+- Symposium banner: replace CSS placeholder with final artwork from artist (1520×400px, 2× retina)
 - Promote Network page to main nav once member content is added
 - Migrate hosting from Netlify to Cloudflare Pages (see GitHub Issue #1/#2); migrate assets to R2 under same /assets/* paths (proxy via Pages Function so no HTML changes needed)
 - Add Events page with Google Calendar embed (calendar location TBD — hold until calendar is finalized)
-- Symposium page: add Google Form URL when ready; set submission deadline and exact dates
 - Add Sachin Benny photo to assets/beings/ and wire up on consulting page
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-05-29** — Session 10: updated /network cards from Google Form data (ProSoDiAC lab / Giovanni Merlino with logo; Protopolis Lab / Helena Rong with website); updated /consulting card for Rafael Fernandez (full expertise, rafael.fyi contact). Added assets/network/ for logos. Added fetch_form_data.py script and SHEETS.md to document the Google Sheets update workflow. Symposium page: wired in Google Form, added June 14 submission deadline to blurb and CTA box, removed boxed submission-type blurbs. Added symposium promo banner to landing page (placeholder CSS; artist brief: 1520×400px 2×). Merged main → feat/cloudflare-migration.
 - **2026-05-28** — Session 9: major site restructure. Clean URLs (pagename/index.html). SIG session pages split into individual detail pages with date-based slugs (YYYY-MM-DD-title); CONVENTIONS.md added as spec for c3po ingestion. /projects → /programs rename; "Initiatives" → "Programs" nav label; page restructured as program bundles with track lists (Protocolized: Substack/archive/YouTube/Books/Worldbuilding; AI Infrastructure: C3PO+Humboldt; SIGs; Long Now). "Magazine" nav → "Protocolized". Nav refactored to single shared source in main.js (injected, active link computed from URL). Team page: all photos added (James, Tim, Rafa), Venkat's photo localized, C3PO and Humboldt added as full team members (titles: Corpus Orchestrator, Artificial Researcher). "the new nature" → "New Nature" throughout. Profile photos consolidated into assets/beings/.
 - **2026-05-28** — Session 8: created `pitchdeck/` scaffolding — embeddable HTML presentation system for support.html. Slide types: cover, big-point, section, bullets, numbered, quote, big-image, table, two-column. PDF export, keyboard nav, semantic versioning with `archive/`. Content is placeholder v0.1.0.
 - **2026-05-26** — Session 7 (~3:05–3:20 PT): diagnosed iPad "Site not found" issue — fixed by enabling HTTPS enforcement in GitHub Pages settings. Merged main into feat/cloudflare-migration (17 commits, 36 files, clean). Reviewed symposium page status.

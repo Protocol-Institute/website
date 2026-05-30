@@ -27,21 +27,28 @@ All pages use clean URLs: `about/index.html` is served at `/about`, etc.
 index.html          Landing page
 about/              /about
 contact/            /contact
-projects/           /projects
+programs/           /programs
 sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
   sigfpt/           /sigs/sigfpt — each SIG has a sub-index + one dir per session
   mrg/
   sigpfb/
   protfisig/
+network/            /network — PIN member directory (data from Google Form)
+consulting/         /consulting — consultant directory (data from Google Form)
+symposium-2026/     /symposium-2026
 support/            /support (embeds pitchdeck iframe)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css)
 assets/
   logo-animated.svg   Animated logo — used only on index.html
   logo-static.png     Static logo — used on all other pages
+  beings/             Profile photos (people and AI team members)
+  network/            Logos for PIN member cards
 css/
   style.css           All styles — single stylesheet for the whole site
 js/
-  main.js             Minimal JS for mobile nav toggle
+  main.js             Minimal JS for mobile nav toggle + nav injection
+fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
+SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Netlify redirect rules
 ```
 
