@@ -1,5 +1,14 @@
 // Protocol Institute — Shared nav injection + mobile toggle
 
+// CF Web Analytics beacon
+(function () {
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', '{"token": "5d26701bc38c4ee38a6d2c82a7c0c8a4"}');
+  document.head.appendChild(s);
+}());
+
 var NAV_HTML =
   '<nav class="site-nav" aria-label="Site navigation">' +
     '<a href="/" class="nav-brand"><img src="/assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>' +
