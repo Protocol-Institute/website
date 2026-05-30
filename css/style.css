@@ -165,6 +165,9 @@ a:hover {
 /* ---- Page Header (interior pages) ---- */
 
 .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   padding: 1.75rem 0 1.5rem;
   border-bottom: 1px solid #E0DDD8;
   margin-bottom: 2.5rem;
@@ -172,6 +175,22 @@ a:hover {
 
 .page-header h1 {
   font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.page-header-action {
+  font-size: 0.875rem;
+  color: #2A6B6B;
+  text-decoration: none;
+  border: 1px solid #2A6B6B;
+  padding: 0.35rem 0.8rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.page-header-action:hover {
+  background: #2A6B6B;
+  color: #fff;
 }
 
 /* ---- Footer ---- */
