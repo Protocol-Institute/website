@@ -22,6 +22,7 @@ See `MIGRATION.md`. CF Pages live, custom domains active, R2 asset bucket, secur
 Items captured for consideration, not yet assigned to a phase:
 
 - **Contact form with email delivery** — replace static contact page with a form (name, email, message); CF Pages Function backend at `/api/contact`; Resend for delivery to team@protocol-institute.org; CF Turnstile for spam protection
+- **Symposium 2026 submission ingestion** — after June 14 deadline, run a one-time script to pull the Google Sheets responses (spreadsheet: `1cnXQUBVdwTbOJTYEhv2KCxhSAobcP_Jx0WEwH5S_dJQ`) into D1 to seed the talks/workshops database; keep the Google Form as-is for intake
 
 ---
 
