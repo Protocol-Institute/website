@@ -2,11 +2,7 @@
 // Handles new member registration form submission
 // Inserts into membership_requests (pending admin review)
 
-const VALID_TAGS = [
-  'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
-  'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
-  'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer'
-];
+import { EVENT_TAGS } from '../../_shared/tags.js';
 
 export async function onRequestPost({ request, env }) {
   let body;
@@ -41,7 +37,7 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ error: 'Name required' }, { status: 400 });
   }
   // Must select at least one qualifying event
-  const validEvents = qualifying_events.filter(t => VALID_TAGS.includes(t));
+  const validEvents = qualifying_events.filter(t => EVENT_TAGS.includes(t));
   if (validEvents.length === 0) {
     return Response.json({ error: 'At least one qualifying event required' }, { status: 400 });
   }

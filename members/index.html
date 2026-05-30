@@ -56,29 +56,12 @@
 
 </div>
 
+<script src="/js/tags.js"></script>
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const TAG_LABELS = {
-    is_team: 'Team',
-    is_consultant: 'Consultant',
-    tag_sop23: "SoP '23",
-    tag_sop24: "SoP '24",
-    tag_sop25: "SoP '25",
-    tag_ps25: 'Protocol School \'25',
-    tag_datus_nusas: 'Datus & Nusas',
-    tag_khlongs_subaks: 'Khlongs & Subaks',
-    tag_town_hall: 'Town Hall',
-    tag_sig: 'SIG Participant',
-    tag_protocol_kit: 'Protocol Kit',
-    tag_protocolized_writer: 'Protocolized Writer',
-  };
-
-  const EVENT_TAGS = [
-    'tag_sop23','tag_sop24','tag_sop25','tag_ps25',
-    'tag_datus_nusas','tag_khlongs_subaks','tag_town_hall',
-    'tag_sig','tag_protocol_kit','tag_protocolized_writer'
-  ];
+  const TAG_LABELS = PI_TAGS.LABELS;
+  const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
   let allMembers = [];
   let activeFilter = '';

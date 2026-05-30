@@ -2,17 +2,7 @@
 // Query params: tag=team|consultant|<event_tag>, type=human|ai
 // Returns members with is_public=1, never includes email field
 
-const VALID_TAGS = [
-  'is_team', 'is_consultant',
-  'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
-  'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
-  'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer'
-];
-
-const TAG_ALIASES = {
-  team: 'is_team',
-  consultant: 'is_consultant',
-};
+import { VALID_TAGS, TAG_ALIASES } from '../_shared/tags.js';
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);

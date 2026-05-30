@@ -3,11 +3,7 @@
 // POST — approve or reject a request  (body: { email, action: 'approve'|'reject', admin_notes?, slug? })
 // Protected by Authorization: Bearer <ADMIN_KEY> header
 
-const TAG_COLUMNS = [
-  'tag_sop23','tag_sop24','tag_sop25','tag_ps25',
-  'tag_datus_nusas','tag_khlongs_subaks','tag_town_hall',
-  'tag_sig','tag_protocol_kit'
-];
+import { EVENT_TAGS as TAG_COLUMNS } from '../../_shared/tags.js';
 
 function checkAuth(request, env) {
   const auth = request.headers.get('Authorization') || '';
