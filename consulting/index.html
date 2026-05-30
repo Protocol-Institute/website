@@ -54,6 +54,12 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  function photoSrc(key) {
+    if (!key) return null;
+    if (key.startsWith('http://') || key.startsWith('https://')) return key;
+    return '/assets/' + key;
+  }
+
   function escHtml(str) {
     return String(str || '')
       .replace(/&/g, '&amp;')
@@ -70,8 +76,9 @@
   }
 
   function renderConsultant(m) {
-    const photoHtml = m.photo_r2_key
-      ? `<img src="/assets/${escHtml(m.photo_r2_key)}" alt="${escHtml(m.name)}">`
+    const src = photoSrc(m.photo_r2_key);
+    const photoHtml = src
+      ? `<img src="${escHtml(src)}" alt="${escHtml(m.name)}">`
       : `<div class="consulting-photo--placeholder"><span>Photo</span><span class="consulting-photo-hint">240 × 240 px</span></div>`;
 
     const roleHtml = m.team_title

@@ -44,6 +44,12 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  function photoSrc(key) {
+    if (!key) return null;
+    if (key.startsWith('http://') || key.startsWith('https://')) return key;
+    return '/assets/' + key;
+  }
+
   function escHtml(str) {
     return String(str || '')
       .replace(/&/g, '&amp;')
@@ -54,8 +60,9 @@
 
   function renderTeamMember(m) {
     const isAi = m.type === 'ai';
-    const photoHtml = m.photo_r2_key
-      ? `<img src="/assets/${escHtml(m.photo_r2_key)}" alt="${escHtml(m.name)}"${isAi ? ' class="team-photo-ai"' : ''}>`
+    const src = photoSrc(m.photo_r2_key);
+    const photoHtml = src
+      ? `<img src="${escHtml(src)}" alt="${escHtml(m.name)}"${isAi ? ' class="team-photo-ai"' : ''}>`
       : `<div class="team-photo-placeholder"><span>Photo</span></div>`;
 
     const contactHtml = isAi

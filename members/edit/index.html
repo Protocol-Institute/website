@@ -103,12 +103,24 @@
           </div>
 
           <div id="photo-field-group">
-            <p class="form-section-title">Photo</p>
+            <p class="form-section-title">Profile photo</p>
             <div class="form-group">
-              <label class="form-label" for="photo-input">Photo URL or R2 key <span class="optional">(optional)</span></label>
-              <input class="form-input" type="text" id="photo-input">
-              <p class="form-hint">R2 key (e.g. <code>beings/yourname.jpg</code>) or a public URL.</p>
+              <div id="photo-preview-wrap" style="margin-bottom:1rem;">
+                <img id="photo-preview" src="" alt="Profile photo" style="width:120px;height:120px;object-fit:cover;object-position:top center;border:1px solid #E0DDD8;display:none;">
+                <div id="photo-placeholder" style="width:120px;height:120px;background:#F0EDE8;border:1px solid #E0DDD8;display:none;align-items:center;justify-content:center;">
+                  <span style="font-size:0.75rem;color:#C0BCBA;letter-spacing:0.05em;text-transform:uppercase;">No photo</span>
+                </div>
+              </div>
+              <label class="form-label" for="photo-input">Replace with a different photo <span class="optional">(optional)</span></label>
+              <input class="form-input" type="url" id="photo-input" placeholder="https://…">
+              <p class="form-hint">Paste a link to a publicly accessible photo, square format, at least 240×240px.</p>
             </div>
+          </div>
+
+          <div id="tags-display-group">
+            <p class="form-section-title">Qualifying events</p>
+            <p style="font-size:0.88rem;color:#8A8A8A;margin-bottom:0.75rem;">Set by the PI team based on your participation history. Contact <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a> if anything is missing.</p>
+            <div id="tags-display" class="member-tags" style="margin-bottom:1rem;"></div>
           </div>
 
           <div class="form-actions">
@@ -187,6 +199,19 @@
     });
   }
 
+  const TAG_LABELS = {
+    tag_sop23: "SoP '23", tag_sop24: "SoP '24", tag_sop25: "SoP '25",
+    tag_ps25: "Protocol School '25", tag_datus_nusas: 'Datus & Nusas',
+    tag_khlongs_subaks: 'Khlongs & Subaks', tag_town_hall: 'Town Hall',
+    tag_sig: 'SIG Participant', tag_protocol_kit: 'Protocol Kit',
+  };
+
+  function photoSrc(key) {
+    if (!key) return null;
+    if (key.startsWith('http://') || key.startsWith('https://')) return key;
+    return '/assets/' + key;
+  }
+
   function populateForm(profile) {
     currentProfile = profile;
     document.getElementById('name-input').value = profile.name || '';
@@ -195,7 +220,27 @@
     document.getElementById('expertise-input').value = profile.consulting_expertise || '';
     document.getElementById('contact-input').value = profile.consulting_contact || '';
     document.getElementById('portfolio-input').value = profile.consulting_portfolio || '';
-    document.getElementById('photo-input').value = profile.photo_r2_key || '';
+    document.getElementById('photo-input').value = '';  // always blank — shows current as thumbnail
+
+    // Photo thumbnail
+    const src = photoSrc(profile.photo_r2_key);
+    const preview = document.getElementById('photo-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    if (src) {
+      preview.src = src;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      preview.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+
+    // Qualifying tags (read-only)
+    const tagsEl = document.getElementById('tags-display');
+    const activeTags = Object.keys(TAG_LABELS).filter(k => profile[k]);
+    tagsEl.innerHTML = activeTags.length
+      ? activeTags.map(k => `<span class="member-tag">${TAG_LABELS[k]}</span>`).join('')
+      : '<span style="font-size:0.88rem;color:#ABABAB;font-style:italic;">No qualifying events on record yet.</span>';
 
     const showConsulting = !!(profile.is_consultant);
     document.getElementById('consulting-fields').style.display = showConsulting ? '' : 'none';
@@ -300,6 +345,7 @@
 
   // Save changes
   document.getElementById('save-btn').addEventListener('click', async function () {
+    const newPhotoUrl = document.getElementById('photo-input').value.trim();
     const fields = {
       name: document.getElementById('name-input').value.trim(),
       bio: document.getElementById('bio-input').value.trim(),
@@ -307,8 +353,9 @@
       consulting_expertise: document.getElementById('expertise-input').value.trim() || '',
       consulting_contact: document.getElementById('contact-input').value.trim() || '',
       consulting_portfolio: document.getElementById('portfolio-input').value.trim() || '',
-      photo_r2_key: document.getElementById('photo-input').value.trim() || '',
     };
+    // Only update photo if a new URL was entered
+    if (newPhotoUrl) fields.photo_r2_key = newPhotoUrl;
 
     if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }
 
