@@ -54,49 +54,31 @@ Add Stripe Payment Links or a Stripe Checkout widget (JavaScript embed, no Worke
 
 ---
 
-## Phase 2 — Member Directory *(target: after CF migration is live)*
+## Phase 2 — Member Directory ✅ *(complete 2026-05-30)*
 
 A public-facing directory of PI members and network participants, with self-service profile editing via email PIN auth.
 
-### Data model (D1)
+### Implemented
 
-```sql
-members (id, name, org, role, bio, research_interests, url, email,
-         eth_address, photo_r2_key, public_email bool,
-         created_at, updated_at)
-```
+- D1 database `pi-members` with `members`, `membership_requests`, `auth_pins` tables (see `db/schema.sql`)
+- Seed: 6 human + 2 AI members from team/consulting pages; confirmed emails in `db/seed.sql`
+- `owner_email` field on AI members so Venkat can manage C3PO/Humboldt via edit page
+- `/api/members` — public D1 endpoint, filterable by tag (team, consultant, event tags); email excluded from response
+- `/api/auth/send-pin` + `/api/auth/verify-pin` — email→PIN auth; SHA-256 hashed; 24h session cookie
+- `/api/membership/request` — registration form submission → membership_requests (pending review)
+- `/api/members/me` + `/api/members/update` — session-based profile read/edit (admin-only fields blocked)
+- `/api/admin/members` — pending request review queue; protected by `ADMIN_KEY` CF Pages secret
+- `/members` — filterable directory with tag badges (JS-rendered from D1); "Members" added to site nav
+- `/members/join` — 3-step registration form (email→PIN→apply); conditional consultant/team/photo sections
+- `/members/edit` — 3-step edit form; bot profile switcher (Venkat sees C3PO and Humboldt selectable)
+- `/admin/members.html` — admin UI for approving/rejecting pending applications
+- `/team` and `/consulting` pages now fetch from D1 (same visual design)
 
-### Features
+### Still needed to fully activate
 
-**Public directory** (`members.html`)
-- Filterable grid by role/research area (vanilla JS, Fuse.js — same pattern as protocolized-website)
-- Profile cards: name, org, role, bio excerpt, links
-- Photos served from R2
-
-**Initial import**
-- One-time: Worker or local script reads CSV export from spreadsheet → bulk-inserts into D1
-- Format: same columns as D1 schema above
-
-**Member self-service (email PIN auth)**
-1. Member visits `/members/edit`, enters their email
-2. Worker: generate 6-digit PIN, store in KV with 15-minute TTL, email PIN via Resend
-3. Member enters PIN → Worker validates → sets a signed session cookie (KV-backed, 24h TTL)
-4. Member sees their profile form; submits edits → Worker updates D1 row
-5. Session cookie allows re-editing without re-auth for 24h
-
-**Admin interface**
-- Simple Worker-protected route at `/admin/members` (HTTP Basic auth or a long secret URL initially)
-- CSV import, individual record edit/delete, photo upload to R2
-- Upgrade to proper admin auth later (share with SIWE in Phase 4)
-
-### CF resources
-
-| Resource | Purpose |
-|---|---|
-| D1 | Member records |
-| KV | PIN tokens + sessions |
-| R2 | Profile photos |
-| Resend (external) | PIN emails |
+- **Set `RESEND_API_KEY` CF Pages secret** — PIN emails won't send until this is configured
+- **Set `ADMIN_KEY` CF Pages secret** — admin interface locked until configured
+- **Sign up for Resend** — get API key, add sending domain `protocol-institute.org`
 
 ---
 
