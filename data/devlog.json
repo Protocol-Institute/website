@@ -356,10 +356,10 @@
       "id": 12,
       "sort_key": 12.0,
       "label": "Session 12",
-      "title": "Architecture Review: CF Access, Tag Consolidation, Mailing List Plan",
+      "title": "Architecture Review, SoP Migration Pages, Domain Redirect Plan",
       "date": "2026-05-30",
       "time_pt": "",
-      "tracks": ["cloudflare-migration", "member-directory", "operations"],
+      "tracks": ["cloudflare-migration", "member-directory", "static-site", "content", "operations"],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -383,6 +383,14 @@
         {
           "title": "SIG mailing list plan:",
           "html": "<strong>SIG mailing list plan documented:</strong> Designed a SIG-only opt-in mailing list system using Resend Audiences + D1 subscription prefs + CF Worker for broadcast. Single sending address: <code>sigs@protocol-institute.org</code> (not yet created). Four SIG lists (sigfpt, mrg, sigpfb, protfisig). New <code>is_sig_host</code> role. Members opt in via a new Lists tab in their profile. SIG hosts compose and send via a web UI (no inbound email alias for now). Plan documented in <code>status-vgr.md</code>. Implementation blocked pending Resend sender setup and Audience creation."
+        },
+        {
+          "title": "SoP migration pages:",
+          "html": "<strong>SoP migration — new pages:</strong> Migrated content from <code>summerofprotocols.com</code> to this site. <code>/symposium-2025</code>: archive of the 2025 Protocol Symposium (Sept 12–19, theme <em>Accelerating Order</em>) — Foundations Workshop, Protocol School, Hackathons. <code>/programs/protocol-school</code>: stub for the biennial Protocol School program with 2025 edition details and full list of 11 teaching fellows. Added Protocol School entry to <code>/programs</code>. <code>/workshops</code>: Corporate Workshops offering — virtual seminar + in-person format, Venkat/Timber facilitator split by sector, contact updated to PI email. <code>/license</code>: CC+ License page documenting the SoP23 dual-licensing model (CC BY-NC 4.0 → CC BY 4.0 on Dec 13, 2026); linked from About page. <code>data/alumni.json</code>: 70 alumni from SoP23–25 saved locally as reference for future directory work."
+        },
+        {
+          "title": "summerofprotocols.com redirect plan:",
+          "html": "<strong>summerofprotocols.com redirect plan:</strong> Domain migrating to Cloudflare; will redirect different paths to <code>protocol-institute.org</code> (institutional pages) and <code>protocolized.io</code> (content/research). Catch-all goes to protocolized.io. Specific path rules documented in <code>../admin/sop-domain-migration.md</code> as an ordered CF Redirect Rules list. Protocolized CLAUDE.md updated to note the incoming catch-all traffic. Implementation ready to execute once DNS zone is in CF."
         }
       ]
     }

@@ -186,11 +186,11 @@ A build log for protocol-institute.org — how the static site was built, what i
 
 ---
 
-## Session 12: Architecture Review: CF Access, Tag Consolidation, Mailing List Plan
+## Session 12: Architecture Review, SoP Migration Pages, Domain Redirect Plan
 
 *2026-05-30*
 
-**Tracks:** cloudflare-migration, member-directory, operations
+**Tracks:** cloudflare-migration, member-directory, static-site, content, operations
 
 - **Member Login/Register topbar:** Added a site-wide 'Member Login / Register' link injected above the nav on every page via `main.js`. Styled as a small uppercase link in the upper right corner. The `/members/join` page copy updated to clarify it handles both cases — existing members are routed to their edit profile, new applicants complete the join form.
 
@@ -201,5 +201,9 @@ A build log for protocol-institute.org — how the static site was built, what i
 - **CSP cleanup:** Removed `cdn.jsdelivr.net` from the `script-src` directive in `_headers` — it was allowlisted but never loaded. Tightening the CSP reduces the attack surface for script injection.
 
 - **SIG mailing list plan documented:** Designed a SIG-only opt-in mailing list system using Resend Audiences + D1 subscription prefs + CF Worker for broadcast. Single sending address: `sigs@protocol-institute.org` (not yet created). Four SIG lists (sigfpt, mrg, sigpfb, protfisig). New `is_sig_host` role. Members opt in via a new Lists tab in their profile. SIG hosts compose and send via a web UI (no inbound email alias for now). Plan documented in `status-vgr.md`. Implementation blocked pending Resend sender setup and Audience creation.
+
+- **SoP migration — new pages:** Migrated content from `summerofprotocols.com` to this site. `/symposium-2025`: archive of the 2025 Protocol Symposium (Sept 12–19, theme *Accelerating Order*) — Foundations Workshop, Protocol School, Hackathons. `/programs/protocol-school`: stub for the biennial Protocol School program with 2025 edition details and full list of 11 teaching fellows. Added Protocol School entry to `/programs`. `/workshops`: Corporate Workshops offering — virtual seminar + in-person format, Venkat/Timber facilitator split by sector, contact updated to PI email. `/license`: CC+ License page documenting the SoP23 dual-licensing model (CC BY-NC 4.0 → CC BY 4.0 on Dec 13, 2026); linked from About page. `data/alumni.json`: 70 alumni from SoP23–25 saved locally as reference for future directory work.
+
+- **summerofprotocols.com redirect plan:** Domain migrating to Cloudflare; will redirect different paths to `protocol-institute.org` (institutional pages) and `protocolized.io` (content/research). Catch-all goes to protocolized.io. Specific path rules documented in `../admin/sop-domain-migration.md` as an ordered CF Redirect Rules list. Protocolized CLAUDE.md updated to note the incoming catch-all traffic. Implementation ready to execute once DNS zone is in CF.
 
 ---

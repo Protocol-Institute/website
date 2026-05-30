@@ -35,9 +35,25 @@ sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
   protfisig/
 network/            /network — PIN member directory (data from Google Form)
 consulting/         /consulting — consultant directory (data from Google Form)
+workshops/          /workshops — Corporate Workshops offering
+symposium-2025/     /symposium-2025 — 2025 symposium archive
 symposium-2026/     /symposium-2026
+programs/
+  protocol-school/  /programs/protocol-school — biennial Protocol School program
 support/            /support (embeds pitchdeck iframe)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css)
+license/            /license — CC+ license for SoP23 outputs
+members/            /members — member directory (D1-backed, PIN auth)
+  join/             /members/join — login + registration flow
+  edit/             /members/edit — authenticated profile editor
+admin/              /admin/members — admin review panel (CF Access gated)
+functions/          Cloudflare Pages Functions (API endpoints)
+  _shared/tags.js   Canonical tag definitions — imported by all Workers
+  api/              /api/* endpoints (members, auth, membership, admin)
+db/                 D1 schema and migrations
+data/
+  devlog.json       Build log source of truth
+  alumni.json       SoP23–25 alumni reference data (70 entries)
 assets/
   logo-animated.svg   Animated logo — used only on index.html
   logo-static.png     Static logo — used on all other pages
@@ -46,10 +62,11 @@ assets/
 css/
   style.css           All styles — single stylesheet for the whole site
 js/
-  main.js             Minimal JS for mobile nav toggle + nav injection
+  main.js             Nav injection, mobile toggle, CF Analytics beacon
+  tags.js             Canonical tag labels/lists for client-side pages
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
-_redirects          Netlify redirect rules
+_redirects          Legacy URL redirects (works on both Netlify and CF Pages)
 ```
 
 ## SIG session pages
