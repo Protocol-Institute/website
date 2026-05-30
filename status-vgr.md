@@ -9,8 +9,10 @@
 - Promote Network page to main nav once member content is added
 - Migrate hosting from Netlify to Cloudflare Pages (see GitHub Issue #1/#2); migrate assets to R2 under same /assets/* paths (proxy via Pages Function so no HTML changes needed)
 - Add Events page with Google Calendar embed (calendar location TBD — hold until calendar is finalized)
-- Add Sachin Benny photo to assets/beings/ and wire up on consulting page
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
+- **SoP migration — Program History:** Expand `about/index.html` with a "Program History" / "Origins" section covering SoP23–25: research tracks, participant counts, $2.5M EF funding, 70+ alumni, 100+ outputs, 358-page proto-textbook, 1,800+ subscribers, conference history (Seattle, Singapore, Healdsburg, Chiang Mai, Devconnect Buenos Aires). Source: summerofprotocols.com/about. Blocked on writing/editing time.
+- **SoP migration — CC+ License:** New page at `/license`. Content is 404 on live SoP site — needs recovery from internal records or Wayback Machine. Link from About page and any content pages that reference reuse terms.
+- **SoP migration — Teaching Fellows list:** Add to `/programs/protocol-school` — 11 names/affiliations from SoP25. Page exists, stub placeholder in place. Source page is 404 on live SoP site; recover from internal records.
 
 ### SIG Mailing Lists (planned, not started)
 
