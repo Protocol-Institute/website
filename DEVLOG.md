@@ -95,3 +95,111 @@ A build log for protocol-institute.org — how the static site was built, what i
 - **Magazine nav link:** Added Magazine → `https://protocolized.io` (opens in new tab) to the primary nav on all 12 pages, positioned after Initiatives. One perl one-liner across all HTML files.
 
 ---
+
+## Session 6: SIG Meeting Archive, Humboldt, C3PO Live
+
+*2026-05-19*
+
+**Tracks:** static-site, content
+
+- **SIG meeting archive — 78 sessions:** Added individual HTML pages for all four SIGs (`sigfpt`, `mrg`, `sigpfb`, `protfisig`) with meeting summaries sourced from Discord transcripts via c3po. Each SIG got an index page listing all sessions and individual detail pages per meeting. A second pass (2026-05-20) recovered 10 additional sessions that had been missed. The c3po pipeline began running automatically after this, committing new session pages as meetings occur.
+
+- **Humboldt project page and lab notebook (2026-05-20):** Added `humboldt/index.html` — describes Humboldt as an AI research agent investigating the New Nature using the c3po Pinecone index. Added `humboldt-notebook/index.html` — a running research log with dated entries. Added entry to initiatives listing. Title corrected from 'research agent' to 'Artificial Researcher' to match the AI team member framing. `/humboldt-notebook.html` redirect added to preserve any hash-anchor deep links.
+
+- **C3PO updated to live/beta:** `projects.html` status badge changed from In Development to Live · Beta. `c3po.html` Status and Technical sections rewritten present-tense: RAG assistant over 12k+ vectors, MCP server integration, Claude Sonnet backend. Corpus size updated. Direct 'Open C3PO →' link added from the initiatives listing; 'Try it →' link at top of the c3po page. The page now accurately reflects the deployed tool rather than the original forward-looking description.
+
+---
+
+## Session 7: HTTPS Enforcement Fix, CF Branch Sync
+
+*2026-05-26 · ~15:05–15:20 PT*
+
+**Tracks:** cloudflare-migration, operations
+
+- **iPad HTTPS enforcement fix:** Site was showing 'Site not found' on iPad (and likely other iOS clients). Root cause: GitHub Pages HTTPS enforcement was not enabled in the repository settings. The site was accessible over HTTP but iOS WebKit was refusing the non-HTTPS connection. Fixed by enabling 'Enforce HTTPS' in the GitHub Pages settings. CNAME record was also confirmed correct at this time.
+
+- **Merged main → feat/cloudflare-migration:** 17 commits, 36 files. Clean merge with no conflicts — the CF migration branch had been diverging as content work accumulated on main. The branch is kept in sync periodically so the CF Pages deploy preview tracks current content.
+
+---
+
+## Session 8: Pitchdeck Scaffolding
+
+*2026-05-28*
+
+**Tracks:** static-site
+
+- **Pitchdeck system (`pitchdeck/`):** Built an embeddable HTML presentation system for `support.html`. Slide types implemented: cover, big-point, section, bullets, numbered, quote, big-image, table, two-column. Features: keyboard nav (arrow keys, space), PDF export via print dialog, fullscreen toggle, semantic versioning with `archive/` subfolder. Deck content is inline in `deck.html` (no fetch required). A fetch-based approach was tried first but caused loading failures when the page was embedded in an iframe — fixed by embedding content directly. Added public-facing `README.md` and renamed the technical guide to `EDITING.md`.
+
+- **New Nature deck v0.1.0:** 11-slide placeholder deck covering the Protocol Institute's New Nature research thesis. All slide types exercised. Images are SVG placeholders — real assets to replace later. The deck is live and embedded on `/support`. Version bump workflow (editing `deck.html`, archiving old version, updating `support.html` embed) is documented in `EDITING.md` but not yet tested end-to-end.
+
+---
+
+## Session 9: Major Site Restructure: Clean URLs, SIG Detail Pages, Programs Rename, Nav Refactor
+
+*2026-05-28*
+
+**Tracks:** static-site, content
+
+- **Clean URLs:** All pages migrated from `pagename.html` to `pagename/index.html` — so `/about.html` becomes `/about`, etc. Every internal link across the site updated. This is the standard pattern for static sites on both Netlify and CF Pages and removes the `.html` extension from all URLs.
+
+- **SIG session detail pages:** Each SIG session became its own page at `/sigs/{sig}/{YYYY-MM-DD}-{slug}/`. SIG index pages now list sessions with short abstracts and link out to detail pages (rather than displaying full summaries inline). URL naming convention and HTML structure documented in `sigs/CONVENTIONS.md`, which also serves as the spec for the c3po automated ingestion pipeline.
+
+- **/projects → /programs rename:** The Initiatives listing was renamed — URL changed from `/projects` to `/programs`, nav label changed from 'Initiatives' to 'Programs', page title updated. The old `/projects` URL gets a 301 redirect via `_redirects`. The page content was restructured as program bundles with track lists: Protocolized (Substack, archive, YouTube, Books, Worldbuilding), AI Infrastructure (C3PO, Humboldt), SIGs, Long Now.
+
+- **Nav refactored to shared JS injection:** All pages previously had the full `&lt;nav&gt;` HTML duplicated inline. Replaced with a single `NAV_HTML` constant in `main.js` injected into a `&lt;header id='site-header'&gt;&lt;/header&gt;` placeholder. Active link computed from `window.location.pathname` rather than hardcoded `class='active'` per page. Magazine nav link renamed from 'Magazine' to 'Protocolized'.
+
+- **Team page overhaul:** Added photos for James Langdon, Tim Beiko, and Rafael Fernandez. Venkat's photo localized to `assets/beings/` rather than pulling from an external URL. C3PO and Humboldt added as full team members with titles 'Corpus Orchestrator' and 'Artificial Researcher' respectively. All profile photos consolidated into `assets/beings/`.
+
+- **'New Nature' capitalization:** 'the new nature' (lowercase) replaced with 'New Nature' (title case) throughout the site — copy, headings, and alt text. Treated as a proper noun / named research area rather than a generic description.
+
+---
+
+## Session 10: Network and Consulting Updates, Symposium Form, Landing Banner
+
+*2026-05-29*
+
+**Tracks:** static-site, content, operations
+
+- **Network and consulting updated from Google Form data:** Added ProSoDiAC Lab (Giovanni Merlino, University of Messina) with SVG logo to the PIN network page. Added Protopolis Lab (Helena Rong, NYU Shanghai) with website link. Updated Rafael Fernandez's consulting card with full expertise list and `rafael.fyi` contact link. Logos stored in `assets/network/`. Added `fetch_form_data.py` script for pulling current Google Sheets data and `SHEETS.md` documenting the update workflow and field mappings.
+
+- **Symposium 2026 page updates:** Wired in the Google Form for abstract submissions. Added June 14 submission deadline to the body copy and the CTA box. Removed the boxed submission-type blurbs that were creating redundant structure. The page now has a clear single CTA.
+
+- **Symposium banner on landing page:** Added a promotional banner for the 2026 symposium to `index.html`. Currently a CSS placeholder — final artwork from the commissioned artist is pending (brief: 1520×400px at 2× retina). The slot and CSS are in place; swapping in the real image requires one file replacement.
+
+---
+
+## Session 11: Member Directory Phase 2 — D1 Backend, PIN Auth, Admin Tools
+
+*2026-05-30*
+
+**Tracks:** member-directory, cloudflare-migration
+
+- **D1-backed member directory:** Replaced static HTML on `/members`, `/team`, and `/consulting` with dynamic pages backed by Cloudflare D1 (`pi-members` database). `/api/members` serves a filtered public listing; `/api/members/me` returns authenticated user data. Members table holds profile fields, role flags (`is_team`, `is_consultant`, `is_public`, `is_admin`), 10 event tags, and consulting fields.
+
+- **PIN email auth flow:** Email → Resend sends 6-digit PIN → verify → 24h session cookie. Implemented across `/api/auth/send-pin` and `/api/auth/verify-pin`. Works for both new applicants (proceeds to join form) and existing members (redirects to edit page). Resend API key and domain (`protocol-institute.org`) confirmed live.
+
+- **Join form (`/members/join`):** 3-step flow: email → PIN verification → application form. Fields: name, bio, website, city, Discord handle, 10 qualifying event checkboxes, optional consulting listing (expertise, contact, portfolio), optional team listing (job title, role description), profile photo URL. Submitted to `/api/membership/request` as a pending request for admin review.
+
+- **Profile edit page (`/members/edit`):** Session-gated edit form. Features: photo thumbnail preview, R2 upload from computer, editable event tag checkboxes, city and Discord handle fields. Admin users see a member selector dropdown (via `/api/admin/member-list`) and can toggle `is_team`, `team_title`, `is_consultant`, `is_public` for any member.
+
+- **Admin review panel (`/admin/members`):** Displays pending membership requests. Each card shows all submitted fields including city, Discord handle, team fields, and photo URL. Approve/reject actions with optional admin notes and slug override. `is_admin` flag added to members table (migration 007); Venkat and Timber are admins.
+
+---
+
+## Session 12: Architecture Review: CF Access, Tag Consolidation, Mailing List Plan
+
+*2026-05-30*
+
+**Tracks:** cloudflare-migration, member-directory, operations
+
+- **Member Login/Register topbar:** Added a site-wide 'Member Login / Register' link injected above the nav on every page via `main.js`. Styled as a small uppercase link in the upper right corner. The `/members/join` page copy updated to clarify it handles both cases — existing members are routed to their edit profile, new applicants complete the join form.
+
+- **CF Zero Trust Access for `/admin/*`:** Configured Cloudflare Access (Zero Trust free tier) to gate the admin panel at the CDN layer — unauthenticated requests never reach the page. Policy: email allowlist (Venkat + Timber), one-time PIN to email. Zero application code changes required. The existing Bearer token auth remains as a second layer. Previously, the admin page was publicly visible and the only protection was a password field sending a key from JavaScript.
+
+- **Tag consolidation and bug fix:** `VALID_TAGS` / `TAG_COLUMNS` was duplicated across three Worker function files and two HTML inline scripts, with a silent drift: `admin/members.js` was missing `tag_protocolized_writer` from `TAG_COLUMNS`, so approving a member who applied with that tag silently dropped it from their record. Fixed by creating `functions/_shared/tags.js` (ES module, imported by all Workers) and `js/tags.js` (global for HTML pages). Adding a new event tag now requires editing one file.
+
+- **CSP cleanup:** Removed `cdn.jsdelivr.net` from the `script-src` directive in `_headers` — it was allowlisted but never loaded. Tightening the CSP reduces the attack surface for script injection.
+
+- **SIG mailing list plan documented:** Designed a SIG-only opt-in mailing list system using Resend Audiences + D1 subscription prefs + CF Worker for broadcast. Single sending address: `sigs@protocol-institute.org` (not yet created). Four SIG lists (sigfpt, mrg, sigpfb, protfisig). New `is_sig_host` role. Members opt in via a new Lists tab in their profile. SIG hosts compose and send via a web UI (no inbound email alias for now). Plan documented in `status-vgr.md`. Implementation blocked pending Resend sender setup and Audience creation.
+
+---
