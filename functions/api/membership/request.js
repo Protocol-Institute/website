@@ -29,6 +29,8 @@ export async function onRequestPost({ request, env }) {
   const consulting_contact = (body.consulting_contact || '').trim();
   const consulting_portfolio = (body.consulting_portfolio || '').trim();
   const photo_url = (body.photo_url || '').trim();
+  const applicant_team_title = (body.applicant_team_title || '').trim();
+  const applicant_team_description = (body.applicant_team_description || '').trim();
   const applicant_notes = (body.applicant_notes || '').trim();
 
   // Basic validation
@@ -65,8 +67,9 @@ export async function onRequestPost({ request, env }) {
        qualifying_events,
        request_team, request_consultant, photo_url,
        consulting_expertise, consulting_contact, consulting_portfolio,
+       applicant_team_title, applicant_team_description,
        applicant_notes, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
   `).bind(
     email, name, bio || null, website || null,
     city || null, discord_handle || null,
@@ -76,6 +79,8 @@ export async function onRequestPost({ request, env }) {
     consulting_expertise || null,
     consulting_contact || null,
     consulting_portfolio || null,
+    applicant_team_title || null,
+    applicant_team_description || null,
     applicant_notes || null
   ).run();
 

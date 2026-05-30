@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS members (
   is_team      INTEGER DEFAULT 0,
   is_consultant INTEGER DEFAULT 0,
   is_public    INTEGER DEFAULT 1,
+  is_admin     INTEGER DEFAULT 0,
   -- Team field
   team_title   TEXT,
   -- Qualifying PI event tags

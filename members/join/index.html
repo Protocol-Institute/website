@@ -106,10 +106,10 @@
         </div>
 
         <p class="form-section-title">Optional listings</p>
-        <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1rem;">These requests are reviewed and approved separately by the PI team.</p>
+        <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1.5rem;">These requests are reviewed and approved separately by the PI team.</p>
 
-        <div class="form-group">
-          <label class="form-checkbox" id="consultant-toggle-label">
+        <div class="form-group" style="margin-bottom:0.25rem;">
+          <label class="form-checkbox">
             <input type="checkbox" id="consultant-toggle"> I would like to be listed in the <a href="/consulting">Consulting directory</a>
           </label>
         </div>
@@ -131,14 +131,25 @@
           </div>
         </div>
 
-        <div class="form-group" style="margin-top:1.5rem;">
-          <label class="form-checkbox" id="team-toggle-label">
-            <input type="checkbox" id="team-toggle"> I would like to request consideration for a team role
+        <div class="form-group" style="margin-top:1.25rem;margin-bottom:0.25rem;">
+          <label class="form-checkbox">
+            <input type="checkbox" id="team-toggle"> I'm a member of the team
           </label>
-          <p class="form-hint" style="margin-top:0.35rem;">Team inclusion is at the discretion of PI leadership. Checking this flag alerts the team to your interest.</p>
         </div>
 
-        <div class="form-conditional" id="photo-field">
+        <div class="form-conditional" id="team-fields">
+          <div class="form-group">
+            <label class="form-label" for="team-title-input">Job title</label>
+            <input class="form-input" type="text" id="team-title-input" placeholder="e.g. Managing Director">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="team-description-input">Role description <span class="optional">(optional)</span></label>
+            <textarea class="form-textarea" id="team-description-input" rows="2" placeholder="Brief description of your role at the Protocol Institute."></textarea>
+          </div>
+        </div>
+
+        <div id="photo-field" style="display:none;margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid #E0DDD8;">
+          <p style="margin-bottom:0.75rem;"><span class="member-tag">Required for consultants and team members</span></p>
           <div class="form-group">
             <label class="form-label" for="photo-input">Profile photo URL <span class="optional">(optional)</span></label>
             <input class="form-input" type="url" id="photo-input" placeholder="https://…">
@@ -276,11 +287,13 @@
 
   function updateConditionalFields() {
     const showConsulting = consultantToggle.checked;
-    const showPhoto = consultantToggle.checked || teamToggle.checked;
+    const showTeam = teamToggle.checked;
+    const showPhoto = showConsulting || showTeam;
     document.getElementById('consultant-fields').className =
       'form-conditional' + (showConsulting ? ' visible' : '');
-    document.getElementById('photo-field').className =
-      'form-conditional' + (showPhoto ? ' visible' : '');
+    document.getElementById('team-fields').className =
+      'form-conditional' + (showTeam ? ' visible' : '');
+    document.getElementById('photo-field').style.display = showPhoto ? '' : 'none';
   }
 
   consultantToggle.addEventListener('change', updateConditionalFields);
@@ -299,6 +312,8 @@
     const expertise = document.getElementById('expertise-input').value.trim();
     const contact = document.getElementById('contact-input').value.trim();
     const portfolio = document.getElementById('portfolio-input').value.trim();
+    const teamTitle = document.getElementById('team-title-input').value.trim();
+    const teamDescription = document.getElementById('team-description-input').value.trim();
     const photo = document.getElementById('photo-input').value.trim();
     const notes = document.getElementById('notes-input').value.trim();
 
@@ -324,6 +339,8 @@
           consulting_expertise: expertise,
           consulting_contact: contact,
           consulting_portfolio: portfolio,
+          applicant_team_title: teamTitle,
+          applicant_team_description: teamDescription,
           photo_url: photo,
           applicant_notes: notes,
         }),

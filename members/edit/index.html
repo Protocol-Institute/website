@@ -57,11 +57,11 @@
       <!-- Step 3: Edit form -->
       <div id="step-3" style="display:none">
 
-        <!-- Profile selector (shown if user owns bot records) -->
+        <!-- Profile selector (shown if user owns bot records, or for admins) -->
         <div id="profile-selector" style="display:none;margin-bottom:2rem;">
           <div class="form-group">
             <label class="form-label" for="profile-select">Editing profile for:</label>
-            <select class="form-input" id="profile-select" style="max-width:320px;"></select>
+            <select class="form-input" id="profile-select" style="max-width:360px;"></select>
           </div>
         </div>
 
@@ -155,6 +155,22 @@
             </div>
           </div>
 
+          <!-- Admin-only fields -->
+          <div id="admin-fields-group" style="display:none;margin-top:1.75rem;padding-top:1.25rem;border-top:2px solid #2A6B6B;">
+            <p class="form-section-title" style="color:#2A6B6B;">Admin <span style="font-size:0.75em;font-weight:400;color:#8A8A8A;">— only visible to you and other admins</span></p>
+            <div class="form-checkbox-group" style="margin-bottom:1rem;">
+              <label class="form-checkbox"><input type="checkbox" id="admin-is-team"> Team member</label>
+              <label class="form-checkbox"><input type="checkbox" id="admin-is-consultant"> Listed consultant</label>
+              <label class="form-checkbox"><input type="checkbox" id="admin-is-public"> Public profile</label>
+            </div>
+            <div id="admin-team-title-group" style="display:none;">
+              <div class="form-group">
+                <label class="form-label" for="admin-team-title">Job title</label>
+                <input class="form-input" type="text" id="admin-team-title" placeholder="e.g. Managing Director">
+              </div>
+            </div>
+          </div>
+
           <div class="form-actions">
             <button class="form-btn" id="save-btn">Save changes</button>
           </div>
@@ -182,39 +198,9 @@
 <script>
 (function () {
   let userEmail = '';
-  let profiles = [];   // [{email, name, ...}, ...] — own + owned bots
+  let isAdmin = false;
+  let profiles = [];
   let currentProfile = null;
-
-  // On load: check for an existing valid session and skip auth steps if found
-  (async function checkExistingSession() {
-    try {
-      const meRes = await fetch('/api/members/me');
-      if (!meRes.ok) return;
-      const meData = await meRes.json();
-      userEmail = meData.member.email;
-      profiles = [meData.member];
-      if (meData.owned && meData.owned.length) {
-        profiles = profiles.concat(meData.owned);
-      }
-      setStep(3);
-      populateForm(profiles[0]);
-      if (profiles.length > 1) {
-        const sel = document.getElementById('profile-select');
-        sel.innerHTML = '';
-        profiles.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.email;
-          opt.textContent = p.name + (p.type === 'ai' ? ' (AI)' : '');
-          sel.appendChild(opt);
-        });
-        document.getElementById('profile-selector').style.display = '';
-        sel.addEventListener('change', function () {
-          const p = profiles.find(x => x.email === this.value);
-          if (p) populateForm(p);
-        });
-      }
-    } catch {}
-  }());
 
   function showMsg(id, text, isError) {
     const el = document.getElementById(id);
@@ -247,7 +233,7 @@
     document.getElementById('expertise-input').value = profile.consulting_expertise || '';
     document.getElementById('contact-input').value = profile.consulting_contact || '';
     document.getElementById('portfolio-input').value = profile.consulting_portfolio || '';
-    // Photo thumbnail
+
     const src = photoSrc(profile.photo_r2_key);
     const preview = document.getElementById('photo-preview');
     const placeholder = document.getElementById('photo-placeholder');
@@ -260,16 +246,91 @@
       placeholder.style.display = 'flex';
     }
 
-    // Event/credential tag checkboxes
     document.querySelectorAll('input[name="edit-tag"]').forEach(cb => {
       cb.checked = !!(profile[cb.value]);
     });
-    // Team tag: read-only badge, shown only if is_team
-    document.getElementById('team-tag-display').style.display = profile.is_team ? '' : 'none';
 
-    const showConsulting = !!(profile.is_consultant);
-    document.getElementById('consulting-fields').style.display = showConsulting ? '' : 'none';
+    document.getElementById('consulting-fields').style.display = profile.is_consultant ? '' : 'none';
+
+    if (isAdmin) {
+      // Admin: editable toggles replace the read-only team badge
+      document.getElementById('team-tag-display').style.display = 'none';
+      document.getElementById('admin-is-team').checked = !!(profile.is_team);
+      document.getElementById('admin-is-consultant').checked = !!(profile.is_consultant);
+      document.getElementById('admin-is-public').checked = profile.is_public !== 0;
+      document.getElementById('admin-team-title').value = profile.team_title || '';
+      document.getElementById('admin-team-title-group').style.display = profile.is_team ? '' : 'none';
+    } else {
+      document.getElementById('team-tag-display').style.display = profile.is_team ? '' : 'none';
+    }
   }
+
+  function buildProfileSelector() {
+    const sel = document.getElementById('profile-select');
+    sel.innerHTML = '';
+    profiles.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.email;
+      let label = p.name;
+      if (p.type === 'ai') label += ' (AI)';
+      if (isAdmin && !p.is_public) label += ' [hidden]';
+      if (isAdmin && p.is_team) label += ' ★';
+      if (p.email === userEmail) opt.selected = true;
+      opt.textContent = label;
+      sel.appendChild(opt);
+    });
+    document.getElementById('profile-selector').style.display = '';
+    sel.addEventListener('change', function () {
+      const p = profiles.find(x => x.email === this.value);
+      if (p) populateForm(p);
+    });
+  }
+
+  async function loadAndSetup(meData) {
+    userEmail = meData.member.email;
+    isAdmin = !!(meData.member.is_admin);
+
+    if (isAdmin) {
+      document.getElementById('admin-fields-group').style.display = '';
+      // Show is_team toggle listener
+      document.getElementById('admin-is-team').addEventListener('change', function () {
+        document.getElementById('admin-team-title-group').style.display = this.checked ? '' : 'none';
+      });
+      document.getElementById('admin-is-consultant').addEventListener('change', function () {
+        document.getElementById('consulting-fields').style.display = this.checked ? '' : 'none';
+      });
+
+      const listRes = await fetch('/api/admin/member-list');
+      if (listRes.ok) {
+        const listData = await listRes.json();
+        profiles = listData.members || [];
+      } else {
+        profiles = [meData.member];
+      }
+    } else {
+      profiles = [meData.member];
+      if (meData.owned && meData.owned.length) {
+        profiles = profiles.concat(meData.owned);
+      }
+    }
+
+    setStep(3);
+    const ownProfile = profiles.find(p => p.email === userEmail) || profiles[0];
+    populateForm(ownProfile);
+
+    if (profiles.length > 1 || isAdmin) {
+      buildProfileSelector();
+    }
+  }
+
+  // On load: check for an existing valid session and skip auth steps if found
+  (async function checkExistingSession() {
+    try {
+      const meRes = await fetch('/api/members/me');
+      if (!meRes.ok) return;
+      await loadAndSetup(await meRes.json());
+    } catch {}
+  }());
 
   // Photo upload
   document.getElementById('photo-pick-btn').addEventListener('click', function () {
@@ -297,9 +358,8 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed');
 
-      // Update thumbnail immediately
       const preview = document.getElementById('photo-preview');
-      preview.src = data.url + '?t=' + Date.now(); // cache-bust
+      preview.src = data.url + '?t=' + Date.now();
       preview.style.display = 'block';
       document.getElementById('photo-placeholder').style.display = 'none';
 
@@ -310,7 +370,7 @@
       status.textContent = e.message || 'Upload failed. Please try again.';
     } finally {
       document.getElementById('photo-pick-btn').disabled = false;
-      this.value = ''; // reset so same file can be re-selected if needed
+      this.value = '';
     }
   });
 
@@ -371,7 +431,6 @@
         throw new Error(data.error || 'Invalid code');
       }
 
-      // Load profile(s)
       const meRes = await fetch('/api/members/me');
       if (!meRes.ok) {
         showMsg('step2-msg', 'Your email is not in the member directory. Please apply at /members/join.', true);
@@ -380,30 +439,7 @@
         return;
       }
 
-      const meData = await meRes.json();
-      profiles = [meData.member];
-      if (meData.owned && meData.owned.length) {
-        profiles = profiles.concat(meData.owned);
-      }
-
-      setStep(3);
-      populateForm(profiles[0]);
-
-      if (profiles.length > 1) {
-        const sel = document.getElementById('profile-select');
-        sel.innerHTML = '';
-        profiles.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.email;
-          opt.textContent = p.name + (p.type === 'ai' ? ' (AI)' : '');
-          sel.appendChild(opt);
-        });
-        document.getElementById('profile-selector').style.display = '';
-        sel.addEventListener('change', function () {
-          const p = profiles.find(x => x.email === this.value);
-          if (p) populateForm(p);
-        });
-      }
+      await loadAndSetup(await meRes.json());
     } catch (e) {
       showMsg('step2-msg', e.message || 'Something went wrong.', true);
       this.disabled = false;
@@ -413,7 +449,6 @@
 
   // Save changes
   document.getElementById('save-btn').addEventListener('click', async function () {
-    // Collect tag checkbox values
     const tagFields = {};
     document.querySelectorAll('input[name="edit-tag"]').forEach(cb => {
       tagFields[cb.value] = cb.checked ? 1 : 0;
@@ -431,6 +466,16 @@
       ...tagFields,
     };
 
+    if (isAdmin) {
+      const isTeam = document.getElementById('admin-is-team').checked;
+      Object.assign(fields, {
+        is_team: isTeam ? 1 : 0,
+        team_title: document.getElementById('admin-team-title').value.trim() || '',
+        is_consultant: document.getElementById('admin-is-consultant').checked ? 1 : 0,
+        is_public: document.getElementById('admin-is-public').checked ? 1 : 0,
+      });
+    }
+
     if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }
 
     this.disabled = true;
@@ -438,7 +483,7 @@
     showMsg('step3-msg', '', false);
 
     const body = { fields };
-    if (currentProfile.email !== userEmail) {
+    if (currentProfile && currentProfile.email !== userEmail) {
       body.target_email = currentProfile.email;
     }
 
@@ -451,6 +496,11 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed');
       showMsg('step3-msg', 'Changes saved.', false);
+      // Sync local profile object with saved admin fields
+      if (isAdmin) {
+        const p = profiles.find(x => x.email === (currentProfile.email));
+        if (p) Object.assign(p, fields);
+      }
     } catch (e) {
       showMsg('step3-msg', e.message || 'Something went wrong.', true);
     } finally {

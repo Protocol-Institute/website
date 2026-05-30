@@ -1,7 +1,6 @@
 // PATCH /api/members/update
 // Body: { target_email?: string, fields: {...} }
-// Updates own profile; if target_email is a bot owned by the user, updates that record instead
-// Admin-only fields (is_team, team_title, qualifying tags) are blocked for self-service
+// Updates own profile; admins can update any member record and admin-only fields
 
 const SELF_EDITABLE = new Set([
   'name', 'bio', 'website', 'photo_r2_key',
@@ -12,6 +11,10 @@ const SELF_EDITABLE = new Set([
   'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer',
   // Consulting fields
   'consulting_expertise', 'consulting_contact', 'consulting_portfolio',
+]);
+
+const ADMIN_EDITABLE = new Set([
+  'is_team', 'team_title', 'is_consultant', 'is_public',
 ]);
 
 async function sha256hex(str) {
@@ -60,9 +63,17 @@ export async function onRequestPatch({ request, env }) {
   const targetEmail = (body.target_email || '').trim().toLowerCase() || sessionEmail;
   const fields = body.fields || {};
 
+  // Determine if requester is admin
+  const requesterRow = await env.DB.prepare(
+    'SELECT is_admin FROM members WHERE email = ?'
+  ).bind(sessionEmail).first();
+  const isAdmin = !!(requesterRow && requesterRow.is_admin);
+
   // Determine if user may edit the target record
   let authorized = false;
   if (targetEmail === sessionEmail) {
+    authorized = true;
+  } else if (isAdmin) {
     authorized = true;
   } else {
     // Check if target is a bot owned by the session user
@@ -82,6 +93,8 @@ export async function onRequestPatch({ request, env }) {
   const allowed = {};
   for (const [k, v] of Object.entries(fields)) {
     if (SELF_EDITABLE.has(k)) {
+      allowed[k] = v === '' ? null : v;
+    } else if (isAdmin && ADMIN_EDITABLE.has(k)) {
       allowed[k] = v === '' ? null : v;
     }
   }
