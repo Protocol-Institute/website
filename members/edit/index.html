@@ -105,15 +105,20 @@
           <div id="photo-field-group">
             <p class="form-section-title">Profile photo</p>
             <div class="form-group">
-              <div id="photo-preview-wrap" style="margin-bottom:1rem;">
-                <img id="photo-preview" src="" alt="Profile photo" style="width:120px;height:120px;object-fit:cover;object-position:top center;border:1px solid #E0DDD8;display:none;">
-                <div id="photo-placeholder" style="width:120px;height:120px;background:#F0EDE8;border:1px solid #E0DDD8;display:none;align-items:center;justify-content:center;">
-                  <span style="font-size:0.75rem;color:#C0BCBA;letter-spacing:0.05em;text-transform:uppercase;">No photo</span>
+              <div style="display:flex;align-items:flex-start;gap:1.25rem;flex-wrap:wrap;">
+                <div>
+                  <img id="photo-preview" src="" alt="Profile photo" style="width:120px;height:120px;object-fit:cover;object-position:top center;border:1px solid #E0DDD8;display:none;">
+                  <div id="photo-placeholder" style="width:120px;height:120px;background:#F0EDE8;border:1px solid #E0DDD8;display:none;align-items:center;justify-content:center;">
+                    <span style="font-size:0.75rem;color:#C0BCBA;letter-spacing:0.05em;text-transform:uppercase;">No photo</span>
+                  </div>
+                </div>
+                <div style="padding-top:0.25rem;">
+                  <input type="file" id="photo-file-input" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;">
+                  <button type="button" class="form-btn form-btn--secondary" id="photo-pick-btn">Upload from computer</button>
+                  <p class="form-hint" style="margin-top:0.5rem;">JPEG, PNG, WebP or GIF · max 2MB · square format preferred</p>
+                  <div id="photo-upload-status" style="display:none;font-size:0.85rem;margin-top:0.5rem;"></div>
                 </div>
               </div>
-              <label class="form-label" for="photo-input">Replace with a different photo <span class="optional">(optional)</span></label>
-              <input class="form-input" type="url" id="photo-input" placeholder="https://…">
-              <p class="form-hint">Paste a link to a publicly accessible photo, square format, at least 240×240px.</p>
             </div>
           </div>
 
@@ -246,6 +251,49 @@
     document.getElementById('consulting-fields').style.display = showConsulting ? '' : 'none';
   }
 
+  // Photo upload
+  document.getElementById('photo-pick-btn').addEventListener('click', function () {
+    document.getElementById('photo-file-input').click();
+  });
+
+  document.getElementById('photo-file-input').addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const status = document.getElementById('photo-upload-status');
+    status.style.display = '';
+    status.style.color = '#5A5A5A';
+    status.textContent = 'Uploading…';
+    document.getElementById('photo-pick-btn').disabled = true;
+
+    try {
+      const fd = new FormData();
+      fd.append('photo', file);
+      if (currentProfile && currentProfile.email !== userEmail) {
+        fd.append('target_email', currentProfile.email);
+      }
+
+      const res = await fetch('/api/members/upload-photo', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+      // Update thumbnail immediately
+      const preview = document.getElementById('photo-preview');
+      preview.src = data.url + '?t=' + Date.now(); // cache-bust
+      preview.style.display = 'block';
+      document.getElementById('photo-placeholder').style.display = 'none';
+
+      status.style.color = '#1A5A3A';
+      status.textContent = 'Photo updated.';
+    } catch (e) {
+      status.style.color = '#8B2020';
+      status.textContent = e.message || 'Upload failed. Please try again.';
+    } finally {
+      document.getElementById('photo-pick-btn').disabled = false;
+      this.value = ''; // reset so same file can be re-selected if needed
+    }
+  });
+
   // Step 1: send PIN
   document.getElementById('send-pin-btn').addEventListener('click', async function () {
     const email = document.getElementById('email-input').value.trim();
@@ -345,7 +393,6 @@
 
   // Save changes
   document.getElementById('save-btn').addEventListener('click', async function () {
-    const newPhotoUrl = document.getElementById('photo-input').value.trim();
     const fields = {
       name: document.getElementById('name-input').value.trim(),
       bio: document.getElementById('bio-input').value.trim(),
@@ -354,8 +401,6 @@
       consulting_contact: document.getElementById('contact-input').value.trim() || '',
       consulting_portfolio: document.getElementById('portfolio-input').value.trim() || '',
     };
-    // Only update photo if a new URL was entered
-    if (newPhotoUrl) fields.photo_r2_key = newPhotoUrl;
 
     if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }
 
