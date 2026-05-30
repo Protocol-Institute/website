@@ -1,0 +1,4 @@
+# Ignore everything in this folder except this file.
+# Drop files here for Claude to process (rename, resize, move to assets/).
+*
+!.gitignore
