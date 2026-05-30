@@ -4,6 +4,11 @@
 name = "protocol-institute-website"
 pages_build_output_dir = "."
 compatibility_date = "2025-01-01"
+# account_id is set via CLOUDFLARE_ACCOUNT_ID env var (see .env)
 
 # No build step — files are served as-is from the repo root.
 # The _redirects file (already present) is natively supported by CF Pages.
+
+[[r2_buckets]]
+binding = "ASSETS_BUCKET"
+bucket_name = "pi-assets"
