@@ -211,7 +211,7 @@
       const res = await fetch('/api/auth/send-pin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, purpose: 'join' }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
@@ -231,7 +231,7 @@
     await fetch('/api/auth/send-pin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail }),
+      body: JSON.stringify({ email: userEmail, purpose: 'join' }),
     });
     showMsg('step2-msg', 'A new code has been sent.', false);
     this.disabled = false;

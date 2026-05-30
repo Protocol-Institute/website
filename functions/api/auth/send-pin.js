@@ -27,18 +27,21 @@ export async function onRequestPost({ request, env }) {
   }
 
   const email = (body.email || '').trim().toLowerCase();
+  const purpose = body.purpose || 'edit'; // 'edit' = members only; 'join' = any email
+
   if (!email || !email.includes('@')) {
     return Response.json({ error: 'Valid email required' }, { status: 400 });
   }
 
-  // Check member exists in D1
-  const member = await env.DB.prepare(
-    'SELECT email, name FROM members WHERE email = ? AND is_public = 1'
-  ).bind(email).first();
-
-  if (!member) {
-    // Return 200 to avoid email enumeration — client sees same message either way
-    return Response.json({ ok: true });
+  // For edit flow: silently skip if email not in members table (avoids enumeration)
+  // For join flow: any email can request a PIN to verify ownership
+  let memberName = null;
+  if (purpose === 'edit') {
+    const member = await env.DB.prepare(
+      'SELECT name FROM members WHERE email = ? AND is_public = 1'
+    ).bind(email).first();
+    if (!member) return Response.json({ ok: true });
+    memberName = member.name;
   }
 
   const pin = generatePin();
@@ -60,7 +63,7 @@ export async function onRequestPost({ request, env }) {
       from: 'Protocol Institute <noreply@protocol-institute.org>',
       to: [email],
       subject: 'Your Protocol Institute sign-in code',
-      html: `<p>Hi${member.name ? ' ' + member.name.split(' ')[0] : ''},</p>
+      html: `<p>Hi${memberName ? ' ' + memberName.split(' ')[0] : ''},</p>
 <p>Your sign-in code is: <strong style="font-size:1.4em;letter-spacing:0.1em">${pin}</strong></p>
 <p>This code expires in ${PIN_TTL_MINUTES} minutes. If you did not request this, you can ignore this email.</p>
 <p>— Protocol Institute</p>`,
