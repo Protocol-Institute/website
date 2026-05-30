@@ -20,6 +20,8 @@ export async function onRequestPost({ request, env }) {
   const name = (body.name || '').trim();
   const bio = (body.bio || '').trim();
   const website = (body.website || '').trim();
+  const city = (body.city || '').trim();
+  const discord_handle = (body.discord_handle || '').trim();
   const qualifying_events = Array.isArray(body.qualifying_events) ? body.qualifying_events : [];
   const request_team = body.request_team ? 1 : 0;
   const request_consultant = body.request_consultant ? 1 : 0;
@@ -59,13 +61,15 @@ export async function onRequestPost({ request, env }) {
 
   await env.DB.prepare(`
     INSERT INTO membership_requests
-      (email, name, bio, website, qualifying_events,
+      (email, name, bio, website, city, discord_handle,
+       qualifying_events,
        request_team, request_consultant, photo_url,
        consulting_expertise, consulting_contact, consulting_portfolio,
        applicant_notes, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
   `).bind(
     email, name, bio || null, website || null,
+    city || null, discord_handle || null,
     JSON.stringify(validEvents),
     request_team, request_consultant,
     photo_url || null,

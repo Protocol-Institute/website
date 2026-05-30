@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS members (
   consulting_expertise TEXT,
   consulting_contact   TEXT,
   consulting_portfolio TEXT,
+  -- Location and community
+  city TEXT,
+  discord_handle TEXT,
   -- For AI/bot members: email of the human admin who manages this record
   owner_email TEXT,
   -- Timestamps
@@ -38,6 +41,8 @@ CREATE TABLE IF NOT EXISTS membership_requests (
   name              TEXT NOT NULL,
   bio               TEXT,
   website           TEXT,
+  city              TEXT,
+  discord_handle    TEXT,
   qualifying_events TEXT, -- JSON array of tag keys
   request_team      INTEGER DEFAULT 0,
   request_consultant INTEGER DEFAULT 0,

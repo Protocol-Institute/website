@@ -106,11 +106,18 @@
       ? `<p class="member-bio">${escHtml(truncate(m.bio, 180))}</p>`
       : '';
 
+    const metaEl = [
+      m.city ? escHtml(m.city) : '',
+      m.discord_handle ? `Discord: ${escHtml(m.discord_handle)}` : '',
+    ].filter(Boolean).join(' · ');
+    const memberMetaEl = metaEl ? `<p class="member-website" style="color:#8A8A8A;">${metaEl}</p>` : '';
+
     return `<li class="member-item" data-team="${m.is_team}" data-consultant="${m.is_consultant}"
               ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
       <h2 class="member-name">${nameEl}</h2>
       ${roleEl}
       ${bioEl}
+      ${memberMetaEl}
       ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}
     </li>`;
   }

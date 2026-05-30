@@ -30,6 +30,7 @@ export async function onRequestGet({ request, env }) {
   let query = `
     SELECT slug, name, bio, website, type, photo_r2_key,
            is_team, is_consultant, team_title,
+           city, discord_handle,
            tag_sop23, tag_sop24, tag_sop25, tag_ps25,
            tag_datus_nusas, tag_khlongs_subaks, tag_town_hall,
            tag_sig, tag_protocol_kit,

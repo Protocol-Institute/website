@@ -5,6 +5,7 @@
 
 const SELF_EDITABLE = new Set([
   'name', 'bio', 'website', 'photo_r2_key',
+  'city', 'discord_handle',
   'consulting_expertise', 'consulting_contact', 'consulting_portfolio',
 ]);
 

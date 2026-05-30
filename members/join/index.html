@@ -76,6 +76,17 @@
           <input class="form-input" type="url" id="website-input" placeholder="https://">
         </div>
 
+        <div class="form-group">
+          <label class="form-label" for="city-input">City <span class="optional">(optional)</span></label>
+          <input class="form-input" type="text" id="city-input" placeholder="e.g. Seattle, WA">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="discord-input">Discord handle <span class="optional">(optional)</span></label>
+          <input class="form-input" type="text" id="discord-input" placeholder="e.g. yourname">
+          <p class="form-hint">Your handle on the <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">PI Discord server</a>.</p>
+        </div>
+
         <p class="form-section-title">Qualifying events</p>
         <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1rem;">Check all events you have participated in. At least one is required for membership.</p>
 
@@ -278,6 +289,8 @@
     const name = document.getElementById('name-input').value.trim();
     const bio = document.getElementById('bio-input').value.trim();
     const website = document.getElementById('website-input').value.trim();
+    const city = document.getElementById('city-input').value.trim();
+    const discord_handle = document.getElementById('discord-input').value.trim();
     const tags = Array.from(document.querySelectorAll('input[name="tag"]:checked')).map(el => el.value);
     const requestConsultant = document.getElementById('consultant-toggle').checked;
     const requestTeam = document.getElementById('team-toggle').checked;
@@ -302,7 +315,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: userEmail,
-          name, bio, website,
+          name, bio, website, city, discord_handle,
           qualifying_events: tags,
           request_consultant: requestConsultant,
           request_team: requestTeam,
