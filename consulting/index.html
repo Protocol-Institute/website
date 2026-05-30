@@ -29,57 +29,11 @@
 
         <p>If you're not sure what kind of expertise might be relevant, please contact PI Managing Director <a href="mailto:timber@protocol-institute.org">Timber Stinson-Schroff</a>.</p>
 
-        <p>If you'd like to be added to this directory, please submit your profile via <a href="https://forms.gle/YC2wrVwVnGFpiZq19">this form</a>. This directory is mainly for individuals who are, or have been, active participants in PI activities such as special interest groups, magazine publishing, and past grant programs of the Summer of Protocols program. If you are new to PI and its work, please spend time participating in our activities on Discord before applying.</p>
+        <p>If you'd like to be added to this directory, <a href="/members/join">apply for membership</a>. This directory is mainly for individuals who are, or have been, active participants in PI activities such as special interest groups, magazine publishing, and past grant programs of the Summer of Protocols program.</p>
 
       </div>
 
-      <div class="consulting-grid">
-
-        <div class="consulting-card">
-          <div class="consulting-photo consulting-photo--placeholder">
-            <span>Photo</span>
-            <span class="consulting-photo-hint">240 × 240 px</span>
-          </div>
-          <div class="consulting-details">
-            <div class="consulting-name">Sachin Benny</div>
-            <div class="consulting-expertise">AI adoption models · Infrastructure ethnography</div>
-          </div>
-        </div>
-
-        <div class="consulting-card">
-          <div class="consulting-photo">
-            <img src="/assets/beings/rafaellfernandez.png" alt="Rafael Fernandez">
-          </div>
-          <div class="consulting-details">
-            <div class="consulting-name">Rafael Fernandez</div>
-            <div class="consulting-expertise">Protocol governance · Blockchains · Token economics · Marketplaces · Swarm intelligence · Robotics · AI enablement</div>
-            <div class="consulting-contact">Contact: <a href="https://rafael.fyi">rafael.fyi</a></div>
-          </div>
-        </div>
-
-        <div class="consulting-card">
-          <div class="consulting-photo">
-            <img src="/assets/beings/venkat.jpg" alt="Venkatesh Rao">
-          </div>
-          <div class="consulting-details">
-            <div class="consulting-name">Venkatesh Rao</div>
-            <div class="consulting-expertise">Protocol theory · Organizational dynamics · Strategy · Technical writing · Robotics applications</div>
-            <div class="consulting-contact">Contact: <a href="mailto:venkat@protocol-institute.org">venkat@protocol-institute.org</a></div>
-          </div>
-        </div>
-
-        <div class="consulting-card">
-          <div class="consulting-photo">
-            <img src="/assets/beings/timber.jpg" alt="Timber Stinson-Schroff">
-          </div>
-          <div class="consulting-details">
-            <div class="consulting-name">Timber Stinson-Schroff</div>
-            <div class="consulting-expertise">Safety protocols · Business protocolization · Editorial consulting · Operations</div>
-            <div class="consulting-contact">Contact: <a href="mailto:timber@protocol-institute.org">timber@protocol-institute.org</a></div>
-          </div>
-        </div>
-
-      </div>
+      <div class="consulting-grid" id="consulting-grid"></div>
 
     </div>
   </main>
@@ -98,5 +52,65 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function contactLink(contact) {
+    if (!contact) return '';
+    if (contact.includes('@')) return `<a href="mailto:${escHtml(contact)}">${escHtml(contact)}</a>`;
+    if (contact.startsWith('http')) return `<a href="${escHtml(contact)}" target="_blank" rel="noopener noreferrer">${escHtml(contact.replace(/^https?:\/\//, ''))}</a>`;
+    return escHtml(contact);
+  }
+
+  function renderConsultant(m) {
+    const photoHtml = m.photo_r2_key
+      ? `<img src="/assets/${escHtml(m.photo_r2_key)}" alt="${escHtml(m.name)}">`
+      : `<div class="consulting-photo--placeholder"><span>Photo</span><span class="consulting-photo-hint">240 × 240 px</span></div>`;
+
+    const roleHtml = m.team_title
+      ? `<div class="consulting-role">${escHtml(m.team_title)}</div>`
+      : '';
+
+    const contactHtml = m.consulting_contact
+      ? `<div class="consulting-contact">Contact: ${contactLink(m.consulting_contact)}</div>`
+      : '';
+
+    return `<div class="consulting-card">
+      <div class="consulting-photo">
+        ${photoHtml}
+      </div>
+      <div class="consulting-details">
+        <div class="consulting-name">${escHtml(m.name)}</div>
+        ${roleHtml}
+        <div class="consulting-expertise">${escHtml(m.consulting_expertise || '')}</div>
+        ${contactHtml}
+      </div>
+    </div>`;
+  }
+
+  fetch('/api/members?tag=consultant')
+    .then(r => r.json())
+    .then(data => {
+      const members = data.members || [];
+      const grid = document.getElementById('consulting-grid');
+      if (!members.length) {
+        grid.innerHTML = '<p style="color:#8A8A8A;font-style:italic;">No consultants listed yet.</p>';
+        return;
+      }
+      grid.innerHTML = members.map(renderConsultant).join('');
+    })
+    .catch(() => {
+      document.getElementById('consulting-grid').innerHTML =
+        '<p style="color:#8A8A8A;font-style:italic;">Unable to load consultants. Please try again later.</p>';
+    });
+}());
+</script>
 </body>
 </html>

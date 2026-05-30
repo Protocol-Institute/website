@@ -16,6 +16,7 @@ var NAV_HTML =
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
+      '<li><a href="/members">Members</a></li>' +
       '<li><a href="/about">About</a></li>' +
       '<li><a href="/support">Support Us</a></li>' +
       '<li><a href="/contact">Contact</a></li>' +

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Members — The Protocol Institute</title>
+  <meta name="description" content="The Protocol Institute member directory — researchers, practitioners, and participants in the PI ecosystem.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Members</h1>
+      </div>
+
+      <div class="members-intro">
+        <p>Participants in the Protocol Institute ecosystem — researchers, practitioners, and collaborators who have taken part in PI programs and activities. Membership is available to individuals who have participated in qualifying PI events.</p>
+        <p><a href="/members/join">Apply for membership →</a></p>
+      </div>
+
+      <div class="members-filter" id="filter-bar">
+        <button class="filter-btn active" data-filter="">All</button>
+        <button class="filter-btn" data-filter="team">Team</button>
+        <button class="filter-btn" data-filter="consultant">Consultants</button>
+        <button class="filter-btn" data-filter="tag_sop23">SoP '23</button>
+        <button class="filter-btn" data-filter="tag_sop24">SoP '24</button>
+        <button class="filter-btn" data-filter="tag_sop25">SoP '25</button>
+        <button class="filter-btn" data-filter="tag_ps25">Protocol School '25</button>
+        <button class="filter-btn" data-filter="tag_sig">SIG</button>
+      </div>
+
+      <ul class="member-list" id="member-list">
+        <li class="member-item member-empty">Loading members…</li>
+      </ul>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const TAG_LABELS = {
+    is_team: 'Team',
+    is_consultant: 'Consultant',
+    tag_sop23: "SoP '23",
+    tag_sop24: "SoP '24",
+    tag_sop25: "SoP '25",
+    tag_ps25: 'Protocol School \'25',
+    tag_datus_nusas: 'Datus & Nusas',
+    tag_khlongs_subaks: 'Khlongs & Subaks',
+    tag_town_hall: 'Town Hall',
+    tag_sig: 'SIG Participant',
+    tag_protocol_kit: 'Protocol Kit',
+  };
+
+  const EVENT_TAGS = [
+    'tag_sop23','tag_sop24','tag_sop25','tag_ps25',
+    'tag_datus_nusas','tag_khlongs_subaks','tag_town_hall',
+    'tag_sig','tag_protocol_kit'
+  ];
+
+  let allMembers = [];
+  let activeFilter = '';
+
+  function renderMember(m) {
+    const tags = [];
+    if (m.is_team) tags.push({ key: 'is_team', cls: 'member-tag--team' });
+    if (m.is_consultant) tags.push({ key: 'is_consultant', cls: '' });
+    if (m.type === 'ai') tags.push({ key: null, label: 'AI', cls: 'member-tag--ai' });
+    EVENT_TAGS.forEach(k => { if (m[k]) tags.push({ key: k, cls: '' }); });
+
+    const tagsHtml = tags.map(t =>
+      `<span class="member-tag ${t.cls}">${t.label || TAG_LABELS[t.key]}</span>`
+    ).join('');
+
+    const nameEl = m.website
+      ? `<a href="${escHtml(m.website)}" target="_blank" rel="noopener noreferrer">${escHtml(m.name)}</a>`
+      : escHtml(m.name);
+
+    const roleEl = m.team_title
+      ? `<p class="member-role-label">${escHtml(m.team_title)}</p>`
+      : '';
+
+    const bioEl = m.bio
+      ? `<p class="member-bio">${escHtml(truncate(m.bio, 180))}</p>`
+      : '';
+
+    return `<li class="member-item" data-team="${m.is_team}" data-consultant="${m.is_consultant}"
+              ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
+      <h2 class="member-name">${nameEl}</h2>
+      ${roleEl}
+      ${bioEl}
+      ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}
+    </li>`;
+  }
+
+  function render(members) {
+    const list = document.getElementById('member-list');
+    if (!members.length) {
+      list.innerHTML = '<li class="member-item member-empty">No members found for this filter.</li>';
+      return;
+    }
+    list.innerHTML = members.map(renderMember).join('');
+  }
+
+  function applyFilter(filter) {
+    activeFilter = filter;
+    if (!filter) { render(allMembers); return; }
+    const filtered = allMembers.filter(m => {
+      if (filter === 'team') return m.is_team;
+      if (filter === 'consultant') return m.is_consultant;
+      return m[filter];
+    });
+    render(filtered);
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function truncate(str, max) {
+    if (str.length <= max) return str;
+    return str.slice(0, max).replace(/\s+\S*$/, '') + '…';
+  }
+
+  // Filter buttons
+  document.getElementById('filter-bar').addEventListener('click', function (e) {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter(btn.dataset.filter);
+  });
+
+  // Load members
+  fetch('/api/members')
+    .then(r => r.json())
+    .then(data => {
+      allMembers = data.members || [];
+      render(allMembers);
+    })
+    .catch(() => {
+      document.getElementById('member-list').innerHTML =
+        '<li class="member-item member-empty">Failed to load members. Please try again later.</li>';
+    });
+}());
+</script>
+</body>
+</html>

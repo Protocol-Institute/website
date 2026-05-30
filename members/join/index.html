@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join — The Protocol Institute</title>
+  <meta name="description" content="Apply for membership in the Protocol Institute member directory.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Join the Directory</h1>
+      </div>
+
+      <p style="margin-bottom:2rem;color:#5A5A5A;">Membership is open to individuals who have participated in qualifying Protocol Institute events. Your application will be reviewed by a team member before your profile goes live.</p>
+
+      <div class="auth-steps">
+        <span class="auth-step-label active" id="step-label-1">1. Email</span>
+        <span class="auth-step-label" id="step-label-2">2. Verify</span>
+        <span class="auth-step-label" id="step-label-3">3. Apply</span>
+      </div>
+
+      <!-- Step 1: Email -->
+      <div id="step-1" class="pi-form">
+        <div class="form-group">
+          <label class="form-label" for="email-input">Your email address</label>
+          <input class="form-input" type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
+          <p class="form-hint">We'll send a 6-digit code to verify you're a real person.</p>
+        </div>
+        <div class="form-actions">
+          <button class="form-btn" id="send-pin-btn">Send code</button>
+        </div>
+        <div id="step1-msg"></div>
+      </div>
+
+      <!-- Step 2: PIN -->
+      <div id="step-2" class="pi-form" style="display:none">
+        <p style="margin-bottom:1.5rem;color:#5A5A5A;">A 6-digit code was sent to <strong id="email-display"></strong>. Enter it below.</p>
+        <div class="form-group">
+          <label class="form-label" for="pin-input">Verification code</label>
+          <input class="form-input pin-display" type="text" id="pin-input" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="max-width:180px;font-size:1.4rem;letter-spacing:0.25em;">
+        </div>
+        <div class="form-actions">
+          <button class="form-btn" id="verify-pin-btn">Verify code</button>
+          <button class="form-btn form-btn--secondary" id="resend-btn">Resend</button>
+        </div>
+        <div id="step2-msg"></div>
+      </div>
+
+      <!-- Step 3: Application form -->
+      <div id="step-3" class="pi-form" style="display:none">
+        <p class="form-section-title">Your profile</p>
+
+        <div class="form-group">
+          <label class="form-label" for="name-input">Full name</label>
+          <input class="form-input" type="text" id="name-input" autocomplete="name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="bio-input">Short bio</label>
+          <textarea class="form-textarea" id="bio-input" rows="4" placeholder="2–4 sentences about your work and connection to protocol research."></textarea>
+          <p class="form-hint">This appears in your directory profile.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="website-input">Website or profile link <span class="optional">(optional)</span></label>
+          <input class="form-input" type="url" id="website-input" placeholder="https://">
+        </div>
+
+        <p class="form-section-title">Qualifying events</p>
+        <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1rem;">Check all events you have participated in. At least one is required for membership.</p>
+
+        <div class="form-group">
+          <div class="form-checkbox-group">
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_sop23"> Summer of Protocols 2023 cohort</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_sop24"> Summer of Protocols 2024 cohort</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_sop25"> Summer of Protocols 2025 cohort</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_ps25"> Protocol School 2025 graduate</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_datus_nusas"> Datus and Nusas attendee</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_khlongs_subaks"> Khlongs and Subaks attendee</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_town_hall"> Town Hall speaker</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_sig"> SIG participant</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_protocol_kit"> Protocol Kit recipient</label>
+          </div>
+        </div>
+
+        <p class="form-section-title">Optional listings</p>
+        <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1rem;">These requests are reviewed and approved separately by the PI team.</p>
+
+        <div class="form-group">
+          <label class="form-checkbox" id="consultant-toggle-label">
+            <input type="checkbox" id="consultant-toggle"> I would like to be listed in the <a href="/consulting">Consulting directory</a>
+          </label>
+        </div>
+
+        <div class="form-conditional" id="consultant-fields">
+          <div class="form-group">
+            <label class="form-label" for="expertise-input">Areas of expertise</label>
+            <input class="form-input" type="text" id="expertise-input" placeholder="e.g. Protocol governance · Strategy · Technical writing">
+            <p class="form-hint">Separate areas with ·</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-input">Contact preference <span class="optional">(email or URL)</span></label>
+            <input class="form-input" type="text" id="contact-input" placeholder="you@example.com or https://yoursite.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="portfolio-input">Portfolio or work samples <span class="optional">(optional URL)</span></label>
+            <input class="form-input" type="url" id="portfolio-input" placeholder="https://">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:1.5rem;">
+          <label class="form-checkbox" id="team-toggle-label">
+            <input type="checkbox" id="team-toggle"> I would like to request consideration for a team role
+          </label>
+          <p class="form-hint" style="margin-top:0.35rem;">Team inclusion is at the discretion of PI leadership. Checking this flag alerts the team to your interest.</p>
+        </div>
+
+        <div class="form-conditional" id="photo-field">
+          <div class="form-group">
+            <label class="form-label" for="photo-input">Profile photo URL <span class="optional">(optional)</span></label>
+            <input class="form-input" type="url" id="photo-input" placeholder="https://…">
+            <p class="form-hint">A public link to a headshot (240×240px minimum). We'll download and host it.</p>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:2rem;">
+          <label class="form-label" for="notes-input">Notes for reviewers <span class="optional">(optional)</span></label>
+          <textarea class="form-textarea" id="notes-input" rows="3" placeholder="Anything you'd like the PI team to know about your application."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="form-btn" id="submit-btn">Submit application</button>
+        </div>
+        <div id="step3-msg"></div>
+      </div>
+
+      <!-- Success state -->
+      <div id="step-done" style="display:none;padding:2rem 0;">
+        <p style="font-size:1.1rem;color:#1A5A3A;">Your application has been submitted. The PI team will review it and notify you by email when approved.</p>
+        <p style="margin-top:1rem;"><a href="/members">View the member directory →</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  let userEmail = '';
+
+  function showMsg(id, text, isError) {
+    const el = document.getElementById(id);
+    el.className = 'form-msg ' + (isError ? 'form-msg--error' : 'form-msg--success');
+    el.textContent = text;
+    el.style.display = text ? '' : 'none';
+  }
+
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
+      const lbl = document.getElementById('step-label-' + i);
+      lbl.className = 'auth-step-label' + (i === n ? ' active' : i < n ? ' done' : '');
+    });
+  }
+
+  // Step 1: send PIN
+  document.getElementById('send-pin-btn').addEventListener('click', async function () {
+    const email = document.getElementById('email-input').value.trim();
+    if (!email) { showMsg('step1-msg', 'Please enter your email address.', true); return; }
+    this.disabled = true;
+    this.textContent = 'Sending…';
+    showMsg('step1-msg', '', false);
+
+    try {
+      const res = await fetch('/api/auth/send-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      userEmail = email;
+      document.getElementById('email-display').textContent = email;
+      setStep(2);
+    } catch (e) {
+      showMsg('step1-msg', e.message || 'Something went wrong. Please try again.', true);
+      this.disabled = false;
+      this.textContent = 'Send code';
+    }
+  });
+
+  // Resend
+  document.getElementById('resend-btn').addEventListener('click', async function () {
+    this.disabled = true;
+    await fetch('/api/auth/send-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    showMsg('step2-msg', 'A new code has been sent.', false);
+    this.disabled = false;
+  });
+
+  // Step 2: verify PIN
+  document.getElementById('verify-pin-btn').addEventListener('click', async function () {
+    const pin = document.getElementById('pin-input').value.trim();
+    if (!pin || pin.length < 6) { showMsg('step2-msg', 'Please enter the 6-digit code.', true); return; }
+    this.disabled = true;
+    this.textContent = 'Verifying…';
+    showMsg('step2-msg', '', false);
+
+    try {
+      const res = await fetch('/api/auth/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, pin }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Invalid code');
+
+      // Check if already a member
+      const me = await fetch('/api/members/me');
+      if (me.ok) {
+        // Already a member — redirect to edit
+        window.location.href = '/members/edit';
+        return;
+      }
+
+      setStep(3);
+    } catch (e) {
+      showMsg('step2-msg', e.message || 'Something went wrong.', true);
+      this.disabled = false;
+      this.textContent = 'Verify code';
+    }
+  });
+
+  // Show/hide conditional fields
+  const consultantToggle = document.getElementById('consultant-toggle');
+  const teamToggle = document.getElementById('team-toggle');
+
+  function updateConditionalFields() {
+    const showConsulting = consultantToggle.checked;
+    const showPhoto = consultantToggle.checked || teamToggle.checked;
+    document.getElementById('consultant-fields').className =
+      'form-conditional' + (showConsulting ? ' visible' : '');
+    document.getElementById('photo-field').className =
+      'form-conditional' + (showPhoto ? ' visible' : '');
+  }
+
+  consultantToggle.addEventListener('change', updateConditionalFields);
+  teamToggle.addEventListener('change', updateConditionalFields);
+
+  // Step 3: submit application
+  document.getElementById('submit-btn').addEventListener('click', async function () {
+    const name = document.getElementById('name-input').value.trim();
+    const bio = document.getElementById('bio-input').value.trim();
+    const website = document.getElementById('website-input').value.trim();
+    const tags = Array.from(document.querySelectorAll('input[name="tag"]:checked')).map(el => el.value);
+    const requestConsultant = document.getElementById('consultant-toggle').checked;
+    const requestTeam = document.getElementById('team-toggle').checked;
+    const expertise = document.getElementById('expertise-input').value.trim();
+    const contact = document.getElementById('contact-input').value.trim();
+    const portfolio = document.getElementById('portfolio-input').value.trim();
+    const photo = document.getElementById('photo-input').value.trim();
+    const notes = document.getElementById('notes-input').value.trim();
+
+    if (!name) { showMsg('step3-msg', 'Name is required.', true); return; }
+    if (!bio) { showMsg('step3-msg', 'A short bio is required.', true); return; }
+    if (!tags.length) { showMsg('step3-msg', 'Please select at least one qualifying event.', true); return; }
+    if (requestConsultant && !expertise) { showMsg('step3-msg', 'Please list your areas of expertise for the consulting directory.', true); return; }
+
+    this.disabled = true;
+    this.textContent = 'Submitting…';
+    showMsg('step3-msg', '', false);
+
+    try {
+      const res = await fetch('/api/membership/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: userEmail,
+          name, bio, website,
+          qualifying_events: tags,
+          request_consultant: requestConsultant,
+          request_team: requestTeam,
+          consulting_expertise: expertise,
+          consulting_contact: contact,
+          consulting_portfolio: portfolio,
+          photo_url: photo,
+          applicant_notes: notes,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      // Hide all steps, show done
+      [1,2,3].forEach(i => document.getElementById('step-' + i).style.display = 'none');
+      document.querySelectorAll('.auth-steps').forEach(el => el.style.display = 'none');
+      document.getElementById('step-done').style.display = '';
+    } catch (e) {
+      showMsg('step3-msg', e.message || 'Something went wrong. Please try again.', true);
+      this.disabled = false;
+      this.textContent = 'Submit application';
+    }
+  });
+}());
+</script>
+</body>
+</html>

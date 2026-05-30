@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile — The Protocol Institute</title>
+  <meta name="description" content="Edit your Protocol Institute member profile.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Edit Profile</h1>
+      </div>
+
+      <div class="auth-steps">
+        <span class="auth-step-label active" id="step-label-1">1. Email</span>
+        <span class="auth-step-label" id="step-label-2">2. Verify</span>
+        <span class="auth-step-label" id="step-label-3">3. Edit</span>
+      </div>
+
+      <!-- Step 1: Email -->
+      <div id="step-1" class="pi-form">
+        <div class="form-group">
+          <label class="form-label" for="email-input">Your member email address</label>
+          <input class="form-input" type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
+          <p class="form-hint">The email address associated with your PI membership.</p>
+        </div>
+        <div class="form-actions">
+          <button class="form-btn" id="send-pin-btn">Send code</button>
+        </div>
+        <div id="step1-msg"></div>
+      </div>
+
+      <!-- Step 2: PIN -->
+      <div id="step-2" class="pi-form" style="display:none">
+        <p style="margin-bottom:1.5rem;color:#5A5A5A;">A 6-digit code was sent to <strong id="email-display"></strong>. Enter it below.</p>
+        <div class="form-group">
+          <label class="form-label" for="pin-input">Verification code</label>
+          <input class="form-input" type="text" id="pin-input" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="max-width:180px;font-size:1.4rem;letter-spacing:0.25em;">
+        </div>
+        <div class="form-actions">
+          <button class="form-btn" id="verify-pin-btn">Verify code</button>
+          <button class="form-btn form-btn--secondary" id="resend-btn">Resend</button>
+        </div>
+        <div id="step2-msg"></div>
+      </div>
+
+      <!-- Step 3: Edit form -->
+      <div id="step-3" style="display:none">
+
+        <!-- Profile selector (shown if user owns bot records) -->
+        <div id="profile-selector" style="display:none;margin-bottom:2rem;">
+          <div class="form-group">
+            <label class="form-label" for="profile-select">Editing profile for:</label>
+            <select class="form-input" id="profile-select" style="max-width:320px;"></select>
+          </div>
+        </div>
+
+        <div class="pi-form">
+          <p class="form-section-title">Your profile</p>
+
+          <div class="form-group">
+            <label class="form-label" for="name-input">Full name</label>
+            <input class="form-input" type="text" id="name-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bio-input">Short bio</label>
+            <textarea class="form-textarea" id="bio-input" rows="4"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="website-input">Website or profile link <span class="optional">(optional)</span></label>
+            <input class="form-input" type="url" id="website-input" placeholder="https://">
+          </div>
+
+          <div id="consulting-fields" style="display:none">
+            <p class="form-section-title">Consulting</p>
+
+            <div class="form-group">
+              <label class="form-label" for="expertise-input">Areas of expertise</label>
+              <input class="form-input" type="text" id="expertise-input" placeholder="e.g. Protocol governance · Strategy">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contact-input">Contact preference <span class="optional">(email or URL)</span></label>
+              <input class="form-input" type="text" id="contact-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="portfolio-input">Portfolio <span class="optional">(optional URL)</span></label>
+              <input class="form-input" type="url" id="portfolio-input" placeholder="https://">
+            </div>
+          </div>
+
+          <div id="photo-field-group">
+            <p class="form-section-title">Photo</p>
+            <div class="form-group">
+              <label class="form-label" for="photo-input">Photo URL or R2 key <span class="optional">(optional)</span></label>
+              <input class="form-input" type="text" id="photo-input">
+              <p class="form-hint">R2 key (e.g. <code>beings/yourname.jpg</code>) or a public URL.</p>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="form-btn" id="save-btn">Save changes</button>
+          </div>
+          <div id="step3-msg"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  let userEmail = '';
+  let profiles = [];   // [{email, name, ...}, ...] — own + owned bots
+  let currentProfile = null;
+
+  function showMsg(id, text, isError) {
+    const el = document.getElementById(id);
+    el.className = 'form-msg ' + (isError ? 'form-msg--error' : 'form-msg--success');
+    el.textContent = text;
+    el.style.display = text ? '' : 'none';
+  }
+
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
+      const lbl = document.getElementById('step-label-' + i);
+      lbl.className = 'auth-step-label' + (i === n ? ' active' : i < n ? ' done' : '');
+    });
+  }
+
+  function populateForm(profile) {
+    currentProfile = profile;
+    document.getElementById('name-input').value = profile.name || '';
+    document.getElementById('bio-input').value = profile.bio || '';
+    document.getElementById('website-input').value = profile.website || '';
+    document.getElementById('expertise-input').value = profile.consulting_expertise || '';
+    document.getElementById('contact-input').value = profile.consulting_contact || '';
+    document.getElementById('portfolio-input').value = profile.consulting_portfolio || '';
+    document.getElementById('photo-input').value = profile.photo_r2_key || '';
+
+    const showConsulting = !!(profile.is_consultant);
+    document.getElementById('consulting-fields').style.display = showConsulting ? '' : 'none';
+  }
+
+  // Step 1: send PIN
+  document.getElementById('send-pin-btn').addEventListener('click', async function () {
+    const email = document.getElementById('email-input').value.trim();
+    if (!email) { showMsg('step1-msg', 'Please enter your email address.', true); return; }
+    this.disabled = true;
+    this.textContent = 'Sending…';
+    showMsg('step1-msg', '', false);
+
+    try {
+      const res = await fetch('/api/auth/send-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      userEmail = email;
+      document.getElementById('email-display').textContent = email;
+      setStep(2);
+    } catch (e) {
+      showMsg('step1-msg', e.message || 'Something went wrong.', true);
+      this.disabled = false;
+      this.textContent = 'Send code';
+    }
+  });
+
+  // Resend
+  document.getElementById('resend-btn').addEventListener('click', async function () {
+    this.disabled = true;
+    await fetch('/api/auth/send-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail }),
+    });
+    showMsg('step2-msg', 'A new code has been sent.', false);
+    this.disabled = false;
+  });
+
+  // Step 2: verify PIN
+  document.getElementById('verify-pin-btn').addEventListener('click', async function () {
+    const pin = document.getElementById('pin-input').value.trim();
+    if (!pin || pin.length < 6) { showMsg('step2-msg', 'Please enter the 6-digit code.', true); return; }
+    this.disabled = true;
+    this.textContent = 'Verifying…';
+    showMsg('step2-msg', '', false);
+
+    try {
+      const res = await fetch('/api/auth/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, pin }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Invalid code');
+      }
+
+      // Load profile(s)
+      const meRes = await fetch('/api/members/me');
+      if (!meRes.ok) {
+        showMsg('step2-msg', 'Your email is not in the member directory. Please apply at /members/join.', true);
+        this.disabled = false;
+        this.textContent = 'Verify code';
+        return;
+      }
+
+      const meData = await meRes.json();
+      profiles = [{ email: userEmail, ...meData.member }];
+      if (meData.owned && meData.owned.length) {
+        profiles = profiles.concat(meData.owned);
+      }
+
+      setStep(3);
+      populateForm(profiles[0]);
+
+      // Show profile selector only if there are multiple profiles
+      if (profiles.length > 1) {
+        const sel = document.getElementById('profile-select');
+        sel.innerHTML = '';
+        profiles.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.email;
+          opt.textContent = p.name + (p.type === 'ai' ? ' (AI)' : '');
+          sel.appendChild(opt);
+        });
+        document.getElementById('profile-selector').style.display = '';
+
+        sel.addEventListener('change', function () {
+          const p = profiles.find(x => x.email === this.value);
+          if (p) populateForm(p);
+        });
+      }
+    } catch (e) {
+      showMsg('step2-msg', e.message || 'Something went wrong.', true);
+      this.disabled = false;
+      this.textContent = 'Verify code';
+    }
+  });
+
+  // Save changes
+  document.getElementById('save-btn').addEventListener('click', async function () {
+    const fields = {
+      name: document.getElementById('name-input').value.trim(),
+      bio: document.getElementById('bio-input').value.trim(),
+      website: document.getElementById('website-input').value.trim() || '',
+      consulting_expertise: document.getElementById('expertise-input').value.trim() || '',
+      consulting_contact: document.getElementById('contact-input').value.trim() || '',
+      consulting_portfolio: document.getElementById('portfolio-input').value.trim() || '',
+      photo_r2_key: document.getElementById('photo-input').value.trim() || '',
+    };
+
+    if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }
+
+    this.disabled = true;
+    this.textContent = 'Saving…';
+    showMsg('step3-msg', '', false);
+
+    const body = { fields };
+    if (currentProfile.email !== userEmail) {
+      body.target_email = currentProfile.email;
+    }
+
+    try {
+      const res = await fetch('/api/members/update', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Save failed');
+      showMsg('step3-msg', 'Changes saved.', false);
+    } catch (e) {
+      showMsg('step3-msg', e.message || 'Something went wrong.', true);
+    } finally {
+      this.disabled = false;
+      this.textContent = 'Save changes';
+    }
+  });
+}());
+</script>
+</body>
+</html>

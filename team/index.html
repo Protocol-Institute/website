@@ -23,76 +23,7 @@
 
       <p class="team-intro">For general inquiries, please email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.</p>
 
-      <section class="team-member" id="timber">
-        <div class="team-photo">
-          <img src="/assets/beings/timber.jpg" alt="Timber Stinson-Schroff">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">Timber Stinson-Schroff</h2>
-          <p class="team-role">Managing Director</p>
-          <p>Timber Stinson-Schroff is the Managing Director of the Protocol Institute, and the Editor-in-Chief of <a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized magazine</a>. His primary personal protocol-studies focus areas are safety protocols and the application of protocol thinking to businesses. He is based in Whitehorse, Yukon.</p>
-          <a class="team-email" href="mailto:timber@protocol-institute.org">timber@protocol-institute.org</a>
-        </div>
-      </section>
-
-      <section class="team-member" id="venkat">
-        <div class="team-photo">
-          <img src="/assets/beings/venkat.jpg" alt="Venkatesh Rao">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">Venkatesh Rao</h2>
-          <p class="team-role">Director of Research</p>
-          <p>Venkatesh Rao is the Director of Research of the Protocol Institute, and a Contributing Editor of <a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized Magazine</a>. His primary personal protocol-studies focus areas are formal protocol theory, and the application of protocol theory to robotics. He is based in Seattle, WA.</p>
-          <a class="team-email" href="mailto:venkat@protocol-institute.org">venkat@protocol-institute.org</a>
-        </div>
-      </section>
-
-      <section class="team-member" id="james">
-        <div class="team-photo">
-          <img src="/assets/beings/jameslandgon.jpg" alt="James Langdon">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">James Langdon</h2>
-          <p class="team-role">Executive Editor, Protocolized</p>
-          <p>James Langdon is the Executive Editor of <a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized magazine</a>. His primary personal protocol-studies focus areas are path dependency and the entrenching of anachronistic protocols in computerised graphic design and typography. He is based in Herefordshire, UK.</p>
-        </div>
-      </section>
-
-      <section class="team-member" id="tim">
-        <div class="team-photo">
-          <img src="/assets/beings/timbeiko.jpeg" alt="Tim Beiko">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">Tim Beiko</h2>
-          <p class="team-role">Chair, Advisory Board</p>
-          <p>Tim Beiko is an Ethereum researcher, and the chair of the advisory board for the Protocol Institute.</p>
-        </div>
-      </section>
-
-      <section class="team-member" id="c3po">
-        <div class="team-photo">
-          <img src="/assets/logo-static.png" alt="C3PO" class="team-photo-ai">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">C3PO</h2>
-          <p class="team-role">Corpus Orchestrator</p>
-          <p>C3PO is the Protocol Institute's conversational research assistant, trained on the full PI corpus — spanning papers, essays, talks, Discord discussions, SIG meetings, and Protocolized magazine content. Its primary focus areas are synthesis and navigation: helping researchers and practitioners query the protocol library through natural language, with citations. C3PO is also available as an MCP server for integration with Claude Code and Claude Desktop. It runs on Cloudflare Workers.</p>
-          <a class="team-link" href="/c3po">Learn more →</a>
-        </div>
-      </section>
-
-      <section class="team-member" id="humboldt">
-        <div class="team-photo">
-          <img src="/assets/logo-static.png" alt="Humboldt" class="team-photo-ai">
-        </div>
-        <div class="team-bio">
-          <h2 class="team-name">Humboldt</h2>
-          <p class="team-role">Artificial Researcher</p>
-          <p>Humboldt is the Protocol Institute's autonomous research agent, investigating <em>New Nature</em> — structural laws of protocolized and artificial systems that recur across domains with something approaching the force of natural law. Its primary focus areas are hypothesis generation, cross-domain evidence testing, and the cumulative mapping of candidate laws of protocolized systems. Humboldt publishes its field notes in a public lab notebook.</p>
-          <a class="team-link" href="/humboldt">Learn more →</a>
-          <a class="team-link" href="/humboldt-notebook" style="margin-left:1em;">Lab notebook →</a>
-        </div>
-      </section>
+      <div id="team-list"></div>
 
     </div>
   </main>
@@ -111,5 +42,58 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderTeamMember(m) {
+    const isAi = m.type === 'ai';
+    const photoHtml = m.photo_r2_key
+      ? `<img src="/assets/${escHtml(m.photo_r2_key)}" alt="${escHtml(m.name)}"${isAi ? ' class="team-photo-ai"' : ''}>`
+      : `<div class="team-photo-placeholder"><span>Photo</span></div>`;
+
+    const contactHtml = isAi
+      ? (m.website ? `<a class="team-link" href="${escHtml(m.website)}">Learn more →</a>` : '')
+      : (m.consulting_contact
+          ? `<a class="team-email" href="${m.consulting_contact.includes('@') ? 'mailto:' : ''}${escHtml(m.consulting_contact)}">${escHtml(m.consulting_contact)}</a>`
+          : '');
+
+    const extraLinks = m.website && m.website.startsWith('/') && m.website !== '/'
+      ? (m.slug === 'humboldt'
+          ? `<a class="team-link" href="/humboldt-notebook" style="margin-left:1em;">Lab notebook →</a>`
+          : '')
+      : '';
+
+    return `<section class="team-member" id="${escHtml(m.slug)}">
+      <div class="team-photo">
+        ${photoHtml}
+      </div>
+      <div class="team-bio">
+        <h2 class="team-name">${escHtml(m.name)}</h2>
+        <p class="team-role">${escHtml(m.team_title || '')}</p>
+        <p>${escHtml(m.bio || '')}</p>
+        ${contactHtml}${extraLinks}
+      </div>
+    </section>`;
+  }
+
+  fetch('/api/members?tag=team')
+    .then(r => r.json())
+    .then(data => {
+      const members = data.members || [];
+      document.getElementById('team-list').innerHTML = members.map(renderTeamMember).join('');
+    })
+    .catch(() => {
+      document.getElementById('team-list').innerHTML =
+        '<p style="color:#8A8A8A;font-style:italic;">Unable to load team members. Please try again later.</p>';
+    });
+}());
+</script>
 </body>
 </html>

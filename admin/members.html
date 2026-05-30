@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Member Requests</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Member Requests</h1>
+      </div>
+
+      <p class="admin-note">Admin interface — not linked publicly. Authenticate with your ADMIN_KEY to load pending requests.</p>
+
+      <div class="admin-key-form" id="auth-form">
+        <div class="form-group" style="flex:1;margin-bottom:0;">
+          <label class="form-label" for="admin-key-input">Admin key</label>
+          <input class="form-input" type="password" id="admin-key-input" placeholder="Enter ADMIN_KEY">
+        </div>
+        <button class="form-btn" id="auth-btn" style="align-self:flex-end;">Load requests</button>
+      </div>
+
+      <div id="requests-section" style="display:none;">
+        <div id="requests-list"></div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+(function () {
+  let adminKey = '';
+
+  const TAG_LABELS = {
+    tag_sop23: "SoP '23",
+    tag_sop24: "SoP '24",
+    tag_sop25: "SoP '25",
+    tag_ps25: 'Protocol School \'25',
+    tag_datus_nusas: 'Datus & Nusas',
+    tag_khlongs_subaks: 'Khlongs & Subaks',
+    tag_town_hall: 'Town Hall',
+    tag_sig: 'SIG Participant',
+    tag_protocol_kit: 'Protocol Kit',
+  };
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  async function loadRequests() {
+    const res = await fetch('/api/admin/members', {
+      headers: { 'Authorization': `Bearer ${adminKey}` },
+    });
+    if (!res.ok) {
+      alert('Authentication failed or server error.');
+      return;
+    }
+    const data = await res.json();
+    renderRequests(data.requests || []);
+    document.getElementById('requests-section').style.display = '';
+  }
+
+  function renderRequests(requests) {
+    const list = document.getElementById('requests-list');
+    if (!requests.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">No pending requests.</p>';
+      return;
+    }
+
+    list.innerHTML = requests.map(r => {
+      const events = JSON.parse(r.qualifying_events || '[]');
+      const eventLabels = events.map(k => TAG_LABELS[k] || k).join(', ');
+
+      return `<div class="request-item" id="req-${escHtml(r.email)}">
+        <div class="request-name">${escHtml(r.name)}</div>
+        <div class="request-email">${escHtml(r.email)}</div>
+        ${r.bio ? `<div class="request-field"><strong>Bio:</strong> ${escHtml(r.bio)}</div>` : ''}
+        ${r.website ? `<div class="request-field"><strong>Website:</strong> <a href="${escHtml(r.website)}" target="_blank">${escHtml(r.website)}</a></div>` : ''}
+        <div class="request-field"><strong>Events:</strong> ${escHtml(eventLabels)}</div>
+        ${r.request_team ? '<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting team consideration</strong></div>' : ''}
+        ${r.request_consultant ? '<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>' : ''}
+        ${r.consulting_expertise ? `<div class="request-field"><strong>Expertise:</strong> ${escHtml(r.consulting_expertise)}</div>` : ''}
+        ${r.consulting_contact ? `<div class="request-field"><strong>Contact:</strong> ${escHtml(r.consulting_contact)}</div>` : ''}
+        ${r.applicant_notes ? `<div class="request-field"><strong>Notes:</strong> ${escHtml(r.applicant_notes)}</div>` : ''}
+        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${escHtml(r.created_at)}</div>
+        <div style="margin-top:0.75rem;">
+          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Slug override (optional)</label>
+          <input type="text" class="form-input slug-input" style="max-width:240px;margin-bottom:0.75rem;" placeholder="e.g. firstname-lastname" data-email="${escHtml(r.email)}">
+        </div>
+        <div style="margin-top:0.5rem;">
+          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Admin notes (optional)</label>
+          <textarea class="form-textarea notes-input" style="min-height:60px;" data-email="${escHtml(r.email)}"></textarea>
+        </div>
+        <div class="request-actions">
+          <button class="form-btn approve-btn" data-email="${escHtml(r.email)}">Approve</button>
+          <button class="form-btn form-btn--secondary reject-btn" data-email="${escHtml(r.email)}">Reject</button>
+        </div>
+        <div class="form-msg" id="msg-${CSS.escape(r.email)}" style="display:none;"></div>
+      </div>`;
+    }).join('');
+
+    // Bind buttons
+    document.querySelectorAll('.approve-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleAction(btn.dataset.email, 'approve'));
+    });
+    document.querySelectorAll('.reject-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleAction(btn.dataset.email, 'reject'));
+    });
+  }
+
+  async function handleAction(email, action) {
+    const slugInput = document.querySelector(`.slug-input[data-email="${CSS.escape(email)}"]`);
+    const notesInput = document.querySelector(`.notes-input[data-email="${CSS.escape(email)}"]`);
+    const msg = document.getElementById(`msg-${CSS.escape(email)}`);
+
+    const body = { email, action };
+    if (slugInput && slugInput.value.trim()) body.slug = slugInput.value.trim();
+    if (notesInput && notesInput.value.trim()) body.admin_notes = notesInput.value.trim();
+
+    const res = await fetch('/api/admin/members', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${adminKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await res.json();
+    msg.style.display = '';
+    if (res.ok) {
+      msg.className = 'form-msg form-msg--success';
+      msg.textContent = action === 'approve' ? 'Approved and added to member directory.' : 'Request rejected.';
+      // Dim the card
+      document.getElementById(`req-${CSS.escape(email)}`).style.opacity = '0.4';
+    } else {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Error processing request.';
+    }
+  }
+
+  document.getElementById('auth-btn').addEventListener('click', function () {
+    adminKey = document.getElementById('admin-key-input').value.trim();
+    if (!adminKey) return;
+    loadRequests();
+  });
+
+  document.getElementById('admin-key-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') document.getElementById('auth-btn').click();
+  });
+}());
+</script>
+</body>
+</html>

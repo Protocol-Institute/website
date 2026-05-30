@@ -12,3 +12,8 @@ compatibility_date = "2025-01-01"
 [[r2_buckets]]
 binding = "ASSETS_BUCKET"
 bucket_name = "pi-assets"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pi-members"
+database_id = "a86730ae-27b8-41e7-b8d2-927efcada8e2"
