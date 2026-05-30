@@ -11,9 +11,17 @@ CF resources needed across all phases:
 
 ---
 
-## Phase 0 — CF Pages Migration *(in progress)*
+## Phase 0 — CF Pages Migration ✅ *(complete 2026-05-30)*
 
-See `MIGRATION.md`. Prerequisite for all phases below.
+See `MIGRATION.md`. CF Pages live, custom domains active, R2 asset bucket, security headers, CF Web Analytics, push-to-deploy via GitHub.
+
+---
+
+## Backlog — Unplanned / Unprioritized
+
+Items captured for consideration, not yet assigned to a phase:
+
+- **Contact form with email delivery** — replace static contact page with a form (name, email, message); CF Pages Function backend at `/api/contact`; Resend for delivery to team@protocol-institute.org; CF Turnstile for spam protection
 
 ---
 
@@ -175,7 +183,6 @@ Phase 0 (CF migration)
 
 ## Open Questions
 
-- Which CF account currently holds the `protocol-institute.org` DNS zone — Timber's personal account, or has a PI org account been created? (Blocks Phase 0.)
-- Resend vs Mailgun vs another email API? (Needed for Phase 2 PIN auth.)
+- Resend vs Mailgun vs another email API? (Needed for contact form and Phase 2 PIN auth.)
 - Dynamic.xyz vs Privy vs DIY ethers.js for SIWE? (Cost/complexity tradeoff for Phase 4.)
 - For the Symposium: confirm Sessionize meets review workflow needs before committing.
