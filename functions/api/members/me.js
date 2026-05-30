@@ -43,7 +43,8 @@ export async function onRequestGet({ request, env }) {
   if (!own) {
     return Response.json({ error: 'Member not found' }, { status: 404 });
   }
-  delete own.email; // don't expose email in body (already known by client)
+  // Include email so client can reconstruct session state after page reload
+  own.email = email;
 
   // Fetch owned bot profiles
   const { results: owned } = await env.DB.prepare(

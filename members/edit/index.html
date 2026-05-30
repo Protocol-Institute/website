@@ -141,6 +141,37 @@
   let profiles = [];   // [{email, name, ...}, ...] — own + owned bots
   let currentProfile = null;
 
+  // On load: check for an existing valid session and skip auth steps if found
+  (async function checkExistingSession() {
+    try {
+      const meRes = await fetch('/api/members/me');
+      if (!meRes.ok) return;
+      const meData = await meRes.json();
+      userEmail = meData.member.email;
+      profiles = [meData.member];
+      if (meData.owned && meData.owned.length) {
+        profiles = profiles.concat(meData.owned);
+      }
+      setStep(3);
+      populateForm(profiles[0]);
+      if (profiles.length > 1) {
+        const sel = document.getElementById('profile-select');
+        sel.innerHTML = '';
+        profiles.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.email;
+          opt.textContent = p.name + (p.type === 'ai' ? ' (AI)' : '');
+          sel.appendChild(opt);
+        });
+        document.getElementById('profile-selector').style.display = '';
+        sel.addEventListener('change', function () {
+          const p = profiles.find(x => x.email === this.value);
+          if (p) populateForm(p);
+        });
+      }
+    } catch {}
+  }());
+
   function showMsg(id, text, isError) {
     const el = document.getElementById(id);
     el.className = 'form-msg ' + (isError ? 'form-msg--error' : 'form-msg--success');
@@ -237,7 +268,7 @@
       }
 
       const meData = await meRes.json();
-      profiles = [{ email: userEmail, ...meData.member }];
+      profiles = [meData.member];
       if (meData.owned && meData.owned.length) {
         profiles = profiles.concat(meData.owned);
       }
@@ -245,7 +276,6 @@
       setStep(3);
       populateForm(profiles[0]);
 
-      // Show profile selector only if there are multiple profiles
       if (profiles.length > 1) {
         const sel = document.getElementById('profile-select');
         sel.innerHTML = '';
@@ -256,7 +286,6 @@
           sel.appendChild(opt);
         });
         document.getElementById('profile-selector').style.display = '';
-
         sel.addEventListener('change', function () {
           const p = profiles.find(x => x.email === this.value);
           if (p) populateForm(p);
