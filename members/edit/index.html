@@ -247,8 +247,6 @@
     document.getElementById('expertise-input').value = profile.consulting_expertise || '';
     document.getElementById('contact-input').value = profile.consulting_contact || '';
     document.getElementById('portfolio-input').value = profile.consulting_portfolio || '';
-    document.getElementById('photo-input').value = '';  // always blank — shows current as thumbnail
-
     // Photo thumbnail
     const src = photoSrc(profile.photo_r2_key);
     const preview = document.getElementById('photo-preview');
