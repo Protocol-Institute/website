@@ -12,6 +12,42 @@
 - Add Sachin Benny photo to assets/beings/ and wire up on consulting page
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
 
+### SIG Mailing Lists (planned, not started)
+
+Opt-in email lists for each SIG, managed through member profiles. Substack covers broad PI outreach; this is SIG-only.
+
+**Sending address:** `sigs@protocol-institute.org` — single From address for all SIG emails. Not yet created; needs to be added as a verified sender in Resend (domain already verified). No inbound needed — sending only.
+
+**Stack:** Resend Audiences (one per SIG) + D1 subscription prefs + CF Worker for broadcast. No new service.
+
+**Prerequisites before building:**
+1. Create `sigs@protocol-institute.org` in Resend as a verified sender (or confirm domain-level send covers it)
+2. Create 4 Resend Audiences: SIGFPT, MRG, SIGPfB, ProtFiSIG — note the audience IDs
+3. Add audience IDs as CF Pages secrets (`RESEND_AUD_SIGFPT`, etc.) or hardcode in Worker
+
+**D1 migration (008):**
+- Add to `members` table: `sub_sigfpt`, `sub_mrg`, `sub_sigpfb`, `sub_protfisig` — INTEGER DEFAULT 0
+- Add `is_sig_host` INTEGER DEFAULT 0
+- Add `sig_host_slugs` TEXT (JSON array, e.g. `["sigfpt","mrg"]`)
+
+**Profile edit — new "Lists" tab:**
+- 4 checkboxes (one per SIG), visible to all members after login
+- Save: updates D1 sub_* columns + syncs to Resend audience (add/remove contact)
+- Endpoint: extend `/api/members/update` to handle sub_* fields and call Resend
+
+**SIG host send UI:**
+- New section in `/members/edit`, visible only when `is_sig_host = 1`
+- Shows only the SIGs listed in `sig_host_slugs`
+- Fields: subject (text), body (textarea, plain text)
+- Submit → POST `/api/sigs/send` → Worker verifies host role → calls Resend broadcast API
+- From: `sigs@protocol-institute.org`, Reply-To: host's member email
+- Endpoint: `functions/api/sigs/send.js` — session-gated, checks is_sig_host + sig_host_slugs
+
+**What is NOT in scope:**
+- Global PI mailing list (Substack)
+- Inbound email alias (sigfpt@... forwarding) — web UI only for sending
+- Digest or scheduling features — sends immediately on submit
+
 ## Done
 <!-- completed items, reverse chronological -->
 - **2026-05-30** — Session 11: member directory continued. Join form: added team job title/description fields under team checkbox, fixed conditional field visibility (team-fields, photo), wired fields through to backend. Admin review cards now show city, discord, team fields, photo URL. Admin edit: added `is_admin` flag (Venkat + Timber), new `/api/admin/member-list` endpoint, edit page shows full all-member dropdown and admin-only toggles (is_team, team_title, is_consultant, is_public) for admins. Migration 007 applied to live D1.
