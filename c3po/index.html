@@ -23,7 +23,7 @@
 
       <div class="about-body">
 
-        <p><strong>C3PO</strong> is the Protocol Institute's conversational research assistant — a RAG-based AI agent trained on the Institute's full research corpus. It lets researchers, practitioners, and curious readers query, synthesize, and explore the protocol research library through natural language, with citations. <strong><a href="https://c3po.vgr-702.workers.dev" target="_blank" rel="noopener noreferrer">Try it →</a></strong></p>
+        <p><strong>C3PO</strong> is the Protocol Institute's conversational research assistant — a RAG-based AI agent trained on the Institute's full research corpus. It lets researchers, practitioners, and curious readers query, synthesize, and explore the protocol research library through natural language, with citations. <strong><a href="https://c3po.protocolized.io" target="_blank" rel="noopener noreferrer">Try it →</a></strong></p>
 
         <p>The corpus spans over 12,000 indexed passages from academic papers, working papers, essays, talks, datasets, games, interviews, fiction, Discord discussions, SIG meeting records, and Protocolized magazine content — the majority originating from the <a href="https://web.archive.org/web/20260421142108/https://summerofprotocols.com/" target="_blank" rel="noopener noreferrer">Summer of Protocols</a> program (2023–2024), and growing continuously. C3PO makes that corpus conversationally accessible: ask it a question about protocol theory, a specific paper, a design problem, or a cross-domain connection, and it will draw on the corpus to respond — with citations.</p>
 
@@ -41,13 +41,13 @@
 
         <h2>Status</h2>
 
-        <p>C3PO is live in public beta at <a href="https://c3po.vgr-702.workers.dev" target="_blank" rel="noopener noreferrer">c3po.vgr-702.workers.dev</a>. The index currently spans 12,000+ vectors across five namespaces: the Protocolized PDF library and Substack archive, Protocol Institute Discord discussions, SIG (Special Interest Group) meeting records, and video transcripts. The corpus grows as new content is published and ingested.</p>
+        <p>C3PO is live in public beta at <a href="https://c3po.protocolized.io" target="_blank" rel="noopener noreferrer">c3po.protocolized.io</a>. The index currently spans 25,000+ vectors across ten namespaces: the Protocolized PDF library and Substack archive, Protocol Institute Discord discussions, SIG (Special Interest Group) meeting records, video transcripts, shared links, and the PI lexicon. The corpus grows as new content is published and ingested.</p>
 
-        <p>C3PO is also available as an MCP (Model Context Protocol) server, letting Claude Code and Claude Desktop users search the corpus and ask questions directly from their AI coding environment — without opening a browser. See the <a href="https://c3po.vgr-702.workers.dev/how-it-works" target="_blank" rel="noopener noreferrer">how it works</a> page for connection instructions.</p>
+        <p>C3PO is also available as an MCP (Model Context Protocol) server, letting Claude Code and Claude Desktop users search the corpus and ask questions directly from their AI coding environment — without opening a browser. See the <a href="https://c3po.protocolized.io/how-it-works" target="_blank" rel="noopener noreferrer">how it works</a> page for connection instructions.</p>
 
         <h2>Technical approach</h2>
 
-        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings (voyage-3, 1024 dimensions), <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude Sonnet</a> as the language model. It runs as a Cloudflare Worker serving a web UI, a rate-limited REST API, and an MCP server endpoint from a single deployment. The source code is at <a href="https://github.com/vgururao/c3po" target="_blank" rel="noopener noreferrer">github.com/vgururao/c3po</a>.</p>
+        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings (voyage-3, 1024 dimensions), <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude Sonnet</a> as the language model. It runs as a Cloudflare Worker serving a web UI, a rate-limited REST API, and an MCP server endpoint from a single deployment. The source code is at <a href="https://github.com/Protocol-Institute/c3po" target="_blank" rel="noopener noreferrer">github.com/Protocol-Institute/c3po</a>.</p>
 
       </div>
 
