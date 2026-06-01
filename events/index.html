@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — The Protocol Institute</title>
+  <meta name="description" content="A history of Protocol Institute events: symposia, workshops, and residential gatherings from 2024 onward.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Events</h1>
+      </div>
+
+      <p class="events-intro">Symposia, workshops, and residential gatherings organized by the Protocol Institute and its predecessor program, the Summer of Protocols.</p>
+
+      <p class="events-loading" id="events-loading">Loading&hellip;</p>
+      <ul class="event-list" id="event-list"></ul>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium 2026</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  var TYPE_LABELS = {
+    symposium:  'Symposium',
+    workshop:   'Workshop',
+    conference: 'Conference Event',
+    residency:  'Residency'
+  };
+
+  fetch('/data/events.json')
+    .then(function (r) { return r.json(); })
+    .then(function (events) {
+      events.sort(function (a, b) {
+        return b.date_start.localeCompare(a.date_start);
+      });
+
+      var list    = document.getElementById('event-list');
+      var loading = document.getElementById('events-loading');
+
+      events.forEach(function (ev) {
+        var li = document.createElement('li');
+        li.className = 'event-item';
+
+        var thumb = ev.image
+          ? '<img src="' + ev.image + '" alt="" class="event-thumbnail">'
+          : '<div class="event-thumbnail-placeholder"></div>';
+
+        var links = '<a href="/events/' + ev.id + '/" class="event-card-link">Details &rarr;</a>';
+        if (ev.resources_url) {
+          links += '<a href="' + ev.resources_url + '" class="event-card-link" target="_blank" rel="noopener noreferrer">Research archive &rarr;</a>';
+        }
+
+        var typeLabel = TYPE_LABELS[ev.type] || ev.type;
+
+        li.innerHTML =
+          '<div class="event-thumbnail-wrap">' + thumb + '</div>' +
+          '<div class="event-card-body">' +
+            '<div class="event-type-badge">' + typeLabel + '</div>' +
+            '<div class="event-card-title"><a href="/events/' + ev.id + '/">' + ev.title + '</a></div>' +
+            '<div class="event-card-meta">' + ev.date_display + ' &middot; ' + ev.location + '</div>' +
+            '<p class="event-card-description">' + ev.short_description + '</p>' +
+            '<div class="event-card-links">' + links + '</div>' +
+          '</div>';
+
+        list.appendChild(li);
+      });
+
+      loading.style.display = 'none';
+    })
+    .catch(function () {
+      document.getElementById('events-loading').textContent = 'Events could not be loaded.';
+    });
+}());
+</script>
+</body>
+</html>

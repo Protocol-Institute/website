@@ -1,0 +1,86 @@
+[
+  {
+    "id": "bridge-atlas-devconnect-2025",
+    "title": "Bridge Atlas at Devconnect 2025",
+    "type": "conference",
+    "date_start": "2025-11-22",
+    "date_end": "2025-11-22",
+    "date_display": "November 22, 2025",
+    "location": "Buenos Aires",
+    "short_description": "A day-long gathering at Devconnect Buenos Aires convened by the Summer of Protocols team, drawing on three years of protocol research to explore how protocols can serve as bridges across disciplines, communities, and institutions.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "edge-esmeralda-workshop-2025",
+    "title": "Edge Esmeralda Workshop 2025",
+    "type": "workshop",
+    "date_start": "2025-05-24",
+    "date_end": "2025-06-21",
+    "date_display": "May 24 – June 21, 2025",
+    "location": "Healdsburg, California",
+    "short_description": "A Protocol Institute workshop held during Edge City's month-long popup village in Healdsburg, continuing ongoing collaboration on protocol design and experimental community infrastructure.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "protocol-school-2025",
+    "title": "Protocol School 2025",
+    "type": "symposium",
+    "date_start": "2025-09-15",
+    "date_end": "2025-09-19",
+    "date_display": "September 15–19, 2025",
+    "location": "Online",
+    "short_description": "The inaugural Protocol School — twelve 90-minute learning modules over five days, developed and delivered by eleven university teaching fellows as part of Protocol Symposium 2025.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "protocol-foundations-workshop-2025",
+    "title": "Protocol Foundations Workshop 2025",
+    "type": "workshop",
+    "date_start": "2025-09-12",
+    "date_end": "2025-09-14",
+    "date_display": "September 12–14, 2025",
+    "location": "Online",
+    "short_description": "A focused three-day research sprint bringing together up to thirty researchers and practitioners to collaboratively develop a formal, mathematizable theory of protocols. Held as part of Protocol Symposium 2025.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "edge-lanna-workshop-2024",
+    "title": "Edge Lanna Workshop 2024",
+    "type": "workshop",
+    "date_start": "2024-10-10",
+    "date_end": "2024-11-10",
+    "date_display": "October 10 – November 10, 2024",
+    "location": "Chiang Mai, Thailand",
+    "short_description": "A Summer of Protocols workshop held during Edge City Lanna, examining protocol design in the context of experimental community governance and distributed coordination across cultural and institutional boundaries.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "protocol-symposium-2024",
+    "title": "Protocol Symposium 2024",
+    "type": "symposium",
+    "date_start": "2024-09-12",
+    "date_end": "2024-09-19",
+    "date_display": "September 12–19, 2024",
+    "location": "Online",
+    "short_description": "The inaugural Protocol Symposium — a week-long online capstone event for Summer of Protocols 2024, bringing together researchers, practitioners, and teaching fellows from across the SoP24 community.",
+    "image": null,
+    "resources_url": null
+  },
+  {
+    "id": "edge-esmeralda-workshop-2024",
+    "title": "Edge Esmeralda Workshop 2024",
+    "type": "workshop",
+    "date_start": "2024-06-02",
+    "date_end": "2024-06-30",
+    "date_display": "June 2–30, 2024",
+    "location": "Healdsburg, California",
+    "short_description": "A Summer of Protocols workshop held during Edge Esmeralda 2024, Edge City's month-long popup village in California wine country. Sessions explored futures and worldbuilding through the lens of protocol design.",
+    "image": null,
+    "resources_url": null
+  }
+]
