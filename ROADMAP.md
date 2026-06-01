@@ -23,6 +23,13 @@ Items captured for consideration, not yet assigned to a phase:
 
 - **Contact form with email delivery** — replace static contact page with a form (name, email, message); CF Pages Function backend at `/api/contact`; Resend for delivery to team@protocol-institute.org; CF Turnstile for spam protection
 - **Symposium 2026 submission ingestion** — after June 14 deadline, run a one-time script to pull the Google Sheets responses (spreadsheet: `1cnXQUBVdwTbOJTYEhv2KCxhSAobcP_Jx0WEwH5S_dJQ`) into D1 to seed the talks/workshops database; keep the Google Form as-is for intake
+- **Member pre-population from spreadsheet** — bulk-import a few hundred existing community members into D1 from the PI member spreadsheet. **Major backlog item.** Key design decisions:
+  - Add `claimed` INTEGER DEFAULT 0 to the `members` table (migration 009); unclaimed rows are invisible to public directory until claimed
+  - **Same-email path** (easy): existing magic-link auth already handles this — if email is found in D1, sends login link → user lands on pre-populated profile; show "complete your profile" prompt on first login when `claimed = 0`
+  - **Different-email path** (hard): user signs up with an email not in the DB but is already present under another address. Options: (a) invite-first — email everyone in the spreadsheet a "claim your profile" link before opening public signup, routing most people to their record before duplicates occur; (b) self-serve merge — join flow offers "I have an existing profile under a different email" path, sends verification to old address, swaps email on confirm; (c) admin merge endpoint — accept duplicates, merge via admin panel manually
+  - **Recommended approach**: invite-first (mass-email via Resend) + a minimal admin merge endpoint as fallback. The invite is also a reactivation touchpoint for the community
+  - Import script: one-off Python script reads spreadsheet CSV → inserts rows into D1 via `wrangler d1 execute` or the D1 REST API; idempotent on email (skip if email already exists)
+  - Spreadsheet field mapping to D1 columns needs to be established before building
 
 ---
 
