@@ -142,15 +142,50 @@ The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes
 
 ## After Each Session
 
-**Documentation (always):**
-1. `status.md` — add a dated log entry with a one-line summary of what changed.
-2. `CLAUDE.md` — update file structure notes or governance info if anything changed.
+**Before starting wrap-up:** Do not initiate wrap-up unilaterally. Wait until Venkat says to wrap up or asks "what did we do."
 
-**Verify (if HTML/CSS/JS changed):**
-3. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
+**Checklist — complete in order:**
 
-**Repo:**
-4. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main`.
+1. **`status.md`** — add a dated entry (format: `**YYYY-MM-DD** — Session N: one-line summary`) to the Done section. Move any completed Upcoming items to Done.
+2. **`CLAUDE.md`** — update file structure, deployment notes, or governance info if anything changed.
+3. **`data/devlog.json`** — append a new session record (see schema below). **Never skip.** This is the load-bearing architectural record.
+4. **`DEVLOG.md`** — regenerate: `python3 devlog_render.py` from the repo root.
+5. **Verify** (if HTML/CSS/JS changed) — confirm changed pages render correctly in a browser. Check mobile nav on narrow viewport.
+6. **Repo** — `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main`.
+7. **Memory** — save anything non-obvious about site structure or workflow preferences. Do not duplicate what's in CLAUDE.md or recoverable from code.
 
-**Memory:**
-5. Update Claude memory — save anything non-obvious about site structure or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
+**Devlog JSON schema** (append to `data/devlog.json` → `sessions` array):
+
+```json
+{
+  "id": <integer>,
+  "sort_key": <session_number as float>,
+  "label": "Session N",
+  "title": "Short descriptive title",
+  "date": "YYYY-MM-DD",
+  "time_pt": "",
+  "tracks": ["static-site" | "cloudflare-migration" | "member-directory" | "content" | "operations"],
+  "costs_usd": {},
+  "vector_counts": {},
+  "deployed": true,
+  "items": [
+    { "title": "Component or decision name", "html": "Explanation in HTML." }
+  ]
+}
+```
+
+**Devlog writing standard** — write `items` as if briefing a future engineer on architectural decisions, not just changes. Explain *why*, name the current state of the affected subsystem, and note anything that closes off alternatives or locks in a direction.
+
+**Wrap-up report (never skip):**
+
+After completing the checklist, report to Venkat with a table:
+
+| # | Item | Status | Notes |
+|---|------|--------|-------|
+| 1 | status.md | ✅ / ❌ | |
+| 2 | CLAUDE.md | ✅ / ❌ / n/a | |
+| 3 | devlog.json | ✅ / ❌ | |
+| 4 | DEVLOG.md regenerated | ✅ / ❌ | |
+| 5 | Browser verify | ✅ / ❌ / n/a | |
+| 6 | git commit + push | ✅ / ❌ | |
+| 7 | Memory updated | ✅ / ❌ / n/a | |
