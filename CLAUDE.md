@@ -75,6 +75,8 @@ Session URL scheme and HTML structure are specified in **[`sigs/CONVENTIONS.md`]
 - **Max content width**: 760px, centered
 - **All interior pages** share the same nav, footer, and `.interior-wrapper` layout
 - **Landing page** (`index.html`) uses a distinct fullscreen centered layout with `.landing-wrapper`
+- **CSS**: single stylesheet `css/style.css`. Both nav contexts (`.site-nav` interior, `.landing-wrapper` nav) must share `max-width: 760px; margin: 0 auto` to keep layout consistent.
+- **Draft pages** use `.draft-banner` (yellow/amber, `#FFF8E7`) until ready to publish
 
 ## Logos
 
@@ -109,7 +111,13 @@ Writing should be measured, institutional, and precise. Avoid marketing language
 
 ## Keys
 
-No keys are currently in use for this repo. When CF Workers are added (Phase 1+), keys will be provisioned via `../.env.keys` and inventoried in `../admin/keys.md`. Do not use `Code/.env.keys` for PI keys.
+Keys for D1, R2, Resend, and CF Access are set as CF Pages secrets in the Cloudflare dashboard — not in `.env` files in this repo. See `../admin/keys.md` for the inventory. Do not use `Code/.env.keys` for PI keys.
+
+## Governance & workflow
+
+The primary maintainer has org admin on Protocol-Institute and direct push access to `main`. Use the fork (`vgururao/website`) only for changes that need review — push a branch there, open a PR to upstream, delete the branch after merge.
+
+**Before working on About, Consulting, or Programs pages:** check `sop-migration.md` for content items from summerofprotocols.com that still need to be ported.
 
 ## Deployment
 
@@ -117,23 +125,23 @@ The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes
 
 ## At Session Start
 
-1. Read `status-vgr.md` — review active and upcoming items from the last session.
-2. Confirm you are on `main` (`git branch --show-current`). Never work on `feat/cloudflare-migration` during content sessions.
-3. Briefly summarize to Venkat: any active items from `status-vgr.md` that are ready to work on.
+1. Read `status.md` — review active and upcoming items from the last session.
+2. Confirm you are on `main` (`git branch --show-current`).
+3. Briefly summarize: any active items from `status.md` that are ready to work on.
 
 ---
 
 ## After Each Session
 
 **Documentation (always):**
-1. `status-vgr.md` — add a dated log entry with PT start–end times and a one-line summary of what changed.
-2. `CLAUDE.md` — update roadmap status or file structure notes if anything changed.
+1. `status.md` — add a dated log entry with a one-line summary of what changed.
+2. `CLAUDE.md` — update file structure notes or governance info if anything changed.
 
 **Verify (if HTML/CSS/JS changed):**
 3. No build step — open the changed pages in a browser and verify before committing. Check mobile nav on narrow viewport.
 
 **Repo:**
-4. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main` — never to the fork or the CF branch.
+4. `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main`.
 
 **Memory:**
-5. Update Claude memory (`/Users/Venkat/.claude/projects/.../memory/`) — save anything non-obvious about site structure, CF migration state, or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
+5. Update Claude memory — save anything non-obvious about site structure or workflow preferences that would help future sessions. Do not duplicate what's in CLAUDE.md or recoverable from code.
