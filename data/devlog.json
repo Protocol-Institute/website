@@ -483,6 +483,36 @@
           "html": "Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from <code>main.js</code> via <code>document.querySelector('.site-footer').innerHTML = FOOTER_HTML</code> — the same pattern already used for the header. The footer's existing <code>.site-footer</code> element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us."
         }
       ]
+    },
+    {
+      "id": 16,
+      "sort_key": 16.0,
+      "label": "Session 16",
+      "title": "URL Consolidation, Programs Restructure, New SIGs, Pitchdeck Fix",
+      "date": "2026-06-01",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium 2026 URL consolidated to events/protocol-symposium-2026/",
+          "html": "Removed two orphaned top-level directories (<code>symposium-2026/</code> and the empty <code>protocol-symposium-2026/</code>) and established <code>events/protocol-symposium-2026/index.html</code> as the single canonical page, matching the naming convention of the 2024 and 2025 editions. The page serves the active CFP and will be updated in-place to show the program after the June 14 submission deadline, then converted to a historical archive post-event. Redirects added to <code>_redirects</code> for both old URLs. Homepage banner link and footer Symposium link updated to the canonical path."
+        },
+        {
+          "title": "Programs index restructured: Protocol Symposium replaces Protocol School",
+          "html": "Removed Protocol School from the Programs index — it is a component of the Symposium, not a standalone program, and its dedicated page at <code>/programs/protocol-school</code> remains. Added a Protocol Symposium entry linking all three editions (2024, 2025, 2026 upcoming) in a single item."
+        },
+        {
+          "title": "Two new SIG stubs added: DRG and SIGPSY",
+          "html": "Created <code>sigs/drg/index.html</code> (Distributed Robotics Group — onchain robotics protocols, led by Anuraj R. and Rafael Fernandez) and <code>sigs/sigpsy/index.html</code> (SIGPSY — Special Interest Group in Psychohistory, long-range historical modeling, led by Venkatesh Rao and Aneesh Sathe; links worldmachines.org). Both appear in the SIG index with an amber 'Coming Soon' badge (<code>status-draft</code> CSS class added). <code>sigs/CONVENTIONS.md</code> updated with <code>drg</code> and <code>sigpsy</code> slugs so c3po's ingestion pipeline knows where to write sessions when they begin."
+        },
+        {
+          "title": "Pitchdeck fixed: vendored marked.min.js",
+          "html": "The pitchdeck was throwing 'Deck error — marked is not defined' because <code>deck.html</code> loaded the marked markdown parser from <code>cdn.jsdelivr.net</code>, which is blocked by the site's <code>Content-Security-Policy: script-src 'self'</code> header (set in <code>_headers</code>). Fixed by downloading marked v15 (~40kb) into <code>pitchdeck/marked.min.js</code> and updating the script tag to load from the same origin."
+        }
+      ]
     }
   ]
 }

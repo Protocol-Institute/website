@@ -255,3 +255,19 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from `main.js` via `document.querySelector('.site-footer').innerHTML = FOOTER_HTML` — the same pattern already used for the header. The footer's existing `.site-footer` element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us.
 
 ---
+
+## Session 16: URL Consolidation, Programs Restructure, New SIGs, Pitchdeck Fix
+
+*2026-06-01*
+
+**Tracks:** static-site, content, operations
+
+- Removed two orphaned top-level directories (`symposium-2026/` and the empty `protocol-symposium-2026/`) and established `events/protocol-symposium-2026/index.html` as the single canonical page, matching the naming convention of the 2024 and 2025 editions. The page serves the active CFP and will be updated in-place to show the program after the June 14 submission deadline, then converted to a historical archive post-event. Redirects added to `_redirects` for both old URLs. Homepage banner link and footer Symposium link updated to the canonical path.
+
+- Removed Protocol School from the Programs index — it is a component of the Symposium, not a standalone program, and its dedicated page at `/programs/protocol-school` remains. Added a Protocol Symposium entry linking all three editions (2024, 2025, 2026 upcoming) in a single item.
+
+- Created `sigs/drg/index.html` (Distributed Robotics Group — onchain robotics protocols, led by Anuraj R. and Rafael Fernandez) and `sigs/sigpsy/index.html` (SIGPSY — Special Interest Group in Psychohistory, long-range historical modeling, led by Venkatesh Rao and Aneesh Sathe; links worldmachines.org). Both appear in the SIG index with an amber 'Coming Soon' badge (`status-draft` CSS class added). `sigs/CONVENTIONS.md` updated with `drg` and `sigpsy` slugs so c3po's ingestion pipeline knows where to write sessions when they begin.
+
+- The pitchdeck was throwing 'Deck error — marked is not defined' because `deck.html` loaded the marked markdown parser from `cdn.jsdelivr.net`, which is blocked by the site's `Content-Security-Policy: script-src 'self'` header (set in `_headers`). Fixed by downloading marked v15 (~40kb) into `pitchdeck/marked.min.js` and updating the script tag to load from the same origin.
+
+---

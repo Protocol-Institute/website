@@ -28,15 +28,16 @@ sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
   mrg/
   sigpfb/
   protfisig/
+  drg/              Distributed Robotics Group — coming soon
+  sigpsy/           Special Interest Group in Psychohistory — coming soon
 network/            /network — PIN member directory (data from Google Form)
 consulting/         /consulting — consultant directory (data from Google Form)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
-symposium-2026/     /symposium-2026
 programs/
   protocol-school/  /programs/protocol-school — biennial Protocol School program
 support/            /support (embeds pitchdeck iframe)
-pitchdeck/          Support deck (deck.html, deck.js, deck.css)
+pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)
 license/            /license — CC+ license for SoP23 outputs
 members/            /members — member directory (D1-backed, PIN auth)
   join/             /members/join — login + registration flow
