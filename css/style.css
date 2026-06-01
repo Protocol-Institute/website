@@ -360,6 +360,11 @@ a:hover {
   border-color: #2A6B6B;
 }
 
+.project-status.status-draft {
+  color: #8A5A00;
+  border-color: #C8861A;
+}
+
 .project-category {
   font-size: 0.72rem;
   font-weight: 500;

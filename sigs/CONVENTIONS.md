@@ -10,6 +10,8 @@ This document specifies the URL scheme and HTML structure for SIG session pages 
 | Memory Research Group | `mrg` | `sigs/mrg/` |
 | Protocols for Business | `sigpfb` | `sigs/sigpfb/` |
 | Protocol Fiction | `protfisig` | `sigs/protfisig/` |
+| Distributed Robotics Group | `drg` | `sigs/drg/` |
+| Special Interest Group in Psychohistory | `sigpsy` | `sigs/sigpsy/` |
 
 ## Session URL scheme
 
