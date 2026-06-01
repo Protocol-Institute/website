@@ -33,7 +33,7 @@
     "date_display": "September 12–19, 2025",
     "location": "Online",
     "short_description": "The second annual Protocol Symposium — a week-long capstone event organized around the theme Accelerating Order, comprising the Foundations Workshop (Sep 12–14, a research sprint toward a formal theory of protocols) and Protocol School (Sep 15–19, twelve modules delivered by eleven university teaching fellows).",
-    "image": null,
+    "image": "/assets/symposium25.webp",
     "resources_url": null
   },
   {
@@ -81,7 +81,7 @@
     "date_display": "September 12–19, 2024",
     "location": "Online",
     "short_description": "The inaugural Protocol Symposium — a week-long online capstone event for Summer of Protocols 2024, bringing together researchers, practitioners, and teaching fellows from across the SoP24 community.",
-    "image": null,
+    "image": "/assets/symposium24.webp",
     "resources_url": null
   },
   {
