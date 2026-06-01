@@ -4,7 +4,7 @@ The public website for the [Protocol Institute](https://protocol-institute.org),
 
 ## About the site
 
-Plain HTML, CSS, and JavaScript. No build step, no framework, no dependencies. Edit files and push — Netlify deploys automatically from the `main` branch.
+Plain HTML, CSS, and JavaScript. No build step, no framework, no dependencies. Edit files and push — Cloudflare Pages deploys automatically from the `main` branch.
 
 ## Pages
 

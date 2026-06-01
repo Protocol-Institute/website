@@ -37,24 +37,4 @@ Add `<li class="project-item">` to `projects.html`. Use `status-active` class fo
 ## Workflow Notes
 - **Default: commit directly to `main`** on Protocol-Institute/website.
 - **Fork (vgururao/website) is only for changes that need review** — push branch, PR to upstream, delete branch after merge.
-- Deployment: Netlify auto-deploys on push to `main`. Migration to Cloudflare Pages planned (see `feat/cloudflare-migration` branch).
-
-## Branch Sync Strategy: `main` ↔ `feat/cloudflare-migration`
-
-Two parallel tracks:
-- **`main`** — all content and page work: new HTML pages, copy edits, CSS tweaks, status/admin files. Deploy target: Netlify.
-- **`feat/cloudflare-migration`** — infra only: `wrangler.toml`, `MIGRATION.md`, Cloudflare-specific config. No content changes here.
-
-Because the file sets don't overlap, merge-downs are conflict-free.
-
-**Periodic sync (merge `main` → CF branch):** do this at the start of each CF work session, or after a batch of main commits lands.
-```bash
-git checkout feat/cloudflare-migration
-git merge main --no-edit
-git push
-git checkout main
-```
-
-**Landing the migration:** when CF infra is ready to ship, merge `feat/cloudflare-migration` → `main` (regular merge or squash). Delete the CF branch after.
-
-**Watch for conflicts:** if CF work ever needs to touch existing HTML files (e.g., adding Cloudflare headers), note it in the commit message so the next merge-down is easy to inspect.
+- Deployment: Cloudflare Pages auto-deploys on push to `main`. API endpoints via CF Pages Functions (`functions/`). D1 database and R2 bucket configured in `wrangler.toml`.

@@ -6,18 +6,13 @@ This file provides guidance for LLMs working on this codebase.
 
 ## What this is
 
-A plain HTML/CSS/JS website for the Protocol Institute at **protocol-institute.org**. No build step, no framework, no dependencies — just static files served directly by Netlify.
+A plain HTML/CSS/JS website for the Protocol Institute at **protocol-institute.org**. No build step, no framework, no dependencies — just static files served by Cloudflare Pages.
 
 **Do not confuse this with `protocolized-website/`**, which is the separate Astro site for Protocolized magazine at protocolized.io.
 
-### Two branches, two purposes
+### One branch
 
-| Branch | Purpose | Deployed at |
-|--------|---------|-------------|
-| `main` | Live production site — plain HTML, edit and push directly | protocol-institute.org via Netlify |
-| `feat/cloudflare-migration` | Future rebuild as a static site for Cloudflare Pages — development only, do not merge | (not yet live) |
-
-All content work happens on `main`. The `feat/cloudflare-migration` branch is a long-running dev branch; never merge it into main and never push main work there.
+All content work happens on `main`. Pushes to `main` deploy automatically via Cloudflare Pages.
 
 ## File structure
 
@@ -66,7 +61,7 @@ js/
   tags.js             Canonical tag labels/lists for client-side pages
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
-_redirects          Legacy URL redirects (works on both Netlify and CF Pages)
+_redirects          Legacy URL redirects (CF Pages native support)
 ```
 
 ## SIG session pages
@@ -118,7 +113,7 @@ No keys are currently in use for this repo. When CF Workers are added (Phase 1+)
 
 ## Deployment
 
-The site is deployed via Netlify, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.`.
+The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.` (configured in `wrangler.toml`). CF Pages Functions in `functions/` handle all API endpoints. D1 database binding: `DB` (`pi-members`). R2 bucket binding: `ASSETS_BUCKET` (`pi-assets`).
 
 ## At Session Start
 
