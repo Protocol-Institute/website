@@ -18,12 +18,21 @@ var NAV_HTML =
       '<li><a href="/programs">Programs</a></li>' +
       '<li><a href="/events">Events</a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
-      '<li><a href="/members">Members</a></li>' +
       '<li><a href="/about">About</a></li>' +
-      '<li><a href="/support">Support Us</a></li>' +
-      '<li><a href="/contact">Contact</a></li>' +
     '</ul>' +
   '</nav>';
+
+var FOOTER_HTML =
+  '<nav class="footer-nav" aria-label="Footer navigation">' +
+    '<a href="/team">Team</a>' +
+    '<a href="/network">Network</a>' +
+    '<a href="/consulting">Consulting</a>' +
+    '<a href="/symposium-2026">Symposium</a>' +
+    '<a href="/contact">Contact</a>' +
+    '<a href="/members">Members</a>' +
+    '<a href="/support">Support Us</a>' +
+  '</nav>' +
+  '<p>&copy; 2025 The Protocol Institute</p>';
 
 (function () {
   // Inject nav
@@ -43,6 +52,10 @@ var NAV_HTML =
       }
     });
   }
+
+  // Inject footer
+  var footer = document.querySelector('.site-footer');
+  if (footer) footer.innerHTML = FOOTER_HTML;
 
   // Mobile toggle
   var toggle = document.getElementById('nav-toggle');
