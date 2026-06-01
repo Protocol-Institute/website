@@ -1,5 +1,18 @@
 [
   {
+    "id": "protocol-symposium-2026",
+    "title": "Protocol Symposium 2026",
+    "type": "symposium",
+    "status": "upcoming",
+    "date_start": "2026-09-21",
+    "date_end": "2026-09-25",
+    "date_display": "September 21–25, 2026",
+    "location": "TBD",
+    "short_description": "The third annual Protocol Symposium, bringing together researchers, practitioners, and institutions working across the challenges and opportunities of protocolization. Submissions open; deadline June 14.",
+    "image": "/assets/nn_banner6.png",
+    "resources_url": null
+  },
+  {
     "id": "bridge-atlas-devconnect-2025",
     "title": "Bridge Atlas at Devconnect 2025",
     "type": "conference",

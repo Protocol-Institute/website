@@ -77,11 +77,14 @@
         }
 
         var typeLabel = TYPE_LABELS[ev.type] || ev.type;
+        var upcomingBadge = ev.status === 'upcoming'
+          ? '<span class="event-upcoming-badge">Upcoming</span>'
+          : '';
 
         li.innerHTML =
           '<div class="event-thumbnail-wrap">' + thumb + '</div>' +
           '<div class="event-card-body">' +
-            '<div class="event-type-badge">' + typeLabel + '</div>' +
+            '<div class="event-type-badge">' + typeLabel + upcomingBadge + '</div>' +
             '<div class="event-card-title"><a href="/events/' + ev.id + '/">' + ev.title + '</a></div>' +
             '<div class="event-card-meta">' + ev.date_display + ' &middot; ' + ev.location + '</div>' +
             '<p class="event-card-description">' + ev.short_description + '</p>' +
