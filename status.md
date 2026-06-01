@@ -5,7 +5,6 @@
 
 ## Upcoming
 <!-- planned changes or features -->
-- Symposium banner: replace CSS placeholder with final artwork from artist (1520×400px, 2× retina)
 - Promote Network page to main nav once member content is added
 - Add Events calendar page with Google Calendar embed (calendar location TBD — hold until calendar is finalized)
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
@@ -51,6 +50,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-01** — Session 15: Banner replaced with corrected version (nn_banner.png → R2 as nn_banner6.png). Date fixed site-wide: Sep 21–24 → Sep 21–25 (4 occurrences across index.html and symposium-2026/index.html). Protocol Symposium 2026 added to events.json with "upcoming" status and amber badge on events index. Art banner (nn_artbanner.png) uploaded to R2 and used for events card thumbnail. Symposium 2024/2025 thumbnails (symposium24.webp, symposium25.webp) uploaded to R2 and wired into events.json. Nav trimmed to 4 items (Programs, Events, Protocolized, About); footer now globally injected from main.js — Contact, Members, Support Us moved to footer.
 - **2026-06-01** — Session 13 (continued): SoP event ingestion complete — added 3 events (Researcher Retreat Seattle 2023, Datus and Nusas Singapore 2024, Khlongs and Subaks Bangkok 2025); events.json now 10 events; Healdsburg location updated to "Edge Esmeralda, Healdsburg, CA"; TYPE_LABELS updated with "retreat"; deleted sop-migration.md.
 - **2026-06-01** — Session 13: Events history system — data/events.json (7 events), /events/ index (JS-rendered from JSON), 7 detail pages. "Events" added to main nav. CF migration cleanup: deleted netlify.toml, MIGRATION.md, feat/cloudflare-migration branch (local + remote). Consolidated claude-vgr.md → CLAUDE.md, status-vgr.md → status.md. All docs now reflect CF Pages as live host.
 - **2026-05-30** — Session 12: site architecture review. CF Zero Trust Access on /admin/* (zero code, CDN-layer auth). Tag definitions consolidated into shared module (fixed silent tag_protocolized_writer drop on member approval). CSP tightened. SIG mailing list plan documented (Resend Audiences + D1 + web compose UI, blocked on sigs@protocol-institute.org setup). Member Login/Register topbar added site-wide. SoP migration: built /symposium-2025, /programs/protocol-school (with 11 teaching fellows), /workshops, /license. Alumni data saved to data/alumni.json. summerofprotocols.com redirect plan documented in admin repo. Devlog backfilled sessions 6–12.

@@ -239,3 +239,19 @@ A build log for protocol-institute.org — how the static site was built, what i
 - **ROADMAP: member pre-population added as major backlog item:** Documents the plan to bulk-import a few hundred existing community members from the PI spreadsheet into D1. Key design: `claimed` flag, invite-first approach (mass-email via Resend to route people to pre-populated profiles), admin merge endpoint as fallback. Field mapping from spreadsheet to D1 is the main open prerequisite.
 
 ---
+
+## Session 15: Banner Refresh, Date Fix, Events Thumbnails, Nav Restructure
+
+*2026-06-01*
+
+**Tracks:** static-site, content, operations
+
+- Updated `nn_banner6.png` in R2 with a revised version of the artwork. Simultaneously corrected the symposium date from Sep 21–24 to Sep 21–25 across all four occurrences: meta description, visible kicker, and both `alt` attributes in `index.html` and `symposium-2026/index.html`.
+
+- Added Protocol Symposium 2026 to `data/events.json` as the first entry (sorts to top by `date_start: 2026-09-21`). Added a `status: "upcoming"` field and updated `events/index.html` JS to render an amber 'Upcoming' badge for entries with that status. CSS for `.event-upcoming-badge` added to `style.css` using the site's existing draft-banner amber palette.
+
+- Uploaded `nn_artbanner.png` to R2 and wired it as the Symposium 2026 events card thumbnail — the wide banner aspect ratio is inappropriate for the card layout, so a separate square-ish art image is used there. Uploaded `symposium24.webp` and `symposium25.webp` to R2 and wired into the 2024 and 2025 events entries respectively. All three wired via `image` field in `data/events.json`.
+
+- Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from `main.js` via `document.querySelector('.site-footer').innerHTML = FOOTER_HTML` — the same pattern already used for the header. The footer's existing `.site-footer` element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us.
+
+---

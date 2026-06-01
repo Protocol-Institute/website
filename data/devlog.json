@@ -453,6 +453,36 @@
           "html": "<strong>ROADMAP: member pre-population added as major backlog item:</strong> Documents the plan to bulk-import a few hundred existing community members from the PI spreadsheet into D1. Key design: <code>claimed</code> flag, invite-first approach (mass-email via Resend to route people to pre-populated profiles), admin merge endpoint as fallback. Field mapping from spreadsheet to D1 is the main open prerequisite."
         }
       ]
+    },
+    {
+      "id": 15,
+      "sort_key": 15.0,
+      "label": "Session 15",
+      "title": "Banner Refresh, Date Fix, Events Thumbnails, Nav Restructure",
+      "date": "2026-06-01",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Banner replaced and date corrected",
+          "html": "Updated <code>nn_banner6.png</code> in R2 with a revised version of the artwork. Simultaneously corrected the symposium date from Sep 21–24 to Sep 21–25 across all four occurrences: meta description, visible kicker, and both <code>alt</code> attributes in <code>index.html</code> and <code>symposium-2026/index.html</code>."
+        },
+        {
+          "title": "Protocol Symposium 2026 added to events index",
+          "html": "Added Protocol Symposium 2026 to <code>data/events.json</code> as the first entry (sorts to top by <code>date_start: 2026-09-21</code>). Added a <code>status: \"upcoming\"</code> field and updated <code>events/index.html</code> JS to render an amber 'Upcoming' badge for entries with that status. CSS for <code>.event-upcoming-badge</code> added to <code>style.css</code> using the site's existing draft-banner amber palette."
+        },
+        {
+          "title": "Events thumbnails: art banner and symposium images",
+          "html": "Uploaded <code>nn_artbanner.png</code> to R2 and wired it as the Symposium 2026 events card thumbnail — the wide banner aspect ratio is inappropriate for the card layout, so a separate square-ish art image is used there. Uploaded <code>symposium24.webp</code> and <code>symposium25.webp</code> to R2 and wired into the 2024 and 2025 events entries respectively. All three wired via <code>image</code> field in <code>data/events.json</code>."
+        },
+        {
+          "title": "Nav trimmed; footer globally injected from main.js",
+          "html": "Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from <code>main.js</code> via <code>document.querySelector('.site-footer').innerHTML = FOOTER_HTML</code> — the same pattern already used for the header. The footer's existing <code>.site-footer</code> element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us."
+        }
+      ]
     }
   ]
 }
