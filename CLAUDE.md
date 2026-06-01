@@ -117,8 +117,6 @@ Keys for D1, R2, Resend, and CF Access are set as CF Pages secrets in the Cloudf
 
 The primary maintainer has org admin on Protocol-Institute and direct push access to `main`. Use the fork (`vgururao/website`) only for changes that need review — push a branch there, open a PR to upstream, delete the branch after merge.
 
-**Before working on About, Consulting, or Programs pages:** check `sop-migration.md` for content items from summerofprotocols.com that still need to be ported.
-
 ## Deployment
 
 The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.` (configured in `wrangler.toml`). CF Pages Functions in `functions/` handle all API endpoints. D1 database binding: `DB` (`pi-members`). R2 bucket binding: `ASSETS_BUCKET` (`pi-assets`).
