@@ -150,9 +150,8 @@ The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes
 2. **`CLAUDE.md`** — update file structure, deployment notes, or governance info if anything changed.
 3. **`data/devlog.json`** — append a new session record (see schema below). **Never skip.** This is the load-bearing architectural record.
 4. **`DEVLOG.md`** — regenerate: `python3 devlog_render.py` from the repo root.
-5. **Verify** (if HTML/CSS/JS changed) — confirm changed pages render correctly in a browser. Check mobile nav on narrow viewport.
-6. **Repo** — `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main`.
-7. **Memory** — save anything non-obvious about site structure or workflow preferences. Do not duplicate what's in CLAUDE.md or recoverable from code.
+5. **Repo** — `git add` relevant files; `git commit`; `git push origin main`. Always push to `origin main`.
+6. **Memory** — save anything non-obvious about site structure or workflow preferences. Do not duplicate what's in CLAUDE.md or recoverable from code.
 
 **Devlog JSON schema** (append to `data/devlog.json` → `sessions` array):
 
@@ -186,6 +185,5 @@ After completing the checklist, report to Venkat with a table:
 | 2 | CLAUDE.md | ✅ / ❌ / n/a | |
 | 3 | devlog.json | ✅ / ❌ | |
 | 4 | DEVLOG.md regenerated | ✅ / ❌ | |
-| 5 | Browser verify | ✅ / ❌ / n/a | |
-| 6 | git commit + push | ✅ / ❌ | |
-| 7 | Memory updated | ✅ / ❌ / n/a | |
+| 5 | git commit + push | ✅ / ❌ | |
+| 6 | Memory updated | ✅ / ❌ / n/a | |
