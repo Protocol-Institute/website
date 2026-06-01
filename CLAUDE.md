@@ -43,6 +43,7 @@ members/            /members — member directory (D1-backed, PIN auth)
   edit/             /members/edit — authenticated profile editor
 admin/              /admin/members — admin review panel (CF Access gated)
 functions/          Cloudflare Pages Functions (API endpoints)
+  assets/[[path]].js  R2 proxy — intercepts ALL /assets/* requests, serves from pi-assets R2 bucket
   _shared/tags.js   Canonical tag definitions — imported by all Workers
   api/              /api/* endpoints (members, auth, membership, admin)
 db/                 D1 schema and migrations

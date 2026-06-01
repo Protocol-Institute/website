@@ -7,7 +7,6 @@
 <!-- planned changes or features -->
 - Symposium banner: replace CSS placeholder with final artwork from artist (1520×400px, 2× retina)
 - Promote Network page to main nav once member content is added
-- Migrate assets to R2 under same /assets/* paths (proxy via Pages Function so no HTML changes needed)
 - Add Events calendar page with Google Calendar embed (calendar location TBD — hold until calendar is finalized)
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
 - **SoP migration — Program History:** Expand `about/index.html` with a "Program History" / "Origins" section covering SoP23–25: research tracks, participant counts, $2.5M EF funding, 70+ alumni, 100+ outputs, 358-page proto-textbook, 1,800+ subscribers, conference history (Seattle, Singapore, Healdsburg, Chiang Mai, Devconnect Buenos Aires). Source: summerofprotocols.com/about. Blocked on writing/editing time.

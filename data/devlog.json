@@ -393,6 +393,66 @@
           "html": "<strong>summerofprotocols.com redirect plan:</strong> Domain migrating to Cloudflare; will redirect different paths to <code>protocol-institute.org</code> (institutional pages) and <code>protocolized.io</code> (content/research). Catch-all goes to protocolized.io. Specific path rules documented in <code>../admin/sop-domain-migration.md</code> as an ordered CF Redirect Rules list. Protocolized CLAUDE.md updated to note the incoming catch-all traffic. Implementation ready to execute once DNS zone is in CF."
         }
       ]
+    },
+    {
+      "id": 13,
+      "sort_key": 13.0,
+      "label": "Session 13",
+      "title": "Events History System, CF Cleanup, File Consolidation, SoP Ingestion",
+      "date": "2026-06-01",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Events history system:",
+          "html": "<strong>Events history system:</strong> Built a database-driven events index at <code>/events/</code>. <code>data/events.json</code> is the canonical source of truth — fetched at runtime by the index page, which sorts and renders event cards via JS. Individual event detail pages are static HTML at <code>/events/{slug}/</code>. Initial set: 7 events covering 2023–2025. 'Events' added to main nav. Events index uses a <code>TYPE_LABELS</code> map for human-readable type badges; mobile layout switches to single-column below 580px."
+        },
+        {
+          "title": "SoP event ingestion:",
+          "html": "<strong>SoP event ingestion — 3 additional events:</strong> Added three pre-existing events sourced from summerofprotocols.com: Researcher Retreat, St. Edward State Park, Seattle (August 2023); Datus and Nusas Workshop, Singapore (March 26–29, 2024); Khlongs and Subaks Workshop, CMKL University, Bangkok (April 21–25, 2025). Events.json now covers 10 events. Healdsburg location updated to 'Edge Esmeralda, Healdsburg, CA' for both Healdsburg entries. <code>sop-migration.md</code> deleted after remaining items were ported to <code>status.md</code>."
+        },
+        {
+          "title": "CF migration cleanup:",
+          "html": "<strong>CF migration cleanup:</strong> Deleted <code>netlify.toml</code>, <code>MIGRATION.md</code>, and <code>feat/cloudflare-migration</code> branch (local + remote). All docs updated to reflect Cloudflare Pages as the live host. The migration branch had been 4,854 lines behind main — an obsolete early exploration with nothing to merge."
+        },
+        {
+          "title": "File consolidation:",
+          "html": "<strong>File consolidation:</strong> Merged <code>claude-vgr.md</code> into <code>CLAUDE.md</code> and <code>status-vgr.md</code> into <code>status.md</code>. Both <code>-vgr</code> files deleted. The primary maintainer now owns both files directly; the split was an artifact of the earlier multi-contributor setup. <code>CLAUDE.md</code> updated with CF Pages deployment details, governance section, and session rituals referencing the consolidated files."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "sort_key": 14.0,
+      "label": "Session 14",
+      "title": "Symposium 2026 Banner, Event Merges, Asset Policy",
+      "date": "2026-06-01",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium 2026 banner:",
+          "html": "<strong>Symposium 2026 banner (<code>nn_banner6.png</code>):</strong> Replaced the CSS text placeholder on the homepage with the commissioned artwork (1208×278px PNG, teal background, 'Protocol Symposium September 21–24, 2026 / Abstracts due June 14'). Image also added to the <code>/symposium-2026</code> page header. Symposium kicker and meta description updated with confirmed dates (Sep 21–24). The banner was initially committed to git but failed to load — root cause: all <code>/assets/*</code> requests are intercepted by <code>functions/assets/[[path]].js</code> and served from R2, not from the static file tree. Fixed by uploading to R2 via <code>wrangler r2 object put</code> and removing from git."
+        },
+        {
+          "title": "Protocol Symposium 2025 event merge:",
+          "html": "<strong>Protocol Symposium 2025 event merge:</strong> Replaced the two separate events (Protocol Foundations Workshop 2025, Protocol School 2025) with a single Protocol Symposium 2025 entry covering the full Sep 12–19 week. New detail page at <code>/events/protocol-symposium-2025/</code> covers both components as subsections. Old URLs redirect to new via <code>_redirects</code>."
+        },
+        {
+          "title": "R2 asset policy formalised:",
+          "html": "<strong>R2 asset policy formalised:</strong> Binary assets (PNG, JPG, WEBP) are not committed to git — they live in R2 bucket <code>pi-assets</code> and are served at <code>/assets/*</code> via <code>functions/assets/[[path]].js</code>. This was already the de facto practice (all profile photos, logos, etc. are R2-only); <code>.gitignore</code> now enforces it for <code>assets/*.png</code> and subdirectories. <code>inbox/</code> is the local staging folder (also gitignored). Upload command and workflow documented in <code>CLAUDE.md</code>."
+        },
+        {
+          "title": "ROADMAP: member pre-population:",
+          "html": "<strong>ROADMAP: member pre-population added as major backlog item:</strong> Documents the plan to bulk-import a few hundred existing community members from the PI spreadsheet into D1. Key design: <code>claimed</code> flag, invite-first approach (mass-email via Resend to route people to pre-populated profiles), admin merge endpoint as fallback. Field mapping from spreadsheet to D1 is the main open prerequisite."
+        }
+      ]
     }
   ]
 }

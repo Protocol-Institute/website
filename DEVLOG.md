@@ -207,3 +207,35 @@ A build log for protocol-institute.org — how the static site was built, what i
 - **summerofprotocols.com redirect plan:** Domain migrating to Cloudflare; will redirect different paths to `protocol-institute.org` (institutional pages) and `protocolized.io` (content/research). Catch-all goes to protocolized.io. Specific path rules documented in `../admin/sop-domain-migration.md` as an ordered CF Redirect Rules list. Protocolized CLAUDE.md updated to note the incoming catch-all traffic. Implementation ready to execute once DNS zone is in CF.
 
 ---
+
+## Session 13: Events History System, CF Cleanup, File Consolidation, SoP Ingestion
+
+*2026-06-01*
+
+**Tracks:** static-site, content, operations
+
+- **Events history system:** Built a database-driven events index at `/events/`. `data/events.json` is the canonical source of truth — fetched at runtime by the index page, which sorts and renders event cards via JS. Individual event detail pages are static HTML at `/events/{slug}/`. Initial set: 7 events covering 2023–2025. 'Events' added to main nav. Events index uses a `TYPE_LABELS` map for human-readable type badges; mobile layout switches to single-column below 580px.
+
+- **SoP event ingestion — 3 additional events:** Added three pre-existing events sourced from summerofprotocols.com: Researcher Retreat, St. Edward State Park, Seattle (August 2023); Datus and Nusas Workshop, Singapore (March 26–29, 2024); Khlongs and Subaks Workshop, CMKL University, Bangkok (April 21–25, 2025). Events.json now covers 10 events. Healdsburg location updated to 'Edge Esmeralda, Healdsburg, CA' for both Healdsburg entries. `sop-migration.md` deleted after remaining items were ported to `status.md`.
+
+- **CF migration cleanup:** Deleted `netlify.toml`, `MIGRATION.md`, and `feat/cloudflare-migration` branch (local + remote). All docs updated to reflect Cloudflare Pages as the live host. The migration branch had been 4,854 lines behind main — an obsolete early exploration with nothing to merge.
+
+- **File consolidation:** Merged `claude-vgr.md` into `CLAUDE.md` and `status-vgr.md` into `status.md`. Both `-vgr` files deleted. The primary maintainer now owns both files directly; the split was an artifact of the earlier multi-contributor setup. `CLAUDE.md` updated with CF Pages deployment details, governance section, and session rituals referencing the consolidated files.
+
+---
+
+## Session 14: Symposium 2026 Banner, Event Merges, Asset Policy
+
+*2026-06-01*
+
+**Tracks:** static-site, content, operations
+
+- **Symposium 2026 banner (`nn_banner6.png`):** Replaced the CSS text placeholder on the homepage with the commissioned artwork (1208×278px PNG, teal background, 'Protocol Symposium September 21–24, 2026 / Abstracts due June 14'). Image also added to the `/symposium-2026` page header. Symposium kicker and meta description updated with confirmed dates (Sep 21–24). The banner was initially committed to git but failed to load — root cause: all `/assets/*` requests are intercepted by `functions/assets/[[path]].js` and served from R2, not from the static file tree. Fixed by uploading to R2 via `wrangler r2 object put` and removing from git.
+
+- **Protocol Symposium 2025 event merge:** Replaced the two separate events (Protocol Foundations Workshop 2025, Protocol School 2025) with a single Protocol Symposium 2025 entry covering the full Sep 12–19 week. New detail page at `/events/protocol-symposium-2025/` covers both components as subsections. Old URLs redirect to new via `_redirects`.
+
+- **R2 asset policy formalised:** Binary assets (PNG, JPG, WEBP) are not committed to git — they live in R2 bucket `pi-assets` and are served at `/assets/*` via `functions/assets/[[path]].js`. This was already the de facto practice (all profile photos, logos, etc. are R2-only); `.gitignore` now enforces it for `assets/*.png` and subdirectories. `inbox/` is the local staging folder (also gitignored). Upload command and workflow documented in `CLAUDE.md`.
+
+- **ROADMAP: member pre-population added as major backlog item:** Documents the plan to bulk-import a few hundred existing community members from the PI spreadsheet into D1. Key design: `claimed` flag, invite-first approach (mass-email via Resend to route people to pre-populated profiles), admin merge endpoint as fallback. Field mapping from spreadsheet to D1 is the main open prerequisite.
+
+---
