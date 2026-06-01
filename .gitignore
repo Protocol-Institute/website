@@ -2,3 +2,17 @@
 .DS_Store
 .wrangler/
 *.pdf
+
+# Binary assets — served from R2 (pi-assets bucket), not tracked in git.
+# To upload: npx wrangler r2 object put pi-assets/<filename> --file <local-path> --content-type <mime> --remote
+# Key = bare filename (e.g. nn_banner6.png); served at /assets/<filename> via functions/assets/[[path]].js
+# Stage files locally in inbox/ before uploading.
+inbox/
+assets/*.png
+assets/*.jpg
+assets/*.jpeg
+assets/*.webp
+assets/**/*.png
+assets/**/*.jpg
+assets/**/*.jpeg
+assets/**/*.webp

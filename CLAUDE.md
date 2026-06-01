@@ -49,11 +49,9 @@ db/                 D1 schema and migrations
 data/
   devlog.json       Build log source of truth
   alumni.json       SoP23–25 alumni reference data (70 entries)
-assets/
+assets/             SVG files only — binary assets (PNG/JPG/WEBP) are in R2, not git
   logo-animated.svg   Animated logo — used only on index.html
-  logo-static.png     Static logo — used on all other pages
-  beings/             Profile photos (people and AI team members)
-  network/            Logos for PIN member cards
+inbox/              Local staging for new assets before R2 upload — gitignored
 css/
   style.css           All styles — single stylesheet for the whole site
 js/
@@ -63,6 +61,18 @@ fetch_form_data.py  Fetch and display current Google Form responses (network + c
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
 ```
+
+## Binary assets (images)
+
+Binary assets (PNG, JPG, WEBP) are **not committed to git**. They live in the R2 bucket `pi-assets` and are served at `/assets/<filename>` via `functions/assets/[[path]].js`.
+
+**To add a new image:**
+1. Drop the file into `inbox/` (gitignored)
+2. Upload to R2: `npx wrangler r2 object put pi-assets/<filename> --file inbox/<filename> --content-type image/png --remote`
+3. Reference in HTML as `/assets/<filename>`
+4. Do not `git add` the image file
+
+SVG files (logo, icons) are the exception — they stay in `assets/` and are tracked in git.
 
 ## SIG session pages
 
