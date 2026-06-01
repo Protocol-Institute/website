@@ -977,49 +977,18 @@ a:hover {
   box-sizing: border-box;
 }
 
-.symposium-banner {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid #E0DDD8;
-  border-left: 3px solid #2A6B6B;
-  text-decoration: none;
-  color: inherit;
-  transition: background 0.15s;
+.symposium-banner-wrap--page {
+  margin-bottom: 2rem;
 }
 
-.symposium-banner:hover {
-  background: #F3F3F0;
+.symposium-banner-wrap a {
+  display: block;
 }
 
-.symposium-banner-logo {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-}
-
-.symposium-banner-text {
-  flex: 1;
-}
-
-.symposium-banner-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1A1A1A;
-  margin-bottom: 0.15rem;
-}
-
-.symposium-banner-sub {
-  font-size: 0.85rem;
-  color: #5A5A5A;
-}
-
-.symposium-banner-arrow {
-  color: #2A6B6B;
-  font-size: 1.2rem;
-  flex-shrink: 0;
+.symposium-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 .symposium-submissions {
