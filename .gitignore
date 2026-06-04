@@ -1,5 +1,12 @@
 .env
 .DS_Store
+monitoring.html
+
+# Stale flat SIG pages — superseded by clean-URL subdirectories; Dropbox keeps syncing them back
+sigs/mrg.html
+sigs/protfisig.html
+sigs/sigfpt.html
+sigs/sigpfb.html
 .wrangler/
 *.pdf
 

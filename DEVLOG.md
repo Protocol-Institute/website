@@ -271,3 +271,19 @@ A build log for protocol-institute.org — how the static site was built, what i
 - The pitchdeck was throwing 'Deck error — marked is not defined' because `deck.html` loaded the marked markdown parser from `cdn.jsdelivr.net`, which is blocked by the site's `Content-Security-Policy: script-src 'self'` header (set in `_headers`). Fixed by downloading marked v15 (~40kb) into `pitchdeck/marked.min.js` and updating the script tag to load from the same origin.
 
 ---
+
+## Session 17: Jamverse, Whitespace Compaction, Nav Member Link
+
+*2026-06-03*
+
+**Tracks:** static-site, content
+
+- The placeholder 'Worldbuilding (coming soon)' item in the Protocolized section of `programs/index.html` was replaced with a named entry: **Jamverse**, described as a near-future protocol fiction extended universe, linking to `jamverse.protocolized.io`. Still marked coming soon. A TODO comment in the HTML marks it for a description update in a week or two once copy is ready.
+
+- A broad pass over `css/style.css` reduced vertical spacing throughout: `body line-height` 1.7→1.6; `p margin-bottom` 1.4rem→1rem globally; `.page-header` padding and margin roughly halved; `.site-footer margin-top` 6rem→3.5rem; `.project-item` padding 2.5rem→1.5rem; `.team-member` padding 3rem→2rem; event, member, network, consulting, and symposium section margins all reduced 30–50%. Landing page padding and logo margin also tightened. No structural changes — all visual.
+
+- Previously the 'Member Login / Register' link lived in a separate `.site-topbar` div rendered above the `.site-nav`, adding a full extra row. Restructured so the link is now a `.nav-member-link` inside `.site-nav`, sitting on the same flex row as the logo/brand. Since `.nav-brand` has `flex: 1`, the member link naturally aligns right. The topbar div and its CSS rules were removed. On mobile the link is hidden (`display: none`) since the footer already has a Members link. Net effect: one fewer row of chrome at the top of every page.
+
+- Four untracked files — `sigs/mrg.html`, `sigs/protfisig.html`, `sigs/sigfpt.html`, `sigs/sigpfb.html` — were old pre-clean-URL flat files that kept reappearing. Deleted. The canonical pages live at `sigs/mrg/index.html`, etc.
+
+---

@@ -23,7 +23,7 @@ body {
   color: #1A1A1A;
   font-family: 'DM Sans', system-ui, sans-serif;
   font-weight: 300;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 /* ---- Typography ---- */
@@ -51,7 +51,7 @@ h3 {
 }
 
 p {
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
   max-width: 68ch;
 }
 
@@ -78,27 +78,20 @@ a:hover {
   padding: 0 2.5rem;
 }
 
-/* ---- Top utility bar ---- */
+/* ---- Member link (inline with nav brand) ---- */
 
-.site-topbar {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0.6rem 2.5rem 0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.site-topbar-link {
+.nav-member-link {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #5A5A5A;
   text-decoration: none;
+  align-self: center;
   transition: color 0.2s ease;
 }
 
-.site-topbar-link:hover {
+.nav-member-link:hover {
   color: #2A6B6B;
   text-decoration: none;
 }
@@ -151,8 +144,8 @@ a:hover {
   justify-content: flex-start;
   flex-wrap: wrap;
   border-top: 1px solid #E0DDD8;
-  margin-top: 0.75rem;
-  padding: 0.55rem 0 1.1rem;
+  margin-top: 0.6rem;
+  padding: 0.4rem 0 0.75rem;
 }
 
 .nav-links a {
@@ -190,9 +183,9 @@ a:hover {
 /* ---- Page Header (interior pages) ---- */
 
 .page-header {
-  padding: 1.75rem 0 1.5rem;
+  padding: 1.1rem 0 0.85rem;
   border-bottom: 1px solid #E0DDD8;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .page-header h1 {
@@ -202,8 +195,8 @@ a:hover {
 /* ---- Footer ---- */
 
 .site-footer {
-  margin-top: 6rem;
-  padding: 2rem 2.5rem;
+  margin-top: 3.5rem;
+  padding: 1.5rem 2.5rem;
   border-top: 1px solid #E0DDD8;
   max-width: 760px;
   margin-left: auto;
@@ -233,21 +226,21 @@ a:hover {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4rem 2.5rem;
+  padding: 3rem 2.5rem;
 }
 
 .landing-mark {
   display: block;
   width: clamp(44px, 7vw, 68px);
   height: clamp(44px, 7vw, 68px);
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.25rem;
 }
 
 .landing-content h1 {
   font-size: clamp(2.6rem, 6vw, 4.4rem);
   font-weight: 400;
   letter-spacing: -0.02em;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0.75rem;
   color: #1A1A1A;
 }
 
@@ -284,7 +277,7 @@ a:hover {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #8A8A8A;
-  margin-top: 3rem;
+  margin-top: 1.75rem;
   margin-bottom: 0;
 }
 
@@ -305,7 +298,7 @@ a:hover {
   color: #5A5A5A;
   font-style: italic;
   font-size: 1.05rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .project-list {
@@ -313,7 +306,7 @@ a:hover {
 }
 
 .project-item {
-  padding: 2.5rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid #E0DDD8;
 }
 
@@ -437,8 +430,8 @@ a:hover {
 }
 
 .sig-cta {
-  margin-top: 3rem;
-  padding-top: 2rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
 }
 
@@ -452,7 +445,7 @@ a:hover {
 .about-body p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.1rem;
 }
 
 /* ---- Contact Page ---- */
@@ -481,8 +474,8 @@ a:hover {
 }
 
 .contact-note {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
   font-size: 0.9rem;
   color: #8A8A8A;
@@ -495,14 +488,14 @@ a:hover {
   color: #5A5A5A;
   padding: 1rem 1.4rem;
   border-left: 3px solid #E0DDD8;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
   max-width: none;
 }
 
 .team-member {
   display: flex;
   gap: 2.5rem;
-  padding: 3rem 0;
+  padding: 2rem 0;
   border-bottom: 1px solid #E0DDD8;
 }
 
@@ -576,13 +569,13 @@ a:hover {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #8A8A8A;
-  margin-bottom: 1.4rem;
+  margin-bottom: 0.75rem;
 }
 
 .team-bio p {
   font-size: 1rem;
   color: #2C2C2C;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .team-email {
@@ -669,6 +662,10 @@ a:hover {
     position: relative;
   }
 
+  .nav-member-link {
+    display: none;
+  }
+
   .nav-toggle {
     display: block;
   }
@@ -717,8 +714,8 @@ a:hover {
   }
 
   .page-header {
-    padding: 2.5rem 0 1.5rem;
-    margin-bottom: 2rem;
+    padding: 1.25rem 0 0.85rem;
+    margin-bottom: 1.25rem;
   }
 
   .project-meta {
@@ -727,7 +724,7 @@ a:hover {
   }
 
   .site-footer {
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     padding: 1.5rem;
   }
 
@@ -745,20 +742,20 @@ a:hover {
 /* ---- Network Page ---- */
 
 .network-intro {
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .network-intro p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.1rem;
 }
 
 .network-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .network-card {
@@ -819,20 +816,20 @@ a:hover {
 /* ---- Consulting Page ---- */
 
 .consulting-intro {
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .consulting-intro p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.1rem;
 }
 
 .consulting-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .consulting-card {
@@ -943,13 +940,13 @@ a:hover {
 }
 
 .symposium-intro {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .symposium-intro p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 
@@ -957,7 +954,7 @@ a:hover {
   border: 1px solid #E0DDD8;
   border-left: 3px solid #2A6B6B;
   padding: 1.1rem 1.4rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.75rem;
 }
 
 .symposium-cta p {
@@ -997,7 +994,7 @@ a:hover {
 }
 
 .symposium-submissions {
-  padding-top: 2rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
 }
 
@@ -1062,20 +1059,20 @@ a:hover {
 /* ---- Member Directory ---- */
 
 .members-intro {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .members-intro p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 .members-filter {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .filter-btn {
@@ -1107,7 +1104,7 @@ a:hover {
 }
 
 .member-item {
-  padding: 2rem 0;
+  padding: 1.25rem 0;
   border-bottom: 1px solid #E0DDD8;
 }
 
@@ -1300,9 +1297,9 @@ a:hover {
   font-size: 1.2rem;
   font-weight: 600;
   color: #1A1A1A;
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
-  padding-top: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
 }
 
@@ -1458,7 +1455,7 @@ a:hover {
   color: #5A5A5A;
   font-style: italic;
   font-size: 1.05rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .events-loading {
@@ -1477,7 +1474,7 @@ a:hover {
   display: grid;
   grid-template-columns: 180px 1fr;
   gap: 2rem;
-  padding: 2.5rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid #E0DDD8;
 }
 
@@ -1594,22 +1591,22 @@ a:hover {
   max-height: 340px;
   object-fit: cover;
   display: block;
-  margin: 1.5rem 0 2.5rem;
+  margin: 1rem 0 1.5rem;
 }
 
 .event-body {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
 }
 
 .event-body p {
   font-size: 1.05rem;
   color: #2C2C2C;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 .event-archive-cta {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
 }
 
@@ -1631,8 +1628,8 @@ a:hover {
 }
 
 .event-back {
-  margin-top: 3rem;
-  padding-top: 2rem;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
   border-top: 1px solid #E0DDD8;
   font-size: 0.9rem;
   color: #8A8A8A;

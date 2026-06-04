@@ -513,6 +513,36 @@
           "html": "The pitchdeck was throwing 'Deck error — marked is not defined' because <code>deck.html</code> loaded the marked markdown parser from <code>cdn.jsdelivr.net</code>, which is blocked by the site's <code>Content-Security-Policy: script-src 'self'</code> header (set in <code>_headers</code>). Fixed by downloading marked v15 (~40kb) into <code>pitchdeck/marked.min.js</code> and updating the script tag to load from the same origin."
         }
       ]
+    },
+    {
+      "id": 17,
+      "sort_key": 17.0,
+      "label": "Session 17",
+      "title": "Jamverse, Whitespace Compaction, Nav Member Link",
+      "date": "2026-06-03",
+      "time_pt": "",
+      "tracks": ["static-site", "content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Jamverse added to Programs / Protocolized track",
+          "html": "The placeholder 'Worldbuilding (coming soon)' item in the Protocolized section of <code>programs/index.html</code> was replaced with a named entry: <strong>Jamverse</strong>, described as a near-future protocol fiction extended universe, linking to <code>jamverse.protocolized.io</code>. Still marked coming soon. A TODO comment in the HTML marks it for a description update in a week or two once copy is ready."
+        },
+        {
+          "title": "Comprehensive vertical whitespace reduction across site CSS",
+          "html": "A broad pass over <code>css/style.css</code> reduced vertical spacing throughout: <code>body line-height</code> 1.7→1.6; <code>p margin-bottom</code> 1.4rem→1rem globally; <code>.page-header</code> padding and margin roughly halved; <code>.site-footer margin-top</code> 6rem→3.5rem; <code>.project-item</code> padding 2.5rem→1.5rem; <code>.team-member</code> padding 3rem→2rem; event, member, network, consulting, and symposium section margins all reduced 30–50%. Landing page padding and logo margin also tightened. No structural changes — all visual."
+        },
+        {
+          "title": "Member Login link moved inline with nav brand",
+          "html": "Previously the 'Member Login / Register' link lived in a separate <code>.site-topbar</code> div rendered above the <code>.site-nav</code>, adding a full extra row. Restructured so the link is now a <code>.nav-member-link</code> inside <code>.site-nav</code>, sitting on the same flex row as the logo/brand. Since <code>.nav-brand</code> has <code>flex: 1</code>, the member link naturally aligns right. The topbar div and its CSS rules were removed. On mobile the link is hidden (<code>display: none</code>) since the footer already has a Members link. Net effect: one fewer row of chrome at the top of every page."
+        },
+        {
+          "title": "Stale untracked SIG HTML files deleted",
+          "html": "Four untracked files — <code>sigs/mrg.html</code>, <code>sigs/protfisig.html</code>, <code>sigs/sigfpt.html</code>, <code>sigs/sigpfb.html</code> — were old pre-clean-URL flat files that kept reappearing. Deleted. The canonical pages live at <code>sigs/mrg/index.html</code>, etc."
+        }
+      ]
     }
   ]
 }

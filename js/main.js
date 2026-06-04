@@ -10,9 +10,9 @@
 }());
 
 var NAV_HTML =
-  '<div class="site-topbar"><a href="/members/join" class="site-topbar-link">Member Login / Register</a></div>' +
   '<nav class="site-nav" aria-label="Site navigation">' +
     '<a href="/" class="nav-brand"><img src="/assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>' +
+    '<a href="/members/join" class="nav-member-link">Member Login / Register</a>' +
     '<button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>' +
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
