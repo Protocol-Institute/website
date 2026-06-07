@@ -9,3 +9,18 @@
 /symposium-2026/                             /events/protocol-symposium-2026/  301
 /protocol-symposium-2026                     /events/protocol-symposium-2026   301
 /protocol-symposium-2026/                    /events/protocol-symposium-2026/  301
+
+# Humboldt — migrated to humboldt.protocol-institute.org
+/humboldt                   https://humboldt.protocol-institute.org/            301
+/humboldt/                  https://humboldt.protocol-institute.org/            301
+/humboldt-notebook          https://humboldt.protocol-institute.org/notebook/   301
+/humboldt-notebook/         https://humboldt.protocol-institute.org/notebook/   301
+/humboldt-notebook.html     https://humboldt.protocol-institute.org/notebook/   301
+/humboldt-research          https://humboldt.protocol-institute.org/research/   301
+/humboldt-research/         https://humboldt.protocol-institute.org/research/   301
+/humboldt-reading           https://humboldt.protocol-institute.org/reading/    301
+/humboldt-reading/          https://humboldt.protocol-institute.org/reading/    301
+/humboldt-architecture      https://humboldt.protocol-institute.org/architecture/ 301
+/humboldt-architecture/     https://humboldt.protocol-institute.org/architecture/ 301
+/humboldt-behaviors         https://humboldt.protocol-institute.org/            301
+/humboldt-behaviors/        https://humboldt.protocol-institute.org/            301
