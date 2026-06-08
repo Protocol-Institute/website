@@ -125,9 +125,9 @@ export async function onRequestPost({ request, env }) {
 
   try {
     const result = await env.DB.prepare(`
-      INSERT INTO challenges (title, description, posed_by, communicated_by_slug, difficulty, seed_interesting)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).bind(title, description, posed_by, member.slug, difficulty, seed).run();
+      INSERT INTO challenges (title, description, posed_by, posed_by_slug, communicated_by_slug, difficulty, seed_interesting)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(title, description, posed_by, member.slug, member.slug, difficulty, seed).run();
     return Response.json({ id: result.meta.last_row_id }, { status: 201 });
   } catch (err) {
     console.error('challenges POST error:', err);
