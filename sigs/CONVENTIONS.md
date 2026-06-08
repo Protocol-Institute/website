@@ -109,6 +109,14 @@ The page header contains date and title. The `<div class="meeting-detail">` hold
 2. Add an entry to the `<ul class="meeting-list">` in `sigs/<sig-slug>/index.html` — date, linked title, topics, abstract only.
 3. Update the session count in the `<h2 class="section-label">` line.
 
+## Future-dated sessions
+
+Discord threads are often created ahead of the session to post an agenda. When the computed `date_iso` is in the future (relative to today), the session has not yet occurred and only agenda/announcement content is available.
+
+- Add `class="meeting-item meeting-upcoming"` to the `<li>` on the index page. The CSS will render a "Scheduled" badge next to the date.
+- Do not fabricate a summary. Use `<p class="meeting-summary">Summary to be added after the session.</p>` as a placeholder.
+- After the session occurs, re-ingest the thread to replace the placeholder content and remove the `meeting-upcoming` class.
+
 ## Adding a new session (c3po automated ingestion)
 
 The c3po pipeline should:

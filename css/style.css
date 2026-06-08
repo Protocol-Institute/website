@@ -1525,6 +1525,22 @@ a:hover {
   margin-left: 0.5em;
 }
 
+.meeting-item.meeting-upcoming { opacity: 0.8; }
+.meeting-item.meeting-upcoming .meeting-date::after {
+  content: "Scheduled";
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8A5A00;
+  border: 1px solid #C8861A;
+  background: #FFF8E7;
+  padding: 0.1em 0.5em;
+  margin-left: 0.6em;
+  vertical-align: middle;
+}
+
 .event-card-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 1.5rem;
