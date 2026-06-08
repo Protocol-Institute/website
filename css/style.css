@@ -88,12 +88,19 @@ a:hover {
   color: #5A5A5A;
   text-decoration: none;
   align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
   transition: color 0.2s ease;
 }
 
 .nav-member-link:hover {
   color: #2A6B6B;
   text-decoration: none;
+}
+
+.nav-member-link--authed {
+  color: #2A6B6B;
 }
 
 /* ---- Navigation ---- */

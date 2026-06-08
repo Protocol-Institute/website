@@ -268,8 +268,9 @@
       // Check if already a member
       const me = await fetch('/api/members/me');
       if (me.ok) {
-        // Already a member — redirect to edit
-        window.location.href = '/members/edit';
+        // Already a member — redirect to return param or members page
+        var returnTo = new URLSearchParams(window.location.search).get('return');
+        window.location.href = (returnTo && returnTo.startsWith('/') && returnTo.indexOf('//') !== 0) ? returnTo : '/members';
         return;
       }
 

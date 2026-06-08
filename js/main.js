@@ -9,10 +9,12 @@
   document.head.appendChild(s);
 }());
 
+var PERSON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>';
+
 var NAV_HTML =
   '<nav class="site-nav" aria-label="Site navigation">' +
     '<a href="/" class="nav-brand"><img src="/assets/logo-static.png" alt="" class="nav-logo">The Protocol Institute</a>' +
-    '<a href="/members/join" class="nav-member-link">Member Login / Register</a>' +
+    '<a href="/members/join" class="nav-member-link" id="nav-member-link">' + PERSON_ICON + 'Member Login / Register</a>' +
     '<button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>' +
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
@@ -39,6 +41,25 @@ var FOOTER_HTML =
   var header = document.getElementById('site-header');
   if (header) {
     header.innerHTML = NAV_HTML;
+
+    // Set ?return= on login link so auth flow can redirect back
+    var memberLink = document.getElementById('nav-member-link');
+    if (memberLink && window.location.pathname.indexOf('/members/join') !== 0) {
+      memberLink.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+    }
+
+    // Session check — swap login link for member name if authenticated
+    fetch('/api/members/me')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.member || !memberLink) return;
+        memberLink.href = '/members';
+        memberLink.innerHTML = PERSON_ICON + data.member.name.replace(/[&<>"]/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+        memberLink.classList.add('nav-member-link--authed');
+      })
+      .catch(function () {});
 
     // Mark active link based on current path
     var path = window.location.pathname.replace(/\/$/, '') || '/';
