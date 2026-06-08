@@ -74,8 +74,9 @@ export async function onRequestGet({ request, env }) {
       FROM challenges c
       LEFT JOIN members m ON m.slug = c.communicated_by_slug
       ORDER BY (
+        c.seed_interesting +
         1 * c.anon_interesting * c.anon_interesting +
-        3 * (c.member_interesting + c.seed_interesting) * (c.member_interesting + c.seed_interesting)
+        3 * c.member_interesting * c.member_interesting
       ) DESC, c.created_at DESC
     `).all();
 

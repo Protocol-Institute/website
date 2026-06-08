@@ -140,7 +140,7 @@
   const FIBONACCI = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
   function chalValue(anon, member, seed) {
-    return A * anon * anon + B * (member + seed) * (member + seed);
+    return seed + A * anon * anon + B * member * member;
   }
 
   function escHtml(s) {
@@ -197,7 +197,7 @@
               👀 <span class="interesting-count">${totalVotes}</span>
             </button>
             <span class="challenge-value"
-                  title="Score = ${A}×(anon votes)² + ${B}×(member votes + seed)²">
+                  title="Score = seed + ${A}×(anon votes)² + ${B}×(member votes)²">
               Value: <strong>${value.toLocaleString()}</strong>
             </span>
           </div>
