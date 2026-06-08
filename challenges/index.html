@@ -42,8 +42,11 @@
     .challenge-add-confirmation { color: #3A3A3A; }
     .challenge-add-confirmation a { color: #2A6B6B; }
     .challenge-add-confirmation a:hover { text-decoration: underline; }
-    .challenge-login-prompt { font-size: 0.9rem; color: #8A8A8A; font-style: italic; margin-bottom: 2rem; }
-    .challenge-login-prompt a { color: #2A6B6B; }
+    .challenge-add-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-top: 1px solid #E0DDD8; padding-top: 1.5rem; }
+    .challenge-add-toggle { background: none; border: none; padding: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #C8C4BE; cursor: default; }
+    .challenge-add-toggle:not([disabled]) { color: #2A6B6B; cursor: pointer; }
+    .challenge-add-toggle:not([disabled]):hover { color: #1f5252; }
+    .challenge-add-notice { font-size: 0.78rem; color: #BCBBB6; font-style: italic; }
 
     .challenge-list { list-style: none; padding: 0; margin: 0; }
     .challenge-card { padding: 2rem 0; border-bottom: 1px solid #E0DDD8; }
@@ -281,38 +284,65 @@
     });
   }
 
-  function renderAddForm(member, isAdmin) {
-    const region = document.getElementById('challenge-form-region');
+  function renderFormToggle() {
+    document.getElementById('challenge-form-region').innerHTML =
+      '<div class="challenge-add-bar">' +
+        '<button class="challenge-add-toggle" id="challenge-add-toggle" disabled aria-expanded="false">' +
+          '&#9656; Add a challenge' +
+        '</button>' +
+        '<span class="challenge-add-notice" id="challenge-add-notice">Log in to add a challenge</span>' +
+      '</div>' +
+      '<div id="challenge-add-container" hidden></div>';
+  }
+
+  function activateFormToggle(member, isAdmin) {
+    const toggle = document.getElementById('challenge-add-toggle');
+    const notice = document.getElementById('challenge-add-notice');
+    const container = document.getElementById('challenge-add-container');
+    if (!toggle) return;
+    toggle.removeAttribute('disabled');
+    notice.hidden = true;
+    let formRendered = false;
+
+    toggle.addEventListener('click', function () {
+      const isOpen = !container.hidden;
+      if (isOpen) {
+        container.hidden = true;
+        toggle.innerHTML = '&#9656; Add a challenge';
+        toggle.setAttribute('aria-expanded', 'false');
+      } else {
+        container.hidden = false;
+        toggle.innerHTML = '&#9662; Add a challenge';
+        toggle.setAttribute('aria-expanded', 'true');
+        if (!formRendered) { renderFormInContainer(member, isAdmin); formRendered = true; }
+      }
+    });
+  }
+
+  function renderFormInContainer(member, isAdmin) {
+    const container = document.getElementById('challenge-add-container');
     const diffOptions = FIBONACCI.map(n =>
       `<option value="${n}">${n} — ${DIFFICULTY_LABELS[n]}</option>`
     ).join('');
-
     const seedField = isAdmin
-      ? `<div class="challenge-field">
-           <label for="cf-seed">Starting interest level</label>
-           <input type="number" id="cf-seed" name="seed_interesting" value="1" min="0">
-         </div>`
-      : `<div class="challenge-field">
-           <label>Starting interest level</label>
-           <input type="text" readonly value="1">
-         </div>`;
+      ? `<div class="challenge-field"><label for="cf-seed">Starting interest level</label><input type="number" id="cf-seed" name="seed_interesting" value="1" min="0"></div>`
+      : `<div class="challenge-field"><label>Starting interest level</label><input type="text" readonly value="1"></div>`;
 
-    region.innerHTML = `
+    container.innerHTML = `
       <div class="challenge-add">
-        <h2 class="challenge-add-heading">Add a Challenge</h2>
         <form id="challenge-form">
           <div class="challenge-field">
             <label for="cf-title">Title</label>
-            <input type="text" id="cf-title" name="title" maxlength="200" required>
+            <input type="text" id="cf-title" maxlength="200" required>
           </div>
           <div class="challenge-field">
             <label for="cf-description">Description</label>
-            <textarea id="cf-description" name="description" maxlength="3000" required></textarea>
+            <textarea id="cf-description" maxlength="3000" required></textarea>
             <div class="field-hint">Inline links are supported: <code>&lt;a href="https://..."&gt;text&lt;/a&gt;</code></div>
           </div>
           <div class="challenge-field">
             <label for="cf-difficulty">Difficulty</label>
-            <select id="cf-difficulty" name="difficulty" required>
+            <select id="cf-difficulty" required>
               <option value="">Select…</option>
               ${diffOptions}
             </select>
@@ -323,11 +353,9 @@
           </div>
           <div class="challenge-field">
             <label for="cf-posed-by">Posed By</label>
-            <input type="text" id="cf-posed-by" name="posed_by" maxlength="200"
-                   placeholder="Name of person who posed this problem">
+            <input type="text" id="cf-posed-by" maxlength="200" placeholder="Name of person who posed this problem">
             <label class="challenge-checkbox-row">
-              <input type="checkbox" id="cf-same-as-comm">
-              Same as communicating member
+              <input type="checkbox" id="cf-same-as-comm"> Same as communicating member
             </label>
           </div>
           ${seedField}
@@ -338,13 +366,8 @@
 
     document.getElementById('cf-same-as-comm').addEventListener('change', function () {
       const field = document.getElementById('cf-posed-by');
-      if (this.checked) {
-        field.value = member.name;
-        field.readOnly = true;
-      } else {
-        field.value = '';
-        field.readOnly = false;
-      }
+      if (this.checked) { field.value = member.name; field.readOnly = true; }
+      else { field.value = ''; field.readOnly = false; }
     });
 
     document.getElementById('challenge-form').addEventListener('submit', async function (e) {
@@ -374,13 +397,13 @@
         });
         if (res.ok) {
           loadChallenges();
-          const region = document.getElementById('challenge-form-region');
-          region.innerHTML = `<div class="challenge-add challenge-add-confirmation">
+          const container = document.getElementById('challenge-add-container');
+          container.innerHTML = `<div class="challenge-add challenge-add-confirmation">
             <p>Challenge added. <a href="#" id="cf-add-another">Add another &rarr;</a></p>
           </div>`;
           document.getElementById('cf-add-another').addEventListener('click', function (e) {
             e.preventDefault();
-            renderAddForm(member, isAdmin);
+            renderFormInContainer(member, isAdmin);
           });
         } else {
           const data = await res.json();
@@ -396,11 +419,6 @@
     });
   }
 
-  function renderLoginPrompt() {
-    document.getElementById('challenge-form-region').innerHTML =
-      '<p class="challenge-login-prompt"><a href="/members/join">Log in</a> to add a challenge problem.</p>';
-  }
-
   async function loadChallenges() {
     try {
       const res = await fetch('/api/challenges');
@@ -414,17 +432,14 @@
 
   async function init() {
     loadChallenges();
+    renderFormToggle();
     try {
       const res = await fetch('/api/members/me');
       if (res.ok) {
         const { member } = await res.json();
-        renderAddForm(member, !!(member.is_admin));
-      } else {
-        renderLoginPrompt();
+        activateFormToggle(member, !!(member.is_admin));
       }
-    } catch {
-      renderLoginPrompt();
-    }
+    } catch {}
   }
 
   init();
