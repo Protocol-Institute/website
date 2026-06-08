@@ -19,7 +19,7 @@ var NAV_HTML =
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
       '<li><a href="/events">Events</a></li>' +
-      '<li><a href="/challenges">Challenges</a></li>' +
+      '<li><a href="/challenges">Challenges <span class="beta-badge">Beta</span></a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
       '<li><a href="/about">About</a></li>' +
     '</ul>' +
