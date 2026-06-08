@@ -287,3 +287,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Four untracked files — `sigs/mrg.html`, `sigs/protfisig.html`, `sigs/sigfpt.html`, `sigs/sigpfb.html` — were old pre-clean-URL flat files that kept reappearing. Deleted. The canonical pages live at `sigs/mrg/index.html`, etc.
 
 ---
+
+## Session 18: Challenges Page, Nav Dropdown, Symposium Fixes
+
+*2026-06-08*
+
+**Tracks:** static-site, member-directory, content
+
+- New page at `/challenges` backed by a `challenges` D1 table (migrations 008 + 009). Each challenge has title, description (server-sanitized HTML with safe links), Fibonacci planning-poker difficulty with descriptive labels (Trivial → Whitehead advance), free-text *Posed By* field, and a *Communicated By* field auto-set to the submitting member. Two-track interest voting: anonymous votes deduped via `pi_chal_voted` cookie; member votes deduped in a `challenge_votes` join table. Raw anon and member counts stored separately for reweighted scoring. Challenge value formula: `seed + A×anon² + B×member²` (A=1, B=3), sorted by value descending. Admin-only seed adjustment via PATCH `/api/challenges/:id/seed`. Venkat and Timber set to `is_admin=1`.
+
+- Add-challenge form is collapsed by default behind a teal *▶ Add a challenge* toggle; grayed out and inactive when not logged in. After submit, form is replaced by a confirmation box with *Add another →*. Each challenge card has `id="challenge-{id}"` permalink anchor with hash-scroll after async load. Orange-rust beta badge (`#D85A30`, matching C3PO) on page heading and nav item. Challenges added to top nav (between Events and Protocolized) and to Programs page. `challenges/PLAN.md` documents planned features: individual pages, annotations system, and ingestion/clustering/auto-tagging pipeline.
+
+- The static *Member Login / Register* nav link is now session-aware. After page load, `/api/members/me` is fetched: if authenticated, the link is replaced with a dropdown toggle showing a person-silhouette icon and the member's name (▾). Dropdown contains *Edit profile* → `/members/edit` and *Log out*. Logout hits new endpoint `POST /api/auth/logout`, which deletes the session record from D1 and clears the `HttpOnly` `pi_session` cookie server-side, then reloads. Unauthenticated link now carries `?return=&lt;current_path&gt;` so the auth flow redirects back to the originating page after login (replaces the previous hardcoded redirect to `/members/edit`).
+
+- SIGFPT index had two future-dated stub entries (June 12 and June 26, 2026) pre-created for agenda posting. New CSS class `.meeting-upcoming` adds an amber *Scheduled* badge next to the date and mutes the entry. `sigs/CONVENTIONS.md` updated to specify the correct handling pattern for c3po's ingestion pipeline: use `meeting-upcoming` class, placeholder summary, and re-ingest after the session occurs.
+
+- Short presentations corrected to 25 min + 5 min Q&A (was 20 min). Workshop format updated to 4 Zoom sessions over 2 days, Sept 21–22 (was 60–90 min). Word counts and form-level details stripped — let the Google Form handle them. Special Sessions line added: contact link points to `/team#venkatesh-rao` (team cards already had `id` attributes). Link to Challenges page added above the submission CTA.
+
+---

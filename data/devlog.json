@@ -1,11 +1,11 @@
 {
   "project": "protocol-institute-website",
-  "display_name": "Protocol Institute Website — Build Log",
-  "description": "A build log for protocol-institute.org — how the static site was built, what infrastructure decisions were made, and where things stand. Written for contributors curious about the process and for future maintainers.",
+  "display_name": "Protocol Institute Website \u2014 Build Log",
+  "description": "A build log for protocol-institute.org \u2014 how the static site was built, what infrastructure decisions were made, and where things stand. Written for contributors curious about the process and for future maintainers.",
   "tracks": {
     "static-site": "HTML/CSS/JS page builds, navigation, layout, and design",
     "cloudflare-migration": "Moving from GitHub Pages to Cloudflare Pages; wrangler config, Workers, CF resources",
-    "member-directory": "Phase 2 member directory — D1, KV, PIN auth, R2 profile photos",
+    "member-directory": "Phase 2 member directory \u2014 D1, KV, PIN auth, R2 profile photos",
     "content": "Copy, team bios, initiative descriptions, and editorial content",
     "operations": "Session rituals, expense tracking, devlog system, org admin infrastructure"
   },
@@ -17,30 +17,33 @@
       "title": "Initial Site Build",
       "date": "2026-04-26",
       "time_pt": "",
-      "tracks": ["static-site", "content"],
+      "tracks": [
+        "static-site",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": false,
       "items": [
         {
           "title": "Starting point:",
-          "html": "<strong>Starting point:</strong> The Protocol Institute had no web presence. The goal was a minimal, credible static HTML site at <code>protocol-institute.org</code> — not a CMS, not a framework, just well-structured HTML/CSS/JS that any contributor could read and edit without a build step."
+          "html": "<strong>Starting point:</strong> The Protocol Institute had no web presence. The goal was a minimal, credible static HTML site at <code>protocol-institute.org</code> \u2014 not a CMS, not a framework, just well-structured HTML/CSS/JS that any contributor could read and edit without a build step."
         },
         {
           "title": "Initial commit:",
-          "html": "<strong>Initial commit (2026-04-26):</strong> <code>index.html</code> with landing page — hero section, initiative categories, footer nav. Substack newsletter link. The landing page uses a sticky nav that hides on interior pages (different scroll behavior needed for a longer landing vs short interior pages)."
+          "html": "<strong>Initial commit (2026-04-26):</strong> <code>index.html</code> with landing page \u2014 hero section, initiative categories, footer nav. Substack newsletter link. The landing page uses a sticky nav that hides on interior pages (different scroll behavior needed for a longer landing vs short interior pages)."
         },
         {
           "title": "Nav fix:",
-          "html": "<strong>Nav alignment fix (2026-04-27):</strong> Landing page nav position was misaligned with interior pages — the sticky behavior was scoping incorrectly. Fixed by separating the landing-page nav rule from the interior nav rule. The landing nav keeps all links visible (no collapse); interior nav hides on scroll down, reveals on scroll up."
+          "html": "<strong>Nav alignment fix (2026-04-27):</strong> Landing page nav position was misaligned with interior pages \u2014 the sticky behavior was scoping incorrectly. Fixed by separating the landing-page nav rule from the interior nav rule. The landing nav keeps all links visible (no collapse); interior nav hides on scroll down, reveals on scroll up."
         },
         {
           "title": "README and CLAUDE.md (2026-05-05):",
-          "html": "<strong>README and CLAUDE.md (2026-05-05):</strong> Added contributor onboarding docs. <code>README.md</code> is public-facing (for GitHub visitors). <code>CLAUDE.md</code> is LLM-facing — explains the owner/contributor workflow, links to <code>Code/CLAUDE.md</code> for environment and key management policy. A second personal file <code>claude-vgr.md</code> tracks VGR-specific context (fork policy, PR workflow) that does not belong in the org-visible CLAUDE.md."
+          "html": "<strong>README and CLAUDE.md (2026-05-05):</strong> Added contributor onboarding docs. <code>README.md</code> is public-facing (for GitHub visitors). <code>CLAUDE.md</code> is LLM-facing \u2014 explains the owner/contributor workflow, links to <code>Code/CLAUDE.md</code> for environment and key management policy. A second personal file <code>claude-vgr.md</code> tracks VGR-specific context (fork policy, PR workflow) that does not belong in the org-visible CLAUDE.md."
         },
         {
           "title": "Initiative categories (2026-05-05):",
-          "html": "<strong>Initiative categories (2026-05-05):</strong> Added structured initiative listings to <code>index.html</code> — four categories: Research SIGs, Publications, Events, and Infrastructure. Added <em>Protocols for the Long Now</em> collaboration under Research. The category structure is loose enough to absorb new initiatives without redesign."
+          "html": "<strong>Initiative categories (2026-05-05):</strong> Added structured initiative listings to <code>index.html</code> \u2014 four categories: Research SIGs, Publications, Events, and Infrastructure. Added <em>Protocols for the Long Now</em> collaboration under Research. The category structure is loose enough to absorb new initiatives without redesign."
         },
         {
           "title": "Mobile nav (2026-05-05):",
@@ -55,42 +58,46 @@
       "title": "Pages Build-Out and Cloudflare Migration",
       "date": "2026-05-14",
       "time_pt": "",
-      "tracks": ["static-site", "cloudflare-migration", "content"],
+      "tracks": [
+        "static-site",
+        "cloudflare-migration",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": false,
       "items": [
         {
           "title": "Support Us page:",
-          "html": "<strong>Support Us page:</strong> <code>support.html</code> — donor contact info and partner contact info. Intentionally minimal: no payment buttons yet (those come in Phase 1c of the CF roadmap, once Stripe Payment Links are wired up). The page establishes the URL and nav slot; content will be upgraded when the donation infrastructure is ready."
+          "html": "<strong>Support Us page:</strong> <code>support.html</code> \u2014 donor contact info and partner contact info. Intentionally minimal: no payment buttons yet (those come in Phase 1c of the CF roadmap, once Stripe Payment Links are wired up). The page establishes the URL and nav slot; content will be upgraded when the donation infrastructure is ready."
         },
         {
           "title": "Team page:",
-          "html": "<strong>Team page:</strong> <code>team.html</code> — bios and photo boxes for Venkat Rao (founder) and Timber Stinson-Schroff (co-editor/co-founder). Photo boxes are placeholder boxes (no photos yet) using CSS aspect-ratio to reserve space. Timber's location was corrected to Whitehorse, Yukon in a follow-up fix — had been set to Vancouver from an earlier draft."
+          "html": "<strong>Team page:</strong> <code>team.html</code> \u2014 bios and photo boxes for Venkat Rao (founder) and Timber Stinson-Schroff (co-editor/co-founder). Photo boxes are placeholder boxes (no photos yet) using CSS aspect-ratio to reserve space. Timber's location was corrected to Whitehorse, Yukon in a follow-up fix \u2014 had been set to Vancouver from an earlier draft."
         },
         {
           "title": "Network page:",
-          "html": "<strong>Network page:</strong> <code>network.html</code> — a draft directory of network participants, collaborators, and affiliated individuals. Marked as draft; the authoritative member directory will be built in Phase 2 (CF Workers + D1 + PIN auth). This page is a static placeholder that establishes the URL and nav structure."
+          "html": "<strong>Network page:</strong> <code>network.html</code> \u2014 a draft directory of network participants, collaborators, and affiliated individuals. Marked as draft; the authoritative member directory will be built in Phase 2 (CF Workers + D1 + PIN auth). This page is a static placeholder that establishes the URL and nav structure."
         },
         {
           "title": "C3PO initiative page:",
-          "html": "<strong>C3PO initiative page:</strong> <code>c3po.html</code> — describes C3PO as a Protocol Institute initiative; explains what it is (RAG research assistant), what corpus it covers, and how it will eventually be accessible. Added entry to <code>projects.html</code>. The page intentionally does not link to the C3PO Worker endpoint yet — that comes when the Worker is deployed in Phase 2 of the C3PO roadmap."
+          "html": "<strong>C3PO initiative page:</strong> <code>c3po.html</code> \u2014 describes C3PO as a Protocol Institute initiative; explains what it is (RAG research assistant), what corpus it covers, and how it will eventually be accessible. Added entry to <code>projects.html</code>. The page intentionally does not link to the C3PO Worker endpoint yet \u2014 that comes when the Worker is deployed in Phase 2 of the C3PO roadmap."
         },
         {
           "title": "Cloudflare Pages migration branch:",
-          "html": "<strong>Cloudflare Pages migration branch (<code>feat/cloudflare-migration</code>):</strong> Added <code>wrangler.toml</code> (no-build static config, <code>pages_build_output_dir = \".\"</code>) and <code>MIGRATION.md</code>. The site is pure static HTML — no build step, so CF Pages treats the repo root as the output directory. <code>_redirects</code> already in repo root; CF Pages reads it identically to Netlify. No code changes were needed for the migration itself."
+          "html": "<strong>Cloudflare Pages migration branch (<code>feat/cloudflare-migration</code>):</strong> Added <code>wrangler.toml</code> (no-build static config, <code>pages_build_output_dir = \".\"</code>) and <code>MIGRATION.md</code>. The site is pure static HTML \u2014 no build step, so CF Pages treats the repo root as the output directory. <code>_redirects</code> already in repo root; CF Pages reads it identically to Netlify. No code changes were needed for the migration itself."
         },
         {
-          "title": "Migration path — personal to PI account:",
-          "html": "<strong>Migration path — personal → PI account:</strong> The CF Pages project was created under VGR's personal CF account (the only CF account currently active). <code>MIGRATION.md</code> now includes the explicit migration path: once a Protocol Institute CF org account is created, transfer the Pages project and the <code>protocol-institute.org</code> DNS zone to it. This is a future step — the site goes live on the personal account first."
+          "title": "Migration path \u2014 personal to PI account:",
+          "html": "<strong>Migration path \u2014 personal \u2192 PI account:</strong> The CF Pages project was created under VGR's personal CF account (the only CF account currently active). <code>MIGRATION.md</code> now includes the explicit migration path: once a Protocol Institute CF org account is created, transfer the Pages project and the <code>protocol-institute.org</code> DNS zone to it. This is a future step \u2014 the site goes live on the personal account first."
         },
         {
           "title": "Branch sync strategy:",
-          "html": "<strong>Branch sync strategy:</strong> <code>MIGRATION.md</code> documents the branch relationship: <code>feat/cloudflare-migration</code> is kept up to date with <code>main</code> via periodic merges (not rebases). CF Pages deploys only from <code>feat/cloudflare-migration</code> until the migration is verified — at that point the branch is merged to <code>main</code> and CF Pages is switched to track <code>main</code>."
+          "html": "<strong>Branch sync strategy:</strong> <code>MIGRATION.md</code> documents the branch relationship: <code>feat/cloudflare-migration</code> is kept up to date with <code>main</code> via periodic merges (not rebases). CF Pages deploys only from <code>feat/cloudflare-migration</code> until the migration is verified \u2014 at that point the branch is merged to <code>main</code> and CF Pages is switched to track <code>main</code>."
         },
         {
           "title": "Feature roadmap:",
-          "html": "<strong>Feature roadmap:</strong> <code>ROADMAP.md</code> — five-phase plan for CF-powered features: Phase 0 (CF Pages migration), Phase 1 (quick wins: symposium page, events calendar, donation buttons), Phase 2 (member directory — D1 + KV + R2 + PIN email auth), Phase 3 (Stripe + ETH donations), Phase 4 (SIWE — Sign-In with Ethereum), Phase 5 (Protocol Symposium system). CF resources needed: D1, KV, R2, Resend, Stripe, and optionally Dynamic.xyz or Privy for wallet auth."
+          "html": "<strong>Feature roadmap:</strong> <code>ROADMAP.md</code> \u2014 five-phase plan for CF-powered features: Phase 0 (CF Pages migration), Phase 1 (quick wins: symposium page, events calendar, donation buttons), Phase 2 (member directory \u2014 D1 + KV + R2 + PIN email auth), Phase 3 (Stripe + ETH donations), Phase 4 (SIWE \u2014 Sign-In with Ethereum), Phase 5 (Protocol Symposium system). CF resources needed: D1, KV, R2, Resend, Stripe, and optionally Dynamic.xyz or Privy for wallet auth."
         },
         {
           "title": "Open questions logged:",
@@ -104,8 +111,10 @@
       "label": "Session 3",
       "title": "Devlog System, Session Rituals, and Org Admin Infrastructure",
       "date": "2026-05-14",
-      "time_pt": "14:30–18:56 PT",
-      "tracks": ["operations"],
+      "time_pt": "14:30\u201318:56 PT",
+      "tracks": [
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": false,
@@ -116,11 +125,11 @@
         },
         {
           "title": "Session rituals:",
-          "html": "<strong>Session rituals (added to CLAUDE.md):</strong> Startup: timestamp → <code>track.py status</code> → read status-vgr.md → check CF migration branch divergence → check GitHub Issues #1/#2 → summarize. Wrap-up: devlog entry + devlog_render.py → status-vgr.md → CLAUDE.md updates → verify HTML in browser → git commit/push → <code>track.py end</code> → fill log-{id}.json → expenses render → Claude memory."
+          "html": "<strong>Session rituals (added to CLAUDE.md):</strong> Startup: timestamp \u2192 <code>track.py status</code> \u2192 read status-vgr.md \u2192 check CF migration branch divergence \u2192 check GitHub Issues #1/#2 \u2192 summarize. Wrap-up: devlog entry + devlog_render.py \u2192 status-vgr.md \u2192 CLAUDE.md updates \u2192 verify HTML in browser \u2192 git commit/push \u2192 <code>track.py end</code> \u2192 fill log-{id}.json \u2192 expenses render \u2192 Claude memory."
         },
         {
           "title": "PI admin repo reference:",
-          "html": "<strong>PI admin repo reference:</strong> CLAUDE.md updated to point to <code>../admin/keys.md</code> and <code>../admin/security.md</code> for key and security policy. When CF Workers are added (Phase 1+), all PI keys will be provisioned via <code>../.env.keys</code> and registered in <code>../admin/keys.md</code> — not in <code>Code/.env.keys</code>, which is personal scope only. The admin repo (<code>Protocol-Institute/admin</code>, private) holds the expense tracker, key registry, and security policy for all PI contributors."
+          "html": "<strong>PI admin repo reference:</strong> CLAUDE.md updated to point to <code>../admin/keys.md</code> and <code>../admin/security.md</code> for key and security policy. When CF Workers are added (Phase 1+), all PI keys will be provisioned via <code>../.env.keys</code> and registered in <code>../admin/keys.md</code> \u2014 not in <code>Code/.env.keys</code>, which is personal scope only. The admin repo (<code>Protocol-Institute/admin</code>, private) holds the expense tracker, key registry, and security policy for all PI contributors."
         }
       ]
     },
@@ -131,14 +140,16 @@
       "title": "Timber Headshot on Team Page",
       "date": "2026-05-15",
       "time_pt": "",
-      "tracks": ["content"],
+      "tracks": [
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": false,
       "items": [
         {
           "title": "Timber headshot on /team:",
-          "html": "<strong>Timber headshot on /team:</strong> Replaced the placeholder photo box in <code>team.html</code> with <code>assets/timber.jpg</code> (480×600 JPEG, ~67 KB). Source was a 4284×5712 portrait, cropped to 4:5 from the top to keep the face well-positioned and resized with Lanczos. The team page now shows two of four headshots — James Langdon and Tim Beiko remain placeholders."
+          "html": "<strong>Timber headshot on /team:</strong> Replaced the placeholder photo box in <code>team.html</code> with <code>assets/timber.jpg</code> (480\u00d7600 JPEG, ~67 KB). Source was a 4284\u00d75712 portrait, cropped to 4:5 from the top to keep the face well-positioned and resized with Lanczos. The team page now shows two of four headshots \u2014 James Langdon and Tim Beiko remain placeholders."
         }
       ]
     },
@@ -149,7 +160,10 @@
       "title": "Network, Consulting, Symposium, Nav Redesign, Landing Page Overhaul",
       "date": "2026-05-19",
       "time_pt": "",
-      "tracks": ["static-site", "content"],
+      "tracks": [
+        "static-site",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -160,15 +174,15 @@
         },
         {
           "title": "Consulting page:",
-          "html": "<strong>Consulting page (<code>consulting.html</code>):</strong> Individual consultant cards with headshot, name, expertise tags (dot-separated), and contact link (mailto or external). Data in <code>protocol-institute-consulting/directory.md</code>. Four entries: Benny, Fernandez, Rao, Stinson-Schroff (alphabetical by last name). Photos: placeholders for Benny and Fernandez; live photos for Rao (external URL) and Stinson-Schroff (<code>assets/timber.jpg</code>). No Role field — expertise only. Google Form for directory applications."
+          "html": "<strong>Consulting page (<code>consulting.html</code>):</strong> Individual consultant cards with headshot, name, expertise tags (dot-separated), and contact link (mailto or external). Data in <code>protocol-institute-consulting/directory.md</code>. Four entries: Benny, Fernandez, Rao, Stinson-Schroff (alphabetical by last name). Photos: placeholders for Benny and Fernandez; live photos for Rao (external URL) and Stinson-Schroff (<code>assets/timber.jpg</code>). No Role field \u2014 expertise only. Google Form for directory applications."
         },
         {
           "title": "Symposium page:",
-          "html": "<strong>Protocol Symposium 2026 page (<code>symposium-2026.html</code>):</strong> Announces the September 2026 symposium with CFP for 20-min presentations (200–400 word abstracts) and 60–90 min workshops (400–600 word proposals). Submission form placeholder pending Google Form URL. Empty accepted submissions index at bottom — will be populated as program is confirmed. Data in <code>protocol-symposium-2026/</code>."
+          "html": "<strong>Protocol Symposium 2026 page (<code>symposium-2026.html</code>):</strong> Announces the September 2026 symposium with CFP for 20-min presentations (200\u2013400 word abstracts) and 60\u201390 min workshops (400\u2013600 word proposals). Submission form placeholder pending Google Form URL. Empty accepted submissions index at bottom \u2014 will be populated as program is confirmed. Data in <code>protocol-symposium-2026/</code>."
         },
         {
           "title": "Nav redesign:",
-          "html": "<strong>Nav redesign:</strong> Replaced the inline single-row nav with a two-row stacked layout — logo/brand on top row, nav links on the bottom row separated by a hairline border. Achieved entirely in CSS using <code>flex-wrap: wrap</code> + <code>flex-basis: 100%</code> on <code>.nav-links</code>, no HTML changes across the 12 pages. Left-justified links create room for additional nav items. Compacted whitespace between nav bottom border and page title by reducing <code>.page-header</code> padding."
+          "html": "<strong>Nav redesign:</strong> Replaced the inline single-row nav with a two-row stacked layout \u2014 logo/brand on top row, nav links on the bottom row separated by a hairline border. Achieved entirely in CSS using <code>flex-wrap: wrap</code> + <code>flex-basis: 100%</code> on <code>.nav-links</code>, no HTML changes across the 12 pages. Left-justified links create room for additional nav items. Compacted whitespace between nav bottom border and page title by reducing <code>.page-header</code> padding."
         },
         {
           "title": "Initiatives page restructure:",
@@ -180,7 +194,7 @@
         },
         {
           "title": "Magazine nav link:",
-          "html": "<strong>Magazine nav link:</strong> Added Magazine → <code>https://protocolized.io</code> (opens in new tab) to the primary nav on all 12 pages, positioned after Initiatives. One perl one-liner across all HTML files."
+          "html": "<strong>Magazine nav link:</strong> Added Magazine \u2192 <code>https://protocolized.io</code> (opens in new tab) to the primary nav on all 12 pages, positioned after Initiatives. One perl one-liner across all HTML files."
         }
       ]
     },
@@ -191,22 +205,25 @@
       "title": "SIG Meeting Archive, Humboldt, C3PO Live",
       "date": "2026-05-19",
       "time_pt": "",
-      "tracks": ["static-site", "content"],
+      "tracks": [
+        "static-site",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
-          "title": "SIG meeting archive — 78 sessions:",
-          "html": "<strong>SIG meeting archive — 78 sessions:</strong> Added individual HTML pages for all four SIGs (<code>sigfpt</code>, <code>mrg</code>, <code>sigpfb</code>, <code>protfisig</code>) with meeting summaries sourced from Discord transcripts via c3po. Each SIG got an index page listing all sessions and individual detail pages per meeting. A second pass (2026-05-20) recovered 10 additional sessions that had been missed. The c3po pipeline began running automatically after this, committing new session pages as meetings occur."
+          "title": "SIG meeting archive \u2014 78 sessions:",
+          "html": "<strong>SIG meeting archive \u2014 78 sessions:</strong> Added individual HTML pages for all four SIGs (<code>sigfpt</code>, <code>mrg</code>, <code>sigpfb</code>, <code>protfisig</code>) with meeting summaries sourced from Discord transcripts via c3po. Each SIG got an index page listing all sessions and individual detail pages per meeting. A second pass (2026-05-20) recovered 10 additional sessions that had been missed. The c3po pipeline began running automatically after this, committing new session pages as meetings occur."
         },
         {
           "title": "Humboldt project page and lab notebook:",
-          "html": "<strong>Humboldt project page and lab notebook (2026-05-20):</strong> Added <code>humboldt/index.html</code> — describes Humboldt as an AI research agent investigating the New Nature using the c3po Pinecone index. Added <code>humboldt-notebook/index.html</code> — a running research log with dated entries. Added entry to initiatives listing. Title corrected from 'research agent' to 'Artificial Researcher' to match the AI team member framing. <code>/humboldt-notebook.html</code> redirect added to preserve any hash-anchor deep links."
+          "html": "<strong>Humboldt project page and lab notebook (2026-05-20):</strong> Added <code>humboldt/index.html</code> \u2014 describes Humboldt as an AI research agent investigating the New Nature using the c3po Pinecone index. Added <code>humboldt-notebook/index.html</code> \u2014 a running research log with dated entries. Added entry to initiatives listing. Title corrected from 'research agent' to 'Artificial Researcher' to match the AI team member framing. <code>/humboldt-notebook.html</code> redirect added to preserve any hash-anchor deep links."
         },
         {
           "title": "C3PO updated to live/beta:",
-          "html": "<strong>C3PO updated to live/beta:</strong> <code>projects.html</code> status badge changed from In Development to Live · Beta. <code>c3po.html</code> Status and Technical sections rewritten present-tense: RAG assistant over 12k+ vectors, MCP server integration, Claude Sonnet backend. Corpus size updated. Direct 'Open C3PO →' link added from the initiatives listing; 'Try it →' link at top of the c3po page. The page now accurately reflects the deployed tool rather than the original forward-looking description."
+          "html": "<strong>C3PO updated to live/beta:</strong> <code>projects.html</code> status badge changed from In Development to Live \u00b7 Beta. <code>c3po.html</code> Status and Technical sections rewritten present-tense: RAG assistant over 12k+ vectors, MCP server integration, Claude Sonnet backend. Corpus size updated. Direct 'Open C3PO \u2192' link added from the initiatives listing; 'Try it \u2192' link at top of the c3po page. The page now accurately reflects the deployed tool rather than the original forward-looking description."
         }
       ]
     },
@@ -216,8 +233,11 @@
       "label": "Session 7",
       "title": "HTTPS Enforcement Fix, CF Branch Sync",
       "date": "2026-05-26",
-      "time_pt": "~15:05–15:20 PT",
-      "tracks": ["cloudflare-migration", "operations"],
+      "time_pt": "~15:05\u201315:20 PT",
+      "tracks": [
+        "cloudflare-migration",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -228,7 +248,7 @@
         },
         {
           "title": "CF branch sync:",
-          "html": "<strong>Merged main → feat/cloudflare-migration:</strong> 17 commits, 36 files. Clean merge with no conflicts — the CF migration branch had been diverging as content work accumulated on main. The branch is kept in sync periodically so the CF Pages deploy preview tracks current content."
+          "html": "<strong>Merged main \u2192 feat/cloudflare-migration:</strong> 17 commits, 36 files. Clean merge with no conflicts \u2014 the CF migration branch had been diverging as content work accumulated on main. The branch is kept in sync periodically so the CF Pages deploy preview tracks current content."
         }
       ]
     },
@@ -239,18 +259,20 @@
       "title": "Pitchdeck Scaffolding",
       "date": "2026-05-28",
       "time_pt": "",
-      "tracks": ["static-site"],
+      "tracks": [
+        "static-site"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Pitchdeck system:",
-          "html": "<strong>Pitchdeck system (<code>pitchdeck/</code>):</strong> Built an embeddable HTML presentation system for <code>support.html</code>. Slide types implemented: cover, big-point, section, bullets, numbered, quote, big-image, table, two-column. Features: keyboard nav (arrow keys, space), PDF export via print dialog, fullscreen toggle, semantic versioning with <code>archive/</code> subfolder. Deck content is inline in <code>deck.html</code> (no fetch required). A fetch-based approach was tried first but caused loading failures when the page was embedded in an iframe — fixed by embedding content directly. Added public-facing <code>README.md</code> and renamed the technical guide to <code>EDITING.md</code>."
+          "html": "<strong>Pitchdeck system (<code>pitchdeck/</code>):</strong> Built an embeddable HTML presentation system for <code>support.html</code>. Slide types implemented: cover, big-point, section, bullets, numbered, quote, big-image, table, two-column. Features: keyboard nav (arrow keys, space), PDF export via print dialog, fullscreen toggle, semantic versioning with <code>archive/</code> subfolder. Deck content is inline in <code>deck.html</code> (no fetch required). A fetch-based approach was tried first but caused loading failures when the page was embedded in an iframe \u2014 fixed by embedding content directly. Added public-facing <code>README.md</code> and renamed the technical guide to <code>EDITING.md</code>."
         },
         {
           "title": "New Nature deck v0.1.0:",
-          "html": "<strong>New Nature deck v0.1.0:</strong> 11-slide placeholder deck covering the Protocol Institute's New Nature research thesis. All slide types exercised. Images are SVG placeholders — real assets to replace later. The deck is live and embedded on <code>/support</code>. Version bump workflow (editing <code>deck.html</code>, archiving old version, updating <code>support.html</code> embed) is documented in <code>EDITING.md</code> but not yet tested end-to-end."
+          "html": "<strong>New Nature deck v0.1.0:</strong> 11-slide placeholder deck covering the Protocol Institute's New Nature research thesis. All slide types exercised. Images are SVG placeholders \u2014 real assets to replace later. The deck is live and embedded on <code>/support</code>. Version bump workflow (editing <code>deck.html</code>, archiving old version, updating <code>support.html</code> embed) is documented in <code>EDITING.md</code> but not yet tested end-to-end."
         }
       ]
     },
@@ -261,22 +283,25 @@
       "title": "Major Site Restructure: Clean URLs, SIG Detail Pages, Programs Rename, Nav Refactor",
       "date": "2026-05-28",
       "time_pt": "",
-      "tracks": ["static-site", "content"],
+      "tracks": [
+        "static-site",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Clean URLs:",
-          "html": "<strong>Clean URLs:</strong> All pages migrated from <code>pagename.html</code> to <code>pagename/index.html</code> — so <code>/about.html</code> becomes <code>/about</code>, etc. Every internal link across the site updated. This is the standard pattern for static sites on both Netlify and CF Pages and removes the <code>.html</code> extension from all URLs."
+          "html": "<strong>Clean URLs:</strong> All pages migrated from <code>pagename.html</code> to <code>pagename/index.html</code> \u2014 so <code>/about.html</code> becomes <code>/about</code>, etc. Every internal link across the site updated. This is the standard pattern for static sites on both Netlify and CF Pages and removes the <code>.html</code> extension from all URLs."
         },
         {
           "title": "SIG session detail pages:",
           "html": "<strong>SIG session detail pages:</strong> Each SIG session became its own page at <code>/sigs/{sig}/{YYYY-MM-DD}-{slug}/</code>. SIG index pages now list sessions with short abstracts and link out to detail pages (rather than displaying full summaries inline). URL naming convention and HTML structure documented in <code>sigs/CONVENTIONS.md</code>, which also serves as the spec for the c3po automated ingestion pipeline."
         },
         {
-          "title": "/projects → /programs rename:",
-          "html": "<strong>/projects → /programs rename:</strong> The Initiatives listing was renamed — URL changed from <code>/projects</code> to <code>/programs</code>, nav label changed from 'Initiatives' to 'Programs', page title updated. The old <code>/projects</code> URL gets a 301 redirect via <code>_redirects</code>. The page content was restructured as program bundles with track lists: Protocolized (Substack, archive, YouTube, Books, Worldbuilding), AI Infrastructure (C3PO, Humboldt), SIGs, Long Now."
+          "title": "/projects \u2192 /programs rename:",
+          "html": "<strong>/projects \u2192 /programs rename:</strong> The Initiatives listing was renamed \u2014 URL changed from <code>/projects</code> to <code>/programs</code>, nav label changed from 'Initiatives' to 'Programs', page title updated. The old <code>/projects</code> URL gets a 301 redirect via <code>_redirects</code>. The page content was restructured as program bundles with track lists: Protocolized (Substack, archive, YouTube, Books, Worldbuilding), AI Infrastructure (C3PO, Humboldt), SIGs, Long Now."
         },
         {
           "title": "Nav refactored to shared JS injection:",
@@ -288,7 +313,7 @@
         },
         {
           "title": "New Nature capitalization:",
-          "html": "<strong>'New Nature' capitalization:</strong> 'the new nature' (lowercase) replaced with 'New Nature' (title case) throughout the site — copy, headings, and alt text. Treated as a proper noun / named research area rather than a generic description."
+          "html": "<strong>'New Nature' capitalization:</strong> 'the new nature' (lowercase) replaced with 'New Nature' (title case) throughout the site \u2014 copy, headings, and alt text. Treated as a proper noun / named research area rather than a generic description."
         }
       ]
     },
@@ -299,7 +324,11 @@
       "title": "Network and Consulting Updates, Symposium Form, Landing Banner",
       "date": "2026-05-29",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -314,7 +343,7 @@
         },
         {
           "title": "Symposium banner on landing page:",
-          "html": "<strong>Symposium banner on landing page:</strong> Added a promotional banner for the 2026 symposium to <code>index.html</code>. Currently a CSS placeholder — final artwork from the commissioned artist is pending (brief: 1520×400px at 2× retina). The slot and CSS are in place; swapping in the real image requires one file replacement."
+          "html": "<strong>Symposium banner on landing page:</strong> Added a promotional banner for the 2026 symposium to <code>index.html</code>. Currently a CSS placeholder \u2014 final artwork from the commissioned artist is pending (brief: 1520\u00d7400px at 2\u00d7 retina). The slot and CSS are in place; swapping in the real image requires one file replacement."
         }
       ]
     },
@@ -322,10 +351,13 @@
       "id": 11,
       "sort_key": 11.0,
       "label": "Session 11",
-      "title": "Member Directory Phase 2 — D1 Backend, PIN Auth, Admin Tools",
+      "title": "Member Directory Phase 2 \u2014 D1 Backend, PIN Auth, Admin Tools",
       "date": "2026-05-30",
       "time_pt": "",
-      "tracks": ["member-directory", "cloudflare-migration"],
+      "tracks": [
+        "member-directory",
+        "cloudflare-migration"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -336,11 +368,11 @@
         },
         {
           "title": "PIN auth flow:",
-          "html": "<strong>PIN email auth flow:</strong> Email → Resend sends 6-digit PIN → verify → 24h session cookie. Implemented across <code>/api/auth/send-pin</code> and <code>/api/auth/verify-pin</code>. Works for both new applicants (proceeds to join form) and existing members (redirects to edit page). Resend API key and domain (<code>protocol-institute.org</code>) confirmed live."
+          "html": "<strong>PIN email auth flow:</strong> Email \u2192 Resend sends 6-digit PIN \u2192 verify \u2192 24h session cookie. Implemented across <code>/api/auth/send-pin</code> and <code>/api/auth/verify-pin</code>. Works for both new applicants (proceeds to join form) and existing members (redirects to edit page). Resend API key and domain (<code>protocol-institute.org</code>) confirmed live."
         },
         {
           "title": "Join form:",
-          "html": "<strong>Join form (<code>/members/join</code>):</strong> 3-step flow: email → PIN verification → application form. Fields: name, bio, website, city, Discord handle, 10 qualifying event checkboxes, optional consulting listing (expertise, contact, portfolio), optional team listing (job title, role description), profile photo URL. Submitted to <code>/api/membership/request</code> as a pending request for admin review."
+          "html": "<strong>Join form (<code>/members/join</code>):</strong> 3-step flow: email \u2192 PIN verification \u2192 application form. Fields: name, bio, website, city, Discord handle, 10 qualifying event checkboxes, optional consulting listing (expertise, contact, portfolio), optional team listing (job title, role description), profile photo URL. Submitted to <code>/api/membership/request</code> as a pending request for admin review."
         },
         {
           "title": "Profile edit page:",
@@ -359,18 +391,24 @@
       "title": "Architecture Review, SoP Migration Pages, Domain Redirect Plan",
       "date": "2026-05-30",
       "time_pt": "",
-      "tracks": ["cloudflare-migration", "member-directory", "static-site", "content", "operations"],
+      "tracks": [
+        "cloudflare-migration",
+        "member-directory",
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Member Login/Register topbar:",
-          "html": "<strong>Member Login/Register topbar:</strong> Added a site-wide 'Member Login / Register' link injected above the nav on every page via <code>main.js</code>. Styled as a small uppercase link in the upper right corner. The <code>/members/join</code> page copy updated to clarify it handles both cases — existing members are routed to their edit profile, new applicants complete the join form."
+          "html": "<strong>Member Login/Register topbar:</strong> Added a site-wide 'Member Login / Register' link injected above the nav on every page via <code>main.js</code>. Styled as a small uppercase link in the upper right corner. The <code>/members/join</code> page copy updated to clarify it handles both cases \u2014 existing members are routed to their edit profile, new applicants complete the join form."
         },
         {
           "title": "CF Zero Trust Access for /admin/*:",
-          "html": "<strong>CF Zero Trust Access for <code>/admin/*</code>:</strong> Configured Cloudflare Access (Zero Trust free tier) to gate the admin panel at the CDN layer — unauthenticated requests never reach the page. Policy: email allowlist (Venkat + Timber), one-time PIN to email. Zero application code changes required. The existing Bearer token auth remains as a second layer. Previously, the admin page was publicly visible and the only protection was a password field sending a key from JavaScript."
+          "html": "<strong>CF Zero Trust Access for <code>/admin/*</code>:</strong> Configured Cloudflare Access (Zero Trust free tier) to gate the admin panel at the CDN layer \u2014 unauthenticated requests never reach the page. Policy: email allowlist (Venkat + Timber), one-time PIN to email. Zero application code changes required. The existing Bearer token auth remains as a second layer. Previously, the admin page was publicly visible and the only protection was a password field sending a key from JavaScript."
         },
         {
           "title": "Tag consolidation and bug fix:",
@@ -378,7 +416,7 @@
         },
         {
           "title": "CSP cleanup:",
-          "html": "<strong>CSP cleanup:</strong> Removed <code>cdn.jsdelivr.net</code> from the <code>script-src</code> directive in <code>_headers</code> — it was allowlisted but never loaded. Tightening the CSP reduces the attack surface for script injection."
+          "html": "<strong>CSP cleanup:</strong> Removed <code>cdn.jsdelivr.net</code> from the <code>script-src</code> directive in <code>_headers</code> \u2014 it was allowlisted but never loaded. Tightening the CSP reduces the attack surface for script injection."
         },
         {
           "title": "SIG mailing list plan:",
@@ -386,7 +424,7 @@
         },
         {
           "title": "SoP migration pages:",
-          "html": "<strong>SoP migration — new pages:</strong> Migrated content from <code>summerofprotocols.com</code> to this site. <code>/symposium-2025</code>: archive of the 2025 Protocol Symposium (Sept 12–19, theme <em>Accelerating Order</em>) — Foundations Workshop, Protocol School, Hackathons. <code>/programs/protocol-school</code>: stub for the biennial Protocol School program with 2025 edition details and full list of 11 teaching fellows. Added Protocol School entry to <code>/programs</code>. <code>/workshops</code>: Corporate Workshops offering — virtual seminar + in-person format, Venkat/Timber facilitator split by sector, contact updated to PI email. <code>/license</code>: CC+ License page documenting the SoP23 dual-licensing model (CC BY-NC 4.0 → CC BY 4.0 on Dec 13, 2026); linked from About page. <code>data/alumni.json</code>: 70 alumni from SoP23–25 saved locally as reference for future directory work."
+          "html": "<strong>SoP migration \u2014 new pages:</strong> Migrated content from <code>summerofprotocols.com</code> to this site. <code>/symposium-2025</code>: archive of the 2025 Protocol Symposium (Sept 12\u201319, theme <em>Accelerating Order</em>) \u2014 Foundations Workshop, Protocol School, Hackathons. <code>/programs/protocol-school</code>: stub for the biennial Protocol School program with 2025 edition details and full list of 11 teaching fellows. Added Protocol School entry to <code>/programs</code>. <code>/workshops</code>: Corporate Workshops offering \u2014 virtual seminar + in-person format, Venkat/Timber facilitator split by sector, contact updated to PI email. <code>/license</code>: CC+ License page documenting the SoP23 dual-licensing model (CC BY-NC 4.0 \u2192 CC BY 4.0 on Dec 13, 2026); linked from About page. <code>data/alumni.json</code>: 70 alumni from SoP23\u201325 saved locally as reference for future directory work."
         },
         {
           "title": "summerofprotocols.com redirect plan:",
@@ -401,22 +439,26 @@
       "title": "Events History System, CF Cleanup, File Consolidation, SoP Ingestion",
       "date": "2026-06-01",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Events history system:",
-          "html": "<strong>Events history system:</strong> Built a database-driven events index at <code>/events/</code>. <code>data/events.json</code> is the canonical source of truth — fetched at runtime by the index page, which sorts and renders event cards via JS. Individual event detail pages are static HTML at <code>/events/{slug}/</code>. Initial set: 7 events covering 2023–2025. 'Events' added to main nav. Events index uses a <code>TYPE_LABELS</code> map for human-readable type badges; mobile layout switches to single-column below 580px."
+          "html": "<strong>Events history system:</strong> Built a database-driven events index at <code>/events/</code>. <code>data/events.json</code> is the canonical source of truth \u2014 fetched at runtime by the index page, which sorts and renders event cards via JS. Individual event detail pages are static HTML at <code>/events/{slug}/</code>. Initial set: 7 events covering 2023\u20132025. 'Events' added to main nav. Events index uses a <code>TYPE_LABELS</code> map for human-readable type badges; mobile layout switches to single-column below 580px."
         },
         {
           "title": "SoP event ingestion:",
-          "html": "<strong>SoP event ingestion — 3 additional events:</strong> Added three pre-existing events sourced from summerofprotocols.com: Researcher Retreat, St. Edward State Park, Seattle (August 2023); Datus and Nusas Workshop, Singapore (March 26–29, 2024); Khlongs and Subaks Workshop, CMKL University, Bangkok (April 21–25, 2025). Events.json now covers 10 events. Healdsburg location updated to 'Edge Esmeralda, Healdsburg, CA' for both Healdsburg entries. <code>sop-migration.md</code> deleted after remaining items were ported to <code>status.md</code>."
+          "html": "<strong>SoP event ingestion \u2014 3 additional events:</strong> Added three pre-existing events sourced from summerofprotocols.com: Researcher Retreat, St. Edward State Park, Seattle (August 2023); Datus and Nusas Workshop, Singapore (March 26\u201329, 2024); Khlongs and Subaks Workshop, CMKL University, Bangkok (April 21\u201325, 2025). Events.json now covers 10 events. Healdsburg location updated to 'Edge Esmeralda, Healdsburg, CA' for both Healdsburg entries. <code>sop-migration.md</code> deleted after remaining items were ported to <code>status.md</code>."
         },
         {
           "title": "CF migration cleanup:",
-          "html": "<strong>CF migration cleanup:</strong> Deleted <code>netlify.toml</code>, <code>MIGRATION.md</code>, and <code>feat/cloudflare-migration</code> branch (local + remote). All docs updated to reflect Cloudflare Pages as the live host. The migration branch had been 4,854 lines behind main — an obsolete early exploration with nothing to merge."
+          "html": "<strong>CF migration cleanup:</strong> Deleted <code>netlify.toml</code>, <code>MIGRATION.md</code>, and <code>feat/cloudflare-migration</code> branch (local + remote). All docs updated to reflect Cloudflare Pages as the live host. The migration branch had been 4,854 lines behind main \u2014 an obsolete early exploration with nothing to merge."
         },
         {
           "title": "File consolidation:",
@@ -431,22 +473,26 @@
       "title": "Symposium 2026 Banner, Event Merges, Asset Policy",
       "date": "2026-06-01",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Symposium 2026 banner:",
-          "html": "<strong>Symposium 2026 banner (<code>nn_banner6.png</code>):</strong> Replaced the CSS text placeholder on the homepage with the commissioned artwork (1208×278px PNG, teal background, 'Protocol Symposium September 21–24, 2026 / Abstracts due June 14'). Image also added to the <code>/symposium-2026</code> page header. Symposium kicker and meta description updated with confirmed dates (Sep 21–24). The banner was initially committed to git but failed to load — root cause: all <code>/assets/*</code> requests are intercepted by <code>functions/assets/[[path]].js</code> and served from R2, not from the static file tree. Fixed by uploading to R2 via <code>wrangler r2 object put</code> and removing from git."
+          "html": "<strong>Symposium 2026 banner (<code>nn_banner6.png</code>):</strong> Replaced the CSS text placeholder on the homepage with the commissioned artwork (1208\u00d7278px PNG, teal background, 'Protocol Symposium September 21\u201324, 2026 / Abstracts due June 14'). Image also added to the <code>/symposium-2026</code> page header. Symposium kicker and meta description updated with confirmed dates (Sep 21\u201324). The banner was initially committed to git but failed to load \u2014 root cause: all <code>/assets/*</code> requests are intercepted by <code>functions/assets/[[path]].js</code> and served from R2, not from the static file tree. Fixed by uploading to R2 via <code>wrangler r2 object put</code> and removing from git."
         },
         {
           "title": "Protocol Symposium 2025 event merge:",
-          "html": "<strong>Protocol Symposium 2025 event merge:</strong> Replaced the two separate events (Protocol Foundations Workshop 2025, Protocol School 2025) with a single Protocol Symposium 2025 entry covering the full Sep 12–19 week. New detail page at <code>/events/protocol-symposium-2025/</code> covers both components as subsections. Old URLs redirect to new via <code>_redirects</code>."
+          "html": "<strong>Protocol Symposium 2025 event merge:</strong> Replaced the two separate events (Protocol Foundations Workshop 2025, Protocol School 2025) with a single Protocol Symposium 2025 entry covering the full Sep 12\u201319 week. New detail page at <code>/events/protocol-symposium-2025/</code> covers both components as subsections. Old URLs redirect to new via <code>_redirects</code>."
         },
         {
           "title": "R2 asset policy formalised:",
-          "html": "<strong>R2 asset policy formalised:</strong> Binary assets (PNG, JPG, WEBP) are not committed to git — they live in R2 bucket <code>pi-assets</code> and are served at <code>/assets/*</code> via <code>functions/assets/[[path]].js</code>. This was already the de facto practice (all profile photos, logos, etc. are R2-only); <code>.gitignore</code> now enforces it for <code>assets/*.png</code> and subdirectories. <code>inbox/</code> is the local staging folder (also gitignored). Upload command and workflow documented in <code>CLAUDE.md</code>."
+          "html": "<strong>R2 asset policy formalised:</strong> Binary assets (PNG, JPG, WEBP) are not committed to git \u2014 they live in R2 bucket <code>pi-assets</code> and are served at <code>/assets/*</code> via <code>functions/assets/[[path]].js</code>. This was already the de facto practice (all profile photos, logos, etc. are R2-only); <code>.gitignore</code> now enforces it for <code>assets/*.png</code> and subdirectories. <code>inbox/</code> is the local staging folder (also gitignored). Upload command and workflow documented in <code>CLAUDE.md</code>."
         },
         {
           "title": "ROADMAP: member pre-population:",
@@ -461,14 +507,18 @@
       "title": "Banner Refresh, Date Fix, Events Thumbnails, Nav Restructure",
       "date": "2026-06-01",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Banner replaced and date corrected",
-          "html": "Updated <code>nn_banner6.png</code> in R2 with a revised version of the artwork. Simultaneously corrected the symposium date from Sep 21–24 to Sep 21–25 across all four occurrences: meta description, visible kicker, and both <code>alt</code> attributes in <code>index.html</code> and <code>symposium-2026/index.html</code>."
+          "html": "Updated <code>nn_banner6.png</code> in R2 with a revised version of the artwork. Simultaneously corrected the symposium date from Sep 21\u201324 to Sep 21\u201325 across all four occurrences: meta description, visible kicker, and both <code>alt</code> attributes in <code>index.html</code> and <code>symposium-2026/index.html</code>."
         },
         {
           "title": "Protocol Symposium 2026 added to events index",
@@ -476,11 +526,11 @@
         },
         {
           "title": "Events thumbnails: art banner and symposium images",
-          "html": "Uploaded <code>nn_artbanner.png</code> to R2 and wired it as the Symposium 2026 events card thumbnail — the wide banner aspect ratio is inappropriate for the card layout, so a separate square-ish art image is used there. Uploaded <code>symposium24.webp</code> and <code>symposium25.webp</code> to R2 and wired into the 2024 and 2025 events entries respectively. All three wired via <code>image</code> field in <code>data/events.json</code>."
+          "html": "Uploaded <code>nn_artbanner.png</code> to R2 and wired it as the Symposium 2026 events card thumbnail \u2014 the wide banner aspect ratio is inappropriate for the card layout, so a separate square-ish art image is used there. Uploaded <code>symposium24.webp</code> and <code>symposium25.webp</code> to R2 and wired into the 2024 and 2025 events entries respectively. All three wired via <code>image</code> field in <code>data/events.json</code>."
         },
         {
           "title": "Nav trimmed; footer globally injected from main.js",
-          "html": "Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from <code>main.js</code> via <code>document.querySelector('.site-footer').innerHTML = FOOTER_HTML</code> — the same pattern already used for the header. The footer's existing <code>.site-footer</code> element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us."
+          "html": "Top nav reduced from 7 items to 4: Programs, Events, Protocolized, About. Contact, Members, and Support Us moved to the footer. Rather than editing ~100 individual HTML files, the footer is now injected globally from <code>main.js</code> via <code>document.querySelector('.site-footer').innerHTML = FOOTER_HTML</code> \u2014 the same pattern already used for the header. The footer's existing <code>.site-footer</code> element in every page serves as the injection target. Footer links: Team, Network, Consulting, Symposium, Contact, Members, Support Us."
         }
       ]
     },
@@ -491,7 +541,11 @@
       "title": "URL Consolidation, Programs Restructure, New SIGs, Pitchdeck Fix",
       "date": "2026-06-01",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -502,15 +556,15 @@
         },
         {
           "title": "Programs index restructured: Protocol Symposium replaces Protocol School",
-          "html": "Removed Protocol School from the Programs index — it is a component of the Symposium, not a standalone program, and its dedicated page at <code>/programs/protocol-school</code> remains. Added a Protocol Symposium entry linking all three editions (2024, 2025, 2026 upcoming) in a single item."
+          "html": "Removed Protocol School from the Programs index \u2014 it is a component of the Symposium, not a standalone program, and its dedicated page at <code>/programs/protocol-school</code> remains. Added a Protocol Symposium entry linking all three editions (2024, 2025, 2026 upcoming) in a single item."
         },
         {
           "title": "Two new SIG stubs added: DRG and SIGPSY",
-          "html": "Created <code>sigs/drg/index.html</code> (Distributed Robotics Group — onchain robotics protocols, led by Anuraj R. and Rafael Fernandez) and <code>sigs/sigpsy/index.html</code> (SIGPSY — Special Interest Group in Psychohistory, long-range historical modeling, led by Venkatesh Rao and Aneesh Sathe; links worldmachines.org). Both appear in the SIG index with an amber 'Coming Soon' badge (<code>status-draft</code> CSS class added). <code>sigs/CONVENTIONS.md</code> updated with <code>drg</code> and <code>sigpsy</code> slugs so c3po's ingestion pipeline knows where to write sessions when they begin."
+          "html": "Created <code>sigs/drg/index.html</code> (Distributed Robotics Group \u2014 onchain robotics protocols, led by Anuraj R. and Rafael Fernandez) and <code>sigs/sigpsy/index.html</code> (SIGPSY \u2014 Special Interest Group in Psychohistory, long-range historical modeling, led by Venkatesh Rao and Aneesh Sathe; links worldmachines.org). Both appear in the SIG index with an amber 'Coming Soon' badge (<code>status-draft</code> CSS class added). <code>sigs/CONVENTIONS.md</code> updated with <code>drg</code> and <code>sigpsy</code> slugs so c3po's ingestion pipeline knows where to write sessions when they begin."
         },
         {
           "title": "Pitchdeck fixed: vendored marked.min.js",
-          "html": "The pitchdeck was throwing 'Deck error — marked is not defined' because <code>deck.html</code> loaded the marked markdown parser from <code>cdn.jsdelivr.net</code>, which is blocked by the site's <code>Content-Security-Policy: script-src 'self'</code> header (set in <code>_headers</code>). Fixed by downloading marked v15 (~40kb) into <code>pitchdeck/marked.min.js</code> and updating the script tag to load from the same origin."
+          "html": "The pitchdeck was throwing 'Deck error \u2014 marked is not defined' because <code>deck.html</code> loaded the marked markdown parser from <code>cdn.jsdelivr.net</code>, which is blocked by the site's <code>Content-Security-Policy: script-src 'self'</code> header (set in <code>_headers</code>). Fixed by downloading marked v15 (~40kb) into <code>pitchdeck/marked.min.js</code> and updating the script tag to load from the same origin."
         }
       ]
     },
@@ -521,7 +575,10 @@
       "title": "Jamverse, Whitespace Compaction, Nav Member Link",
       "date": "2026-06-03",
       "time_pt": "",
-      "tracks": ["static-site", "content"],
+      "tracks": [
+        "static-site",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -532,7 +589,7 @@
         },
         {
           "title": "Comprehensive vertical whitespace reduction across site CSS",
-          "html": "A broad pass over <code>css/style.css</code> reduced vertical spacing throughout: <code>body line-height</code> 1.7→1.6; <code>p margin-bottom</code> 1.4rem→1rem globally; <code>.page-header</code> padding and margin roughly halved; <code>.site-footer margin-top</code> 6rem→3.5rem; <code>.project-item</code> padding 2.5rem→1.5rem; <code>.team-member</code> padding 3rem→2rem; event, member, network, consulting, and symposium section margins all reduced 30–50%. Landing page padding and logo margin also tightened. No structural changes — all visual."
+          "html": "A broad pass over <code>css/style.css</code> reduced vertical spacing throughout: <code>body line-height</code> 1.7\u21921.6; <code>p margin-bottom</code> 1.4rem\u21921rem globally; <code>.page-header</code> padding and margin roughly halved; <code>.site-footer margin-top</code> 6rem\u21923.5rem; <code>.project-item</code> padding 2.5rem\u21921.5rem; <code>.team-member</code> padding 3rem\u21922rem; event, member, network, consulting, and symposium section margins all reduced 30\u201350%. Landing page padding and logo margin also tightened. No structural changes \u2014 all visual."
         },
         {
           "title": "Member Login link moved inline with nav brand",
@@ -540,7 +597,45 @@
         },
         {
           "title": "Stale untracked SIG HTML files deleted",
-          "html": "Four untracked files — <code>sigs/mrg.html</code>, <code>sigs/protfisig.html</code>, <code>sigs/sigfpt.html</code>, <code>sigs/sigpfb.html</code> — were old pre-clean-URL flat files that kept reappearing. Deleted. The canonical pages live at <code>sigs/mrg/index.html</code>, etc."
+          "html": "Four untracked files \u2014 <code>sigs/mrg.html</code>, <code>sigs/protfisig.html</code>, <code>sigs/sigfpt.html</code>, <code>sigs/sigpfb.html</code> \u2014 were old pre-clean-URL flat files that kept reappearing. Deleted. The canonical pages live at <code>sigs/mrg/index.html</code>, etc."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "sort_key": 18.0,
+      "label": "Session 18",
+      "title": "Challenges Page, Nav Dropdown, Symposium Fixes",
+      "date": "2026-06-08",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Challenges page \u2014 D1-backed open-ended research problem index",
+          "html": "New page at <code>/challenges</code> backed by a <code>challenges</code> D1 table (migrations 008 + 009). Each challenge has title, description (server-sanitized HTML with safe links), Fibonacci planning-poker difficulty with descriptive labels (Trivial \u2192 Whitehead advance), free-text <em>Posed By</em> field, and a <em>Communicated By</em> field auto-set to the submitting member. Two-track interest voting: anonymous votes deduped via <code>pi_chal_voted</code> cookie; member votes deduped in a <code>challenge_votes</code> join table. Raw anon and member counts stored separately for reweighted scoring. Challenge value formula: <code>seed + A\u00d7anon\u00b2 + B\u00d7member\u00b2</code> (A=1, B=3), sorted by value descending. Admin-only seed adjustment via PATCH <code>/api/challenges/:id/seed</code>. Venkat and Timber set to <code>is_admin=1</code>."
+        },
+        {
+          "title": "Challenges UX \u2014 collapsible form, permalinks, beta badge, Programs entry",
+          "html": "Add-challenge form is collapsed by default behind a teal <em>\u25b6 Add a challenge</em> toggle; grayed out and inactive when not logged in. After submit, form is replaced by a confirmation box with <em>Add another \u2192</em>. Each challenge card has <code>id=\"challenge-{id}\"</code> permalink anchor with hash-scroll after async load. Orange-rust beta badge (<code>#D85A30</code>, matching C3PO) on page heading and nav item. Challenges added to top nav (between Events and Protocolized) and to Programs page. <code>challenges/PLAN.md</code> documents planned features: individual pages, annotations system, and ingestion/clustering/auto-tagging pipeline."
+        },
+        {
+          "title": "Nav: session-aware member link with dropdown",
+          "html": "The static <em>Member Login / Register</em> nav link is now session-aware. After page load, <code>/api/members/me</code> is fetched: if authenticated, the link is replaced with a dropdown toggle showing a person-silhouette icon and the member's name (\u25be). Dropdown contains <em>Edit profile</em> \u2192 <code>/members/edit</code> and <em>Log out</em>. Logout hits new endpoint <code>POST /api/auth/logout</code>, which deletes the session record from D1 and clears the <code>HttpOnly</code> <code>pi_session</code> cookie server-side, then reloads. Unauthenticated link now carries <code>?return=&lt;current_path&gt;</code> so the auth flow redirects back to the originating page after login (replaces the previous hardcoded redirect to <code>/members/edit</code>)."
+        },
+        {
+          "title": "SIG future-dated session handling",
+          "html": "SIGFPT index had two future-dated stub entries (June 12 and June 26, 2026) pre-created for agenda posting. New CSS class <code>.meeting-upcoming</code> adds an amber <em>Scheduled</em> badge next to the date and mutes the entry. <code>sigs/CONVENTIONS.md</code> updated to specify the correct handling pattern for c3po's ingestion pipeline: use <code>meeting-upcoming</code> class, placeholder summary, and re-ingest after the session occurs."
+        },
+        {
+          "title": "Symposium 2026 copy fixes and Special Sessions line",
+          "html": "Short presentations corrected to 25 min + 5 min Q&A (was 20 min). Workshop format updated to 4 Zoom sessions over 2 days, Sept 21\u201322 (was 60\u201390 min). Word counts and form-level details stripped \u2014 let the Google Form handle them. Special Sessions line added: contact link points to <code>/team#venkatesh-rao</code> (team cards already had <code>id</code> attributes). Link to Challenges page added above the submission CTA."
         }
       ]
     }
