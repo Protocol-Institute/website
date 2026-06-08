@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenges — The Protocol Institute</title>
+  <meta name="description" content="An open-ended index of research challenges in protocol theory — posed in the spirit of Erdős problems and Grand Challenges.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .challenges-intro { color: #3A3A3A; line-height: 1.7; margin-bottom: 2rem; }
+    .challenges-intro a { color: #2A6B6B; }
+    .challenges-intro a:hover { text-decoration: underline; }
+
+    /* Add form */
+    .challenge-add { background: #F3F3EF; border: 1px solid #E0DDD8; padding: 1.5rem; margin-bottom: 2.5rem; }
+    .challenge-add h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 0 0 1rem; }
+    .challenge-add-posedby { font-size: 0.85rem; color: #8A8A8A; margin-bottom: 1rem; }
+    .challenge-add-posedby strong { color: #3A3A3A; }
+    .challenge-field { margin-bottom: 1rem; }
+    .challenge-field label { display: block; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5A5A5A; margin-bottom: 0.35rem; }
+    .challenge-field input,
+    .challenge-field textarea,
+    .challenge-field select { width: 100%; box-sizing: border-box; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #1A1A1A; background: #FAFAF7; border: 1px solid #C8C4BE; padding: 0.5rem 0.65rem; }
+    .challenge-field textarea { resize: vertical; min-height: 100px; }
+    .challenge-field select { cursor: pointer; }
+    .challenge-submit { background: #2A6B6B; color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.04em; padding: 0.55rem 1.4rem; cursor: pointer; }
+    .challenge-submit:hover { background: #1f5252; }
+    .challenge-submit:disabled { opacity: 0.6; cursor: default; }
+    .challenge-form-msg { font-size: 0.85rem; margin-top: 0.75rem; }
+    .challenge-form-msg.error { color: #c0392b; }
+    .challenge-form-msg.success { color: #2A6B6B; }
+
+    .challenge-login-prompt { font-size: 0.9rem; color: #8A8A8A; font-style: italic; margin-bottom: 2.5rem; }
+    .challenge-login-prompt a { color: #2A6B6B; }
+
+    /* Challenge list */
+    .challenge-list { list-style: none; padding: 0; margin: 0; }
+    .challenge-card { padding: 2rem 0; border-bottom: 1px solid #E0DDD8; }
+    .challenge-card:first-child { border-top: 1px solid #E0DDD8; }
+    .challenge-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.6rem; }
+    .challenge-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; font-weight: 600; color: #1A1A1A; line-height: 1.3; margin: 0; }
+    .challenge-difficulty { flex-shrink: 0; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.2em 0.65em; white-space: nowrap; margin-top: 0.2rem; }
+    .challenge-description { color: #3A3A3A; line-height: 1.7; margin: 0.6rem 0 1rem; font-size: 0.95rem; }
+    .challenge-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .challenge-posed-by { font-size: 0.8rem; color: #8A8A8A; }
+    .challenge-actions { display: flex; align-items: center; gap: 1.25rem; }
+    .challenge-interesting-btn { display: inline-flex; align-items: center; gap: 0.35rem; background: none; border: 1px solid #C8C4BE; padding: 0.25em 0.75em; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: #3A3A3A; cursor: pointer; transition: border-color 0.15s; }
+    .challenge-interesting-btn:hover:not(:disabled) { border-color: #2A6B6B; color: #2A6B6B; }
+    .challenge-interesting-btn.voted { border-color: #2A6B6B; color: #2A6B6B; cursor: default; }
+    .challenge-interesting-btn:disabled { opacity: 0.6; cursor: default; }
+    .challenge-value { font-size: 0.8rem; color: #8A8A8A; }
+    .challenge-value strong { color: #3A3A3A; }
+    .challenge-empty { color: #8A8A8A; font-style: italic; padding: 2rem 0; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Challenges</h1>
+      </div>
+
+      <div class="challenges-intro">
+        <p>An open-ended index of research challenges in the spirit of Erdős problems and Grand Challenges — but smaller in scale, and without a single definitive solution. These are problems worth making progress on, not problems to be closed.</p>
+        <p>Logged in PI members can add problems. If you're not a member, you can <a href="mailto:team@protocol-institute.org">email a member</a> to suggest a problem.</p>
+      </div>
+
+      <div id="challenge-form-region"></div>
+
+      <ul class="challenge-list" id="challenge-list">
+        <li class="challenge-empty">Loading challenges…</li>
+      </ul>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/events/protocol-symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+      <a href="/members">Members</a>
+      <a href="/support">Support Us</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const FIBONACCI = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+  const VOTED_KEY = 'pi_challenges_voted';
+
+  function getVoted() {
+    try { return new Set(JSON.parse(localStorage.getItem(VOTED_KEY) || '[]')); }
+    catch { return new Set(); }
+  }
+
+  function markVoted(id) {
+    const v = getVoted();
+    v.add(id);
+    try { localStorage.setItem(VOTED_KEY, JSON.stringify([...v])); } catch {}
+  }
+
+  function escHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function challengeValue(interesting, difficulty) {
+    return interesting * interesting * difficulty;
+  }
+
+  function renderCard(c) {
+    const voted = getVoted().has(c.id);
+    const value = challengeValue(c.interesting, c.difficulty);
+    const posedBy = escHtml(c.posed_by_name || c.posed_by_slug);
+    const date = new Date(c.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    return `
+      <li class="challenge-card" data-id="${c.id}">
+        <div class="challenge-header">
+          <h2 class="challenge-title">${escHtml(c.title)}</h2>
+          <span class="challenge-difficulty" title="Difficulty (planning poker)">Difficulty: ${c.difficulty}</span>
+        </div>
+        <p class="challenge-description">${escHtml(c.description)}</p>
+        <div class="challenge-footer">
+          <span class="challenge-posed-by">Posed by ${posedBy} &middot; ${date}</span>
+          <div class="challenge-actions">
+            <button class="challenge-interesting-btn${voted ? ' voted' : ''}"
+                    data-id="${c.id}"
+                    ${voted ? 'disabled' : ''}
+                    title="Mark as interesting">
+              👀 <span class="interesting-count">${c.interesting}</span>
+            </button>
+            <span class="challenge-value">Challenge value: <strong>${value.toLocaleString()}</strong></span>
+          </div>
+        </div>
+      </li>`;
+  }
+
+  function renderList(challenges) {
+    const list = document.getElementById('challenge-list');
+    if (!challenges.length) {
+      list.innerHTML = '<li class="challenge-empty">No challenges yet. Be the first to pose one.</li>';
+      return;
+    }
+    list.innerHTML = challenges.map(renderCard).join('');
+
+    list.querySelectorAll('.challenge-interesting-btn:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const id = parseInt(this.dataset.id, 10);
+        this.disabled = true;
+        try {
+          const res = await fetch(`/api/challenges/${id}/interesting`, { method: 'POST' });
+          if (res.ok) {
+            const { interesting } = await res.json();
+            this.querySelector('.interesting-count').textContent = interesting;
+            this.classList.add('voted');
+            markVoted(id);
+            // update challenge value display
+            const card = this.closest('.challenge-card');
+            const diffText = card.querySelector('.challenge-difficulty').textContent;
+            const diff = parseInt(diffText.replace('Difficulty: ', ''), 10);
+            card.querySelector('.challenge-value strong').textContent =
+              challengeValue(interesting, diff).toLocaleString();
+          } else {
+            this.disabled = false;
+          }
+        } catch {
+          this.disabled = false;
+        }
+      });
+    });
+  }
+
+  function renderAddForm(member) {
+    const region = document.getElementById('challenge-form-region');
+    region.innerHTML = `
+      <div class="challenge-add">
+        <h2>Add a Challenge</h2>
+        <p class="challenge-add-posedby">Posed by: <strong>${escHtml(member.name)}</strong></p>
+        <form id="challenge-form">
+          <div class="challenge-field">
+            <label for="cf-title">Title</label>
+            <input type="text" id="cf-title" name="title" maxlength="200" required>
+          </div>
+          <div class="challenge-field">
+            <label for="cf-description">Description</label>
+            <textarea id="cf-description" name="description" maxlength="2000" required></textarea>
+          </div>
+          <div class="challenge-field">
+            <label for="cf-difficulty">Difficulty (planning poker)</label>
+            <select id="cf-difficulty" name="difficulty" required>
+              <option value="">Select…</option>
+              ${FIBONACCI.map(n => `<option value="${n}">${n}</option>`).join('')}
+            </select>
+          </div>
+          <button type="submit" class="challenge-submit">Add Challenge</button>
+          <div class="challenge-form-msg" id="cf-msg"></div>
+        </form>
+      </div>`;
+
+    document.getElementById('challenge-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      const msg = document.getElementById('cf-msg');
+      btn.disabled = true;
+      msg.textContent = '';
+      msg.className = 'challenge-form-msg';
+
+      const body = {
+        title: this.title.value.trim(),
+        description: this.description.value.trim(),
+        difficulty: parseInt(this.difficulty.value, 10),
+      };
+
+      try {
+        const res = await fetch('/api/challenges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) {
+          msg.textContent = 'Challenge added.';
+          msg.className = 'challenge-form-msg success';
+          this.reset();
+          loadChallenges();
+        } else {
+          const data = await res.json();
+          msg.textContent = data.error || 'Submission failed.';
+          msg.className = 'challenge-form-msg error';
+          btn.disabled = false;
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+        msg.className = 'challenge-form-msg error';
+        btn.disabled = false;
+      }
+    });
+  }
+
+  function renderLoginPrompt() {
+    document.getElementById('challenge-form-region').innerHTML =
+      '<p class="challenge-login-prompt"><a href="/members/join">Log in</a> to add a challenge problem.</p>';
+  }
+
+  async function loadChallenges() {
+    try {
+      const res = await fetch('/api/challenges');
+      const { challenges } = await res.json();
+      renderList(challenges || []);
+    } catch {
+      document.getElementById('challenge-list').innerHTML =
+        '<li class="challenge-empty">Unable to load challenges. Please try again later.</li>';
+    }
+  }
+
+  async function init() {
+    loadChallenges();
+    try {
+      const res = await fetch('/api/members/me');
+      if (res.ok) {
+        const { member } = await res.json();
+        renderAddForm(member);
+      } else {
+        renderLoginPrompt();
+      }
+    } catch {
+      renderLoginPrompt();
+    }
+  }
+
+  init();
+}());
+</script>
+</body>
+</html>
