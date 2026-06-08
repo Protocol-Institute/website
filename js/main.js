@@ -49,16 +49,48 @@ var FOOTER_HTML =
       memberLink.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
     }
 
-    // Session check — swap login link for member name if authenticated
+    // Session check — swap login link for member dropdown if authenticated
     fetch('/api/members/me')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data || !data.member || !memberLink) return;
-        memberLink.href = '/members';
-        memberLink.innerHTML = PERSON_ICON + data.member.name.replace(/[&<>"]/g, function (c) {
+        var safeName = data.member.name.replace(/[&<>"]/g, function (c) {
           return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
         });
-        memberLink.classList.add('nav-member-link--authed');
+        var wrapper = document.createElement('div');
+        wrapper.className = 'nav-member-menu';
+        wrapper.innerHTML =
+          '<button class="nav-member-link nav-member-link--authed nav-member-toggle" id="nav-member-toggle" aria-expanded="false" aria-haspopup="true">' +
+            PERSON_ICON + safeName + '<span class="nav-member-caret">&#9662;</span>' +
+          '</button>' +
+          '<ul class="nav-member-dropdown" id="nav-member-dropdown" hidden>' +
+            '<li><a href="/members/edit">Edit profile</a></li>' +
+            '<li><button id="nav-logout-btn">Log out</button></li>' +
+          '</ul>';
+        memberLink.replaceWith(wrapper);
+
+        var toggle = document.getElementById('nav-member-toggle');
+        var dropdown = document.getElementById('nav-member-dropdown');
+
+        toggle.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var isOpen = !dropdown.hidden;
+          dropdown.hidden = isOpen;
+          toggle.setAttribute('aria-expanded', String(!isOpen));
+        });
+
+        document.addEventListener('click', function () {
+          if (!dropdown.hidden) {
+            dropdown.hidden = true;
+            toggle.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        document.getElementById('nav-logout-btn').addEventListener('click', function () {
+          fetch('/api/auth/logout', { method: 'POST' })
+            .then(function () { window.location.reload(); })
+            .catch(function () { window.location.reload(); });
+        });
       })
       .catch(function () {});
 
