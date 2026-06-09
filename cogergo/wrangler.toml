@@ -1,0 +1,11 @@
+# Cognitive Ergonomics for AI — cogergo.protocol-institute.org
+# Separate CF Pages project; root directory set to "cogergo" in CF dashboard.
+# D1 binding shares pi-members database with the main website project.
+name = "cogergo"
+pages_build_output_dir = "."
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pi-members"
+database_id = "a86730ae-27b8-41e7-b8d2-927efcada8e2"

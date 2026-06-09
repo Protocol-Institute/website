@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Ergonomics for AI</title>
+  <link rel="icon" href="https://protocol-institute.org/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="brand">Cognitive Ergonomics <span>for AI · Protocol Institute</span></a>
+  <nav class="header-links">
+    <a href="/submit" id="submit-link" style="display:none">Submit entry</a>
+    <a href="https://protocol-institute.org/members/join" id="login-link">Log in</a>
+    <a href="https://protocol-institute.org" target="_blank" rel="noopener">PI ↗</a>
+  </nav>
+</header>
+
+<div class="page-wrap page-wrap--narrow">
+  <div id="item-loading"><p class="loading-state">Loading…</p></div>
+  <div id="item-content" style="display:none">
+
+    <div class="item-detail-header">
+      <p class="breadcrumb"><a href="/">← Habit inventory</a></p>
+      <div id="admin-sev-bar" class="admin-sev-row" style="display:none">
+        <label>Admin — Severity:</label>
+        <input type="number" id="admin-sev-input" min="-10" max="10" placeholder="–">
+        <button id="admin-sev-btn">Set</button>
+        <span id="admin-sev-msg" style="font-size:0.82rem;"></span>
+      </div>
+      <div class="detail-title-row">
+        <h1 class="detail-title" id="d-title"></h1>
+        <div class="detail-sev-chip" id="d-sev-chip"></div>
+      </div>
+      <div class="detail-meta-row">
+        <span id="d-type-badge"></span>
+        <span id="d-tags"></span>
+        <span id="d-contributor" style="margin-left:auto;font-size:0.78rem;color:var(--text-3)"></span>
+      </div>
+    </div>
+
+    <div class="clinical-sections">
+      <div class="clinical-section" id="d-symptoms-section">
+        <span class="clinical-label">Visible symptoms</span>
+        <div class="clinical-body" id="d-symptoms"></div>
+      </div>
+      <div class="clinical-section" id="d-prognosis-section">
+        <span class="clinical-label">Prognosis</span>
+        <div class="clinical-body" id="d-prognosis"></div>
+      </div>
+      <div class="clinical-section" id="d-improvement-section">
+        <span class="clinical-label">Improvement ideas</span>
+        <div class="clinical-body" id="d-improvement"></div>
+      </div>
+    </div>
+
+    <div class="detail-vote-row" id="d-vote-row"></div>
+
+    <div class="comments-section" id="comments">
+      <h2 class="comments-heading">Discussion</h2>
+      <div id="comments-list"></div>
+      <div id="comment-form-area"></div>
+    </div>
+
+  </div>
+  <div id="item-error" style="display:none">
+    <p class="empty-state">Entry not found. <a href="/">Back to inventory</a></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  function escHtml(s) {
+    return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+
+  function severityColor(s) {
+    if (s === null || s === undefined) return '#CCCCCC';
+    const t = (s + 10) / 20;
+    let r, g;
+    if (t <= 0.5) { r = 210; g = Math.round(20 + t * 2 * 190); }
+    else { r = Math.round(210 * (1 - (t - 0.5) * 2)); g = 210; }
+    return `rgb(${r},${g},0)`;
+  }
+
+  function severityTextColor(s) {
+    if (s === null || s === undefined) return '#888';
+    return (s >= -2 && s <= 2) ? '#333' : '#fff';
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso + (iso.endsWith('Z') ? '' : 'Z')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  const slug = new URLSearchParams(window.location.search).get('slug');
+  if (!slug) { window.location.replace('/'); return; }
+
+  let itemId = null;
+  let currentDoCount = 0, currentDontCount = 0;
+
+  // Auth check
+  fetch('https://protocol-institute.org/api/members/me', { credentials: 'include' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data?.member) {
+        document.getElementById('submit-link').style.display = '';
+        document.getElementById('login-link').style.display = 'none';
+      }
+    }).catch(() => {});
+
+  fetch(`/api/items/${encodeURIComponent(slug)}`, { credentials: 'include' })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      const item = data.item;
+      const comments = data.comments || [];
+      itemId = item.id;
+      currentDoCount = item.do_count || 0;
+      currentDontCount = item.dont_count || 0;
+
+      document.title = item.title + ' — Cognitive Ergonomics for AI';
+
+      const bg  = severityColor(item.severity);
+      const tc  = severityTextColor(item.severity);
+
+      document.getElementById('d-title').textContent = item.title;
+
+      const chip = document.getElementById('d-sev-chip');
+      if (item.severity !== null && item.severity !== undefined) {
+        chip.style.background = bg;
+        chip.style.color = tc;
+        chip.textContent = (item.severity > 0 ? '+' : '') + item.severity;
+        chip.title = 'Severity ' + item.severity;
+      } else {
+        chip.style.background = '#EEF1F8';
+        chip.style.color = '#AAA';
+        chip.textContent = '?';
+        chip.title = 'Severity unset';
+      }
+
+      document.getElementById('d-type-badge').innerHTML =
+        `<span class="item-type-badge ${item.type === 'good' ? 'good' : 'bad'}">${item.type === 'good' ? 'Good habit' : 'Bad habit'}</span>`;
+
+      if (item.tags?.length) {
+        document.getElementById('d-tags').innerHTML =
+          `<span class="item-tags" style="display:inline-flex;gap:0.3rem;flex-wrap:wrap;">${item.tags.map(t => `<span class="tag-chip">#${escHtml(t)}</span>`).join('')}</span>`;
+      }
+
+      document.getElementById('d-contributor').textContent = 'Contributed by ' + (item.contributor_name || item.contributed_by_slug);
+
+      function setSection(id, val) {
+        if (val) {
+          document.getElementById(id + '-section').style.display = '';
+          document.getElementById(id).textContent = val;
+        } else {
+          document.getElementById(id + '-section').style.display = 'none';
+        }
+      }
+      setSection('d-symptoms', item.symptoms);
+      setSection('d-prognosis', item.prognosis);
+      setSection('d-improvement', item.improvement_ideas);
+
+      // Vote buttons
+      renderVoteRow(item.my_vote);
+
+      // Admin severity control
+      if (item.is_admin) {
+        const bar = document.getElementById('admin-sev-bar');
+        bar.style.display = 'flex';
+        document.getElementById('admin-sev-input').value = item.severity ?? '';
+        document.getElementById('admin-sev-btn').addEventListener('click', async () => {
+          const val = document.getElementById('admin-sev-input').value.trim();
+          const body = val === '' ? { slug, action: 'set_severity', severity: null }
+                                  : { slug, action: 'set_severity', severity: parseInt(val, 10) };
+          const res = await fetch('/api/admin/items', { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          const msg = document.getElementById('admin-sev-msg');
+          if (res.ok) {
+            msg.textContent = 'Saved.';
+            msg.style.color = 'var(--good-text)';
+            // Update display
+            const newSev = val === '' ? null : parseInt(val, 10);
+            const newBg  = severityColor(newSev);
+            const newTc  = severityTextColor(newSev);
+            chip.style.background = newBg;
+            chip.style.color = newTc;
+            chip.textContent = newSev !== null ? ((newSev > 0 ? '+' : '') + newSev) : '?';
+          } else {
+            msg.textContent = 'Error.';
+            msg.style.color = 'var(--bad-text)';
+          }
+        });
+      }
+
+      // Comments
+      renderComments(comments, item.my_vote !== undefined);
+
+      document.getElementById('item-loading').style.display = 'none';
+      document.getElementById('item-content').style.display = '';
+    })
+    .catch(() => {
+      document.getElementById('item-loading').style.display = 'none';
+      document.getElementById('item-error').style.display = '';
+    });
+
+  function renderVoteRow(myVote) {
+    const row = document.getElementById('d-vote-row');
+    const doClass   = myVote === 'do'   ? ' voted-do'   : '';
+    const dontClass = myVote === 'dont' ? ' voted-dont' : '';
+    row.innerHTML = `
+      <button class="vote-btn${doClass}"   id="vote-do">✓ I do this <span class="vote-count">${currentDoCount}</span></button>
+      <button class="vote-btn${dontClass}" id="vote-dont">✗ I don't do this <span class="vote-count">${currentDontCount}</span></button>
+    `;
+    ['do', 'dont'].forEach(v => {
+      document.getElementById('vote-' + v).addEventListener('click', async () => {
+        const res = await fetch(`/api/items/${encodeURIComponent(slug)}/vote`, {
+          method: 'POST', credentials: 'include',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ vote: v }),
+        });
+        if (res.status === 401) { window.location.href = 'https://protocol-institute.org/members/join?return=' + encodeURIComponent(window.location.href); return; }
+        if (!res.ok) return;
+        const d = await res.json();
+        currentDoCount   = d.do_count;
+        currentDontCount = d.dont_count;
+        renderVoteRow(d.my_vote);
+      });
+    });
+  }
+
+  function renderComments(comments, isAuthed) {
+    const list = document.getElementById('comments-list');
+    if (!comments.length) {
+      list.innerHTML = '<p class="no-comments">No comments yet.</p>';
+    } else {
+      list.innerHTML = comments.map(c => `
+        <div class="comment-item">
+          <div class="comment-author">
+            <a href="https://protocol-institute.org/members/${escHtml(c.member_slug)}">${escHtml(c.member_name)}</a>
+            <span class="comment-date">${fmtDate(c.created_at)}</span>
+          </div>
+          <div class="comment-body">${escHtml(c.body)}</div>
+        </div>
+      `).join('');
+    }
+
+    const area = document.getElementById('comment-form-area');
+    if (isAuthed) {
+      area.innerHTML = `
+        <div class="comment-form">
+          <textarea class="comment-textarea" id="comment-body" rows="3" placeholder="Add a comment…" maxlength="2000"></textarea>
+          <div style="display:flex;gap:0.6rem;align-items:center;">
+            <button class="btn" id="post-comment-btn">Post comment</button>
+            <span id="comment-msg" style="font-size:0.82rem;"></span>
+          </div>
+        </div>
+      `;
+      document.getElementById('post-comment-btn').addEventListener('click', async () => {
+        const body = document.getElementById('comment-body').value.trim();
+        if (!body) return;
+        const btn = document.getElementById('post-comment-btn');
+        btn.disabled = true;
+        const res = await fetch(`/api/items/${encodeURIComponent(slug)}/comments`, {
+          method: 'POST', credentials: 'include',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ body }),
+        });
+        if (res.ok) {
+          // Reload comments
+          const d = await fetch(`/api/items/${encodeURIComponent(slug)}/comments`, { credentials: 'include' }).then(r => r.json());
+          renderComments(d.comments || [], true);
+        } else {
+          document.getElementById('comment-msg').textContent = 'Error posting comment.';
+          btn.disabled = false;
+        }
+      });
+    } else {
+      area.innerHTML = `<p class="auth-prompt"><a href="https://protocol-institute.org/members/join?return=${encodeURIComponent(window.location.href)}">Log in</a> to join the discussion.</p>`;
+    }
+  }
+}());
+</script>
+</body>
+</html>

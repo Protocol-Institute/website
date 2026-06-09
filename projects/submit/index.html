@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit a Project — The Protocol Institute</title>
+  <meta name="description" content="Submit a project to the Protocol Institute directory.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Submit a Project</h1>
+      </div>
+
+      <div id="auth-gate" style="display:none;">
+        <p class="projects-intro">You must be a logged-in member to submit a project.</p>
+        <a id="login-link" href="/members/join?return=/projects/submit" class="form-btn">Log in to continue</a>
+      </div>
+
+      <div id="submit-form-area" style="display:none;">
+        <p class="projects-intro">Projects that produce specific artifacts — documents, tools, websites, or other outputs. Submissions are reviewed before appearing in the index.</p>
+
+        <form id="project-form" class="member-form">
+
+          <div class="form-group">
+            <label class="form-label" for="f-title">Title <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="f-title" maxlength="200" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-description">Description <span class="form-required">*</span></label>
+            <textarea class="form-textarea" id="f-description" rows="4" maxlength="2000" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-lead">Lead <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="f-lead-display" readonly style="background:#F4F2EE;cursor:default;">
+            <input type="hidden" id="f-lead">
+            <p class="form-hint">Defaults to you. The lead must have a member profile.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-url">Artifact URL <span class="form-required">*</span></label>
+            <input class="form-input" type="url" id="f-url" placeholder="https://" required>
+            <p class="form-hint">The current location of the artifact. Can be updated after approval.</p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group--half">
+              <label class="form-label" for="f-state">State <span class="form-required">*</span></label>
+              <select class="form-select" id="f-state" required>
+                <option value="">Select…</option>
+                <option value="stub">Stub — placeholder, not yet substantive</option>
+                <option value="beta">Beta — work in progress, usable but incomplete</option>
+                <option value="production">Production — complete and stable</option>
+              </select>
+            </div>
+
+            <div class="form-group form-group--half">
+              <label class="form-label" for="f-type">Project type <span class="form-required">*</span></label>
+              <select class="form-select" id="f-type" required>
+                <option value="">Select…</option>
+                <option value="one-off">One-off — produced once and done</option>
+                <option value="versioned">Versioned — periodic new releases</option>
+                <option value="accretive">Accretive — single artifact that grows continuously</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-artifact-type">Artifact type <span class="form-required">*</span></label>
+            <select class="form-select" id="f-artifact-type" required>
+              <option value="">Select…</option>
+              <option value="text">Text</option>
+              <option value="code">Code</option>
+              <option value="website">Website</option>
+              <option value="rich_media">Rich media (video, audio, interactive)</option>
+              <option value="other">Other (specify below)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="f-artifact-other-group" style="display:none;">
+            <label class="form-label" for="f-artifact-other">Specify artifact type <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="f-artifact-other" maxlength="100" placeholder="e.g. database, dataset, protocol spec…">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-program">Program (optional)</label>
+            <select class="form-select" id="f-program">
+              <option value="">None (unclassified)</option>
+              <option value="protocolized">Protocolized</option>
+              <option value="ai-infrastructure">AI Infrastructure</option>
+              <option value="challenges">Challenges</option>
+              <option value="sigs">Special Interest Groups</option>
+              <option value="protocol-symposium">Protocol Symposium</option>
+              <option value="long-now">Protocols for the Long Now</option>
+              <option value="solo-projects">Solo Projects</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="form-btn" id="submit-btn">Submit for review</button>
+          </div>
+
+          <div class="form-msg" id="form-msg" style="display:none;"></div>
+
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  let memberSlug = '';
+
+  fetch('/api/members/me')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !data.member) {
+        document.getElementById('auth-gate').style.display = '';
+        return;
+      }
+      memberSlug = data.member.slug;
+      document.getElementById('f-lead').value = memberSlug;
+      document.getElementById('f-lead-display').value = data.member.name;
+      document.getElementById('submit-form-area').style.display = '';
+    })
+    .catch(() => {
+      document.getElementById('auth-gate').style.display = '';
+    });
+
+  document.getElementById('f-artifact-type').addEventListener('change', function () {
+    document.getElementById('f-artifact-other-group').style.display =
+      this.value === 'other' ? '' : 'none';
+    const otherInput = document.getElementById('f-artifact-other');
+    otherInput.required = this.value === 'other';
+  });
+
+  document.getElementById('project-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('form-msg');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    msg.style.display = 'none';
+
+    const artifactType = document.getElementById('f-artifact-type').value;
+    const body = {
+      title:               document.getElementById('f-title').value.trim(),
+      description:         document.getElementById('f-description').value.trim(),
+      lead_slug:           document.getElementById('f-lead').value,
+      url:                 document.getElementById('f-url').value.trim(),
+      state:               document.getElementById('f-state').value,
+      type:                document.getElementById('f-type').value,
+      artifact_type:       artifactType,
+      artifact_type_other: artifactType === 'other' ? document.getElementById('f-artifact-other').value.trim() : undefined,
+      program:             document.getElementById('f-program').value || undefined,
+    };
+
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        msg.className = 'form-msg form-msg--success';
+        msg.textContent = 'Project submitted for review. It will appear in the index once approved.';
+        msg.style.display = '';
+        document.getElementById('project-form').reset();
+        document.getElementById('f-lead').value = memberSlug;
+        document.getElementById('f-lead-display').value = document.getElementById('f-lead-display').value;
+        document.getElementById('f-artifact-other-group').style.display = 'none';
+      } else {
+        msg.className = 'form-msg form-msg--error';
+        msg.textContent = data.error || 'Submission failed.';
+        msg.style.display = '';
+        btn.disabled = false;
+        btn.textContent = 'Submit for review';
+      }
+    } catch {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = 'Network error. Please try again.';
+      msg.style.display = '';
+      btn.disabled = false;
+      btn.textContent = 'Submit for review';
+    }
+  });
+}());
+</script>
+</body>
+</html>

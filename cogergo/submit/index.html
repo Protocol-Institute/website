@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Entry — Cognitive Ergonomics for AI</title>
+  <link rel="icon" href="https://protocol-institute.org/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="brand">Cognitive Ergonomics <span>for AI · Protocol Institute</span></a>
+  <nav class="header-links">
+    <a href="https://protocol-institute.org" target="_blank" rel="noopener">PI ↗</a>
+  </nav>
+</header>
+
+<div class="page-wrap page-wrap--narrow">
+  <h1 class="page-title">Submit an Entry</h1>
+  <p class="page-subtitle">Contribute a good or bad cognitive ergonomic habit for AI use. Submissions are reviewed by admins before appearing in the index.</p>
+
+  <div id="auth-gate" style="display:none">
+    <p style="margin-bottom:1rem;color:var(--text-2)">You must be a Protocol Institute member to submit an entry.</p>
+    <a href="https://protocol-institute.org/members/join?return=https://cogergo.protocol-institute.org/submit" class="btn">Log in to continue</a>
+  </div>
+
+  <div id="form-wrap" class="form-wrap" style="display:none">
+    <form id="submit-form">
+      <div class="form-group">
+        <label class="form-label" for="f-title">Title <span class="form-required">*</span></label>
+        <input class="form-input" type="text" id="f-title" maxlength="200" required placeholder="e.g. Context window neglect">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Type <span class="form-required">*</span></label>
+        <div class="type-radio-row">
+          <label class="type-radio"><input type="radio" name="type" value="good" required> Good habit</label>
+          <label class="type-radio"><input type="radio" name="type" value="bad"> Bad habit</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-symptoms">Visible symptoms</label>
+        <textarea class="form-textarea" id="f-symptoms" rows="3" maxlength="1500" placeholder="How does this habit show up in practice? What are the observable signs?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-prognosis">Prognosis</label>
+        <textarea class="form-textarea" id="f-prognosis" rows="3" maxlength="1500" placeholder="What happens if this habit continues unchecked?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-improvement">Improvement ideas</label>
+        <textarea class="form-textarea" id="f-improvement" rows="3" maxlength="1500" placeholder="Practical suggestions for improvement or mitigation…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-tags">Tags</label>
+        <input class="form-input" type="text" id="f-tags" placeholder="attention, context, prompting  (comma-separated)">
+        <span class="form-hint">Lowercase, comma-separated keywords.</span>
+      </div>
+
+      <div class="form-actions" style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem;">
+        <button type="submit" class="form-submit" id="submit-btn">Submit for review</button>
+        <span id="form-msg" class="form-msg" style="display:none"></span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  fetch('https://protocol-institute.org/api/members/me', { credentials: 'include' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data?.member) {
+        document.getElementById('auth-gate').style.display = '';
+      } else {
+        document.getElementById('form-wrap').style.display = '';
+      }
+    })
+    .catch(() => { document.getElementById('auth-gate').style.display = ''; });
+
+  document.getElementById('submit-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('form-msg');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    msg.style.display = 'none';
+
+    const typeEl = document.querySelector('input[name="type"]:checked');
+    const body = {
+      title:             document.getElementById('f-title').value.trim(),
+      type:              typeEl ? typeEl.value : '',
+      symptoms:          document.getElementById('f-symptoms').value.trim(),
+      prognosis:         document.getElementById('f-prognosis').value.trim(),
+      improvement_ideas: document.getElementById('f-improvement').value.trim(),
+      tags:              document.getElementById('f-tags').value.trim(),
+    };
+
+    try {
+      const res = await fetch('/api/items', {
+        method: 'POST', credentials: 'include',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        msg.className = 'form-msg form-msg--success';
+        msg.textContent = 'Submitted! It will appear once approved by an admin.';
+        msg.style.display = '';
+        document.getElementById('submit-form').reset();
+      } else {
+        msg.className = 'form-msg form-msg--error';
+        msg.textContent = data.error || 'Submission failed.';
+        msg.style.display = '';
+        btn.disabled = false;
+        btn.textContent = 'Submit for review';
+      }
+    } catch {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = 'Network error. Please try again.';
+      msg.style.display = '';
+      btn.disabled = false;
+      btn.textContent = 'Submit for review';
+    }
+  });
+}());
+</script>
+</body>
+</html>

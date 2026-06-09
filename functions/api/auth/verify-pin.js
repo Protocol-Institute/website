@@ -68,7 +68,7 @@ export async function onRequestPost({ request, env }) {
   return new Response(JSON.stringify({ ok: true, email }), {
     headers: {
       'Content-Type': 'application/json',
-      'Set-Cookie': `pi_session=${token}:${encodeURIComponent(email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${cookieExpires}`,
+      'Set-Cookie': `pi_session=${token}:${encodeURIComponent(email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Domain=.protocol-institute.org; Expires=${cookieExpires}`,
     },
   });
 }

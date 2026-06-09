@@ -1,6 +1,6 @@
 # Legacy URL redirects
 /home        /           301
-/projects    /programs   301
+
 /events/protocol-foundations-workshop-2025   /events/protocol-symposium-2025   301
 /events/protocol-foundations-workshop-2025/  /events/protocol-symposium-2025/  301
 /events/protocol-school-2025                 /events/protocol-symposium-2025   301

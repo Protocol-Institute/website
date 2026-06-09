@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Ergonomics for AI</title>
+  <meta name="description" content="An inventory of good and bad cognitive ergonomic habits for AI use.">
+  <link rel="icon" href="https://protocol-institute.org/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="brand">Cognitive Ergonomics <span>for AI · Protocol Institute</span></a>
+  <nav class="header-links">
+    <a href="/submit" id="submit-link" style="display:none">Submit entry</a>
+    <a href="https://protocol-institute.org/members/join" id="login-link">Log in</a>
+    <a href="https://protocol-institute.org" target="_blank" rel="noopener">PI ↗</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <h1 class="page-title">Habit Inventory</h1>
+  <p class="page-subtitle">An open index of cognitive ergonomic patterns for AI use — good habits that sharpen thinking, bad habits that blunt it.</p>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">Type</span>
+      <div class="type-toggle">
+        <button data-type="all" class="active">All</button>
+        <button data-type="good">Good</button>
+        <button data-type="bad">Bad</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Severity range</span>
+      <div class="sev-range">
+        <input type="number" id="sev-min" min="-10" max="10" value="-10" title="Min severity">
+        <span class="sev-sep">to</span>
+        <input type="number" id="sev-max" min="-10" max="10" value="10" title="Max severity">
+        <label style="font-size:0.8rem;color:var(--text-3);display:flex;align-items:center;gap:0.25rem;">
+          <input type="checkbox" id="sev-filter-active"> filter
+        </label>
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Sort</span>
+      <select class="sort-select" id="sort-select">
+        <option value="alpha">A – Z</option>
+        <option value="do">Most "I do this"</option>
+        <option value="dont">Most "I don't do this"</option>
+        <option value="comments">Most comments</option>
+        <option value="severity">Severity (abs)</option>
+      </select>
+    </div>
+    <span class="filter-count" id="filter-count"></span>
+  </div>
+
+  <div id="items-container">
+    <p class="loading-state">Loading…</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  let allItems = [];
+  let isAdmin = false;
+  let filterType = 'all';
+  let sortMode = 'alpha';
+  let sevFilterActive = false;
+  let sevMin = -10, sevMax = 10;
+
+  function escHtml(s) {
+    return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+
+  function severityColor(s) {
+    if (s === null || s === undefined) return '#CCCCCC';
+    const t = (s + 10) / 20;
+    let r, g;
+    if (t <= 0.5) { r = 210; g = Math.round(20 + t * 2 * 190); }
+    else { r = Math.round(210 * (1 - (t - 0.5) * 2)); g = 210; }
+    return `rgb(${r},${g},0)`;
+  }
+
+  function severityTextColor(s) {
+    if (s === null || s === undefined) return '#888';
+    return (s >= -2 && s <= 2) ? '#333' : '#fff';
+  }
+
+  function renderItems() {
+    let items = allItems.slice();
+
+    if (filterType !== 'all') items = items.filter(i => i.type === filterType);
+
+    if (sevFilterActive) {
+      items = items.filter(i => i.severity !== null && i.severity !== undefined && i.severity >= sevMin && i.severity <= sevMax);
+    }
+
+    if (sortMode === 'alpha')    items.sort((a,b) => a.title.localeCompare(b.title));
+    if (sortMode === 'do')       items.sort((a,b) => (b.do_count||0) - (a.do_count||0));
+    if (sortMode === 'dont')     items.sort((a,b) => (b.dont_count||0) - (a.dont_count||0));
+    if (sortMode === 'comments') items.sort((a,b) => (b.comment_count||0) - (a.comment_count||0));
+    if (sortMode === 'severity') items.sort((a,b) => Math.abs(b.severity||0) - Math.abs(a.severity||0));
+
+    document.getElementById('filter-count').textContent = items.length + ' ' + (items.length === 1 ? 'entry' : 'entries');
+
+    if (!items.length) {
+      document.getElementById('items-container').innerHTML = '<p class="empty-state">No entries match the current filters.</p>';
+      return;
+    }
+
+    const html = '<div class="items-list">' + items.map(item => {
+      const bg = severityColor(item.severity);
+      const tc = severityTextColor(item.severity);
+      const sevChip = item.severity !== null && item.severity !== undefined
+        ? `<span class="sev-chip" style="background:${bg};color:${tc}" title="Severity ${item.severity}">${item.severity > 0 ? '+' : ''}${item.severity}</span>`
+        : `<span class="sev-chip" style="background:#EEF1F8;color:#AAA" title="Severity unset">?</span>`;
+      const tags = (item.tags || []).map(t => `<span class="tag-chip">#${escHtml(t)}</span>`).join('');
+      const doClass = item.my_vote === 'do' ? ' voted-do' : '';
+      const dontClass = item.my_vote === 'dont' ? ' voted-dont' : '';
+      const shortSymptoms = item.symptoms ? item.symptoms.slice(0, 180) + (item.symptoms.length > 180 ? '…' : '') : '';
+
+      return `<div class="item-card" style="border-left-color:${bg}" data-slug="${escHtml(item.slug)}">
+        <div class="item-card-top">
+          <span class="item-type-badge ${item.type === 'good' ? 'good' : 'bad'}">${item.type === 'good' ? 'Good habit' : 'Bad habit'}</span>
+          <span class="item-title"><a href="/item?slug=${encodeURIComponent(item.slug)}">${escHtml(item.title)}</a></span>
+          ${sevChip}
+        </div>
+        ${shortSymptoms ? `<p class="item-symptoms">${escHtml(shortSymptoms)}</p>` : ''}
+        ${tags ? `<div class="item-tags">${tags}</div>` : ''}
+        <div class="item-footer">
+          <button class="vote-btn${doClass}" data-slug="${escHtml(item.slug)}" data-vote="do">
+            ✓ I do this <span class="vote-count">${item.do_count || 0}</span>
+          </button>
+          <button class="vote-btn${dontClass}" data-slug="${escHtml(item.slug)}" data-vote="dont">
+            ✗ I don't <span class="vote-count">${item.dont_count || 0}</span>
+          </button>
+          <span class="comment-count"><a href="/item?slug=${encodeURIComponent(item.slug)}#comments">💬 ${item.comment_count || 0}</a></span>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+
+    document.getElementById('items-container').innerHTML = html;
+    bindVoteButtons();
+  }
+
+  function bindVoteButtons() {
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const slug = btn.dataset.slug;
+        const vote = btn.dataset.vote;
+        try {
+          const res = await fetch(`/api/items/${encodeURIComponent(slug)}/vote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vote }),
+          });
+          if (res.status === 401) { window.location.href = 'https://protocol-institute.org/members/join?return=' + encodeURIComponent(window.location.href); return; }
+          if (!res.ok) return;
+          const data = await res.json();
+          const item = allItems.find(i => i.slug === slug);
+          if (item) {
+            item.do_count   = data.do_count;
+            item.dont_count = data.dont_count;
+            item.my_vote    = data.my_vote;
+          }
+          renderItems();
+        } catch {}
+      });
+    });
+  }
+
+  // Auth check
+  fetch('https://protocol-institute.org/api/members/me', { credentials: 'include' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data?.member) {
+        document.getElementById('submit-link').style.display = '';
+        document.getElementById('login-link').style.display = 'none';
+      }
+    }).catch(() => {});
+
+  // Fetch items
+  fetch('/api/items', { credentials: 'include' })
+    .then(r => r.json())
+    .then(data => {
+      allItems  = data.items || [];
+      isAdmin   = data.is_admin || false;
+      renderItems();
+    })
+    .catch(() => {
+      document.getElementById('items-container').innerHTML = '<p class="empty-state">Could not load entries.</p>';
+    });
+
+  // Filter controls
+  document.querySelectorAll('.type-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterType = btn.dataset.type;
+      document.querySelectorAll('.type-toggle button').forEach(b => b.className = '');
+      btn.className = filterType === 'all' ? 'active' : (filterType === 'good' ? 'active-good' : 'active-bad');
+      renderItems();
+    });
+  });
+
+  document.getElementById('sort-select').addEventListener('change', e => {
+    sortMode = e.target.value;
+    renderItems();
+  });
+
+  document.getElementById('sev-filter-active').addEventListener('change', e => {
+    sevFilterActive = e.target.checked;
+    renderItems();
+  });
+
+  ['sev-min', 'sev-max'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      sevMin = parseInt(document.getElementById('sev-min').value, 10) || -10;
+      sevMax = parseInt(document.getElementById('sev-max').value, 10) || 10;
+      if (sevFilterActive) renderItems();
+    });
+  });
+}());
+</script>
+</body>
+</html>

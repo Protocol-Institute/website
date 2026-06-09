@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project — The Protocol Institute</title>
+  <meta name="description" content="Protocol Institute project detail.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="project-loading">
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Loading…</p>
+      </div>
+
+      <div id="project-content" style="display:none;">
+
+        <div class="page-header project-detail-header">
+          <div class="project-detail-breadcrumb"><a href="/projects">← Projects</a></div>
+          <h1 id="pd-title"></h1>
+          <div class="project-meta project-detail-meta" id="pd-meta"></div>
+        </div>
+
+        <div class="project-detail-body">
+          <p id="pd-description" class="project-detail-description"></p>
+
+          <div class="project-detail-fields">
+            <div class="project-detail-field">
+              <span class="project-detail-label">Lead</span>
+              <span id="pd-lead"></span>
+            </div>
+            <div class="project-detail-field" id="pd-program-row" style="display:none;">
+              <span class="project-detail-label">Program</span>
+              <span id="pd-program"></span>
+            </div>
+            <div class="project-detail-field" id="pd-sub-program-row" style="display:none;">
+              <span class="project-detail-label">SIG</span>
+              <span id="pd-sub-program"></span>
+            </div>
+            <div class="project-detail-field" id="pd-version-row" style="display:none;">
+              <span class="project-detail-label">Version</span>
+              <span id="pd-version"></span>
+            </div>
+            <div class="project-detail-field">
+              <span class="project-detail-label">Artifact</span>
+              <span id="pd-artifact-type"></span>
+            </div>
+            <div class="project-detail-field">
+              <span class="project-detail-label">Type</span>
+              <span id="pd-type"></span>
+            </div>
+            <div class="project-detail-field">
+              <span class="project-detail-label">State</span>
+              <span id="pd-state"></span>
+            </div>
+          </div>
+
+          <div class="project-detail-cta">
+            <a id="pd-url" href="#" class="form-btn" target="_blank" rel="noopener noreferrer">View artifact →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="project-error" style="display:none;">
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Project not found. <a href="/projects">Back to projects</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const PROGRAM_LABELS = {
+    'protocolized':        'Protocolized',
+    'ai-infrastructure':   'AI Infrastructure',
+    'challenges':          'Challenges',
+    'sigs':                'Special Interest Groups',
+    'protocol-symposium':  'Protocol Symposium',
+    'long-now':            'Protocols for the Long Now',
+    'solo-projects':       'Solo Projects',
+  };
+
+  const STATE_LABELS    = { stub: 'Stub', beta: 'Beta', production: 'Production' };
+  const TYPE_LABELS     = { 'one-off': 'One-off', versioned: 'Versioned', accretive: 'Accretive' };
+  const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', other: 'Other' };
+  const SUB_PROGRAM_LABELS = {
+    sigpfb: 'Protocols for Business',
+    sigpsy: 'SIG Psychohistory',
+    sigfpt: 'SIG Formal Protocol Theory',
+    mrg: 'Memory Research Group',
+    protfisig: 'Protocol Fiction SIG',
+    drg: 'Distributed Robotics Group',
+  };
+
+  function escHtml(str) {
+    return String(str || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+
+  // Slug comes from ?slug= query param: /projects/project?slug=<slug>
+  const slug = new URLSearchParams(window.location.search).get('slug');
+
+  if (!slug) {
+    window.location.replace('/projects');
+    return;
+  }
+
+  fetch('/api/projects/' + encodeURIComponent(slug))
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const p = data.project;
+
+      document.title = escHtml(p.title) + ' — The Protocol Institute';
+
+      document.getElementById('pd-title').textContent = p.title;
+
+      // Badges
+      const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
+        ? escHtml(p.artifact_type_other)
+        : (ARTIFACT_LABELS[p.artifact_type] || escHtml(p.artifact_type));
+
+      const programTag = p.program
+        ? `<span class="project-category">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</span>`
+        : '';
+      const subProgramTag = p.sub_program
+        ? `<span class="project-category project-sub-program">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</span>`
+        : '';
+      const versionTag = p.current_version
+        ? `<span class="project-version">v${escHtml(p.current_version)}</span>`
+        : '';
+
+      document.getElementById('pd-meta').innerHTML =
+        `<span class="project-state state-${escHtml(p.state)}">${escHtml(STATE_LABELS[p.state] || p.state)}</span>` +
+        `<span class="project-type-badge">${escHtml(TYPE_LABELS[p.type] || p.type)}</span>` +
+        `<span class="project-artifact-badge">${artifactLabel}</span>` +
+        versionTag + programTag + subProgramTag;
+
+      document.getElementById('pd-description').textContent = p.description;
+
+      document.getElementById('pd-lead').innerHTML =
+        `<a href="/members/${escHtml(p.lead_slug)}" class="project-lead-link">${escHtml(p.lead_name || p.lead_slug)}</a>`;
+
+      if (p.program) {
+        document.getElementById('pd-program-row').style.display = '';
+        document.getElementById('pd-program').innerHTML =
+          `<a href="/projects?program=${encodeURIComponent(p.program)}">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</a>`;
+      }
+
+      if (p.sub_program) {
+        document.getElementById('pd-sub-program-row').style.display = '';
+        document.getElementById('pd-sub-program').innerHTML =
+          `<a href="/sigs/${escHtml(p.sub_program)}">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</a>`;
+      }
+
+      if (p.current_version) {
+        document.getElementById('pd-version-row').style.display = '';
+        document.getElementById('pd-version').textContent = p.current_version;
+      }
+
+      document.getElementById('pd-artifact-type').textContent = artifactLabel;
+      document.getElementById('pd-type').textContent = TYPE_LABELS[p.type] || p.type;
+      document.getElementById('pd-state').innerHTML =
+        `<span class="project-state state-${escHtml(p.state)}">${escHtml(STATE_LABELS[p.state] || p.state)}</span>`;
+
+      const urlEl = document.getElementById('pd-url');
+      urlEl.href = p.url;
+
+      document.getElementById('project-loading').style.display = 'none';
+      document.getElementById('project-content').style.display = '';
+    })
+    .catch(() => {
+      document.getElementById('project-loading').style.display = 'none';
+      document.getElementById('project-error').style.display = '';
+    });
+}());
+</script>
+</body>
+</html>

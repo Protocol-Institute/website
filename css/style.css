@@ -1726,3 +1726,152 @@ a:hover {
     aspect-ratio: 16/9;
   }
 }
+
+/* ---- Projects ---- */
+
+.project-state {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  padding: 0.15em 0.55em;
+  white-space: nowrap;
+}
+
+.project-state.state-stub       { color: #8A8A8A; border-color: #C0BDBB; }
+.project-state.state-beta       { color: #8A5A00; border-color: #C8861A; }
+.project-state.state-production { color: #2A6B6B; border-color: #2A6B6B; }
+
+.project-type-badge,
+.project-artifact-badge {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8A8A8A;
+  border: 1px solid #E0DDD8;
+  padding: 0.15em 0.55em;
+  white-space: nowrap;
+}
+
+.project-version {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #2A6B6B;
+  padding: 0.15em 0.4em;
+  white-space: nowrap;
+}
+
+.project-sub-program {
+  color: #5A5A5A;
+  border-color: #C8C4BE;
+}
+
+.project-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.project-lead-label {
+  color: #5A5A5A;
+}
+
+.project-lead-link {
+  color: #2A6B6B;
+}
+
+.project-lead-link:hover {
+  text-decoration: underline;
+}
+
+.project-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  margin-bottom: 1.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #F4F2EE;
+  border: 1px solid #E0DDD8;
+}
+
+.filter-label { color: #8A8A8A; }
+.filter-value { font-weight: 500; color: #1A1A1A; }
+.filter-clear { color: #2A6B6B; font-size: 0.82rem; margin-left: auto; }
+.filter-clear:hover { text-decoration: underline; }
+
+/* Submit CTA on index */
+#submit-cta { margin-bottom: 1.5rem; }
+.form-btn--inline { display: inline-block; }
+
+/* Project detail page */
+.project-detail-breadcrumb {
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+
+.project-detail-breadcrumb a {
+  color: #2A6B6B;
+}
+
+.project-detail-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.project-detail-meta {
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.project-detail-description {
+  font-size: 1.05rem;
+  color: #3A3A3A;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.project-detail-fields {
+  border-top: 1px solid #E0DDD8;
+  padding-top: 1.25rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.project-detail-field {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.92rem;
+}
+
+.project-detail-label {
+  min-width: 80px;
+  color: #8A8A8A;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding-top: 0.1em;
+}
+
+.project-detail-cta {
+  margin-bottom: 2rem;
+}
+
+/* Programs page: projects link */
+.program-projects-link {
+  font-size: 0.88rem;
+  color: #2A6B6B;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+
+.program-projects-link:hover {
+  text-decoration: underline;
+}

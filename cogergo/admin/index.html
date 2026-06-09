@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Cognitive Ergonomics</title>
+  <link rel="icon" href="https://protocol-institute.org/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="/" class="brand">Cognitive Ergonomics <span>Admin</span></a>
+  <nav class="header-links">
+    <a href="/">← Index</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <div id="auth-gate">
+    <h1 class="page-title" style="margin-bottom:1.25rem">Admin</h1>
+    <p style="color:var(--text-2);margin-bottom:1rem;">Log in with your Protocol Institute account to access admin functions.</p>
+    <a href="https://protocol-institute.org/members/join?return=https://cogergo.protocol-institute.org/admin" class="btn">Log in</a>
+  </div>
+
+  <div id="admin-panel" style="display:none">
+    <div style="display:flex;align-items:baseline;gap:1.5rem;margin-bottom:1.5rem;">
+      <h1 class="page-title" style="margin-bottom:0">Admin</h1>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn--secondary" id="tab-pending" data-status="pending" style="font-size:0.85rem;padding:0.3em 0.9em;">Pending</button>
+        <button class="btn" id="tab-approved" data-status="approved" style="font-size:0.85rem;padding:0.3em 0.9em;">Approved</button>
+      </div>
+    </div>
+    <div id="admin-list"><p class="loading-state">Loading…</p></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  let currentStatus = 'pending';
+
+  function escHtml(s) {
+    return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+
+  function severityColor(s) {
+    if (s === null || s === undefined) return '#CCCCCC';
+    const t = (s + 10) / 20;
+    let r, g;
+    if (t <= 0.5) { r = 210; g = Math.round(20 + t * 2 * 190); }
+    else { r = Math.round(210 * (1 - (t - 0.5) * 2)); g = 210; }
+    return `rgb(${r},${g},0)`;
+  }
+
+  fetch('https://protocol-institute.org/api/members/me', { credentials: 'include' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data?.member?.is_admin) {
+        document.getElementById('auth-gate').innerHTML = '<p style="color:var(--text-2)">Not authorised. Admin access requires an admin account.</p>';
+        return;
+      }
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('admin-panel').style.display = '';
+      loadItems('pending');
+    })
+    .catch(() => {});
+
+  function loadItems(status) {
+    currentStatus = status;
+    document.querySelectorAll('[data-status]').forEach(btn => {
+      btn.className = btn.dataset.status === status ? 'btn' : 'btn btn--secondary';
+      btn.style.fontSize = '0.85rem';
+      btn.style.padding = '0.3em 0.9em';
+    });
+    document.getElementById('admin-list').innerHTML = '<p class="loading-state">Loading…</p>';
+
+    fetch(`/api/admin/items?status=${status}`, { credentials: 'include' })
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => renderItems(data.items || [], status))
+      .catch(() => {
+        document.getElementById('admin-list').innerHTML = '<p class="empty-state">Error loading items.</p>';
+      });
+  }
+
+  function renderItems(items, status) {
+    const list = document.getElementById('admin-list');
+    if (!items.length) {
+      list.innerHTML = `<p class="empty-state">No ${status} items.</p>`;
+      return;
+    }
+
+    list.innerHTML = items.map(item => {
+      const sevColor = severityColor(item.severity);
+      return `<div class="admin-item-card is-${item.type}" id="ai-${CSS.escape(item.slug)}">
+        <div class="admin-item-title">${escHtml(item.title)}</div>
+        <div class="admin-field"><strong>Type:</strong> ${item.type === 'good' ? '✓ Good habit' : '✗ Bad habit'}</div>
+        <div class="admin-field"><strong>By:</strong> ${escHtml(item.contributor_name || item.contributed_by_slug)}</div>
+        ${item.symptoms ? `<div class="admin-field"><strong>Symptoms:</strong> ${escHtml(item.symptoms.slice(0,200))}${item.symptoms.length>200?'…':''}</div>` : ''}
+        ${item.prognosis ? `<div class="admin-field"><strong>Prognosis:</strong> ${escHtml(item.prognosis.slice(0,200))}${item.prognosis.length>200?'…':''}</div>` : ''}
+        ${item.improvement_ideas ? `<div class="admin-field"><strong>Improvement:</strong> ${escHtml(item.improvement_ideas.slice(0,200))}${item.improvement_ideas.length>200?'…':''}</div>` : ''}
+        ${(item.tags||[]).length ? `<div class="admin-field"><strong>Tags:</strong> ${item.tags.map(t => '#'+escHtml(t)).join(', ')}</div>` : ''}
+        <div class="admin-field"><strong>Votes:</strong> ✓ ${item.do_count||0} &nbsp; ✗ ${item.dont_count||0}</div>
+        <div class="admin-field" style="display:flex;align-items:center;gap:0.5rem;">
+          <strong>Severity:</strong>
+          <input type="number" class="admin-sev-input sev-field" min="-10" max="10" value="${item.severity ?? ''}" placeholder="–" data-slug="${escHtml(item.slug)}">
+          ${item.severity !== null && item.severity !== undefined
+            ? `<span style="width:14px;height:14px;border-radius:50%;background:${sevColor};display:inline-block;"></span> <span style="font-size:0.82rem;color:var(--text-2)">${item.severity}</span>`
+            : '<span style="font-size:0.82rem;color:var(--text-3)">unset</span>'}
+        </div>
+        <div style="margin-top:0.5rem;">
+          <input type="text" class="admin-notes-input notes-field" placeholder="Admin notes (optional)" data-slug="${escHtml(item.slug)}">
+        </div>
+        <div class="admin-actions">
+          ${status === 'pending' ? `
+            <button class="btn approve-btn" data-slug="${escHtml(item.slug)}">Approve</button>
+            <button class="btn btn--secondary reject-btn" data-slug="${escHtml(item.slug)}">Reject</button>
+          ` : `
+            <button class="btn sev-btn" data-slug="${escHtml(item.slug)}" style="background:var(--accent);border-color:var(--accent);">Save severity</button>
+          `}
+          <a href="/item?slug=${encodeURIComponent(item.slug)}" class="btn btn--secondary" target="_blank" style="font-size:0.82rem;padding:0.3em 0.9em;">View ↗</a>
+          <span class="admin-msg" id="amsg-${CSS.escape(item.slug)}" style="font-size:0.82rem;"></span>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Bind approve/reject
+    list.querySelectorAll('.approve-btn').forEach(btn => {
+      btn.addEventListener('click', () => doAction(btn.dataset.slug, 'approve'));
+    });
+    list.querySelectorAll('.reject-btn').forEach(btn => {
+      btn.addEventListener('click', () => doAction(btn.dataset.slug, 'reject'));
+    });
+    list.querySelectorAll('.sev-btn').forEach(btn => {
+      btn.addEventListener('click', () => doAction(btn.dataset.slug, 'set_severity'));
+    });
+  }
+
+  async function doAction(slug, action) {
+    const sevInput  = document.querySelector(`.sev-field[data-slug="${CSS.escape(slug)}"]`);
+    const notesInput = document.querySelector(`.notes-field[data-slug="${CSS.escape(slug)}"]`);
+    const msg = document.getElementById(`amsg-${CSS.escape(slug)}`);
+
+    const body = { slug, action };
+    if (notesInput?.value.trim()) body.admin_notes = notesInput.value.trim();
+    if (sevInput?.value.trim() !== '') {
+      const s = parseInt(sevInput.value, 10);
+      if (!isNaN(s)) body.severity = s;
+    }
+
+    try {
+      const res = await fetch('/api/admin/items', {
+        method: 'POST', credentials: 'include',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        msg.style.color = 'var(--good-text)';
+        if (action === 'approve')     { msg.textContent = 'Approved.'; document.getElementById(`ai-${CSS.escape(slug)}`).style.opacity = '0.4'; }
+        else if (action === 'reject') { msg.textContent = 'Rejected.'; document.getElementById(`ai-${CSS.escape(slug)}`).style.opacity = '0.4'; }
+        else                          { msg.textContent = 'Severity saved.'; }
+      } else {
+        msg.style.color = 'var(--bad-text)';
+        msg.textContent = data.error || 'Error.';
+      }
+    } catch {
+      msg.style.color = 'var(--bad-text)';
+      msg.textContent = 'Network error.';
+    }
+  }
+
+  document.querySelectorAll('[data-status]').forEach(btn => {
+    btn.addEventListener('click', () => loadItems(btn.dataset.status));
+  });
+}());
+</script>
+</body>
+</html>

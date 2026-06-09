@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — The Protocol Institute</title>
+  <meta name="description" content="Research and development projects of the Protocol Institute community.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Projects</h1>
+      </div>
+
+      <p class="projects-intro">Community projects that produce specific artifacts — documents, tools, websites, or other outputs. Projects may be one-off, versioned, or continuously accreting. Most projects are associated with a program.</p>
+
+      <div id="program-filter" class="project-filter-row" style="display:none;">
+        <span class="filter-label">Program:</span>
+        <span id="filter-program-name" class="filter-value"></span>
+        <a href="/projects" class="filter-clear">Show all</a>
+      </div>
+
+      <div id="submit-cta" style="display:none;">
+        <a href="/projects/submit" class="form-btn form-btn--inline">Submit a project</a>
+      </div>
+
+      <div id="projects-list">
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Loading…</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const PROGRAM_LABELS = {
+    'protocolized':        'Protocolized',
+    'ai-infrastructure':   'AI Infrastructure',
+    'challenges':          'Challenges',
+    'sigs':                'Special Interest Groups',
+    'protocol-symposium':  'Protocol Symposium',
+    'long-now':            'Protocols for the Long Now',
+    'solo-projects':       'Solo Projects',
+  };
+
+  const STATE_LABELS = { stub: 'Stub', beta: 'Beta', production: 'Production' };
+  const TYPE_LABELS  = { 'one-off': 'One-off', versioned: 'Versioned', accretive: 'Accretive' };
+  const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', other: 'Other' };
+  const SUB_PROGRAM_LABELS = {
+    sigpfb: 'Protocols for Business',
+    sigpsy: 'SIG Psychohistory',
+    sigfpt: 'SIG Formal Protocol Theory',
+    mrg: 'Memory Research Group',
+    protfisig: 'Protocol Fiction SIG',
+    drg: 'Distributed Robotics Group',
+  };
+
+  function escHtml(str) {
+    return String(str || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const programFilter = params.get('program') || null;
+
+  if (programFilter) {
+    document.getElementById('program-filter').style.display = 'flex';
+    document.getElementById('filter-program-name').textContent = PROGRAM_LABELS[programFilter] || programFilter;
+  }
+
+  // Show submit button for authenticated members
+  fetch('/api/members/me')
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.member) {
+        document.getElementById('submit-cta').style.display = '';
+      }
+    })
+    .catch(() => {});
+
+  const apiUrl = '/api/projects' + (programFilter ? '?program=' + encodeURIComponent(programFilter) : '');
+
+  fetch(apiUrl)
+    .then(r => r.json())
+    .then(data => {
+      const list = document.getElementById('projects-list');
+      const projects = data.projects || [];
+
+      if (!projects.length) {
+        list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">No projects yet.</p>';
+        return;
+      }
+
+      list.innerHTML = '<ul class="project-list" role="list">' +
+        projects.map(p => {
+          const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
+            ? escHtml(p.artifact_type_other)
+            : (ARTIFACT_LABELS[p.artifact_type] || escHtml(p.artifact_type));
+          const programTag = p.program ? `<span class="project-category">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</span>` : '';
+          const subProgramTag = p.sub_program ? `<span class="project-category project-sub-program">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</span>` : '';
+          const versionTag = p.current_version ? `<span class="project-version">v${escHtml(p.current_version)}</span>` : '';
+
+          return `<li class="project-item">
+            <div class="project-meta">
+              <a href="/projects/project?slug=${encodeURIComponent(p.slug)}" class="project-name-link">
+                <span class="project-name">${escHtml(p.title)}</span>
+              </a>
+              <span class="project-state state-${escHtml(p.state)}">${escHtml(STATE_LABELS[p.state] || p.state)}</span>
+              <span class="project-type-badge">${escHtml(TYPE_LABELS[p.type] || p.type)}</span>
+              <span class="project-artifact-badge">${artifactLabel}</span>
+              ${versionTag}
+              ${programTag}
+              ${subProgramTag}
+            </div>
+            <p class="project-description">${escHtml(p.description)}</p>
+            <div class="project-meta-row">
+              <span class="project-lead-label">Lead: <a href="/members/${escHtml(p.lead_slug)}" class="project-lead-link">${escHtml(p.lead_name || p.lead_slug)}</a></span>
+              <a href="${escHtml(p.url)}" class="project-link" target="_blank" rel="noopener noreferrer">View artifact →</a>
+            </div>
+          </li>`;
+        }).join('') +
+      '</ul>';
+    })
+    .catch(() => {
+      document.getElementById('projects-list').innerHTML =
+        '<p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Could not load projects.</p>';
+    });
+}());
+</script>
+</body>
+</html>
