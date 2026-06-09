@@ -305,3 +305,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Short presentations corrected to 25 min + 5 min Q&A (was 20 min). Workshop format updated to 4 Zoom sessions over 2 days, Sept 21–22 (was 60–90 min). Word counts and form-level details stripped — let the Google Form handle them. Special Sessions line added: contact link points to `/team#venkatesh-rao` (team cards already had `id` attributes). Link to Challenges page added above the submission CTA.
 
 ---
+
+## Session 19: Membership approvals, welcome emails, DRG blurb
+
+*2026-06-09*
+
+**Tracks:** member-directory, content, operations
+
+- Reviewed 8 pending `membership_requests` records directly via D1. Six were approved (Sean Stevenson, Patrick Atwater, Giovanni Merlino, Nai-Chi Cheng, Johann Richard, Will Abramson) and inserted into `members` via `wrangler d1 execute --remote` with correct schema — fixing a pre-existing bug in the admin API where `request_consultant` was used as a column name instead of `is_team`, and adding `city`, `discord_handle`, and `owner_email` fields that the old code omitted. Two applications (Alexandra Braslasu, Javier Chavez) were rejected: Braslasu explicitly stated no prior event or SIG participation; Chavez selected `tag_sig` only with no corroborating bio or notes evidence.
+
+- Rewrote `functions/api/admin/members.js` to send emails on approval and rejection. On approve: generates a PIN with 72-hour TTL (vs. 15 min for standard login), stores hash in `auth_pins`, sends a welcome email via Resend with the code and a link to `/members/join`. On reject: sends the standard ineligibility notice referencing the join page. New `resend_welcome` action allows retroactively sending welcome emails to already-approved members without requiring a new application. Shares all Resend infrastructure with `send-pin.js` — no new service dependency. The 8 emails from this session are pending until `RESEND_API_KEY` and `WEBSITE_ADMIN_KEY` are retrieved from CF dashboard and saved locally.
+
+- The intro paragraph on `/members/join` previously said only 'qualifying Protocol Institute events' — too vague to set expectations accurately. Replaced with an explicit list: Summer of Protocols cohorts, Protocol School, PI symposium events, active SIG participation, Protocol Kit recipients, Protocolized contributors. The qualifying events checkbox section now notes that applications are reviewed against actual participation records, to deter applicants who select boxes without qualifying.
+
+- Discovered that `RESEND_API_KEY` and `WEBSITE_ADMIN_KEY`, both set as CF Pages secrets in May 2026, were never saved to `../.env.keys` per the PI security policy. This blocked programmatic email sending and required retrieval from the CF dashboard. A mandatory protocol callout was added to `CLAUDE.md` and a persistent memory entry recorded, specifying that any new CF secret must be saved locally and registered in `../admin/keys.md` before the task is considered complete.
+
+- The Distributed Robotics Group description was updated on both the SIG index and the DRG detail page with the full two-paragraph third-person blurb supplied by the team: onchain robotics / decentralized coordination framing in paragraph 1; applied research group with equal protocol design and robot-building focus in paragraph 2. The DRG page also had a stale hardcoded nav with dead `.html` links from a pre-migration era — replaced with the standard `&lt;header id="site-header"&gt;` injection pattern and a `&lt;footer class="site-footer"&gt;` element populated by `main.js`.
+
+---

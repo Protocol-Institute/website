@@ -639,5 +639,40 @@
         }
       ]
     }
+  ,
+    {
+      "id": 19,
+      "sort_key": 19.0,
+      "label": "Session 19",
+      "title": "Membership approvals, welcome emails, DRG blurb",
+      "date": "2026-06-09",
+      "time_pt": "",
+      "tracks": ["member-directory", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Membership queue — 8 applications reviewed, 6 approved, 2 declined",
+          "html": "Reviewed 8 pending <code>membership_requests</code> records directly via D1. Six were approved (Sean Stevenson, Patrick Atwater, Giovanni Merlino, Nai-Chi Cheng, Johann Richard, Will Abramson) and inserted into <code>members</code> via <code>wrangler d1 execute --remote</code> with correct schema — fixing a pre-existing bug in the admin API where <code>request_consultant</code> was used as a column name instead of <code>is_team</code>, and adding <code>city</code>, <code>discord_handle</code>, and <code>owner_email</code> fields that the old code omitted. Two applications (Alexandra Braslasu, Javier Chavez) were rejected: Braslasu explicitly stated no prior event or SIG participation; Chavez selected <code>tag_sig</code> only with no corroborating bio or notes evidence."
+        },
+        {
+          "title": "Approval email flow — welcome + 3-day PIN, rejection notice",
+          "html": "Rewrote <code>functions/api/admin/members.js</code> to send emails on approval and rejection. On approve: generates a PIN with 72-hour TTL (vs. 15 min for standard login), stores hash in <code>auth_pins</code>, sends a welcome email via Resend with the code and a link to <code>/members/join</code>. On reject: sends the standard ineligibility notice referencing the join page. New <code>resend_welcome</code> action allows retroactively sending welcome emails to already-approved members without requiring a new application. Shares all Resend infrastructure with <code>send-pin.js</code> — no new service dependency. The 8 emails from this session are pending until <code>RESEND_API_KEY</code> and <code>WEBSITE_ADMIN_KEY</code> are retrieved from CF dashboard and saved locally."
+        },
+        {
+          "title": "Join page eligibility description updated",
+          "html": "The intro paragraph on <code>/members/join</code> previously said only 'qualifying Protocol Institute events' — too vague to set expectations accurately. Replaced with an explicit list: Summer of Protocols cohorts, Protocol School, PI symposium events, active SIG participation, Protocol Kit recipients, Protocolized contributors. The qualifying events checkbox section now notes that applications are reviewed against actual participation records, to deter applicants who select boxes without qualifying."
+        },
+        {
+          "title": "Key management failure — RESEND_API_KEY and WEBSITE_ADMIN_KEY not saved locally",
+          "html": "Discovered that <code>RESEND_API_KEY</code> and <code>WEBSITE_ADMIN_KEY</code>, both set as CF Pages secrets in May 2026, were never saved to <code>../.env.keys</code> per the PI security policy. This blocked programmatic email sending and required retrieval from the CF dashboard. A mandatory protocol callout was added to <code>CLAUDE.md</code> and a persistent memory entry recorded, specifying that any new CF secret must be saved locally and registered in <code>../admin/keys.md</code> before the task is considered complete."
+        },
+        {
+          "title": "DRG blurb expanded, stale nav fixed",
+          "html": "The Distributed Robotics Group description was updated on both the SIG index and the DRG detail page with the full two-paragraph third-person blurb supplied by the team: onchain robotics / decentralized coordination framing in paragraph 1; applied research group with equal protocol design and robot-building focus in paragraph 2. The DRG page also had a stale hardcoded nav with dead <code>.html</code> links from a pre-migration era — replaced with the standard <code>&lt;header id=\"site-header\"&gt;</code> injection pattern and a <code>&lt;footer class=\"site-footer\"&gt;</code> element populated by <code>main.js</code>."
+        }
+      ]
+    }
   ]
 }
