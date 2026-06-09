@@ -2,6 +2,12 @@
 
 > **PI key registry & security policy:** see [`../admin/keys.md`](../admin/keys.md) and [`../admin/security.md`](../admin/security.md) . Do not register PI keys in `Code/.env.keys`.
 
+> ⚠️ **KEY MANAGEMENT — MANDATORY PROTOCOL (do not skip):**
+> Any time a new key or secret is created for this project — including Cloudflare Pages secrets set via `wrangler secret put` or the CF dashboard — you MUST:
+> 1. Store the value in `../` `.env.keys` (the PI local key store) **before or immediately after** setting it remotely.
+> 2. Add a row to `../admin/keys.md` with name, service, owner, billing, and date.
+> This was violated for `RESEND_API_KEY` and `WEBSITE_ADMIN_KEY` (set 2026-05-30) — neither was saved locally, making them unrecoverable without going back to the CF dashboard. Treat any omission here as a serious operational failure.
+
 This file provides guidance for LLMs working on this codebase.
 
 ## What this is
