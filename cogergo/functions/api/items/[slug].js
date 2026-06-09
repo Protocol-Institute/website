@@ -1,4 +1,5 @@
-// GET /api/items/:slug — single approved item with vote counts + comments
+// GET   /api/items/:slug — single approved item with vote counts + comments
+// PATCH /api/items/:slug — edit item (admin or original author)
 import { getSessionMember } from '../../_shared/auth.js';
 
 function parseTags(raw) {
@@ -29,11 +30,13 @@ export async function onRequestGet({ params, request, env }) {
       const vr = await env.DB.prepare(
         'SELECT vote FROM cogergo_votes WHERE item_id = ? AND email = ?'
       ).bind(item.id, member.email).first();
-      item.my_vote = vr?.vote || null;
-      item.is_admin = !!(member.is_admin);
+      item.my_vote  = vr?.vote || null;
+      item.is_admin  = !!(member.is_admin);
+      item.is_author = item.contributed_by_slug === member.slug;
     } else {
-      item.my_vote = null;
-      item.is_admin = false;
+      item.my_vote   = null;
+      item.is_admin  = false;
+      item.is_author = false;
     }
 
     const { results: comments } = await env.DB.prepare(
@@ -43,6 +46,52 @@ export async function onRequestGet({ params, request, env }) {
     return Response.json({ item, comments: comments || [] });
   } catch (err) {
     console.error('item slug GET error:', err);
+    return Response.json({ error: 'Database error' }, { status: 500 });
+  }
+}
+
+export async function onRequestPatch({ params, request, env }) {
+  const member = await getSessionMember(request, env);
+  if (!member) return Response.json({ error: 'Not authenticated' }, { status: 401 });
+
+  const { slug } = params;
+  const item = await env.DB.prepare(
+    "SELECT id, contributed_by_slug FROM cogergo_items WHERE slug = ? AND status != 'rejected'"
+  ).bind(slug).first();
+  if (!item) return Response.json({ error: 'Not found' }, { status: 404 });
+  if (!member.is_admin && item.contributed_by_slug !== member.slug) {
+    return Response.json({ error: 'Not authorized' }, { status: 403 });
+  }
+
+  let body;
+  try { body = await request.json(); }
+  catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
+
+  const title             = (body.title || '').trim();
+  const type              = (body.type || '').trim();
+  const symptoms          = (body.symptoms || '').trim();
+  const prognosis         = (body.prognosis || '').trim();
+  const improvement_ideas = (body.improvement_ideas || '').trim();
+  const rawTags           = (body.tags || '').trim();
+  const tags = JSON.stringify(
+    rawTags ? rawTags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : []
+  );
+
+  if (!title)                          return Response.json({ error: 'Title required' }, { status: 400 });
+  if (!['good', 'bad'].includes(type)) return Response.json({ error: 'Invalid type' }, { status: 400 });
+  if (!symptoms)                       return Response.json({ error: 'Visible symptoms required' }, { status: 400 });
+  if (!prognosis)                      return Response.json({ error: 'Prognosis required' }, { status: 400 });
+  if (!improvement_ideas)              return Response.json({ error: 'Improvement ideas required' }, { status: 400 });
+
+  try {
+    await env.DB.prepare(`
+      UPDATE cogergo_items
+      SET title=?, type=?, symptoms=?, prognosis=?, improvement_ideas=?, tags=?, updated_at=datetime('now')
+      WHERE slug=?
+    `).bind(title, type, symptoms, prognosis, improvement_ideas, tags, slug).run();
+    return Response.json({ ok: true });
+  } catch (err) {
+    console.error('item PATCH error:', err);
     return Response.json({ error: 'Database error' }, { status: 500 });
   }
 }

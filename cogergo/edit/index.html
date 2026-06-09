@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Entry — Cognitive Ergonomics for AI</title>
+  <link rel="icon" href="https://protocol-institute.org/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="loading"><p class="loading-state">Loading…</p></div>
+      <div id="auth-gate" style="display:none">
+        <p style="color:#5A5A5A;margin-bottom:1.25rem;">You must be the original author or an admin to edit this entry.</p>
+        <a href="/" class="form-btn form-btn--secondary">← Back to inventory</a>
+      </div>
+
+      <div id="edit-area" style="display:none;max-width:580px;">
+        <div class="page-header">
+          <p style="font-size:0.85rem;color:#ABABAB;margin-bottom:0.5rem;"><a href="/" style="color:#5A5A5A;">← Inventory</a> / <a id="back-link" href="#" style="color:#5A5A5A;"></a></p>
+          <h1>Edit Entry</h1>
+        </div>
+
+        <form id="edit-form">
+          <div class="form-group">
+            <label class="form-label" for="f-title">Title *</label>
+            <input class="form-input" type="text" id="f-title" maxlength="200" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Type *</label>
+            <div style="display:flex;gap:1.5rem;margin-top:0.25rem;">
+              <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.95rem;">
+                <input type="radio" name="type" value="good" required> Good habit
+              </label>
+              <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.95rem;">
+                <input type="radio" name="type" value="bad"> Bad habit
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-symptoms">Visible symptoms *</label>
+            <textarea class="form-textarea" id="f-symptoms" rows="4" maxlength="1500" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-prognosis">Prognosis *</label>
+            <textarea class="form-textarea" id="f-prognosis" rows="4" maxlength="1500" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-improvement">Improvement ideas *</label>
+            <textarea class="form-textarea" id="f-improvement" rows="4" maxlength="1500" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="f-tags">Tags <span style="font-weight:300;color:#8A8A8A;">(optional)</span></label>
+            <input class="form-input" type="text" id="f-tags" placeholder="attention, context, prompting">
+            <p class="form-hint">Comma-separated keywords.</p>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;align-items:center;margin-top:0.5rem;">
+            <button type="submit" class="form-btn" id="save-btn">Save changes</button>
+            <a id="cancel-link" href="#" class="form-btn form-btn--secondary">Cancel</a>
+          </div>
+          <div id="form-msg" class="form-msg" style="display:none;"></div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/nav.js"></script>
+<script>
+(function () {
+  var slug = new URLSearchParams(window.location.search).get('slug');
+  if (!slug) { window.location.replace('/'); return; }
+
+  var itemUrl = '/item?slug=' + encodeURIComponent(slug);
+  document.getElementById('back-link').href = itemUrl;
+  document.getElementById('back-link').textContent = slug;
+  document.getElementById('cancel-link').href = itemUrl;
+
+  // Fetch item and check auth simultaneously
+  Promise.all([
+    fetch('/api/items/' + encodeURIComponent(slug)).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); }),
+    fetch('/api/me').then(function(r){ return r.ok ? r.json() : null; })
+  ]).then(function(results) {
+    var itemData = results[0], meData = results[1];
+    var item = itemData.item;
+    var member = meData && meData.member;
+
+    var canEdit = member && (member.is_admin || item.contributed_by_slug === member.slug);
+    document.getElementById('loading').style.display = 'none';
+
+    if (!canEdit) { document.getElementById('auth-gate').style.display = ''; return; }
+
+    // Pre-populate form
+    document.getElementById('f-title').value = item.title || '';
+    var typeRadio = document.querySelector('input[name="type"][value="' + item.type + '"]');
+    if (typeRadio) typeRadio.checked = true;
+    document.getElementById('f-symptoms').value = item.symptoms || '';
+    document.getElementById('f-prognosis').value = item.prognosis || '';
+    document.getElementById('f-improvement').value = item.improvement_ideas || '';
+    document.getElementById('f-tags').value = (item.tags || []).join(', ');
+
+    document.getElementById('edit-area').style.display = '';
+  }).catch(function() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('auth-gate').style.display = '';
+  });
+
+  document.getElementById('edit-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var btn = document.getElementById('save-btn');
+    var msg = document.getElementById('form-msg');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    msg.style.display = 'none';
+
+    var typeEl = document.querySelector('input[name="type"]:checked');
+    var body = {
+      title:             document.getElementById('f-title').value.trim(),
+      type:              typeEl ? typeEl.value : '',
+      symptoms:          document.getElementById('f-symptoms').value.trim(),
+      prognosis:         document.getElementById('f-prognosis').value.trim(),
+      improvement_ideas: document.getElementById('f-improvement').value.trim(),
+      tags:              document.getElementById('f-tags').value.trim(),
+    };
+
+    fetch('/api/items/' + encodeURIComponent(slug), {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    })
+    .then(function(res){ return res.json().then(function(d){ return {ok: res.ok, data: d}; }); })
+    .then(function(r) {
+      if (r.ok) {
+        window.location.href = '/item?slug=' + encodeURIComponent(slug);
+      } else {
+        msg.className = 'form-msg form-msg--error';
+        msg.textContent = r.data.error || 'Save failed.';
+        msg.style.display = '';
+        btn.disabled = false; btn.textContent = 'Save changes';
+      }
+    })
+    .catch(function() {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = 'Network error. Please try again.';
+      msg.style.display = '';
+      btn.disabled = false; btn.textContent = 'Save changes';
+    });
+  });
+}());
+</script>
+</body>
+</html>

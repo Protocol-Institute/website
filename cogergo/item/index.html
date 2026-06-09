@@ -21,7 +21,7 @@
       <div id="item-content" style="display:none">
 
         <div class="item-detail-header">
-          <p class="detail-breadcrumb"><a href="/">← Habit inventory</a></p>
+          <p class="detail-breadcrumb"><a href="/">← Habit inventory</a> <a href="#" id="edit-link" style="display:none;margin-left:1.25rem;font-size:0.82rem;color:#ABABAB;">Edit entry</a></p>
           <div id="admin-sev-bar" class="admin-sev-row" style="display:none">
             <label>Admin — Severity:</label>
             <input type="number" id="admin-sev-input" min="-10" max="10" placeholder="–">
@@ -129,6 +129,13 @@
         '</div>';
       }).join('');
       document.getElementById('d-clinical').innerHTML = clinHtml;
+
+      // Edit link for admin or author
+      if (item.is_admin || item.is_author) {
+        var editLink = document.getElementById('edit-link');
+        editLink.href = '/edit?slug=' + encodeURIComponent(slug);
+        editLink.style.display = '';
+      }
 
       // Admin severity
       if (item.is_admin) {

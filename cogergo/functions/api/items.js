@@ -59,16 +59,19 @@ export async function onRequestPost({ request, env }) {
 
   const title             = (body.title || '').trim();
   const type              = (body.type || '').trim();
-  const symptoms          = (body.symptoms || '').trim() || null;
-  const prognosis         = (body.prognosis || '').trim() || null;
-  const improvement_ideas = (body.improvement_ideas || '').trim() || null;
+  const symptoms          = (body.symptoms || '').trim();
+  const prognosis         = (body.prognosis || '').trim();
+  const improvement_ideas = (body.improvement_ideas || '').trim();
   const rawTags           = (body.tags || '').trim();
   const tags = JSON.stringify(
     rawTags ? rawTags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : []
   );
 
-  if (!title)                       return Response.json({ error: 'Title required' }, { status: 400 });
+  if (!title)                          return Response.json({ error: 'Title required' }, { status: 400 });
   if (!['good', 'bad'].includes(type)) return Response.json({ error: 'Type must be good or bad' }, { status: 400 });
+  if (!symptoms)                       return Response.json({ error: 'Visible symptoms required' }, { status: 400 });
+  if (!prognosis)                      return Response.json({ error: 'Prognosis required' }, { status: 400 });
+  if (!improvement_ideas)              return Response.json({ error: 'Improvement ideas required' }, { status: 400 });
 
   const baseSlug = slugify(title);
   let slug = baseSlug, attempt = 0;
