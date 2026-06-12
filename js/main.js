@@ -22,12 +22,12 @@ var NAV_HTML =
       '<li><a href="/calendar">Calendar</a></li>' +
       '<li><a href="/challenges">Challenges <span class="beta-badge">Beta</span></a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
-      '<li><a href="/about">About</a></li>' +
     '</ul>' +
   '</nav>';
 
 var FOOTER_HTML =
   '<nav class="footer-nav" aria-label="Footer navigation">' +
+    '<a href="/about">About</a>' +
     '<a href="/team">Team</a>' +
     '<a href="/network">Network</a>' +
     '<a href="/consulting">Consulting</a>' +
