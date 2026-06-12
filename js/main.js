@@ -18,8 +18,8 @@ var NAV_HTML =
     '<button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>' +
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
-      '<li><a href="/projects">Projects</a></li>' +
-      '<li><a href="/events">Events</a></li>' +
+      '<li><a href="/sigs">SIGs</a></li>' +
+      '<li><a href="/calendar">Calendar</a></li>' +
       '<li><a href="/challenges">Challenges <span class="beta-badge">Beta</span></a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
       '<li><a href="/about">About</a></li>' +
