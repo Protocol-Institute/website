@@ -674,5 +674,44 @@
         }
       ]
     }
+  ,
+    {
+      "id": 20,
+      "sort_key": 20.0,
+      "label": "Session 20",
+      "title": "Programs hierarchy, nav overhaul, SIG page fixes, c3po interface plan",
+      "date": "2026-06-12",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Programs page: 4-category hierarchy (Programs / Tracks / Projects / Infrastructure)",
+          "html": "Redesigned the Programs page around a formal 4-category taxonomy. Each program item now has a left-bordered <code>.program-body</code> section with typed sub-items labeled <strong>Tracks</strong>, <strong>Projects</strong>, or <strong>Infrastructure</strong>. Added a taxonomy intro line explaining the three sub-categories. Key structural changes: (1) <em>Research</em> program created, bundling SIGs (tracks), Challenges (infrastructure), and solo projects; (2) <em>AI Infrastructure</em> renamed <em>AI Ops</em>; C3PO and Humboldt reclassified as Infrastructure; (3) <em>Events</em> program replaces the standalone Protocol Symposium item, listing all 10 events from <code>data/events.json</code> as Projects; (4) <em>Collaborations</em> program added with Long Now as a Track; (5) Research SIGs listed individually with descriptions rather than via the /sigs index. All items now have phrase-length descriptions and link to internal detail pages — no direct external links at program-page level."
+        },
+        {
+          "title": "Detail pages for all external-domain projects",
+          "html": "Five new stub detail pages created: <code>/worldmachines</code>, <code>/jamverse</code>, <code>/protocolized-dev</code>, <code>/longnow</code>, <code>/humboldt</code>. Each has a short description and a link to the external site with an <code>.external-badge</code> label. This enforces the pattern that all items on the Programs page link internally; external destinations are one click deeper. The <code>.external-badge</code> CSS class was added to <code>style.css</code>. protocolized.dev description: \"AI adoption protocols for orgs\"."
+        },
+        {
+          "title": "Nav overhaul: Projects+Events removed, SIGs+Calendar added, About to footer",
+          "html": "Main nav links updated in <code>js/main.js</code>: removed <em>Projects</em> (was a dead URL) and <em>Events</em>; added <em>SIGs</em> (links to /sigs) and <em>Calendar</em> (links to /calendar stub); moved <em>About</em> from main nav to footer as first footer link. Calendar stub page created at <code>/calendar/index.html</code> with draft banner."
+        },
+        {
+          "title": "Home page standardized to interior-wrapper layout",
+          "html": "The landing page (<code>index.html</code>) previously used a special <code>.landing-wrapper</code> / <code>.landing-center</code> fullscreen layout with an animated SVG logo. Replaced with the standard <code>.interior-wrapper</code> / <code>.interior-main</code> / <code>.container</code> structure used by all other pages — injected nav, injected footer, 760px container, <code>page-header</code> h1. The animated logo is no longer used anywhere on the site."
+        },
+        {
+          "title": "c3po generate_sig_pages.py: injected nav/footer, no flat files, DRG description",
+          "html": "The c3po ingestion script was generating full HTML pages including a hardcoded stale nav (still referencing <code>/projects.html</code> and <code>Initiatives</code>), causing the DRG and other SIG pages to revert on every ingest run. Three fixes: (1) <code>nav_html()</code> and <code>footer_html()</code> now emit the empty injection placeholders (<code>&lt;header id=\"site-header\"&gt;</code>, <code>&lt;footer class=\"site-footer\"&gt;</code>) rather than hardcoded markup; (2) generator no longer writes legacy <code>sigs/{slug}.html</code> flat files — only <code>sigs/{slug}/index.html</code>; (3) DRG <code>SIG_INFO</code> entry updated with correct two-paragraph description using a new <code>description_extra</code> field rendered as a second <code>&lt;p&gt;</code>. The two tracked legacy flat files (<code>sigs/drg.html</code>, <code>sigs/sigpsy.html</code>) were removed from git. All six SIG <code>index.html</code> pages were regenerated clean."
+        },
+        {
+          "title": "c3po website-interface.md: approved design for content handoff",
+          "html": "Authored <code>plans/website-interface.md</code> in the c3po repo documenting the approved division of labor: c3po's output boundary is JSON (never HTML); the website owns all rendering. The plan specifies the handoff location (<code>website/data/sigs/meetings/</code>), JSON schema, what changes in each repo, and how the pattern extends to future content areas (cogergo writeups, event summaries). The c3po <code>CLAUDE.md</code> now prominently references this plan with a one-line rule: c3po writes JSON only. <code>generate_sig_pages.py</code> is marked as pending refactor per the plan."
+        }
+      ]
+    }
   ]
 }

@@ -98,8 +98,8 @@ Session URL scheme and HTML structure are specified in **[`sigs/CONVENTIONS.md`]
 
 ## Logos
 
-- The animated SVG (`assets/logo-animated.svg`) is used **only** on the landing page (`index.html`) as the `.landing-mark`
-- All other pages use the static PNG (`assets/logo-static.png`) in the nav and as the favicon
+- The animated SVG (`assets/logo-animated.svg`) is no longer used on any page — the landing page was redesigned in Session 20 to use the standard interior layout
+- All pages use the static PNG (`assets/logo-static.png`) in the nav and as the favicon
 
 ## Adding a new page
 

@@ -323,3 +323,23 @@ A build log for protocol-institute.org — how the static site was built, what i
 - The Distributed Robotics Group description was updated on both the SIG index and the DRG detail page with the full two-paragraph third-person blurb supplied by the team: onchain robotics / decentralized coordination framing in paragraph 1; applied research group with equal protocol design and robot-building focus in paragraph 2. The DRG page also had a stale hardcoded nav with dead `.html` links from a pre-migration era — replaced with the standard `&lt;header id="site-header"&gt;` injection pattern and a `&lt;footer class="site-footer"&gt;` element populated by `main.js`.
 
 ---
+
+## Session 20: Programs hierarchy, nav overhaul, SIG page fixes, c3po interface plan
+
+*2026-06-12*
+
+**Tracks:** static-site, content, operations
+
+- Redesigned the Programs page around a formal 4-category taxonomy. Each program item now has a left-bordered `.program-body` section with typed sub-items labeled **Tracks**, **Projects**, or **Infrastructure**. Added a taxonomy intro line explaining the three sub-categories. Key structural changes: (1) *Research* program created, bundling SIGs (tracks), Challenges (infrastructure), and solo projects; (2) *AI Infrastructure* renamed *AI Ops*; C3PO and Humboldt reclassified as Infrastructure; (3) *Events* program replaces the standalone Protocol Symposium item, listing all 10 events from `data/events.json` as Projects; (4) *Collaborations* program added with Long Now as a Track; (5) Research SIGs listed individually with descriptions rather than via the /sigs index. All items now have phrase-length descriptions and link to internal detail pages — no direct external links at program-page level.
+
+- Five new stub detail pages created: `/worldmachines`, `/jamverse`, `/protocolized-dev`, `/longnow`, `/humboldt`. Each has a short description and a link to the external site with an `.external-badge` label. This enforces the pattern that all items on the Programs page link internally; external destinations are one click deeper. The `.external-badge` CSS class was added to `style.css`. protocolized.dev description: "AI adoption protocols for orgs".
+
+- Main nav links updated in `js/main.js`: removed *Projects* (was a dead URL) and *Events*; added *SIGs* (links to /sigs) and *Calendar* (links to /calendar stub); moved *About* from main nav to footer as first footer link. Calendar stub page created at `/calendar/index.html` with draft banner.
+
+- The landing page (`index.html`) previously used a special `.landing-wrapper` / `.landing-center` fullscreen layout with an animated SVG logo. Replaced with the standard `.interior-wrapper` / `.interior-main` / `.container` structure used by all other pages — injected nav, injected footer, 760px container, `page-header` h1. The animated logo is no longer used anywhere on the site.
+
+- The c3po ingestion script was generating full HTML pages including a hardcoded stale nav (still referencing `/projects.html` and `Initiatives`), causing the DRG and other SIG pages to revert on every ingest run. Three fixes: (1) `nav_html()` and `footer_html()` now emit the empty injection placeholders (`&lt;header id="site-header"&gt;`, `&lt;footer class="site-footer"&gt;`) rather than hardcoded markup; (2) generator no longer writes legacy `sigs/{slug}.html` flat files — only `sigs/{slug}/index.html`; (3) DRG `SIG_INFO` entry updated with correct two-paragraph description using a new `description_extra` field rendered as a second `&lt;p&gt;`. The two tracked legacy flat files (`sigs/drg.html`, `sigs/sigpsy.html`) were removed from git. All six SIG `index.html` pages were regenerated clean.
+
+- Authored `plans/website-interface.md` in the c3po repo documenting the approved division of labor: c3po's output boundary is JSON (never HTML); the website owns all rendering. The plan specifies the handoff location (`website/data/sigs/meetings/`), JSON schema, what changes in each repo, and how the pattern extends to future content areas (cogergo writeups, event summaries). The c3po `CLAUDE.md` now prominently references this plan with a one-line rule: c3po writes JSON only. `generate_sig_pages.py` is marked as pending refactor per the plan.
+
+---
