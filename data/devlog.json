@@ -712,6 +712,40 @@
           "html": "Authored <code>plans/website-interface.md</code> in the c3po repo documenting the approved division of labor: c3po's output boundary is JSON (never HTML); the website owns all rendering. The plan specifies the handoff location (<code>website/data/sigs/meetings/</code>), JSON schema, what changes in each repo, and how the pattern extends to future content areas (cogergo writeups, event summaries). The c3po <code>CLAUDE.md</code> now prominently references this plan with a one-line rule: c3po writes JSON only. <code>generate_sig_pages.py</code> is marked as pending refactor per the plan."
         }
       ]
+    },
+    {
+      "id": 21,
+      "sort_key": 21.0,
+      "label": "Session 21",
+      "title": "Calendar, SIG schedule sync, symposium improvements, banner carousel",
+      "date": "2026-06-13",
+      "time_pt": "",
+      "tracks": ["static-site", "content", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium page: New Nature theme, deadline styling, countdown ticker",
+          "html": "Three additions to <code>/events/protocol-symposium-2026/index.html</code>: (1) new paragraph naming the <em>New Nature</em> theme with link to the Protocolized essay, and a pointer to the Challenges page for submission ideas; (2) the June 14 deadline text made bold and red (<code>style=\"color:#c0392b\"</code>) in both the opener and the CTA box; (3) a live countdown ticker in the CTA box, updated every minute, expiring at <code>2026-06-15T07:00:00Z</code> (midnight PDT). The duplicate challenges reference in the Call for Submissions section was removed."
+        },
+        {
+          "title": "Home page: banner carousel + Explore PI's activities list",
+          "html": "Two changes to <code>index.html</code>: (1) the hardcoded symposium banner replaced with a <code>&lt;div id=\"banner-carousel\"&gt;</code> populated at load time by an inline script that fetches <code>/carousel/banners.md</code>, parses a Markdown table of <code>file | weight | link | alt</code> rows, picks a banner by weighted random, and injects the image. Adding a new banner requires uploading to R2 and adding a row to <code>carousel/banners.md</code> — no code changes. Currently one banner. (2) \"Learn more on our About page\" link removed; replaced with an \"Explore PI's activities\" bullet list (Challenges, SIGs, Protocolized, Discord) below the banner."
+        },
+        {
+          "title": "Calendar page: merged Google Calendar embed with subscribe links and instructions",
+          "html": "Built <code>/calendar/index.html</code> from its Coming Soon stub. The page shows a merged Google Calendar iframe in AGENDA mode displaying both the PI Community Calendar (<code>sigs@protocol-institute.org</code>, orange <code>#C17F24</code>) and the PI Institute Calendar (curated events, teal <code>#2A6B6B</code>). Above the iframe: two inline bullet items with colored dots, calendar names, and Subscribe links; a note explaining how to add events to the community calendar (invite <code>sigs@protocol-institute.org</code>, make a Discord event, contact Timber). The <code>_headers</code> CSP was missing <code>https://calendar.google.com</code> in <code>frame-src</code>, causing the iframe to be blocked — fixed by adding it."
+        },
+        {
+          "title": "SIG meeting schedule sync: iCal → JSON → client-side display",
+          "html": "Three-layer system for keeping SIG meeting times accurate: <strong>sync_sig_meetings.py</strong> fetches the SIGs iCal feed (<code>sigs@protocol-institute.org/public/basic.ics</code>), parses VEVENT blocks and RRULEs (using <code>zoneinfo</code> for UTC conversion), and writes <code>data/sig-meetings.json</code> with per-SIG anchor date, interval, day, and UTC time. MRG is not yet on the calendar and is manually set. <strong>Client-side JS</strong> in <code>main.js</code> fetches the JSON on any page containing <code>[data-sig]</code> elements, computes the next meeting date by advancing from anchor, formats the schedule string including browser-local time (via <code>toLocaleTimeString()</code> — detects day-shift for UTC+12 etc.), and writes it as innerHTML. The \"Next meeting on DATE\" phrase is wrapped in <code>&lt;strong&gt;</code>. <strong>HTML</strong>: all six SIG index pages and individual SIG pages updated — <code>.sig-meta</code> now contains only the leader names; a new <code>&lt;p class=\"sig-schedule\" data-sig=\"SLUG\"&gt;</code> element is populated by JS. CSS: <code>.sig-schedule</code> styled as a tinted teal box (<code>#F0F5F3</code> background, <code>#BFCFCC</code> border) to make next-meeting prominent."
+        },
+        {
+          "title": "SIG organizer names linked to member/team profiles",
+          "html": "Organizer names in <code>.sig-meta</code> on both the SIG index and all individual SIG pages are now hyperlinked where a profile exists: Venkatesh Rao links to <code>/team#venkatesh-rao</code> (public); Rafael Fernandez and Sachin Benny link to <code>/members#rafael-fernandez</code> and <code>/members#sachin-benny</code> respectively (PIN-gated). The remaining organizers (Patrick Nast, Kei Kreutler, Spencer Nitkey, Anuraj R., Aneesh Sathe) have no link until they are onboarded. Member cards in <code>members/index.html</code> were given <code>id=\"${m.slug}\"</code> so hash links resolve correctly."
+        }
+      ]
     }
   ]
 }

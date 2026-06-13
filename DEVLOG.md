@@ -343,3 +343,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Authored `plans/website-interface.md` in the c3po repo documenting the approved division of labor: c3po's output boundary is JSON (never HTML); the website owns all rendering. The plan specifies the handoff location (`website/data/sigs/meetings/`), JSON schema, what changes in each repo, and how the pattern extends to future content areas (cogergo writeups, event summaries). The c3po `CLAUDE.md` now prominently references this plan with a one-line rule: c3po writes JSON only. `generate_sig_pages.py` is marked as pending refactor per the plan.
 
 ---
+
+## Session 21: Calendar, SIG schedule sync, symposium improvements, banner carousel
+
+*2026-06-13*
+
+**Tracks:** static-site, content, operations
+
+- Three additions to `/events/protocol-symposium-2026/index.html`: (1) new paragraph naming the *New Nature* theme with link to the Protocolized essay, and a pointer to the Challenges page for submission ideas; (2) the June 14 deadline text made bold and red (`style="color:#c0392b"`) in both the opener and the CTA box; (3) a live countdown ticker in the CTA box, updated every minute, expiring at `2026-06-15T07:00:00Z` (midnight PDT). The duplicate challenges reference in the Call for Submissions section was removed.
+
+- Two changes to `index.html`: (1) the hardcoded symposium banner replaced with a `&lt;div id="banner-carousel"&gt;` populated at load time by an inline script that fetches `/carousel/banners.md`, parses a Markdown table of `file | weight | link | alt` rows, picks a banner by weighted random, and injects the image. Adding a new banner requires uploading to R2 and adding a row to `carousel/banners.md` — no code changes. Currently one banner. (2) "Learn more on our About page" link removed; replaced with an "Explore PI's activities" bullet list (Challenges, SIGs, Protocolized, Discord) below the banner.
+
+- Built `/calendar/index.html` from its Coming Soon stub. The page shows a merged Google Calendar iframe in AGENDA mode displaying both the PI Community Calendar (`sigs@protocol-institute.org`, orange `#C17F24`) and the PI Institute Calendar (curated events, teal `#2A6B6B`). Above the iframe: two inline bullet items with colored dots, calendar names, and Subscribe links; a note explaining how to add events to the community calendar (invite `sigs@protocol-institute.org`, make a Discord event, contact Timber). The `_headers` CSP was missing `https://calendar.google.com` in `frame-src`, causing the iframe to be blocked — fixed by adding it.
+
+- Three-layer system for keeping SIG meeting times accurate: **sync_sig_meetings.py** fetches the SIGs iCal feed (`sigs@protocol-institute.org/public/basic.ics`), parses VEVENT blocks and RRULEs (using `zoneinfo` for UTC conversion), and writes `data/sig-meetings.json` with per-SIG anchor date, interval, day, and UTC time. MRG is not yet on the calendar and is manually set. **Client-side JS** in `main.js` fetches the JSON on any page containing `[data-sig]` elements, computes the next meeting date by advancing from anchor, formats the schedule string including browser-local time (via `toLocaleTimeString()` — detects day-shift for UTC+12 etc.), and writes it as innerHTML. The "Next meeting on DATE" phrase is wrapped in `&lt;strong&gt;`. **HTML**: all six SIG index pages and individual SIG pages updated — `.sig-meta` now contains only the leader names; a new `&lt;p class="sig-schedule" data-sig="SLUG"&gt;` element is populated by JS. CSS: `.sig-schedule` styled as a tinted teal box (`#F0F5F3` background, `#BFCFCC` border) to make next-meeting prominent.
+
+- Organizer names in `.sig-meta` on both the SIG index and all individual SIG pages are now hyperlinked where a profile exists: Venkatesh Rao links to `/team#venkatesh-rao` (public); Rafael Fernandez and Sachin Benny link to `/members#rafael-fernandez` and `/members#sachin-benny` respectively (PIN-gated). The remaining organizers (Patrick Nast, Kei Kreutler, Spencer Nitkey, Anuraj R., Aneesh Sathe) have no link until they are onboarded. Member cards in `members/index.html` were given `id="${m.slug}"` so hash links resolve correctly.
+
+---
