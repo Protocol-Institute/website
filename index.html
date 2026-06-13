@@ -22,13 +22,19 @@
       </div>
 
       <div class="about-body">
-        <p>The Protocol Institute is a research, education, media, and scene-making organization dedicated to advancing protocols and protocolization worldwide. Learn more on our <a href="/about">About</a> page.</p>
+        <p>The Protocol Institute is a research, education, media, and scene-making organization dedicated to advancing protocols and protocolization worldwide.</p>
       </div>
 
-      <div class="symposium-banner-wrap symposium-banner-wrap--page">
-        <a href="/events/protocol-symposium-2026">
-          <img src="/assets/nn_banner6.png" alt="Protocol Symposium 2026 — September 21–25 — Abstracts due June 14" class="symposium-banner-img">
-        </a>
+      <div id="banner-carousel" class="symposium-banner-wrap symposium-banner-wrap--page"></div>
+
+      <div class="home-explore">
+        <p>Explore PI's activities:</p>
+        <ul>
+          <li><a href="/challenges">Challenges</a> — open research problems posed by the PI community</li>
+          <li><a href="/sigs">Special Interest Groups</a> — ongoing working groups on active protocol research topics</li>
+          <li><a href="https://protocolized.io">Protocolized</a> — PI's magazine on protocols and protocolization</li>
+          <li><a href="https://discord.gg/Aj5FbGsNYV">Discord</a> — join the PI community conversation</li>
+        </ul>
       </div>
 
     </div>
@@ -39,5 +45,50 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  function parseCarouselMd(text) {
+    return text.split('\n')
+      .filter(function (l) { return l.startsWith('|') && !l.match(/^\|\s*[-|]+\s*\|/); })
+      .slice(1) // skip header row
+      .map(function (row) {
+        var cols = row.split('|').map(function (c) { return c.trim(); }).filter(Boolean);
+        if (cols.length < 4) return null;
+        return { file: cols[0], weight: parseFloat(cols[1]) || 1, link: cols[2], alt: cols[3] };
+      })
+      .filter(Boolean);
+  }
+
+  function pickWeighted(banners) {
+    var total = banners.reduce(function (s, b) { return s + b.weight; }, 0);
+    var r = Math.random() * total;
+    for (var i = 0; i < banners.length; i++) {
+      r -= banners[i].weight;
+      if (r <= 0) return banners[i];
+    }
+    return banners[banners.length - 1];
+  }
+
+  var wrap = document.getElementById('banner-carousel');
+  if (!wrap) return;
+
+  fetch('/carousel/banners.md')
+    .then(function (res) { return res.ok ? res.text() : Promise.reject(); })
+    .then(function (text) {
+      var banners = parseCarouselMd(text);
+      if (!banners.length) return;
+      var b = pickWeighted(banners);
+      var a = document.createElement('a');
+      a.href = b.link;
+      var img = document.createElement('img');
+      img.src = '/assets/' + b.file;
+      img.alt = b.alt;
+      img.className = 'symposium-banner-img';
+      a.appendChild(img);
+      wrap.appendChild(a);
+    })
+    .catch(function () {});
+})();
+</script>
 </body>
 </html>
