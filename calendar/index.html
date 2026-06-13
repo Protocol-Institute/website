@@ -8,12 +8,9 @@
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .calendar-intro { font-size: 1rem; color: #2C2C2C; margin-bottom: 1.5rem; }
-
     .calendar-embed-wrap {
-      position: relative;
       width: 100%;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
     .calendar-embed-wrap iframe {
       display: block;
@@ -21,57 +18,38 @@
       height: 580px;
       border: 1px solid #E0DDD8;
     }
-
-    .calendar-subscribe { margin-top: 0.5rem; }
-
-    .cal-source {
+    .cal-key {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0.8rem;
+    }
+    .cal-key li {
       display: flex;
-      align-items: flex-start;
-      gap: 0.8rem;
-      margin-bottom: 1.1rem;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: #2C2C2C;
+      margin-bottom: 0.35rem;
     }
     .cal-dot {
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
-      margin-top: 0.35rem;
+      position: relative;
+      top: 1px;
     }
-    .cal-source-body strong {
-      display: block;
-      font-size: 0.95rem;
-      color: #1A1A1A;
-      margin-bottom: 0.1rem;
-    }
-    .cal-source-body p {
-      font-size: 0.88rem;
-      color: #555;
-      margin: 0 0 0.3rem;
-    }
-    .cal-source-body a {
-      font-size: 0.88rem;
+    .cal-key a {
       color: #2A6B6B;
+      font-size: 0.85rem;
     }
-    .cal-source-body a:hover { text-decoration: underline; }
-
+    .cal-key a:hover { text-decoration: underline; }
     .cal-note {
       font-size: 0.82rem;
       color: #8A8A8A;
-      margin-top: 1rem;
+      margin-bottom: 1.2rem;
       font-style: italic;
-    }
-
-    .section-label {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #8A8A8A;
-      margin: 2rem 0 1rem;
-      border-top: 1px solid #E0DDD8;
-      padding-top: 1.5rem;
     }
   </style>
 </head>
@@ -88,42 +66,29 @@
         <h1>Calendar</h1>
       </div>
 
-      <p class="calendar-intro">Protocol Institute events in one view — curated PI events (town halls, symposium, special sessions) alongside the regular SIG working group meetings. Events from both calendars are shown together below.</p>
+      <ul class="cal-key">
+        <li>
+          <span class="cal-dot" style="background:#C17F24;"></span>
+          PI Community Calendar — SIG meetings and member-organized events.
+          <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe &rarr;</a>
+        </li>
+        <li>
+          <span class="cal-dot" style="background:#2A6B6B;"></span>
+          PI Institute Calendar — town halls, symposium, and curated Institute events.
+          <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe &rarr;</a>
+        </li>
+      </ul>
+
+      <p class="cal-note">Click on individual events below to add to your calendar. To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
 
       <div class="calendar-embed-wrap">
         <iframe
-          src="https://calendar.google.com/calendar/embed?src=c_39064bd346954b73835545c21dd13f812700b44c0fbb0723f390211473dded5c%40group.calendar.google.com&color=%232A6B6B&src=sigs%40protocol-institute.org&color=%23C17F24&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=1&showTz=1&mode=AGENDA&wkst=1&hl=en"
+          src="https://calendar.google.com/calendar/embed?src=sigs%40protocol-institute.org&color=%23C17F24&src=c_39064bd346954b73835545c21dd13f812700b44c0fbb0723f390211473dded5c%40group.calendar.google.com&color=%232A6B6B&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=1&showTz=1&mode=AGENDA&wkst=1&hl=en"
           frameborder="0"
           scrolling="no"
           title="Protocol Institute Calendar"
           referrerpolicy="no-referrer-when-downgrade">
         </iframe>
-      </div>
-
-      <h2 class="section-label">Subscribe</h2>
-
-      <div class="calendar-subscribe">
-
-        <div class="cal-source">
-          <span class="cal-dot" style="background:#2A6B6B;"></span>
-          <div class="cal-source-body">
-            <strong>PI Events</strong>
-            <p>Protocol town halls, the annual symposium, and other curated Institute events.</p>
-            <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Add PI Events to Google Calendar &rarr;</a>
-          </div>
-        </div>
-
-        <div class="cal-source">
-          <span class="cal-dot" style="background:#C17F24;"></span>
-          <div class="cal-source-body">
-            <strong>SIG Meetings</strong>
-            <p>Regular working group sessions — DRG, SIGFPT, MRG, SIGPfB, ProtFiSIG.</p>
-            <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Add SIG Meetings to Google Calendar &rarr;</a>
-          </div>
-        </div>
-
-        <p class="cal-note">To add a single event or recurring series rather than an entire calendar, open the event in the view above and use the "Copy to my calendar" option.</p>
-
       </div>
 
     </div>
