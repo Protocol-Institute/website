@@ -132,3 +132,44 @@ var FOOTER_HTML =
     });
   });
 }());
+
+// SIG meeting schedule — populates [data-sig] elements from /data/sig-meetings.json
+(function () {
+  var els = document.querySelectorAll('[data-sig]');
+  if (!els.length) return;
+
+  var MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+  function nextMeeting(anchor, intervalWeeks) {
+    var ms = intervalWeeks * 7 * 86400000;
+    var d = new Date(anchor + 'T00:00:00Z');
+    var today = Date.UTC(
+      new Date().getUTCFullYear(),
+      new Date().getUTCMonth(),
+      new Date().getUTCDate()
+    );
+    while (d.getTime() < today) d = new Date(d.getTime() + ms);
+    return d;
+  }
+
+  function fmt(sig) {
+    var next = nextMeeting(sig.anchor, sig.interval_weeks);
+    var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
+    var day = sig.day + 's';
+    var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
+    return 'Meets ' + freq + ' on ' + day + ' at ' + sig.time_utc +
+           ' UTC on Discord voice channel. Next meeting on ' + nextStr + '.';
+  }
+
+  fetch('/data/sig-meetings.json')
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function (data) {
+      els.forEach(function (el) {
+        var slug = el.getAttribute('data-sig');
+        var sig = data.sigs && data.sigs[slug];
+        if (sig) el.textContent = fmt(sig);
+      });
+    })
+    .catch(function () {});
+}());

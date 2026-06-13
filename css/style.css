@@ -566,6 +566,14 @@ a:hover {
   margin-bottom: 0;
 }
 
+.sig-schedule {
+  font-size: 0.85rem;
+  color: #8A8A8A;
+  letter-spacing: 0.02em;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+}
+
 .sig-cta {
   margin-top: 1.75rem;
   padding-top: 1.25rem;

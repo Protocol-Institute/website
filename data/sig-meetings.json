@@ -1,0 +1,47 @@
+{
+  "synced": "2026-06-13",
+  "sigs": {
+    "sigfpt": {
+      "day": "Friday",
+      "time_utc": "17:00",
+      "interval_weeks": 2,
+      "anchor": "2026-06-12",
+      "_calendar_summary": "SIGFPT: Special Interest Group in Formal Protocol Theory"
+    },
+    "drg": {
+      "day": "Thursday",
+      "time_utc": "16:30",
+      "interval_weeks": 2,
+      "anchor": "2026-06-11",
+      "_calendar_summary": "Protocol Institute: Distributed Robotics Group Call"
+    },
+    "sigpsy": {
+      "day": "Thursday",
+      "time_utc": "16:00",
+      "interval_weeks": 2,
+      "anchor": "2026-06-04",
+      "_calendar_summary": "SIGPSY - Psychohistory"
+    },
+    "protfisig": {
+      "day": "Thursday",
+      "time_utc": "15:00",
+      "interval_weeks": 2,
+      "anchor": "2026-06-11",
+      "_calendar_summary": "PFSIG Meeting "
+    },
+    "sigpfb": {
+      "day": "Monday",
+      "time_utc": "15:30",
+      "interval_weeks": 2,
+      "anchor": "2026-06-01",
+      "_calendar_summary": "Special Interest Group on Protocols for Business"
+    },
+    "mrg": {
+      "day": "Thursday",
+      "time_utc": "14:30",
+      "interval_weeks": 2,
+      "anchor": "2026-06-05",
+      "_calendar_summary": "manually set — not yet on SIGs calendar"
+    }
+  }
+}
