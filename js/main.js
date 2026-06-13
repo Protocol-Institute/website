@@ -159,7 +159,7 @@ var FOOTER_HTML =
     var day = sig.day + 's';
     var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
     return 'Meets ' + freq + ' on ' + day + ' at ' + sig.time_utc +
-           ' UTC on Discord voice channel. Next meeting on ' + nextStr + '.';
+           ' UTC on Discord voice channel. <strong>Next meeting on ' + nextStr + '.</strong>';
   }
 
   fetch('/data/sig-meetings.json')
@@ -168,7 +168,7 @@ var FOOTER_HTML =
       els.forEach(function (el) {
         var slug = el.getAttribute('data-sig');
         var sig = data.sigs && data.sigs[slug];
-        if (sig) el.textContent = fmt(sig);
+        if (sig) el.innerHTML = fmt(sig);
       });
     })
     .catch(function () {});
