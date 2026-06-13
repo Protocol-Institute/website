@@ -4,9 +4,76 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calendar — The Protocol Institute</title>
-  <meta name="description" content="Events calendar for the Protocol Institute.">
+  <meta name="description" content="Protocol Institute event calendar — PI events, town halls, symposium, and SIG meetings.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .calendar-intro { font-size: 1rem; color: #2C2C2C; margin-bottom: 1.5rem; }
+
+    .calendar-embed-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+    .calendar-embed-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 580px;
+      border: 1px solid #E0DDD8;
+    }
+
+    .calendar-subscribe { margin-top: 0.5rem; }
+
+    .cal-source {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 1.1rem;
+    }
+    .cal-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.35rem;
+    }
+    .cal-source-body strong {
+      display: block;
+      font-size: 0.95rem;
+      color: #1A1A1A;
+      margin-bottom: 0.1rem;
+    }
+    .cal-source-body p {
+      font-size: 0.88rem;
+      color: #555;
+      margin: 0 0 0.3rem;
+    }
+    .cal-source-body a {
+      font-size: 0.88rem;
+      color: #2A6B6B;
+    }
+    .cal-source-body a:hover { text-decoration: underline; }
+
+    .cal-note {
+      font-size: 0.82rem;
+      color: #8A8A8A;
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    .section-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #8A8A8A;
+      margin: 2rem 0 1rem;
+      border-top: 1px solid #E0DDD8;
+      padding-top: 1.5rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -21,7 +88,43 @@
         <h1>Calendar</h1>
       </div>
 
-      <div class="draft-banner">Coming soon.</div>
+      <p class="calendar-intro">Protocol Institute events in one view — curated PI events (town halls, symposium, special sessions) alongside the regular SIG working group meetings. Events from both calendars are shown together below.</p>
+
+      <div class="calendar-embed-wrap">
+        <iframe
+          src="https://calendar.google.com/calendar/embed?src=c_39064bd346954b73835545c21dd13f812700b44c0fbb0723f390211473dded5c%40group.calendar.google.com&color=%232A6B6B&src=sigs%40protocol-institute.org&color=%23C17F24&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=1&showTz=1&mode=AGENDA&wkst=1&hl=en"
+          frameborder="0"
+          scrolling="no"
+          title="Protocol Institute Calendar"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+      <h2 class="section-label">Subscribe</h2>
+
+      <div class="calendar-subscribe">
+
+        <div class="cal-source">
+          <span class="cal-dot" style="background:#2A6B6B;"></span>
+          <div class="cal-source-body">
+            <strong>PI Events</strong>
+            <p>Protocol town halls, the annual symposium, and other curated Institute events.</p>
+            <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Add PI Events to Google Calendar &rarr;</a>
+          </div>
+        </div>
+
+        <div class="cal-source">
+          <span class="cal-dot" style="background:#C17F24;"></span>
+          <div class="cal-source-body">
+            <strong>SIG Meetings</strong>
+            <p>Regular working group sessions — DRG, SIGFPT, MRG, SIGPfB, ProtFiSIG.</p>
+            <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Add SIG Meetings to Google Calendar &rarr;</a>
+          </div>
+        </div>
+
+        <p class="cal-note">To add a single event or recurring series rather than an entire calendar, open the event in the view above and use the "Copy to my calendar" option.</p>
+
+      </div>
 
     </div>
   </main>
