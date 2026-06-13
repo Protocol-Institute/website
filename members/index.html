@@ -95,7 +95,7 @@
     ].filter(Boolean).join(' · ');
     const memberMetaEl = metaEl ? `<p class="member-website" style="color:#8A8A8A;">${metaEl}</p>` : '';
 
-    return `<li class="member-item" data-team="${m.is_team}" data-consultant="${m.is_consultant}"
+    return `<li class="member-item" id="${escHtml(m.slug)}" data-team="${m.is_team}" data-consultant="${m.is_consultant}"
               ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
       <h2 class="member-name">${nameEl}</h2>
       ${roleEl}
