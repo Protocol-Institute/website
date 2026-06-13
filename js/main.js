@@ -153,13 +153,30 @@ var FOOTER_HTML =
     return d;
   }
 
+  var DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function localTimeStr(next, timeUtc) {
+    var parts = timeUtc.split(':');
+    var dt = new Date(Date.UTC(
+      next.getUTCFullYear(), next.getUTCMonth(), next.getUTCDate(),
+      parseInt(parts[0], 10), parseInt(parts[1], 10)
+    ));
+    var localTime = dt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    var utcDow = dt.getUTCDay();
+    var localDow = dt.getDay();
+    var dayNote = (localDow !== utcDow) ? ' ' + DOW[localDow] : '';
+    return localTime + dayNote;
+  }
+
   function fmt(sig) {
     var next = nextMeeting(sig.anchor, sig.interval_weeks);
     var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
     var day = sig.day + 's';
     var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
+    var local = localTimeStr(next, sig.time_utc);
     return 'Meets ' + freq + ' on ' + day + ' at ' + sig.time_utc +
-           ' UTC on Discord voice channel. <strong>Next meeting on ' + nextStr + '.</strong>';
+           ' UTC (' + local + ' your local time) on Discord voice channel.' +
+           ' <strong>Next meeting on ' + nextStr + '.</strong>';
   }
 
   fetch('/data/sig-meetings.json')
