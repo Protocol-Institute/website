@@ -22,53 +22,14 @@
       </div>
 
       <div class="about-body">
-
-        <p><strong>C3PO</strong> is the Protocol Institute's research assistant — a retrieval-augmented AI that makes the full PI corpus conversationally accessible. Ask it a question about protocol theory, a specific paper, a design problem, or a cross-domain connection, and it will draw on the corpus to respond — with citations. <strong><a href="https://c3po.protocolized.io" target="_blank" rel="noopener noreferrer">Try it →</a></strong></p>
-
-        <p>The corpus spans ~26,000 indexed passages across ten namespaces: the Protocolized PDF library (82 papers and essays), the Protocolized Substack archive (117+ posts), Protocol Institute Discord discussions and SIG meeting records, video transcripts from 91 talks, community-shared links, and the PI protocol lexicon. The majority of the primary material originated in the <a href="https://web.archive.org/web/20260421142108/https://summerofprotocols.com/" target="_blank" rel="noopener noreferrer">Summer of Protocols</a> program (2023–2024); the corpus grows continuously as new content is published and ingested.</p>
-
-        <h2>What C3PO does</h2>
-
-        <p>C3PO is a RAG (retrieval-augmented generation) system. When you ask a question, it searches the embedded corpus for the most relevant passages across all ten namespaces simultaneously, then generates a response grounded in those sources. It always cites what it found. It does not answer questions outside the corpus, and it is transparent about the limits of what it knows.</p>
-
-        <p>Intended uses include:</p>
-        <ul style="margin-bottom: 1.6rem; padding-left: 1.5rem; color: #2C2C2C;">
-          <li style="margin-bottom: 0.5rem;">Finding relevant research on a specific protocol domain (medical, diplomatic, software, financial, urban, ecological)</li>
-          <li style="margin-bottom: 0.5rem;">Synthesizing what the corpus says about a theoretical question (hardness, formalization, enforcement, capture, protocolization)</li>
-          <li style="margin-bottom: 0.5rem;">Discovering connections across papers and disciplines that are hard to find by browsing alone</li>
-          <li style="margin-bottom: 0.5rem;">Getting oriented in the literature before diving into primary sources</li>
-          <li style="margin-bottom: 0.5rem;">Looking up PI-coined terms and concepts — the lexicon is part of the index</li>
-        </ul>
-
-        <h2>Where to find C3PO</h2>
-
-        <p><strong>Web:</strong> <a href="https://c3po.protocolized.io" target="_blank" rel="noopener noreferrer">c3po.protocolized.io</a> — the primary interface. Full research-librarian voice: substantive, source-specific, 3–5 paragraphs. Rate-limited; no account required.</p>
-
-        <p><strong>Discord:</strong> C3PO is active in the PI Discord server. @mention it in any channel to open a research thread, continue for up to five turns, or use the <code>/ask</code> slash command. The Discord bot uses a shorter, more direct voice suited to conversation — it also monitors #introductions to welcome new members with relevant reading recommendations.</p>
-
-        <p><strong>MCP server:</strong> C3PO exposes a Model Context Protocol endpoint at <code>c3po.protocolized.io/mcp</code>, letting Claude Code, Claude Desktop, and other MCP-compatible clients search the corpus and ask questions directly from an AI coding environment. See the <a href="https://c3po.protocolized.io/how-it-works" target="_blank" rel="noopener noreferrer">how it works</a> page for connection instructions.</p>
-
-        <h2>Technical approach</h2>
-
-        <p>C3PO uses <a href="https://www.voyageai.com" target="_blank" rel="noopener noreferrer">Voyage AI</a> embeddings (voyage-3, 1024 dimensions), <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">Pinecone</a> as the vector store, and <a href="https://www.anthropic.com" target="_blank" rel="noopener noreferrer">Claude Sonnet</a> as the language model. The system runs as a Cloudflare Worker serving a web UI, a rate-limited REST API, an MCP endpoint, and a Discord slash-command handler from a single deployment. A Python ingest daemon runs locally on a 30-minute cycle, keeping the corpus current as new Discord discussions, SIG meetings, Substack posts, and shared links are published.</p>
-
-        <p>The source code is at <a href="https://github.com/Protocol-Institute/c3po" target="_blank" rel="noopener noreferrer">github.com/Protocol-Institute/c3po</a>.</p>
-
+        <p>C3PO is the Protocol Institute's research assistant — a retrieval-augmented AI that makes the full PI corpus conversationally accessible, with citations.</p>
+        <p><a href="https://c3po.protocolized.io" target="_blank" rel="noopener noreferrer">c3po.protocolized.io →</a></p>
       </div>
 
     </div>
   </main>
 
-  <footer class="site-footer">
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="/team">Team</a>
-      <a href="/network">Network</a>
-      <a href="/consulting">Consulting</a>
-      <a href="/symposium-2026">Symposium</a>
-      <a href="/contact">Contact</a>
-    </nav>
-    <p>&copy; 2026 The Protocol Institute</p>
-  </footer>
+  <footer class="site-footer"></footer>
 
 </div>
 
