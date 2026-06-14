@@ -638,8 +638,7 @@
           "html": "Short presentations corrected to 25 min + 5 min Q&A (was 20 min). Workshop format updated to 4 Zoom sessions over 2 days, Sept 21\u201322 (was 60\u201390 min). Word counts and form-level details stripped \u2014 let the Google Form handle them. Special Sessions line added: contact link points to <code>/team#venkatesh-rao</code> (team cards already had <code>id</code> attributes). Link to Challenges page added above the submission CTA."
         }
       ]
-    }
-  ,
+    },
     {
       "id": 19,
       "sort_key": 19.0,
@@ -647,34 +646,37 @@
       "title": "Membership approvals, welcome emails, DRG blurb",
       "date": "2026-06-09",
       "time_pt": "",
-      "tracks": ["member-directory", "content", "operations"],
+      "tracks": [
+        "member-directory",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
-          "title": "Membership queue — 8 applications reviewed, 6 approved, 2 declined",
-          "html": "Reviewed 8 pending <code>membership_requests</code> records directly via D1. Six were approved (Sean Stevenson, Patrick Atwater, Giovanni Merlino, Nai-Chi Cheng, Johann Richard, Will Abramson) and inserted into <code>members</code> via <code>wrangler d1 execute --remote</code> with correct schema — fixing a pre-existing bug in the admin API where <code>request_consultant</code> was used as a column name instead of <code>is_team</code>, and adding <code>city</code>, <code>discord_handle</code>, and <code>owner_email</code> fields that the old code omitted. Two applications (Alexandra Braslasu, Javier Chavez) were rejected: Braslasu explicitly stated no prior event or SIG participation; Chavez selected <code>tag_sig</code> only with no corroborating bio or notes evidence."
+          "title": "Membership queue \u2014 8 applications reviewed, 6 approved, 2 declined",
+          "html": "Reviewed 8 pending <code>membership_requests</code> records directly via D1. Six were approved (Sean Stevenson, Patrick Atwater, Giovanni Merlino, Nai-Chi Cheng, Johann Richard, Will Abramson) and inserted into <code>members</code> via <code>wrangler d1 execute --remote</code> with correct schema \u2014 fixing a pre-existing bug in the admin API where <code>request_consultant</code> was used as a column name instead of <code>is_team</code>, and adding <code>city</code>, <code>discord_handle</code>, and <code>owner_email</code> fields that the old code omitted. Two applications (Alexandra Braslasu, Javier Chavez) were rejected: Braslasu explicitly stated no prior event or SIG participation; Chavez selected <code>tag_sig</code> only with no corroborating bio or notes evidence."
         },
         {
-          "title": "Approval email flow — welcome + 3-day PIN, rejection notice",
-          "html": "Rewrote <code>functions/api/admin/members.js</code> to send emails on approval and rejection. On approve: generates a PIN with 72-hour TTL (vs. 15 min for standard login), stores hash in <code>auth_pins</code>, sends a welcome email via Resend with the code and a link to <code>/members/join</code>. On reject: sends the standard ineligibility notice referencing the join page. New <code>resend_welcome</code> action allows retroactively sending welcome emails to already-approved members without requiring a new application. Shares all Resend infrastructure with <code>send-pin.js</code> — no new service dependency. The 8 emails from this session are pending until <code>RESEND_API_KEY</code> and <code>WEBSITE_ADMIN_KEY</code> are retrieved from CF dashboard and saved locally."
+          "title": "Approval email flow \u2014 welcome + 3-day PIN, rejection notice",
+          "html": "Rewrote <code>functions/api/admin/members.js</code> to send emails on approval and rejection. On approve: generates a PIN with 72-hour TTL (vs. 15 min for standard login), stores hash in <code>auth_pins</code>, sends a welcome email via Resend with the code and a link to <code>/members/join</code>. On reject: sends the standard ineligibility notice referencing the join page. New <code>resend_welcome</code> action allows retroactively sending welcome emails to already-approved members without requiring a new application. Shares all Resend infrastructure with <code>send-pin.js</code> \u2014 no new service dependency. The 8 emails from this session are pending until <code>RESEND_API_KEY</code> and <code>WEBSITE_ADMIN_KEY</code> are retrieved from CF dashboard and saved locally."
         },
         {
           "title": "Join page eligibility description updated",
-          "html": "The intro paragraph on <code>/members/join</code> previously said only 'qualifying Protocol Institute events' — too vague to set expectations accurately. Replaced with an explicit list: Summer of Protocols cohorts, Protocol School, PI symposium events, active SIG participation, Protocol Kit recipients, Protocolized contributors. The qualifying events checkbox section now notes that applications are reviewed against actual participation records, to deter applicants who select boxes without qualifying."
+          "html": "The intro paragraph on <code>/members/join</code> previously said only 'qualifying Protocol Institute events' \u2014 too vague to set expectations accurately. Replaced with an explicit list: Summer of Protocols cohorts, Protocol School, PI symposium events, active SIG participation, Protocol Kit recipients, Protocolized contributors. The qualifying events checkbox section now notes that applications are reviewed against actual participation records, to deter applicants who select boxes without qualifying."
         },
         {
-          "title": "Key management failure — RESEND_API_KEY and WEBSITE_ADMIN_KEY not saved locally",
+          "title": "Key management failure \u2014 RESEND_API_KEY and WEBSITE_ADMIN_KEY not saved locally",
           "html": "Discovered that <code>RESEND_API_KEY</code> and <code>WEBSITE_ADMIN_KEY</code>, both set as CF Pages secrets in May 2026, were never saved to <code>../.env.keys</code> per the PI security policy. This blocked programmatic email sending and required retrieval from the CF dashboard. A mandatory protocol callout was added to <code>CLAUDE.md</code> and a persistent memory entry recorded, specifying that any new CF secret must be saved locally and registered in <code>../admin/keys.md</code> before the task is considered complete."
         },
         {
           "title": "DRG blurb expanded, stale nav fixed",
-          "html": "The Distributed Robotics Group description was updated on both the SIG index and the DRG detail page with the full two-paragraph third-person blurb supplied by the team: onchain robotics / decentralized coordination framing in paragraph 1; applied research group with equal protocol design and robot-building focus in paragraph 2. The DRG page also had a stale hardcoded nav with dead <code>.html</code> links from a pre-migration era — replaced with the standard <code>&lt;header id=\"site-header\"&gt;</code> injection pattern and a <code>&lt;footer class=\"site-footer\"&gt;</code> element populated by <code>main.js</code>."
+          "html": "The Distributed Robotics Group description was updated on both the SIG index and the DRG detail page with the full two-paragraph third-person blurb supplied by the team: onchain robotics / decentralized coordination framing in paragraph 1; applied research group with equal protocol design and robot-building focus in paragraph 2. The DRG page also had a stale hardcoded nav with dead <code>.html</code> links from a pre-migration era \u2014 replaced with the standard <code>&lt;header id=\"site-header\"&gt;</code> injection pattern and a <code>&lt;footer class=\"site-footer\"&gt;</code> element populated by <code>main.js</code>."
         }
       ]
-    }
-  ,
+    },
     {
       "id": 20,
       "sort_key": 20.0,
@@ -682,14 +684,18 @@
       "title": "Programs hierarchy, nav overhaul, SIG page fixes, c3po interface plan",
       "date": "2026-06-12",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Programs page: 4-category hierarchy (Programs / Tracks / Projects / Infrastructure)",
-          "html": "Redesigned the Programs page around a formal 4-category taxonomy. Each program item now has a left-bordered <code>.program-body</code> section with typed sub-items labeled <strong>Tracks</strong>, <strong>Projects</strong>, or <strong>Infrastructure</strong>. Added a taxonomy intro line explaining the three sub-categories. Key structural changes: (1) <em>Research</em> program created, bundling SIGs (tracks), Challenges (infrastructure), and solo projects; (2) <em>AI Infrastructure</em> renamed <em>AI Ops</em>; C3PO and Humboldt reclassified as Infrastructure; (3) <em>Events</em> program replaces the standalone Protocol Symposium item, listing all 10 events from <code>data/events.json</code> as Projects; (4) <em>Collaborations</em> program added with Long Now as a Track; (5) Research SIGs listed individually with descriptions rather than via the /sigs index. All items now have phrase-length descriptions and link to internal detail pages — no direct external links at program-page level."
+          "html": "Redesigned the Programs page around a formal 4-category taxonomy. Each program item now has a left-bordered <code>.program-body</code> section with typed sub-items labeled <strong>Tracks</strong>, <strong>Projects</strong>, or <strong>Infrastructure</strong>. Added a taxonomy intro line explaining the three sub-categories. Key structural changes: (1) <em>Research</em> program created, bundling SIGs (tracks), Challenges (infrastructure), and solo projects; (2) <em>AI Infrastructure</em> renamed <em>AI Ops</em>; C3PO and Humboldt reclassified as Infrastructure; (3) <em>Events</em> program replaces the standalone Protocol Symposium item, listing all 10 events from <code>data/events.json</code> as Projects; (4) <em>Collaborations</em> program added with Long Now as a Track; (5) Research SIGs listed individually with descriptions rather than via the /sigs index. All items now have phrase-length descriptions and link to internal detail pages \u2014 no direct external links at program-page level."
         },
         {
           "title": "Detail pages for all external-domain projects",
@@ -701,11 +707,11 @@
         },
         {
           "title": "Home page standardized to interior-wrapper layout",
-          "html": "The landing page (<code>index.html</code>) previously used a special <code>.landing-wrapper</code> / <code>.landing-center</code> fullscreen layout with an animated SVG logo. Replaced with the standard <code>.interior-wrapper</code> / <code>.interior-main</code> / <code>.container</code> structure used by all other pages — injected nav, injected footer, 760px container, <code>page-header</code> h1. The animated logo is no longer used anywhere on the site."
+          "html": "The landing page (<code>index.html</code>) previously used a special <code>.landing-wrapper</code> / <code>.landing-center</code> fullscreen layout with an animated SVG logo. Replaced with the standard <code>.interior-wrapper</code> / <code>.interior-main</code> / <code>.container</code> structure used by all other pages \u2014 injected nav, injected footer, 760px container, <code>page-header</code> h1. The animated logo is no longer used anywhere on the site."
         },
         {
           "title": "c3po generate_sig_pages.py: injected nav/footer, no flat files, DRG description",
-          "html": "The c3po ingestion script was generating full HTML pages including a hardcoded stale nav (still referencing <code>/projects.html</code> and <code>Initiatives</code>), causing the DRG and other SIG pages to revert on every ingest run. Three fixes: (1) <code>nav_html()</code> and <code>footer_html()</code> now emit the empty injection placeholders (<code>&lt;header id=\"site-header\"&gt;</code>, <code>&lt;footer class=\"site-footer\"&gt;</code>) rather than hardcoded markup; (2) generator no longer writes legacy <code>sigs/{slug}.html</code> flat files — only <code>sigs/{slug}/index.html</code>; (3) DRG <code>SIG_INFO</code> entry updated with correct two-paragraph description using a new <code>description_extra</code> field rendered as a second <code>&lt;p&gt;</code>. The two tracked legacy flat files (<code>sigs/drg.html</code>, <code>sigs/sigpsy.html</code>) were removed from git. All six SIG <code>index.html</code> pages were regenerated clean."
+          "html": "The c3po ingestion script was generating full HTML pages including a hardcoded stale nav (still referencing <code>/projects.html</code> and <code>Initiatives</code>), causing the DRG and other SIG pages to revert on every ingest run. Three fixes: (1) <code>nav_html()</code> and <code>footer_html()</code> now emit the empty injection placeholders (<code>&lt;header id=\"site-header\"&gt;</code>, <code>&lt;footer class=\"site-footer\"&gt;</code>) rather than hardcoded markup; (2) generator no longer writes legacy <code>sigs/{slug}.html</code> flat files \u2014 only <code>sigs/{slug}/index.html</code>; (3) DRG <code>SIG_INFO</code> entry updated with correct two-paragraph description using a new <code>description_extra</code> field rendered as a second <code>&lt;p&gt;</code>. The two tracked legacy flat files (<code>sigs/drg.html</code>, <code>sigs/sigpsy.html</code>) were removed from git. All six SIG <code>index.html</code> pages were regenerated clean."
         },
         {
           "title": "c3po website-interface.md: approved design for content handoff",
@@ -720,7 +726,11 @@
       "title": "Calendar, SIG schedule sync, symposium improvements, banner carousel",
       "date": "2026-06-13",
       "time_pt": "",
-      "tracks": ["static-site", "content", "operations"],
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -731,19 +741,69 @@
         },
         {
           "title": "Home page: banner carousel + Explore PI's activities list",
-          "html": "Two changes to <code>index.html</code>: (1) the hardcoded symposium banner replaced with a <code>&lt;div id=\"banner-carousel\"&gt;</code> populated at load time by an inline script that fetches <code>/carousel/banners.md</code>, parses a Markdown table of <code>file | weight | link | alt</code> rows, picks a banner by weighted random, and injects the image. Adding a new banner requires uploading to R2 and adding a row to <code>carousel/banners.md</code> — no code changes. Currently one banner. (2) \"Learn more on our About page\" link removed; replaced with an \"Explore PI's activities\" bullet list (Challenges, SIGs, Protocolized, Discord) below the banner."
+          "html": "Two changes to <code>index.html</code>: (1) the hardcoded symposium banner replaced with a <code>&lt;div id=\"banner-carousel\"&gt;</code> populated at load time by an inline script that fetches <code>/carousel/banners.md</code>, parses a Markdown table of <code>file | weight | link | alt</code> rows, picks a banner by weighted random, and injects the image. Adding a new banner requires uploading to R2 and adding a row to <code>carousel/banners.md</code> \u2014 no code changes. Currently one banner. (2) \"Learn more on our About page\" link removed; replaced with an \"Explore PI's activities\" bullet list (Challenges, SIGs, Protocolized, Discord) below the banner."
         },
         {
           "title": "Calendar page: merged Google Calendar embed with subscribe links and instructions",
-          "html": "Built <code>/calendar/index.html</code> from its Coming Soon stub. The page shows a merged Google Calendar iframe in AGENDA mode displaying both the PI Community Calendar (<code>sigs@protocol-institute.org</code>, orange <code>#C17F24</code>) and the PI Institute Calendar (curated events, teal <code>#2A6B6B</code>). Above the iframe: two inline bullet items with colored dots, calendar names, and Subscribe links; a note explaining how to add events to the community calendar (invite <code>sigs@protocol-institute.org</code>, make a Discord event, contact Timber). The <code>_headers</code> CSP was missing <code>https://calendar.google.com</code> in <code>frame-src</code>, causing the iframe to be blocked — fixed by adding it."
+          "html": "Built <code>/calendar/index.html</code> from its Coming Soon stub. The page shows a merged Google Calendar iframe in AGENDA mode displaying both the PI Community Calendar (<code>sigs@protocol-institute.org</code>, orange <code>#C17F24</code>) and the PI Institute Calendar (curated events, teal <code>#2A6B6B</code>). Above the iframe: two inline bullet items with colored dots, calendar names, and Subscribe links; a note explaining how to add events to the community calendar (invite <code>sigs@protocol-institute.org</code>, make a Discord event, contact Timber). The <code>_headers</code> CSP was missing <code>https://calendar.google.com</code> in <code>frame-src</code>, causing the iframe to be blocked \u2014 fixed by adding it."
         },
         {
-          "title": "SIG meeting schedule sync: iCal → JSON → client-side display",
-          "html": "Three-layer system for keeping SIG meeting times accurate: <strong>sync_sig_meetings.py</strong> fetches the SIGs iCal feed (<code>sigs@protocol-institute.org/public/basic.ics</code>), parses VEVENT blocks and RRULEs (using <code>zoneinfo</code> for UTC conversion), and writes <code>data/sig-meetings.json</code> with per-SIG anchor date, interval, day, and UTC time. MRG is not yet on the calendar and is manually set. <strong>Client-side JS</strong> in <code>main.js</code> fetches the JSON on any page containing <code>[data-sig]</code> elements, computes the next meeting date by advancing from anchor, formats the schedule string including browser-local time (via <code>toLocaleTimeString()</code> — detects day-shift for UTC+12 etc.), and writes it as innerHTML. The \"Next meeting on DATE\" phrase is wrapped in <code>&lt;strong&gt;</code>. <strong>HTML</strong>: all six SIG index pages and individual SIG pages updated — <code>.sig-meta</code> now contains only the leader names; a new <code>&lt;p class=\"sig-schedule\" data-sig=\"SLUG\"&gt;</code> element is populated by JS. CSS: <code>.sig-schedule</code> styled as a tinted teal box (<code>#F0F5F3</code> background, <code>#BFCFCC</code> border) to make next-meeting prominent."
+          "title": "SIG meeting schedule sync: iCal \u2192 JSON \u2192 client-side display",
+          "html": "Three-layer system for keeping SIG meeting times accurate: <strong>sync_sig_meetings.py</strong> fetches the SIGs iCal feed (<code>sigs@protocol-institute.org/public/basic.ics</code>), parses VEVENT blocks and RRULEs (using <code>zoneinfo</code> for UTC conversion), and writes <code>data/sig-meetings.json</code> with per-SIG anchor date, interval, day, and UTC time. MRG is not yet on the calendar and is manually set. <strong>Client-side JS</strong> in <code>main.js</code> fetches the JSON on any page containing <code>[data-sig]</code> elements, computes the next meeting date by advancing from anchor, formats the schedule string including browser-local time (via <code>toLocaleTimeString()</code> \u2014 detects day-shift for UTC+12 etc.), and writes it as innerHTML. The \"Next meeting on DATE\" phrase is wrapped in <code>&lt;strong&gt;</code>. <strong>HTML</strong>: all six SIG index pages and individual SIG pages updated \u2014 <code>.sig-meta</code> now contains only the leader names; a new <code>&lt;p class=\"sig-schedule\" data-sig=\"SLUG\"&gt;</code> element is populated by JS. CSS: <code>.sig-schedule</code> styled as a tinted teal box (<code>#F0F5F3</code> background, <code>#BFCFCC</code> border) to make next-meeting prominent."
         },
         {
           "title": "SIG organizer names linked to member/team profiles",
           "html": "Organizer names in <code>.sig-meta</code> on both the SIG index and all individual SIG pages are now hyperlinked where a profile exists: Venkatesh Rao links to <code>/team#venkatesh-rao</code> (public); Rafael Fernandez and Sachin Benny link to <code>/members#rafael-fernandez</code> and <code>/members#sachin-benny</code> respectively (PIN-gated). The remaining organizers (Patrick Nast, Kei Kreutler, Spencer Nitkey, Anuraj R., Aneesh Sathe) have no link until they are onboarded. Member cards in <code>members/index.html</code> were given <code>id=\"${m.slug}\"</code> so hash links resolve correctly."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "sort_key": 22.0,
+      "label": "Session 22",
+      "title": "SIG DST fix, Programs tabs, site-wide links, member onboarding",
+      "date": "2026-06-14",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "SIG meeting schedule: DST fix via pre-expanded occurrences",
+          "html": "<p>The prior approach stored a single <code>time_utc</code> string derived from the iCal DTSTART anchor. For meetings specified in a local timezone (e.g. 10am Pacific), this UTC time was correct for the anchor date's DST state but wrong for future occurrences across DST boundaries \u2014 a November meeting would display one hour off.</p><p>Fix: <code>sync_sig_meetings.py</code> now steps the RRULE forward as a naive datetime in the source timezone, converts each occurrence to UTC individually (so DST is applied per-date), and stores 30 pre-expanded ISO 8601 timestamps per SIG in <code>data/sig-meetings.json</code>. <code>main.js</code> is reduced to a list lookup: find the first entry &ge; now, extract UTC time from the Date object directly, call <code>toLocaleTimeString()</code> for browser-local time. MRG (not yet on the SIGs calendar) handled via <code>MANUAL_SIGS</code> dict in the script.</p>"
+        },
+        {
+          "title": "Programs page: Hierarchical View / Flattened View tabs",
+          "html": "<p>Added a two-tab system to <code>programs/index.html</code>. The Hierarchical View is the existing program-by-program layout unchanged. The Flattened View is generated lazily on first click by <code>buildFlatList()</code>, which walks the Hierarchical View DOM \u2014 every <code>.category-items li</code> across all programs and category groups \u2014 and renders a flat list with program name (<code>project-status</code> badge) and category type (<code>project-category</code> badge) as tags. Tab state is mirrored to the URL via <code>history.replaceState</code> using <code>?view=flattened</code>. <code>/projects</code> and <code>/projects/</code> redirect 301 to <code>/programs?view=flattened</code>. Verified isomorphism: 28 leaf items in both views.</p>"
+        },
+        {
+          "title": "Nav layout shift fixes",
+          "html": "<p>Two sources of nav jump identified. (1) The authenticated member dropdown replaces an <code>&lt;a class=\"nav-member-link\"&gt;</code> with a <code>&lt;button class=\"nav-member-toggle nav-member-link\"&gt;</code>. The button carried browser-default padding/border not reset by the shared class, making it slightly larger than the link it replaced and causing a layout shift on every authenticated page load. Fix: <code>.nav-member-toggle { background: none; border: none; padding: 0; }</code>. (2) The Challenges beta badge had <code>line-height: 1.5</code>, creating a taller box than necessary. Reduced to <code>line-height: 1</code>.</p>"
+        },
+        {
+          "title": "Site-wide link underline styling",
+          "html": "<p>Global <code>a {}</code> updated to show teal underline at rest with 30% opacity (<code>text-decoration-color: rgba(42,107,107,0.3)</code>) and full opacity on hover, with <code>text-underline-offset: 0.12em</code>. All existing nav exclusions (<code>.nav-links a</code>, <code>.footer-nav a</code>, <code>.nav-brand</code>, <code>.nav-member-link</code>, <code>.project-name-link</code>) already had class-level <code>text-decoration: none</code> overrides that win over the element selector \u2014 no changes needed to those. Added <code>text-decoration: none</code> to <code>.form-btn</code> (the one button-styled <code>&lt;a&gt;</code> that lacked it). Removed redundant <code>color: inherit; text-decoration: none</code> from <code>.member-name a</code>.</p>"
+        },
+        {
+          "title": "404 page",
+          "html": "<p>Added <code>404.html</code> at repo root. Cloudflare Pages serves this automatically for unmatched routes. Standard interior-wrapper layout with injected nav/footer, terse two-line message, and a small <code>.error-nav</code> return link set to the main site sections.</p>"
+        },
+        {
+          "title": "Member onboarding: welcome_sent tracking and startup check script",
+          "html": "<p>Root cause analysis: the approval Worker sometimes terminated between the <code>INSERT INTO members</code> and <code>sendWelcomeEmail()</code> calls (CF Worker transient error / cold start), leaving members approved but without a welcome email. Previously undetectable.</p><p>Fix: D1 migration 013 adds <code>welcome_sent INTEGER DEFAULT 0</code> to <code>members</code>. The last line of <code>sendWelcomeEmail()</code> sets it to 1 \u2014 only reachable if both the auth_pins write and the Resend call succeeded. The <code>resend_welcome</code> action also sets it.</p><p><code>check_members.py</code> is the session startup ritual: queries pending <code>membership_requests</code> and categorises them as APPROVE (any strong qualifying tag: SIG, SoP cohort, workshop) or REVIEW (weaker tags only); checks <code>members WHERE welcome_sent = 0</code> and prints <code>--resend</code> commands; prints a summary. Run: <code>python3 check_members.py</code>.</p><p>Also resolved: initial query checked <code>members WHERE is_public = 0</code> rather than <code>membership_requests WHERE status = 'pending'</code> \u2014 the two tables are distinct (requests live in membership_requests until approved). Fixed the query approach and documented in the script.</p>"
+        },
+        {
+          "title": "Member email corrections and delayed welcome sends",
+          "html": "<p>10 pending applications approved in bulk via the admin panel. 3 of 10 (Afeez, Anuraj, Randy) had no welcome email sent due to the Worker failure mode above \u2014 resent via the admin API. Founding members (Timber, Tim, James, Sachin, Rafael) were manually inserted before the email system existed and had never received welcome emails \u2014 sent with a custom delayed-welcome template explaining the reason. James Langdon's email corrected from <code>james@protocol-institute.org</code> (bounced) to <code>james@protocolized.io</code>; orphaned auth_pins entry for old address cleaned up. Aneesh Sathe's slug corrected from <code>mail</code> (derived from email prefix) to <code>aneesh-sathe</code>. Note: Resend API calls from local Python urllib are blocked by Cloudflare bot detection on resend.com \u2014 use subprocess + curl instead.</p>"
+        },
+        {
+          "title": "Join page and welcome email copy updates",
+          "html": "<p>Join page: intro split into two paragraphs; eligibility paragraph gains closing sentence linking to the Members page. Added bold spam-guidance paragraph (PIN instant, approval days-to-a-week, sender address, check spam, mark not-spam) followed by an unbolded Discord #bugs-and-tests fallback. Email hint under input simplified to 'We'll send you a 6-digit code to log on.'</p><p>Welcome email template: 'Welcome!' added to first paragraph; new paragraph before sign-off mentions Challenges as a members-only feature and asks recipients to mark not-spam if it landed there.</p>"
         }
       ]
     }
