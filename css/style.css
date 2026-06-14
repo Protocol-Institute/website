@@ -1338,6 +1338,17 @@ a:hover {
   color: #2A6B6B;
 }
 
+.member-name .member-detail-link {
+  color: #2A6B6B;
+  text-decoration: underline;
+  text-decoration-color: rgba(42, 107, 107, 0.35);
+  text-underline-offset: 0.12em;
+}
+
+.member-name .member-detail-link:hover {
+  text-decoration-color: #2A6B6B;
+}
+
 .member-role-label {
   font-size: 0.75rem;
   font-weight: 500;

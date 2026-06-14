@@ -63,6 +63,12 @@
   const TAG_LABELS = PI_TAGS.LABELS;
   const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
+  // Internal detail pages for specific members. Add entries as new pages are created.
+  const DETAIL_PAGES = {
+    'c3po':     '/c3po',
+    'humboldt': '/humboldt',
+  };
+
   let allMembers = [];
   let activeFilter = '';
 
@@ -77,7 +83,10 @@
       `<span class="member-tag ${t.cls}">${t.label || TAG_LABELS[t.key]}</span>`
     ).join('');
 
-    const nameEl = m.website
+    const detailUrl = DETAIL_PAGES[m.slug] || null;
+    const nameEl = detailUrl
+      ? `<a href="${escHtml(detailUrl)}" class="member-detail-link">${escHtml(m.name)}</a>`
+      : m.website
       ? `<a href="${escHtml(m.website)}" target="_blank" rel="noopener noreferrer">${escHtml(m.name)}</a>`
       : escHtml(m.name);
 
@@ -86,7 +95,7 @@
       : '';
 
     const bioEl = m.bio
-      ? `<p class="member-bio">${escHtml(truncate(m.bio, 180))}</p>`
+      ? `<p class="member-bio">${escHtml(m.bio)}</p>`
       : '';
 
     const metaEl = [
@@ -131,11 +140,6 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
-  }
-
-  function truncate(str, max) {
-    if (str.length <= max) return str;
-    return str.slice(0, max).replace(/\s+\S*$/, '') + '…';
   }
 
   // Filter buttons
