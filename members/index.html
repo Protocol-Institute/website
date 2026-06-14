@@ -111,67 +111,96 @@
     return escHtml(c);
   }
 
-  function renderMember(m) {
+  function memberTags(m) {
     const tags = [];
     if (m.tier === 'team') tags.push({ key: 'is_team', cls: 'member-tag--team' });
     if (m.tier === 'community_lead' && m.community_lead_title)
       tags.push({ key: null, label: escHtml(m.community_lead_title), cls: 'member-tag--community-lead' });
     if (m.type === 'ai') tags.push({ key: null, label: 'AI', cls: 'member-tag--ai' });
     EVENT_TAGS.forEach(k => { if (m[k]) tags.push({ key: k, cls: '' }); });
+    return tags;
+  }
 
-    const tagsHtml = tags.map(t =>
+  function tagsHtml(tags) {
+    if (!tags.length) return '';
+    return `<div class="member-tags">${tags.map(t =>
       `<span class="member-tag ${t.cls}">${t.label !== undefined ? t.label : TAG_LABELS[t.key]}</span>`
-    ).join('');
+    ).join('')}</div>`;
+  }
 
+  function nameLink(m) {
     const detailUrl = DETAIL_PAGES[m.slug] || null;
-    const nameEl = detailUrl
-      ? `<a href="${escHtml(detailUrl)}" class="member-detail-link">${escHtml(m.name)}</a>`
-      : m.website
-      ? `<a href="${escHtml(m.website)}" target="_blank" rel="noopener noreferrer">${escHtml(m.name)}</a>`
-      : escHtml(m.name);
+    if (detailUrl) return `<a href="${escHtml(detailUrl)}" class="member-detail-link">${escHtml(m.name)}</a>`;
+    if (m.website) return `<a href="${escHtml(m.website)}" target="_blank" rel="noopener noreferrer">${escHtml(m.name)}</a>`;
+    return escHtml(m.name);
+  }
 
-    const roleEl = m.team_title
-      ? `<p class="member-role-label">${escHtml(m.team_title)}</p>`
-      : '';
+  function photoThumb(m) {
+    const src = photoSrc(m.photo_r2_key);
+    if (!src) return '';
+    const inits = escHtml(initials(m.name));
+    return `<div class="member-photo-thumb">
+      <img src="${escHtml(src)}" alt="" onerror="this.style.display='none'">
+      <span class="member-photo-initials">${inits}</span>
+    </div>`;
+  }
 
-    const bioEl = m.bio
-      ? `<p class="member-bio">${escHtml(m.bio)}</p>`
-      : '';
-
+  // Plain list renderer — no photos, used for All and non-rich filters
+  function renderMemberList(m) {
+    const tags = memberTags(m);
     const metaParts = [
       m.city ? escHtml(m.city) : '',
       m.discord_handle ? `Discord: ${escHtml(m.discord_handle)}` : '',
     ].filter(Boolean);
-    const memberMetaEl = metaParts.length
-      ? `<p class="member-meta">${metaParts.join(' · ')}</p>`
-      : '';
-
-    const contactStr = consultingContact(m);
-    const consultingEl = (m.is_consultant && m.consulting_expertise)
-      ? `<p class="member-consulting">${escHtml(m.consulting_expertise)}${contactStr ? ` &mdash; ${contactStr}` : ''}</p>`
-      : '';
-
-    const cardContent = `
-      <h2 class="member-name">${nameEl}</h2>
-      ${roleEl}${bioEl}${memberMetaEl}${consultingEl}
-      ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}`;
-
-    const src = photoSrc(m.photo_r2_key);
-    const showPhoto = !!(src && (m.tier === 'team' || m.is_consultant));
-    const inits = escHtml(initials(m.name));
-
-    const innerHtml = showPhoto
-      ? `<div class="member-card-row">
-          <div class="member-photo-thumb">
-            <img src="${escHtml(src)}" alt="" onerror="this.style.display='none'">
-            <span class="member-photo-initials">${inits}</span>
-          </div>
-          <div class="member-content">${cardContent}</div>
-        </div>`
-      : cardContent;
 
     return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
-              ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>${innerHtml}</li>`;
+        ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
+      <h2 class="member-name">${nameLink(m)}</h2>
+      ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
+      ${m.bio ? `<p class="member-bio">${escHtml(m.bio)}</p>` : ''}
+      ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
+      ${tagsHtml(tags)}
+    </li>`;
+  }
+
+  // Rich card renderer — photos + full info, used for team and consultant filters
+  function renderMemberCard(m) {
+    const tags = memberTags(m);
+    const contactStr = consultingContact(m);
+
+    const expertiseChips = m.consulting_expertise
+      ? `<div class="expertise-chips">${
+          m.consulting_expertise.split('·').map(s =>
+            `<span class="expertise-chip">${escHtml(s.trim())}</span>`
+          ).join('')
+        }</div>`
+      : '';
+
+    const cardLinks = [];
+    if (contactStr) cardLinks.push(`<span class="card-link">${contactStr}</span>`);
+    if (m.consulting_portfolio)
+      cardLinks.push(`<a class="card-link" href="${escHtml(m.consulting_portfolio)}" target="_blank" rel="noopener noreferrer">Portfolio →</a>`);
+    const cardLinksHtml = cardLinks.length
+      ? `<div class="card-links">${cardLinks.join('')}</div>`
+      : '';
+
+    const metaParts = [m.city ? escHtml(m.city) : ''].filter(Boolean);
+
+    return `<li class="member-item member-card-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
+        ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
+      <div class="member-card-row">
+        ${photoThumb(m)}
+        <div class="member-content">
+          <h2 class="member-name">${nameLink(m)}</h2>
+          ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
+          ${expertiseChips}
+          ${m.bio ? `<p class="member-bio">${escHtml(m.bio)}</p>` : ''}
+          ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
+          ${cardLinksHtml}
+          ${tagsHtml(tags)}
+        </div>
+      </div>
+    </li>`;
   }
 
   function setBlurb(filter) {
@@ -181,13 +210,16 @@
     blurb.classList.toggle('visible', !!text);
   }
 
-  function render(members) {
+  function render(members, filter) {
     const list = document.getElementById('member-list');
     if (!members.length) {
+      list.className = 'member-list';
       list.innerHTML = '<li class="member-item member-empty">No members found for this filter.</li>';
       return;
     }
-    list.innerHTML = members.map(renderMember).join('');
+    const isRich = filter === 'team' || filter === 'consultant';
+    list.className = isRich ? 'member-list member-list--cards' : 'member-list';
+    list.innerHTML = members.map(isRich ? renderMemberCard : renderMemberList).join('');
   }
 
   function applyFilter(filter, pushState) {
@@ -197,14 +229,19 @@
       const url = filter ? `?filter=${encodeURIComponent(filter)}` : location.pathname;
       history.replaceState(null, '', url);
     }
-    if (!filter) { render(allMembers); return; }
-    const filtered = allMembers.filter(m => {
-      if (filter === 'team') return m.tier === 'team';
-      if (filter === 'community_lead') return m.tier === 'community_lead';
-      if (filter === 'consultant') return m.is_consultant;
-      return m[filter];
-    });
-    render(filtered);
+    let filtered;
+    if (!filter) {
+      filtered = allMembers;
+    } else {
+      filtered = allMembers.filter(m => {
+        if (filter === 'team') return m.tier === 'team';
+        if (filter === 'community_lead') return m.tier === 'community_lead';
+        // Consultants: require photo — members without one are not shown until they add one
+        if (filter === 'consultant') return m.is_consultant && !!m.photo_r2_key;
+        return m[filter];
+      });
+    }
+    render(filtered, filter);
   }
 
   // Filter buttons
@@ -229,7 +266,7 @@
         if (btn) btn.classList.add('active');
         applyFilter(urlFilter, false);
       } else {
-        render(allMembers);
+        render(allMembers, '');
       }
     })
     .catch(() => {
