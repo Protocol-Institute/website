@@ -62,6 +62,11 @@ async function sendWelcomeEmail(env, email, firstName) {
 <p>This code expires in 3 days. If it expires, you can always request a new one at <a href="https://protocol-institute.org/members/join">protocol-institute.org/members/join</a>.</p>
 <p>— Protocol Institute</p>`
   );
+
+  // Mark welcome email as confirmed sent — only reached if no exception above
+  await env.DB.prepare(
+    'UPDATE members SET welcome_sent = 1 WHERE email = ?'
+  ).bind(email).run();
 }
 
 async function sendRejectionEmail(env, email, firstName) {
