@@ -110,13 +110,13 @@
         </div>
 
         <p class="form-section-title">Optional listings</p>
-        <p style="font-size:0.92rem;color:#5A5A5A;margin-bottom:1.5rem;">These requests are reviewed and approved separately by the PI team.</p>
 
         <div class="form-group" style="margin-bottom:0.25rem;">
           <label class="form-checkbox">
             <input type="checkbox" id="consultant-toggle"> I would like to be listed in the <a href="/consulting">Consulting directory</a>
           </label>
         </div>
+        <p style="font-size:0.85rem;color:#8A8A8A;margin:0.4rem 0 1rem 1.6rem;">Consultant status is approved by default. PI may revoke it if a member does not follow the <a href="/consulting/policies" target="_blank" rel="noopener noreferrer">PI Consulting Network policies</a>.</p>
 
         <div class="form-conditional" id="consultant-fields">
           <div class="form-group">
@@ -135,27 +135,10 @@
           </div>
         </div>
 
-        <div class="form-group" style="margin-top:1.25rem;margin-bottom:0.25rem;">
-          <label class="form-checkbox">
-            <input type="checkbox" id="team-toggle"> I'm a member of the team
-          </label>
-        </div>
-
-        <div class="form-conditional" id="team-fields">
-          <div class="form-group">
-            <label class="form-label" for="team-title-input">Job title</label>
-            <input class="form-input" type="text" id="team-title-input" placeholder="e.g. Managing Director">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="team-description-input">Role description <span class="optional">(optional)</span></label>
-            <textarea class="form-textarea" id="team-description-input" rows="2" placeholder="Brief description of your role at the Protocol Institute."></textarea>
-          </div>
-        </div>
-
         <div id="photo-field" style="display:none;margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid #E0DDD8;">
-          <p style="margin-bottom:0.75rem;"><span class="member-tag">Required for consultants and team members</span></p>
+          <p style="margin-bottom:0.75rem;"><span class="member-tag">Required for consultant listing</span></p>
           <div class="form-group">
-            <label class="form-label" for="photo-input">Profile photo URL <span class="optional">(optional)</span></label>
+            <label class="form-label" for="photo-input">Profile photo URL</label>
             <input class="form-input" type="url" id="photo-input" placeholder="https://…">
             <p class="form-hint">A public link to a headshot (240×240px minimum). We'll download and host it.</p>
           </div>
@@ -288,21 +271,15 @@
 
   // Show/hide conditional fields
   const consultantToggle = document.getElementById('consultant-toggle');
-  const teamToggle = document.getElementById('team-toggle');
 
   function updateConditionalFields() {
     const showConsulting = consultantToggle.checked;
-    const showTeam = teamToggle.checked;
-    const showPhoto = showConsulting || showTeam;
     document.getElementById('consultant-fields').className =
       'form-conditional' + (showConsulting ? ' visible' : '');
-    document.getElementById('team-fields').className =
-      'form-conditional' + (showTeam ? ' visible' : '');
-    document.getElementById('photo-field').style.display = showPhoto ? '' : 'none';
+    document.getElementById('photo-field').style.display = showConsulting ? '' : 'none';
   }
 
   consultantToggle.addEventListener('change', updateConditionalFields);
-  teamToggle.addEventListener('change', updateConditionalFields);
 
   // Step 3: submit application
   document.getElementById('submit-btn').addEventListener('click', async function () {
@@ -313,12 +290,9 @@
     const discord_handle = document.getElementById('discord-input').value.trim();
     const tags = Array.from(document.querySelectorAll('input[name="tag"]:checked')).map(el => el.value);
     const requestConsultant = document.getElementById('consultant-toggle').checked;
-    const requestTeam = document.getElementById('team-toggle').checked;
     const expertise = document.getElementById('expertise-input').value.trim();
     const contact = document.getElementById('contact-input').value.trim();
     const portfolio = document.getElementById('portfolio-input').value.trim();
-    const teamTitle = document.getElementById('team-title-input').value.trim();
-    const teamDescription = document.getElementById('team-description-input').value.trim();
     const photo = document.getElementById('photo-input').value.trim();
     const notes = document.getElementById('notes-input').value.trim();
 
@@ -326,6 +300,7 @@
     if (!bio) { showMsg('step3-msg', 'A short bio is required.', true); return; }
     if (!tags.length) { showMsg('step3-msg', 'Please select at least one qualifying event.', true); return; }
     if (requestConsultant && !expertise) { showMsg('step3-msg', 'Please list your areas of expertise for the consulting directory.', true); return; }
+    if (requestConsultant && !photo) { showMsg('step3-msg', 'A profile photo URL is required for the consulting directory.', true); return; }
 
     this.disabled = true;
     this.textContent = 'Submitting…';
@@ -340,12 +315,9 @@
           name, bio, website, city, discord_handle,
           qualifying_events: tags,
           request_consultant: requestConsultant,
-          request_team: requestTeam,
           consulting_expertise: expertise,
           consulting_contact: contact,
           consulting_portfolio: portfolio,
-          applicant_team_title: teamTitle,
-          applicant_team_description: teamDescription,
           photo_url: photo,
           applicant_notes: notes,
         }),

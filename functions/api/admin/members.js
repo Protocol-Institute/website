@@ -103,7 +103,7 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { email, action, admin_notes, slug } = body;
+  const { email, action, admin_notes, slug, consultant_approved } = body;
 
   if (!email || !['approve', 'reject', 'resend_welcome'].includes(action)) {
     return Response.json({ error: 'email and action required' }, { status: 400 });
@@ -158,7 +158,7 @@ export async function onRequestPost({ request, env }) {
     req.bio || null,
     req.website || null,
     req.photo_url || null,
-    req.request_consultant ? 1 : 0,
+    (req.request_consultant && consultant_approved !== false) ? 1 : 0,
     req.request_team ? 1 : 0,
     req.consulting_expertise || null,
     req.consulting_contact || null,

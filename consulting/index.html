@@ -75,11 +75,16 @@
     return escHtml(contact);
   }
 
+  function initials(name) {
+    return String(name || '').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
   function renderConsultant(m) {
     const src = photoSrc(m.photo_r2_key);
+    const placeholderHtml = `<div class="consulting-photo--placeholder" aria-label="${escHtml(m.name)}"><span class="consulting-photo-initials">${escHtml(initials(m.name))}</span></div>`;
     const photoHtml = src
-      ? `<img src="${escHtml(src)}" alt="${escHtml(m.name)}">`
-      : `<div class="consulting-photo--placeholder"><span>Photo</span><span class="consulting-photo-hint">240 × 240 px</span></div>`;
+      ? `<img src="${escHtml(src)}" alt="${escHtml(m.name)}" onerror="this.parentNode.innerHTML='${placeholderHtml.replace(/'/g, "\\'")}'">`
+      : placeholderHtml;
 
     const roleHtml = m.team_title
       ? `<div class="consulting-role">${escHtml(m.team_title)}</div>`

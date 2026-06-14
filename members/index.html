@@ -28,7 +28,7 @@
       <div class="members-filter" id="filter-bar">
         <button class="filter-btn active" data-filter="">All</button>
         <button class="filter-btn" data-filter="team">Team</button>
-        <button class="filter-btn" data-filter="consultant">Consultants</button>
+        <button class="filter-btn" data-filter="community_lead">Community Leads</button>
         <button class="filter-btn" data-filter="tag_sop23">SoP '23</button>
         <button class="filter-btn" data-filter="tag_sop24">SoP '24</button>
         <button class="filter-btn" data-filter="tag_sop25">SoP '25</button>
@@ -74,13 +74,14 @@
 
   function renderMember(m) {
     const tags = [];
-    if (m.is_team) tags.push({ key: 'is_team', cls: 'member-tag--team' });
-    if (m.is_consultant) tags.push({ key: 'is_consultant', cls: '' });
+    if (m.tier === 'team') tags.push({ key: 'is_team', cls: 'member-tag--team' });
+    if (m.tier === 'community_lead' && m.community_lead_title)
+      tags.push({ key: null, label: escHtml(m.community_lead_title), cls: 'member-tag--community-lead' });
     if (m.type === 'ai') tags.push({ key: null, label: 'AI', cls: 'member-tag--ai' });
     EVENT_TAGS.forEach(k => { if (m[k]) tags.push({ key: k, cls: '' }); });
 
     const tagsHtml = tags.map(t =>
-      `<span class="member-tag ${t.cls}">${t.label || TAG_LABELS[t.key]}</span>`
+      `<span class="member-tag ${t.cls}">${t.label !== undefined ? t.label : TAG_LABELS[t.key]}</span>`
     ).join('');
 
     const detailUrl = DETAIL_PAGES[m.slug] || null;
@@ -104,7 +105,7 @@
     ].filter(Boolean).join(' · ');
     const memberMetaEl = metaEl ? `<p class="member-website" style="color:#8A8A8A;">${metaEl}</p>` : '';
 
-    return `<li class="member-item" id="${escHtml(m.slug)}" data-team="${m.is_team}" data-consultant="${m.is_consultant}"
+    return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
               ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
       <h2 class="member-name">${nameEl}</h2>
       ${roleEl}
@@ -127,8 +128,8 @@
     activeFilter = filter;
     if (!filter) { render(allMembers); return; }
     const filtered = allMembers.filter(m => {
-      if (filter === 'team') return m.is_team;
-      if (filter === 'consultant') return m.is_consultant;
+      if (filter === 'team') return m.tier === 'team';
+      if (filter === 'community_lead') return m.tier === 'community_lead';
       return m[filter];
     });
     render(filtered);

@@ -85,7 +85,14 @@
         ${r.request_team ? '<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting team listing</strong></div>' : ''}
         ${r.applicant_team_title ? `<div class="request-field" style="padding-left:1rem;"><strong>Title:</strong> ${escHtml(r.applicant_team_title)}</div>` : ''}
         ${r.applicant_team_description ? `<div class="request-field" style="padding-left:1rem;"><strong>Role desc:</strong> ${escHtml(r.applicant_team_description)}</div>` : ''}
-        ${r.request_consultant ? '<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>' : ''}
+        ${r.request_consultant ? `<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>
+        <div class="request-field" style="padding-left:1rem;">
+          <label style="font-size:0.85rem;cursor:pointer;">
+            <input type="checkbox" class="consultant-approve-checkbox" data-email="${escHtml(r.email)}" checked>
+            Approve consultant status
+          </label>
+          <span style="font-size:0.78rem;color:#8A8A8A;margin-left:0.5rem;">(allowed by default; uncheck to approve membership only)</span>
+        </div>` : ''}
         ${r.consulting_expertise ? `<div class="request-field" style="padding-left:1rem;"><strong>Expertise:</strong> ${escHtml(r.consulting_expertise)}</div>` : ''}
         ${r.consulting_contact ? `<div class="request-field" style="padding-left:1rem;"><strong>Contact:</strong> ${escHtml(r.consulting_contact)}</div>` : ''}
         ${r.photo_url ? `<div class="request-field"><strong>Photo URL:</strong> <a href="${escHtml(r.photo_url)}" target="_blank">${escHtml(r.photo_url)}</a></div>` : ''}
@@ -124,6 +131,8 @@
     const body = { email, action };
     if (slugInput && slugInput.value.trim()) body.slug = slugInput.value.trim();
     if (notesInput && notesInput.value.trim()) body.admin_notes = notesInput.value.trim();
+    const consultantCheckbox = document.querySelector(`.consultant-approve-checkbox[data-email="${CSS.escape(email)}"]`);
+    if (consultantCheckbox) body.consultant_approved = consultantCheckbox.checked;
 
     const res = await fetch('/api/admin/members', {
       method: 'POST',

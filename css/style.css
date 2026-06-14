@@ -1081,25 +1081,18 @@ a:hover {
 
 .consulting-photo--placeholder {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
+  background: #EDEAE5;
+  border-radius: 4px;
 }
 
-.consulting-photo--placeholder span {
-  font-size: 0.7rem;
-  color: #C0BCBA;
+.consulting-photo-initials {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #A0A09A;
   letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.consulting-photo-hint {
-  font-size: 0.62rem !important;
-  color: #D0CDC9 !important;
-  text-transform: none !important;
-  letter-spacing: 0.02em !important;
+  font-family: 'Cormorant Garamond', serif;
 }
 
 .consulting-details {
@@ -1391,6 +1384,11 @@ a:hover {
 .member-tag--ai {
   color: #8A5A2A;
   border-color: #D4A96A;
+}
+
+.member-tag--community-lead {
+  color: #5A3A8A;
+  border-color: #9A7ACC;
 }
 
 .member-empty {

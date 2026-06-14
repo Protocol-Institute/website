@@ -7,8 +7,8 @@ export const EVENT_TAGS = [
   'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer',
 ];
 
-// Includes role flags for filter/validation in public API
-export const VALID_TAGS = ['is_team', 'is_consultant', ...EVENT_TAGS];
+// Includes role flags and tier values for filter/validation in public API
+export const VALID_TAGS = ['is_team', 'is_consultant', 'team', 'community_lead', ...EVENT_TAGS];
 
 export const TAG_ALIASES = {
   team: 'is_team',
