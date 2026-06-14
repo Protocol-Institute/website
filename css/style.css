@@ -104,7 +104,7 @@ a:hover {
 }
 
 .nav-member-menu { position: relative; align-self: center; }
-.nav-member-toggle { cursor: pointer; }
+.nav-member-toggle { cursor: pointer; background: none; border: none; padding: 0; }
 .nav-member-caret { font-size: 0.75em; opacity: 0.65; margin-left: 0.15em; }
 .nav-member-dropdown {
   position: absolute;
@@ -150,7 +150,7 @@ a:hover {
   background: #D85A30;
   padding: 0.15em 0.5em;
   border-radius: 3px;
-  line-height: 1.5;
+  line-height: 1;
   vertical-align: middle;
 }
 
