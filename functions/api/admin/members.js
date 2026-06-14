@@ -57,9 +57,10 @@ async function sendWelcomeEmail(env, email, firstName) {
   await sendEmail(env, email,
     'Welcome to the Protocol Institute member network',
     `<p>Hi ${firstName},</p>
-<p>Your application to the Protocol Institute member network has been approved. You can now log in to view and update your profile.</p>
+<p>Welcome! Your application to the Protocol Institute member network has been approved. You can now log in to view and update your profile.</p>
 <p>Your sign-in code is: <strong style="font-size:1.4em;letter-spacing:0.1em">${pin}</strong></p>
 <p>This code expires in 3 days. If it expires, you can always request a new one at <a href="https://protocol-institute.org/members/join">protocol-institute.org/members/join</a>.</p>
+<p>You now have access to members-only features of the site, such as submitting <a href="https://protocol-institute.org/challenges">Challenges</a>. More features will be added in the future. If this email landed in spam, be sure to mark it not-spam.</p>
 <p>— Protocol Institute</p>`
   );
 
