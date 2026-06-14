@@ -7,12 +7,14 @@ Run from repo root:
   python3 sync_sig_meetings.py
 
 The output JSON drives the client-side schedule display on /sigs and each SIG page.
+Each SIG entry stores pre-expanded UTC occurrence datetimes so the browser needs
+no arithmetic — it just finds the first future entry and uses toLocaleTimeString().
 """
 
 import json
 import re
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
@@ -41,6 +43,18 @@ BYDAY_MAP = {
 }
 
 ALL_SLUGS = ["sigfpt", "mrg", "sigpfb", "protfisig", "drg", "sigpsy"]
+
+# Manual entries for SIGs not yet on the calendar.
+# DTSTART_RAW: YYYYMMDDTHHMMSS in the given TZID (or UTC if TZID is None).
+MANUAL_SIGS = {
+    "mrg": {
+        "day": "Thursday",
+        "interval_weeks": 2,
+        "DTSTART_RAW": "20260605T143000",
+        "TZID": None,  # UTC
+        "_calendar_summary": "manually set — not yet on SIGs calendar",
+    },
+}
 
 
 def slug_for(summary):
@@ -82,16 +96,6 @@ def parse_ical_blocks(text):
     return events
 
 
-def dtstart_to_utc(raw, tzid):
-    dt = datetime.strptime(raw, "%Y%m%dT%H%M%S")
-    if tzid:
-        try:
-            dt = dt.replace(tzinfo=ZoneInfo(tzid)).astimezone(timezone.utc)
-        except Exception as e:
-            print(f"    TZ warning ({tzid}): {e}")
-    return dt
-
-
 def parse_rrule(rrule_str):
     """Return (interval_weeks, day_name) or None."""
     parts = dict(p.split('=', 1) for p in rrule_str.split(';') if '=' in p)
@@ -101,6 +105,45 @@ def parse_rrule(rrule_str):
     byday = re.sub(r'^[+-]?\d+', '', parts.get('BYDAY', ''))
     day = BYDAY_MAP.get(byday)
     return (interval, day) if day else None
+
+
+def expand_occurrences(dtstart_raw, tzid, interval_weeks, count=30):
+    """
+    Expand the recurring event to the next `count` UTC ISO datetimes.
+
+    Works with naive datetimes in the source timezone so DST transitions
+    are handled correctly: each step stays at the same local time-of-day
+    (e.g. always 10:00 AM Pacific) and only the UTC offset varies.
+    """
+    dt_naive = datetime.strptime(dtstart_raw, "%Y%m%dT%H%M%S")
+    step = timedelta(weeks=interval_weeks)
+
+    if tzid:
+        try:
+            tz = ZoneInfo(tzid)
+            def to_utc(naive):
+                return naive.replace(tzinfo=tz).astimezone(timezone.utc)
+        except Exception as e:
+            print(f"    TZ warning ({tzid}): {e} — treating as UTC")
+            def to_utc(naive):
+                return naive.replace(tzinfo=timezone.utc)
+    else:
+        def to_utc(naive):
+            return naive.replace(tzinfo=timezone.utc)
+
+    # Advance to start of today UTC so we don't emit stale entries
+    today_utc = datetime.now(timezone.utc).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    while to_utc(dt_naive) < today_utc:
+        dt_naive += step
+
+    results = []
+    for _ in range(count):
+        results.append(to_utc(dt_naive).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        dt_naive += step
+
+    return results
 
 
 def main():
@@ -118,7 +161,6 @@ def main():
         dtstart_raw = ev.get('DTSTART_RAW')
         dtstart_tzid = ev.get('DTSTART_TZID')
 
-        # Skip one-off instances (exceptions to a series have no RRULE)
         if not rrule or not dtstart_raw:
             continue
 
@@ -136,19 +178,29 @@ def main():
             continue
 
         interval, day = rr
-        dt_utc = dtstart_to_utc(dtstart_raw, dtstart_tzid)
-        time_utc = dt_utc.strftime("%H:%M")
-        # Anchor is the UTC calendar date of this particular occurrence
-        anchor = dt_utc.strftime("%Y-%m-%d")
+        occurrences = expand_occurrences(dtstart_raw, dtstart_tzid, interval)
 
         sigs[slug] = {
             "day": day,
-            "time_utc": time_utc,
             "interval_weeks": interval,
-            "anchor": anchor,
+            "occurrences": occurrences,
             "_calendar_summary": summary,
         }
-        print(f"  {slug}: {day} {time_utc} UTC every {interval}w (anchor {anchor})")
+        print(f"  {slug}: {day} every {interval}w — {len(occurrences)} occurrences from {occurrences[0]}")
+
+    # Fill in manual entries for SIGs not on the calendar
+    for slug, manual in MANUAL_SIGS.items():
+        if slug not in sigs:
+            occurrences = expand_occurrences(
+                manual["DTSTART_RAW"], manual["TZID"], manual["interval_weeks"]
+            )
+            sigs[slug] = {
+                "day": manual["day"],
+                "interval_weeks": manual["interval_weeks"],
+                "occurrences": occurrences,
+                "_calendar_summary": manual["_calendar_summary"],
+            }
+            print(f"  {slug}: using manual entry — {len(occurrences)} occurrences from {occurrences[0]}")
 
     output = {
         "synced": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
@@ -161,8 +213,8 @@ def main():
 
     missing = [s for s in ALL_SLUGS if s not in sigs]
     if missing:
-        print(f"\nWARNING: no calendar entry found for: {', '.join(missing)}")
-        print("Add these manually to data/sig-meetings.json if needed.")
+        print(f"\nWARNING: no entry found for: {', '.join(missing)}")
+        print("Add these to MANUAL_SIGS in sync_sig_meetings.py.")
 
 
 if __name__ == "__main__":

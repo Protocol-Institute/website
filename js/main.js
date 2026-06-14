@@ -140,42 +140,38 @@ var FOOTER_HTML =
 
   var MONTHS = ['January','February','March','April','May','June',
                 'July','August','September','October','November','December'];
-
-  function nextMeeting(anchor, intervalWeeks) {
-    var ms = intervalWeeks * 7 * 86400000;
-    var d = new Date(anchor + 'T00:00:00Z');
-    var today = Date.UTC(
-      new Date().getUTCFullYear(),
-      new Date().getUTCMonth(),
-      new Date().getUTCDate()
-    );
-    while (d.getTime() < today) d = new Date(d.getTime() + ms);
-    return d;
-  }
-
   var DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  function localTimeStr(next, timeUtc) {
-    var parts = timeUtc.split(':');
-    var dt = new Date(Date.UTC(
-      next.getUTCFullYear(), next.getUTCMonth(), next.getUTCDate(),
-      parseInt(parts[0], 10), parseInt(parts[1], 10)
-    ));
-    var localTime = dt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-    var utcDow = dt.getUTCDay();
-    var localDow = dt.getDay();
-    var dayNote = (localDow !== utcDow) ? ' ' + DOW[localDow] : '';
-    return localTime + dayNote;
-  }
-
   function fmt(sig) {
-    var next = nextMeeting(sig.anchor, sig.interval_weeks);
+    if (!sig.occurrences || !sig.occurrences.length) return '';
+    var now = new Date();
+    var next = null;
+    for (var i = 0; i < sig.occurrences.length; i++) {
+      var d = new Date(sig.occurrences[i]);
+      if (d >= now) { next = d; break; }
+    }
+    if (!next) return '';
+
     var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
-    var day = sig.day + 's';
-    var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
-    var local = localTimeStr(next, sig.time_utc);
-    return 'Meets ' + freq + ' on ' + day + ' at ' + sig.time_utc +
-           ' UTC (' + local + ' your local time) on Discord voice channel.' +
+    var days = sig.day + 's';
+
+    // UTC time from the actual occurrence (correct across DST boundaries)
+    var utcH = String(next.getUTCHours()).padStart(2, '0');
+    var utcM = String(next.getUTCMinutes()).padStart(2, '0');
+    var utcTime = utcH + ':' + utcM;
+
+    // Local time via browser timezone
+    var localTime = next.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
+    // Append local day name only when the meeting crosses midnight for this viewer
+    var localDow = DOW[next.getDay()];
+    var utcDow = DOW[next.getUTCDay()];
+    var dayNote = localDow !== utcDow ? ' ' + localDow : '';
+
+    var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
+
+    return 'Meets ' + freq + ' on ' + days + ' at ' + utcTime +
+           ' UTC (' + localTime + dayNote + ' your local time) on Discord voice channel.' +
            ' <strong>Next meeting on ' + nextStr + '.</strong>';
   }
 

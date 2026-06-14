@@ -21,156 +21,274 @@
         <h1>Programs</h1>
       </div>
 
-      <p class="programs-intro">Each program is organized around <strong>tracks</strong> (ongoing collaborative activity streams), <strong>projects</strong> (output-bearing activities), and <strong>infrastructure</strong> (shared support resources).</p>
+      <div class="view-tabs" role="tablist">
+        <button class="view-tab" id="tab-programs" role="tab" aria-selected="true" aria-controls="view-programs">Programs</button>
+        <button class="view-tab" id="tab-projects" role="tab" aria-selected="false" aria-controls="view-projects">Projects</button>
+      </div>
 
-      <ul class="project-list" role="list">
+      <div id="view-programs" role="tabpanel" aria-labelledby="tab-programs">
+        <p class="programs-intro">Each program is organized around <strong>tracks</strong> (ongoing collaborative activity streams), <strong>projects</strong> (output-bearing activities), and <strong>infrastructure</strong> (shared support resources).</p>
 
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Protocolized</span>
-            <span class="project-status status-active">Active</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">The editorial and publishing arm of the protocol research community — essays, science fiction, interviews, and research artifacts examining how protocols shape coordination, infrastructure, and institutional life.</p>
-          <div class="program-body">
-            <div class="category-group">
-              <span class="category-label">Tracks</span>
-              <ul class="category-items">
-                <li><a href="https://protocolized.summerofprotocols.com" target="_blank" rel="noopener noreferrer">Substack</a> <span class="track-sep">&mdash;</span> essays, research, and editorial on protocol themes</li>
-                <li><a href="https://www.youtube.com/@protocol-institute" target="_blank" rel="noopener noreferrer">Youtube channel</a> <span class="track-sep">&mdash;</span> talks, discussions, and event recordings</li>
-                <li><a href="https://protocolized.io/books" target="_blank" rel="noopener noreferrer">Books</a> <span class="track-sep">&mdash;</span> long-form PI publications on protocol research</li>
-              </ul>
-            </div>
-            <div class="category-group">
-              <span class="category-label">Infrastructure</span>
-              <ul class="category-items">
-                <li><a href="https://protocolized.io/resources/" target="_blank" rel="noopener noreferrer">Resource archive</a> <span class="track-sep">&mdash;</span> curated library of protocol research outputs</li>
-              </ul>
-            </div>
-            <div class="category-group">
-              <span class="category-label">Projects</span>
-              <ul class="category-items">
-                <!-- TODO: update Jamverse description once copy is ready -->
-                <li><a href="/jamverse">Jamverse</a> <span class="track-sep">&mdash;</span> near-future protocol fiction extended universe <span class="track-soon">coming soon</span></li>
-              </ul>
-            </div>
-          </div>
-        </li>
+        <ul class="project-list" role="list">
 
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Research</span>
-            <span class="project-status status-active">Active</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">Protocol research activities — convened through Special Interest Groups, supported by an open challenge index, and extended by individual member projects.</p>
-          <div class="program-body">
-            <div class="category-group">
-              <span class="category-label">Tracks</span>
-              <ul class="category-items">
-                <li><a href="/sigs/sigfpt">SIGFPT</a> <span class="track-sep">&mdash;</span> rigorous mathematical foundations for protocol theory</li>
-                <li><a href="/sigs/mrg">MRG</a> <span class="track-sep">&mdash;</span> protocols of memory, storage, and institutional recall</li>
-                <li><a href="/sigs/sigpfb">SIGPfB</a> <span class="track-sep">&mdash;</span> protocol design in business and organizational contexts</li>
-                <li><a href="/sigs/protfisig">ProtFiSIG</a> <span class="track-sep">&mdash;</span> protocol concepts explored through speculative fiction</li>
-                <li><a href="/sigs/drg">DRG</a> <span class="track-sep">&mdash;</span> onchain robotics protocols designed and tested on real hardware</li>
-                <li><a href="/sigs/sigpsy">SIGPSY</a> <span class="track-sep">&mdash;</span> long-range historical modeling through protocol and complexity theory</li>
-              </ul>
+          <li class="project-item">
+            <div class="project-meta">
+              <span class="project-name">Protocolized</span>
+              <span class="project-status status-active">Active</span>
+              <span class="project-category">In-House</span>
             </div>
-            <div class="category-group">
-              <span class="category-label">Infrastructure</span>
-              <ul class="category-items">
-                <li><a href="/challenges">Challenges</a> <span class="track-sep">&mdash;</span> open research problem index</li>
-              </ul>
+            <p class="project-description">The editorial and publishing arm of the protocol research community — essays, science fiction, interviews, and research artifacts examining how protocols shape coordination, infrastructure, and institutional life.</p>
+            <div class="program-body">
+              <div class="category-group">
+                <span class="category-label">Tracks</span>
+                <ul class="category-items">
+                  <li><a href="https://protocolized.summerofprotocols.com" target="_blank" rel="noopener noreferrer">Substack</a> <span class="track-sep">&mdash;</span> essays, research, and editorial on protocol themes</li>
+                  <li><a href="https://www.youtube.com/@protocol-institute" target="_blank" rel="noopener noreferrer">Youtube channel</a> <span class="track-sep">&mdash;</span> talks, discussions, and event recordings</li>
+                  <li><a href="https://protocolized.io/books" target="_blank" rel="noopener noreferrer">Books</a> <span class="track-sep">&mdash;</span> long-form PI publications on protocol research</li>
+                </ul>
+              </div>
+              <div class="category-group">
+                <span class="category-label">Infrastructure</span>
+                <ul class="category-items">
+                  <li><a href="https://protocolized.io/resources/" target="_blank" rel="noopener noreferrer">Resource archive</a> <span class="track-sep">&mdash;</span> curated library of protocol research outputs</li>
+                </ul>
+              </div>
+              <div class="category-group">
+                <span class="category-label">Projects</span>
+                <ul class="category-items">
+                  <!-- TODO: update Jamverse description once copy is ready -->
+                  <li><a href="/jamverse">Jamverse</a> <span class="track-sep">&mdash;</span> near-future protocol fiction extended universe <span class="track-soon">coming soon</span></li>
+                </ul>
+              </div>
             </div>
-            <div class="category-group">
-              <span class="category-label">Projects</span>
-              <ul class="category-items">
-                <li><a href="/cogergo">Cognitive Ergonomics for AI</a> <span class="track-sep">&mdash;</span> inventory of cognitive ergonomic habits for AI use</li>
-                <li><a href="/protocolized-dev">protocolized.dev</a> <span class="track-sep">&mdash;</span> AI adoption protocols for orgs</li>
-                <li><a href="/worldmachines">World Machines</a> <span class="track-sep">&mdash;</span> collaborative platform for psychohistorical modeling</li>
-              </ul>
-            </div>
-          </div>
-        </li>
+          </li>
 
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">AI Ops</span>
-            <span class="project-status status-active">Active</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">AI tools and agents that extend the Protocol Institute's research capacity — building the computational scaffolding for exploring, synthesizing, and growing the protocol corpus.</p>
-          <div class="program-body">
-            <div class="category-group">
-              <span class="category-label">Infrastructure</span>
-              <ul class="category-items">
-                <li><a href="/c3po">C3PO</a> <span class="track-sep">&mdash;</span> retrieval-augmented AI research assistant for the PI corpus</li>
-                <li><a href="/humboldt">Humboldt</a> <span class="track-sep">&mdash;</span> autonomous research agent for new nature inquiry</li>
-              </ul>
+          <li class="project-item">
+            <div class="project-meta">
+              <span class="project-name">Research</span>
+              <span class="project-status status-active">Active</span>
+              <span class="project-category">In-House</span>
             </div>
-          </div>
-        </li>
-
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Events</span>
-            <span class="project-status status-active">Active</span>
-            <span class="project-category">In-House</span>
-          </div>
-          <p class="project-description">Symposia, workshops, retreats, and convenings organized or co-organized by the Protocol Institute — bringing together researchers, practitioners, and institutions around protocol design and research.</p>
-          <div class="program-body">
-            <div class="category-group">
-              <span class="category-label">Projects</span>
-              <ul class="category-items">
-                <li><a href="/events/protocol-symposium-2026">Protocol Symposium 2026</a> <span class="track-sep">&mdash;</span> Symposium <span class="track-soon">upcoming</span></li>
-                <li><a href="/events/protocol-symposium-2025">Protocol Symposium 2025</a> <span class="track-sep">&mdash;</span> Symposium</li>
-                <li><a href="/events/bridge-atlas-devconnect-2025">Bridge Atlas at Devconnect 2025</a> <span class="track-sep">&mdash;</span> Conference &middot; Buenos Aires</li>
-                <li><a href="/events/edge-esmeralda-workshop-2025">Edge Esmeralda Workshop 2025</a> <span class="track-sep">&mdash;</span> Workshop &middot; Healdsburg, CA</li>
-                <li><a href="/events/khlongs-subaks-bangkok-2025">Khlongs and Subaks Workshop 2025</a> <span class="track-sep">&mdash;</span> Workshop &middot; Bangkok</li>
-                <li><a href="/events/protocol-symposium-2024">Protocol Symposium 2024</a> <span class="track-sep">&mdash;</span> Symposium</li>
-                <li><a href="/events/edge-lanna-workshop-2024">Edge Lanna Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Chiang Mai</li>
-                <li><a href="/events/edge-esmeralda-workshop-2024">Edge Esmeralda Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Healdsburg, CA</li>
-                <li><a href="/events/datus-nusas-singapore-2024">Datus and Nusas Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Singapore</li>
-                <li><a href="/events/researcher-retreat-seattle-2023">Researcher Retreat 2023</a> <span class="track-sep">&mdash;</span> Retreat &middot; Seattle</li>
-              </ul>
+            <p class="project-description">Protocol research activities — convened through Special Interest Groups, supported by an open challenge index, and extended by individual member projects.</p>
+            <div class="program-body">
+              <div class="category-group">
+                <span class="category-label">Tracks</span>
+                <ul class="category-items">
+                  <li><a href="/sigs/sigfpt">SIGFPT</a> <span class="track-sep">&mdash;</span> rigorous mathematical foundations for protocol theory</li>
+                  <li><a href="/sigs/mrg">MRG</a> <span class="track-sep">&mdash;</span> protocols of memory, storage, and institutional recall</li>
+                  <li><a href="/sigs/sigpfb">SIGPfB</a> <span class="track-sep">&mdash;</span> protocol design in business and organizational contexts</li>
+                  <li><a href="/sigs/protfisig">ProtFiSIG</a> <span class="track-sep">&mdash;</span> protocol concepts explored through speculative fiction</li>
+                  <li><a href="/sigs/drg">DRG</a> <span class="track-sep">&mdash;</span> onchain robotics protocols designed and tested on real hardware</li>
+                  <li><a href="/sigs/sigpsy">SIGPSY</a> <span class="track-sep">&mdash;</span> long-range historical modeling through protocol and complexity theory</li>
+                </ul>
+              </div>
+              <div class="category-group">
+                <span class="category-label">Infrastructure</span>
+                <ul class="category-items">
+                  <li><a href="/challenges">Challenges</a> <span class="track-sep">&mdash;</span> open research problem index</li>
+                </ul>
+              </div>
+              <div class="category-group">
+                <span class="category-label">Projects</span>
+                <ul class="category-items">
+                  <li><a href="/cogergo">Cognitive Ergonomics for AI</a> <span class="track-sep">&mdash;</span> inventory of cognitive ergonomic habits for AI use</li>
+                  <li><a href="/protocolized-dev">protocolized.dev</a> <span class="track-sep">&mdash;</span> AI adoption protocols for orgs</li>
+                  <li><a href="/worldmachines">World Machines</a> <span class="track-sep">&mdash;</span> collaborative platform for psychohistorical modeling</li>
+                </ul>
+              </div>
             </div>
-          </div>
-        </li>
+          </li>
 
-        <li class="project-item">
-          <div class="project-meta">
-            <span class="project-name">Collaborations</span>
-            <span class="project-status status-active">Active</span>
-          </div>
-          <p class="project-description">Research activities conducted in partnership with external organizations and institutions.</p>
-          <div class="program-body">
-            <div class="category-group">
-              <span class="category-label">Tracks</span>
-              <ul class="category-items">
-                <li><a href="/longnow">Protocols for the Long Now</a> <span class="track-sep">&mdash;</span> protocols for deep-time thinking with the Long Now Foundation</li>
-              </ul>
+          <li class="project-item">
+            <div class="project-meta">
+              <span class="project-name">AI Ops</span>
+              <span class="project-status status-active">Active</span>
+              <span class="project-category">In-House</span>
             </div>
-          </div>
-        </li>
+            <p class="project-description">AI tools and agents that extend the Protocol Institute's research capacity — building the computational scaffolding for exploring, synthesizing, and growing the protocol corpus.</p>
+            <div class="program-body">
+              <div class="category-group">
+                <span class="category-label">Infrastructure</span>
+                <ul class="category-items">
+                  <li><a href="/c3po">C3PO</a> <span class="track-sep">&mdash;</span> retrieval-augmented AI research assistant for the PI corpus</li>
+                  <li><a href="/humboldt">Humboldt</a> <span class="track-sep">&mdash;</span> autonomous research agent for new nature inquiry</li>
+                </ul>
+              </div>
+            </div>
+          </li>
 
-      </ul>
+          <li class="project-item">
+            <div class="project-meta">
+              <span class="project-name">Events</span>
+              <span class="project-status status-active">Active</span>
+              <span class="project-category">In-House</span>
+            </div>
+            <p class="project-description">Symposia, workshops, retreats, and convenings organized or co-organized by the Protocol Institute — bringing together researchers, practitioners, and institutions around protocol design and research.</p>
+            <div class="program-body">
+              <div class="category-group">
+                <span class="category-label">Projects</span>
+                <ul class="category-items">
+                  <li><a href="/events/protocol-symposium-2026">Protocol Symposium 2026</a> <span class="track-sep">&mdash;</span> Symposium <span class="track-soon">upcoming</span></li>
+                  <li><a href="/events/protocol-symposium-2025">Protocol Symposium 2025</a> <span class="track-sep">&mdash;</span> Symposium</li>
+                  <li><a href="/events/bridge-atlas-devconnect-2025">Bridge Atlas at Devconnect 2025</a> <span class="track-sep">&mdash;</span> Conference &middot; Buenos Aires</li>
+                  <li><a href="/events/edge-esmeralda-workshop-2025">Edge Esmeralda Workshop 2025</a> <span class="track-sep">&mdash;</span> Workshop &middot; Healdsburg, CA</li>
+                  <li><a href="/events/khlongs-subaks-bangkok-2025">Khlongs and Subaks Workshop 2025</a> <span class="track-sep">&mdash;</span> Workshop &middot; Bangkok</li>
+                  <li><a href="/events/protocol-symposium-2024">Protocol Symposium 2024</a> <span class="track-sep">&mdash;</span> Symposium</li>
+                  <li><a href="/events/edge-lanna-workshop-2024">Edge Lanna Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Chiang Mai</li>
+                  <li><a href="/events/edge-esmeralda-workshop-2024">Edge Esmeralda Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Healdsburg, CA</li>
+                  <li><a href="/events/datus-nusas-singapore-2024">Datus and Nusas Workshop 2024</a> <span class="track-sep">&mdash;</span> Workshop &middot; Singapore</li>
+                  <li><a href="/events/researcher-retreat-seattle-2023">Researcher Retreat 2023</a> <span class="track-sep">&mdash;</span> Retreat &middot; Seattle</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+
+          <li class="project-item">
+            <div class="project-meta">
+              <span class="project-name">Collaborations</span>
+              <span class="project-status status-active">Active</span>
+            </div>
+            <p class="project-description">Research activities conducted in partnership with external organizations and institutions.</p>
+            <div class="program-body">
+              <div class="category-group">
+                <span class="category-label">Tracks</span>
+                <ul class="category-items">
+                  <li><a href="/longnow">Protocols for the Long Now</a> <span class="track-sep">&mdash;</span> protocols for deep-time thinking with the Long Now Foundation</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+
+        </ul>
+      </div><!-- #view-programs -->
+
+      <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
+        <p class="programs-intro">All activities flattened to individual items. Program and category shown as tags.</p>
+        <ul class="project-list" id="projects-flat-list" role="list"></ul>
+      </div>
 
     </div>
   </main>
 
-  <footer class="site-footer">
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="/team">Team</a>
-      <a href="/network">Network</a>
-      <a href="/consulting">Consulting</a>
-      <a href="/symposium-2026">Symposium</a>
-      <a href="/contact">Contact</a>
-    </nav>
-    <p>&copy; 2025 The Protocol Institute</p>
-  </footer>
+  <footer class="site-footer"></footer>
 
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  var CAT_SINGULAR = { 'Tracks': 'Track', 'Infrastructure': 'Infrastructure', 'Projects': 'Project' };
+
+  function escHtml(s) {
+    return String(s || '').replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function buildFlatList() {
+    var items = [];
+    document.querySelectorAll('#view-programs .project-item').forEach(function (programItem) {
+      var programName = programItem.querySelector('.project-name').textContent.trim();
+      programItem.querySelectorAll('.category-group').forEach(function (group) {
+        var categoryLabel = group.querySelector('.category-label').textContent.trim();
+        group.querySelectorAll('.category-items li').forEach(function (li) {
+          var a = li.querySelector('a');
+          var title = a ? a.textContent.trim() : li.textContent.split('—')[0].trim();
+          var href = a ? a.getAttribute('href') : null;
+          var isExternal = href && href.startsWith('http');
+
+          // Description: text nodes after the track-sep span
+          var trackSep = li.querySelector('.track-sep');
+          var desc = '';
+          if (trackSep) {
+            var node = trackSep.nextSibling;
+            var parts = [];
+            while (node) {
+              if (node.nodeType === 3) {
+                var t = node.textContent.trim();
+                if (t) parts.push(t);
+              }
+              node = node.nextSibling;
+            }
+            desc = parts.join(' ').trim();
+          }
+
+          var trackSoon = li.querySelector('.track-soon');
+          var badge = trackSoon ? trackSoon.textContent.trim() : null;
+
+          items.push({ title: title, href: href, isExternal: isExternal, desc: desc, badge: badge, programName: programName, categoryLabel: categoryLabel });
+        });
+      });
+    });
+    return items;
+  }
+
+  function renderFlatList(items) {
+    return items.map(function (item) {
+      var cat = CAT_SINGULAR[item.categoryLabel] || item.categoryLabel;
+      var titleHtml = item.href
+        ? '<a href="' + escHtml(item.href) + '" class="project-name-link"' +
+          (item.isExternal ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+          '<span class="project-name">' + escHtml(item.title) + '</span></a>'
+        : '<span class="project-name">' + escHtml(item.title) + '</span>';
+
+      var badgeHtml = item.badge ? ' <span class="track-soon">' + escHtml(item.badge) + '</span>' : '';
+
+      return '<li class="project-item">' +
+        '<div class="project-meta">' +
+          titleHtml +
+          '<span class="project-category">' + escHtml(item.programName) + '</span>' +
+          '<span class="project-category">' + escHtml(cat) + '</span>' +
+          badgeHtml +
+        '</div>' +
+        (item.desc ? '<p class="project-description">' + escHtml(item.desc) + '</p>' : '') +
+      '</li>';
+    }).join('');
+  }
+
+  var tabPrograms = document.getElementById('tab-programs');
+  var tabProjects = document.getElementById('tab-projects');
+  var panelPrograms = document.getElementById('view-programs');
+  var panelProjects = document.getElementById('view-projects');
+  var flatBuilt = false;
+
+  function showTab(which) {
+    var onProjects = which === 'projects';
+
+    tabPrograms.classList.toggle('active', !onProjects);
+    tabProjects.classList.toggle('active', onProjects);
+    tabPrograms.setAttribute('aria-selected', String(!onProjects));
+    tabProjects.setAttribute('aria-selected', String(onProjects));
+
+    panelPrograms.hidden = onProjects;
+    panelProjects.hidden = !onProjects;
+
+    if (onProjects && !flatBuilt) {
+      var items = buildFlatList();
+      document.getElementById('projects-flat-list').innerHTML = renderFlatList(items);
+      flatBuilt = true;
+    }
+
+    var url = new URL(window.location.href);
+    if (onProjects) {
+      url.searchParams.set('view', 'projects');
+    } else {
+      url.searchParams.delete('view');
+    }
+    history.replaceState(null, '', url.toString());
+  }
+
+  tabPrograms.addEventListener('click', function () { showTab('programs'); });
+  tabProjects.addEventListener('click', function () { showTab('projects'); });
+
+  // Activate correct tab on load (handles redirect from /projects)
+  var initialView = new URLSearchParams(window.location.search).get('view');
+  if (initialView === 'projects') {
+    showTab('projects');
+  } else {
+    tabPrograms.classList.add('active');
+  }
+}());
+</script>
 </body>
 </html>
