@@ -22,11 +22,11 @@
       </div>
 
       <div class="view-tabs" role="tablist">
-        <button class="view-tab" id="tab-programs" role="tab" aria-selected="true" aria-controls="view-programs">Programs</button>
-        <button class="view-tab" id="tab-projects" role="tab" aria-selected="false" aria-controls="view-projects">Projects</button>
+        <button class="view-tab" id="tab-hierarchical" role="tab" aria-selected="true" aria-controls="view-hierarchical">Hierarchical View</button>
+        <button class="view-tab" id="tab-flattened" role="tab" aria-selected="false" aria-controls="view-flattened">Flattened View</button>
       </div>
 
-      <div id="view-programs" role="tabpanel" aria-labelledby="tab-programs">
+      <div id="view-hierarchical" role="tabpanel" aria-labelledby="tab-hierarchical">
         <p class="programs-intro">Each program is organized around <strong>tracks</strong> (ongoing collaborative activity streams), <strong>projects</strong> (output-bearing activities), and <strong>infrastructure</strong> (shared support resources).</p>
 
         <ul class="project-list" role="list">
@@ -160,10 +160,10 @@
           </li>
 
         </ul>
-      </div><!-- #view-programs -->
+      </div><!-- #view-hierarchical -->
 
-      <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
-        <p class="programs-intro">All activities flattened to individual items. Program and category shown as tags.</p>
+      <div id="view-flattened" role="tabpanel" aria-labelledby="tab-flattened" hidden>
+        <p class="programs-intro">Bottom-up view of all activities. Any hierarchical levels are shown as tags.</p>
         <ul class="project-list" id="projects-flat-list" role="list"></ul>
       </div>
 
@@ -187,7 +187,7 @@
 
   function buildFlatList() {
     var items = [];
-    document.querySelectorAll('#view-programs .project-item').forEach(function (programItem) {
+    document.querySelectorAll('#view-hierarchical .project-item').forEach(function (programItem) {
       var programName = programItem.querySelector('.project-name').textContent.trim();
       programItem.querySelectorAll('.category-group').forEach(function (group) {
         var categoryLabel = group.querySelector('.category-label').textContent.trim();
@@ -197,7 +197,6 @@
           var href = a ? a.getAttribute('href') : null;
           var isExternal = href && href.startsWith('http');
 
-          // Description: text nodes after the track-sep span
           var trackSep = li.querySelector('.track-sep');
           var desc = '';
           if (trackSep) {
@@ -237,7 +236,7 @@
       return '<li class="project-item">' +
         '<div class="project-meta">' +
           titleHtml +
-          '<span class="project-category">' + escHtml(item.programName) + '</span>' +
+          '<span class="project-status">' + escHtml(item.programName) + '</span>' +
           '<span class="project-category">' + escHtml(cat) + '</span>' +
           badgeHtml +
         '</div>' +
@@ -246,47 +245,46 @@
     }).join('');
   }
 
-  var tabPrograms = document.getElementById('tab-programs');
-  var tabProjects = document.getElementById('tab-projects');
-  var panelPrograms = document.getElementById('view-programs');
-  var panelProjects = document.getElementById('view-projects');
+  var tabHierarchical = document.getElementById('tab-hierarchical');
+  var tabFlattened = document.getElementById('tab-flattened');
+  var panelHierarchical = document.getElementById('view-hierarchical');
+  var panelFlattened = document.getElementById('view-flattened');
   var flatBuilt = false;
 
   function showTab(which) {
-    var onProjects = which === 'projects';
+    var onFlattened = which === 'flattened';
 
-    tabPrograms.classList.toggle('active', !onProjects);
-    tabProjects.classList.toggle('active', onProjects);
-    tabPrograms.setAttribute('aria-selected', String(!onProjects));
-    tabProjects.setAttribute('aria-selected', String(onProjects));
+    tabHierarchical.classList.toggle('active', !onFlattened);
+    tabFlattened.classList.toggle('active', onFlattened);
+    tabHierarchical.setAttribute('aria-selected', String(!onFlattened));
+    tabFlattened.setAttribute('aria-selected', String(onFlattened));
 
-    panelPrograms.hidden = onProjects;
-    panelProjects.hidden = !onProjects;
+    panelHierarchical.hidden = onFlattened;
+    panelFlattened.hidden = !onFlattened;
 
-    if (onProjects && !flatBuilt) {
+    if (onFlattened && !flatBuilt) {
       var items = buildFlatList();
       document.getElementById('projects-flat-list').innerHTML = renderFlatList(items);
       flatBuilt = true;
     }
 
     var url = new URL(window.location.href);
-    if (onProjects) {
-      url.searchParams.set('view', 'projects');
+    if (onFlattened) {
+      url.searchParams.set('view', 'flattened');
     } else {
       url.searchParams.delete('view');
     }
     history.replaceState(null, '', url.toString());
   }
 
-  tabPrograms.addEventListener('click', function () { showTab('programs'); });
-  tabProjects.addEventListener('click', function () { showTab('projects'); });
+  tabHierarchical.addEventListener('click', function () { showTab('hierarchical'); });
+  tabFlattened.addEventListener('click', function () { showTab('flattened'); });
 
-  // Activate correct tab on load (handles redirect from /projects)
   var initialView = new URLSearchParams(window.location.search).get('view');
-  if (initialView === 'projects') {
-    showTab('projects');
+  if (initialView === 'flattened') {
+    showTab('flattened');
   } else {
-    tabPrograms.classList.add('active');
+    tabHierarchical.classList.add('active');
   }
 }());
 </script>
