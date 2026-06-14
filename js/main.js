@@ -28,9 +28,7 @@ var NAV_HTML =
 var FOOTER_HTML =
   '<nav class="footer-nav" aria-label="Footer navigation">' +
     '<a href="/about">About</a>' +
-    '<a href="/team">Team</a>' +
     '<a href="/network">Network</a>' +
-    '<a href="/consulting">Consulting</a>' +
     '<a href="/events/protocol-symposium-2026">Symposium</a>' +
     '<a href="/contact">Contact</a>' +
     '<a href="/members">Members</a>' +

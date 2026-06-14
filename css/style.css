@@ -1495,7 +1495,8 @@ a:hover {
 }
 
 .member-tag--team {
-  color: #2A6B6B;
+  color: #FFFFFF;
+  background: #2A6B6B;
   border-color: #2A6B6B;
 }
 
@@ -1505,8 +1506,9 @@ a:hover {
 }
 
 .member-tag--community-lead {
-  color: #5A3A8A;
-  border-color: #9A7ACC;
+  color: #FFFFFF;
+  background: #8A1F2E;
+  border-color: #8A1F2E;
 }
 
 .member-empty {

@@ -43,7 +43,7 @@ export async function onRequestGet({ request, env }) {
     bindings.push(typeParam);
   }
 
-  query += ` ORDER BY CASE tier WHEN 'team' THEN 0 WHEN 'community_lead' THEN 1 ELSE 2 END, name ASC`;
+  query += ` ORDER BY name ASC`;
 
   try {
     const { results } = await env.DB.prepare(query).bind(...bindings).all();
