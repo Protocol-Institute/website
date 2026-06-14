@@ -1,5 +1,11 @@
 # Legacy URL redirects
 /home        /           301
+
+# Team and Consulting pages consolidated into filtered Members view
+/team        /members?filter=team        301
+/team/       /members?filter=team        301
+/consulting  /members?filter=consultant  301
+/consulting/ /members?filter=consultant  301
 /projects    /programs?view=flattened    301
 /projects/   /programs?view=flattened    301
 

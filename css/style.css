@@ -1287,7 +1287,22 @@ a:hover {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filter-blurb {
+  display: none;
+  background: #F4F2EE;
+  border-left: 3px solid #2A6B6B;
+  padding: 0.65rem 1rem;
   margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: #5A5A5A;
+  line-height: 1.5;
+}
+
+.filter-blurb.visible {
+  display: block;
 }
 
 .filter-btn {
@@ -1351,6 +1366,19 @@ a:hover {
   font-size: 0.95rem;
   color: #3A3A3A;
   margin-bottom: 0.75rem;
+}
+
+.member-meta {
+  font-size: 0.85rem;
+  color: #8A8A8A;
+  margin-bottom: 0.5rem;
+}
+
+.member-consulting {
+  font-size: 0.85rem;
+  color: #5A5A5A;
+  margin-bottom: 0.5rem;
+  font-style: italic;
 }
 
 .member-website {

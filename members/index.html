@@ -29,12 +29,15 @@
         <button class="filter-btn active" data-filter="">All</button>
         <button class="filter-btn" data-filter="team">Team</button>
         <button class="filter-btn" data-filter="community_lead">Community Leads</button>
+        <button class="filter-btn" data-filter="consultant">Consultants</button>
         <button class="filter-btn" data-filter="tag_sop23">SoP '23</button>
         <button class="filter-btn" data-filter="tag_sop24">SoP '24</button>
         <button class="filter-btn" data-filter="tag_sop25">SoP '25</button>
         <button class="filter-btn" data-filter="tag_ps25">Protocol School '25</button>
         <button class="filter-btn" data-filter="tag_sig">SIG</button>
       </div>
+
+      <div class="filter-blurb" id="filter-blurb"></div>
 
       <ul class="member-list" id="member-list">
         <li class="member-item member-empty">Loading members…</li>
@@ -63,14 +66,40 @@
   const TAG_LABELS = PI_TAGS.LABELS;
   const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
-  // Internal detail pages for specific members. Add entries as new pages are created.
   const DETAIL_PAGES = {
     'c3po':     '/c3po',
     'humboldt': '/humboldt',
   };
 
+  const FILTER_BLURBS = {
+    'team':          'The Protocol Institute\'s core team — staff, advisors, and AI systems. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
+    'community_lead':'Members who lead PI community activities, currently as Special Interest Group hosts.',
+    'consultant':    'PI members available for consulting on protocol design, governance, organizational protocolization, and strategy. Enquire directly with individual consultants. <a href="/consulting/policies">Consulting network policies →</a>',
+    'tag_sop23':     'Fellows from the Summer of Protocols 2023 cohort — PI\'s inaugural grant program in protocol research.',
+    'tag_sop24':     'Fellows from the Summer of Protocols 2024 cohort, exploring protocolization across institutions, markets, and culture.',
+    'tag_sop25':     'Fellows from the Summer of Protocols 2025 cohort, investigating protocols in new nature and infrastructure.',
+    'tag_ps25':      'Graduates of Protocol School 2025 — PI\'s intensive program in protocol theory and practice.',
+    'tag_sig':       'Members active in Protocol Institute Special Interest Groups — ongoing focused research and practice communities.',
+  };
+
   let allMembers = [];
   let activeFilter = '';
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function consultingContact(m) {
+    if (!m.consulting_contact) return '';
+    const c = m.consulting_contact;
+    if (c.includes('@')) return `<a href="mailto:${escHtml(c)}">${escHtml(c)}</a>`;
+    if (c.startsWith('http')) return `<a href="${escHtml(c)}" target="_blank" rel="noopener noreferrer">${escHtml(c.replace(/^https?:\/\//, ''))}</a>`;
+    return escHtml(c);
+  }
 
   function renderMember(m) {
     const tags = [];
@@ -99,11 +128,18 @@
       ? `<p class="member-bio">${escHtml(m.bio)}</p>`
       : '';
 
-    const metaEl = [
+    const metaParts = [
       m.city ? escHtml(m.city) : '',
       m.discord_handle ? `Discord: ${escHtml(m.discord_handle)}` : '',
-    ].filter(Boolean).join(' · ');
-    const memberMetaEl = metaEl ? `<p class="member-website" style="color:#8A8A8A;">${metaEl}</p>` : '';
+    ].filter(Boolean);
+    const memberMetaEl = metaParts.length
+      ? `<p class="member-meta">${metaParts.join(' · ')}</p>`
+      : '';
+
+    const contactStr = consultingContact(m);
+    const consultingEl = (m.is_consultant && m.consulting_expertise)
+      ? `<p class="member-consulting">${escHtml(m.consulting_expertise)}${contactStr ? ` &mdash; ${contactStr}` : ''}</p>`
+      : '';
 
     return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
               ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
@@ -111,8 +147,16 @@
       ${roleEl}
       ${bioEl}
       ${memberMetaEl}
+      ${consultingEl}
       ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}
     </li>`;
+  }
+
+  function setBlurb(filter) {
+    const blurb = document.getElementById('filter-blurb');
+    const text = FILTER_BLURBS[filter] || '';
+    blurb.innerHTML = text;
+    blurb.classList.toggle('visible', !!text);
   }
 
   function render(members) {
@@ -124,23 +168,21 @@
     list.innerHTML = members.map(renderMember).join('');
   }
 
-  function applyFilter(filter) {
+  function applyFilter(filter, pushState) {
     activeFilter = filter;
+    setBlurb(filter);
+    if (pushState !== false) {
+      const url = filter ? `?filter=${encodeURIComponent(filter)}` : location.pathname;
+      history.replaceState(null, '', url);
+    }
     if (!filter) { render(allMembers); return; }
     const filtered = allMembers.filter(m => {
       if (filter === 'team') return m.tier === 'team';
       if (filter === 'community_lead') return m.tier === 'community_lead';
+      if (filter === 'consultant') return m.is_consultant;
       return m[filter];
     });
     render(filtered);
-  }
-
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   // Filter buttons
@@ -152,12 +194,21 @@
     applyFilter(btn.dataset.filter);
   });
 
-  // Load members
+  // Load members; apply URL param filter if present
+  const urlFilter = new URLSearchParams(location.search).get('filter') || '';
+
   fetch('/api/members')
     .then(r => r.json())
     .then(data => {
       allMembers = data.members || [];
-      render(allMembers);
+      if (urlFilter) {
+        const btn = document.querySelector(`.filter-btn[data-filter="${CSS.escape(urlFilter)}"]`);
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        applyFilter(urlFilter, false);
+      } else {
+        render(allMembers);
+      }
     })
     .catch(() => {
       document.getElementById('member-list').innerHTML =
