@@ -840,6 +840,18 @@ a:hover {
 }
 
 
+/* ---- 404 Error Page ---- */
+
+.error-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #E0DDD8;
+  font-size: 0.9rem;
+}
+
 /* ---- Draft Banner ---- */
 
 .draft-banner {
