@@ -71,6 +71,16 @@
     'humboldt': '/humboldt',
   };
 
+  function initials(name) {
+    return String(name || '').split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
+  }
+
+  function photoSrc(key) {
+    if (!key) return null;
+    if (key.startsWith('http://') || key.startsWith('https://')) return key;
+    return '/assets/' + key;
+  }
+
   const FILTER_BLURBS = {
     'team':          'The Protocol Institute\'s core team — staff, advisors, and AI systems. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
     'community_lead':'Members who lead PI community activities, currently as Special Interest Group hosts.',
@@ -141,15 +151,27 @@
       ? `<p class="member-consulting">${escHtml(m.consulting_expertise)}${contactStr ? ` &mdash; ${contactStr}` : ''}</p>`
       : '';
 
-    return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
-              ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
+    const cardContent = `
       <h2 class="member-name">${nameEl}</h2>
-      ${roleEl}
-      ${bioEl}
-      ${memberMetaEl}
-      ${consultingEl}
-      ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}
-    </li>`;
+      ${roleEl}${bioEl}${memberMetaEl}${consultingEl}
+      ${tags.length ? `<div class="member-tags">${tagsHtml}</div>` : ''}`;
+
+    const src = photoSrc(m.photo_r2_key);
+    const showPhoto = !!(src && (m.tier === 'team' || m.is_consultant));
+    const inits = escHtml(initials(m.name));
+
+    const innerHtml = showPhoto
+      ? `<div class="member-card-row">
+          <div class="member-photo-thumb">
+            <img src="${escHtml(src)}" alt="" onerror="this.style.display='none'">
+            <span class="member-photo-initials">${inits}</span>
+          </div>
+          <div class="member-content">${cardContent}</div>
+        </div>`
+      : cardContent;
+
+    return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
+              ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>${innerHtml}</li>`;
   }
 
   function setBlurb(filter) {

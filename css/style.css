@@ -1342,6 +1342,47 @@ a:hover {
   border-top: 1px solid #E0DDD8;
 }
 
+.member-card-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.member-photo-thumb {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 3px;
+  background: #EDEAE5;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member-photo-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.member-photo-initials {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #A0A09A;
+  user-select: none;
+}
+
+.member-content {
+  flex: 1;
+  min-width: 0;
+}
+
 .member-name {
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.3rem, 2.5vw, 1.7rem);
