@@ -5,6 +5,7 @@ window.PI_TAGS = {
     'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
     'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
     'tag_sig', 'tag_protocol_kit', 'tag_protocolized_writer',
+    'tag_symposium_25', 'tag_guest_speaker',
   ],
   LABELS: {
     is_team: 'Team',
@@ -19,5 +20,7 @@ window.PI_TAGS = {
     tag_sig: 'SIG Participant',
     tag_protocol_kit: 'Protocol Kit',
     tag_protocolized_writer: 'Protocolized Writer',
+    tag_symposium_25: 'Symposium \'25',
+    tag_guest_speaker: 'Guest Speaker',
   },
 };

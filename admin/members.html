@@ -3,64 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — Member Requests</title>
+  <title>Admin — Members</title>
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .admin-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin-bottom:2rem; }
+    .admin-tab { font-size:0.82rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+      padding:0.6rem 1.25rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
+      border-bottom:2px solid transparent; margin-bottom:-2px; }
+    .admin-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
+    .admin-panel { display:none; } .admin-panel.active { display:block; }
+
+    .member-row { display:flex; align-items:center; gap:1rem; padding:0.6rem 0;
+      border-bottom:1px solid #F0EDE8; cursor:pointer; }
+    .member-row:hover { background:#FAFAF7; }
+    .member-row-name { font-weight:500; flex:1; }
+    .member-row-email { font-size:0.82rem; color:#8A8A8A; flex:1; }
+    .member-row-tier { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:#5A5A5A; }
+
+    .member-edit-form { border:1px solid #D8D5CF; border-radius:4px; padding:1.5rem;
+      margin-top:0.5rem; background:#FAFAF7; }
+    .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem; }
+    .edit-grid .full { grid-column:1/-1; }
+    .edit-section-label { font-size:0.72rem; font-weight:600; letter-spacing:0.1em;
+      text-transform:uppercase; color:#8A8A8A; margin:1rem 0 0.5rem; grid-column:1/-1; }
+    .edit-checkbox-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.35rem;
+      grid-column:1/-1; }
+    .edit-checkbox { font-size:0.82rem; display:flex; align-items:center; gap:0.4rem; }
+    .edit-actions { display:flex; gap:0.75rem; margin-top:1rem; grid-column:1/-1; }
+    .tier-select { font-family:inherit; font-size:0.9rem; padding:0.4rem 0.6rem;
+      border:1px solid #C8C5C0; background:#fff; }
+  </style>
 </head>
 <body>
 
 <div class="interior-wrapper">
-
   <main class="interior-main">
     <div class="container">
 
-      <div class="page-header">
-        <h1>Member Requests</h1>
-      </div>
-
-      <p class="admin-note">Admin interface — not linked publicly. Authenticate with your ADMIN_KEY to load pending requests.</p>
+      <div class="page-header"><h1>Admin — Members</h1></div>
+      <p class="admin-note">Admin interface — not linked publicly. Authenticate with your ADMIN_KEY.</p>
 
       <div class="admin-key-form" id="auth-form">
         <div class="form-group" style="flex:1;margin-bottom:0;">
           <label class="form-label" for="admin-key-input">Admin key</label>
           <input class="form-input" type="password" id="admin-key-input" placeholder="Enter ADMIN_KEY">
         </div>
-        <button class="form-btn" id="auth-btn" style="align-self:flex-end;">Load requests</button>
+        <button class="form-btn" id="auth-btn" style="align-self:flex-end;">Load</button>
       </div>
 
-      <div id="requests-section" style="display:none;">
-        <div id="requests-list"></div>
+      <div id="admin-ui" style="display:none;">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="requests">Pending Requests</button>
+          <button class="admin-tab" data-tab="directory">Member Directory</button>
+        </div>
+
+        <!-- Tab 1: Pending requests -->
+        <div class="admin-panel active" id="panel-requests">
+          <div id="requests-list"></div>
+        </div>
+
+        <!-- Tab 2: Member directory editor -->
+        <div class="admin-panel" id="panel-directory">
+          <div id="members-list"></div>
+        </div>
       </div>
 
     </div>
   </main>
-
 </div>
 
 <script src="/js/tags.js"></script>
 <script>
 (function () {
   let adminKey = '';
-
   const TAG_LABELS = PI_TAGS.LABELS;
+  const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
-  function escHtml(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  async function loadRequests() {
-    const res = await fetch('/api/admin/members', {
-      headers: { 'Authorization': `Bearer ${adminKey}` },
+  // ── Auth ──────────────────────────────────────────────────────
+  document.getElementById('auth-btn').addEventListener('click', async function () {
+    adminKey = document.getElementById('admin-key-input').value.trim();
+    if (!adminKey) return;
+    await Promise.all([loadRequests(), loadDirectory()]);
+    document.getElementById('auth-form').style.display = 'none';
+    document.getElementById('admin-ui').style.display = '';
+  });
+  document.getElementById('admin-key-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('auth-btn').click();
+  });
+
+  // ── Tabs ──────────────────────────────────────────────────────
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById('panel-' + this.dataset.tab).classList.add('active');
     });
-    if (!res.ok) {
-      alert('Authentication failed or server error.');
-      return;
-    }
+  });
+
+  // ── Tab 1: Pending requests ───────────────────────────────────
+  async function loadRequests() {
+    const res = await fetch('/api/admin/members', { headers: { 'Authorization': `Bearer ${adminKey}` } });
+    if (!res.ok) { alert('Auth failed.'); return; }
     const data = await res.json();
     renderRequests(data.requests || []);
-    document.getElementById('requests-section').style.display = '';
   }
 
   function renderRequests(requests) {
@@ -69,86 +120,72 @@
       list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">No pending requests.</p>';
       return;
     }
-
     list.innerHTML = requests.map(r => {
       const events = JSON.parse(r.qualifying_events || '[]');
       const eventLabels = events.map(k => TAG_LABELS[k] || k).join(', ');
-
-      return `<div class="request-item" id="req-${escHtml(r.email)}">
-        <div class="request-name">${escHtml(r.name)}</div>
-        <div class="request-email">${escHtml(r.email)}</div>
-        ${r.bio ? `<div class="request-field"><strong>Bio:</strong> ${escHtml(r.bio)}</div>` : ''}
-        ${r.website ? `<div class="request-field"><strong>Website:</strong> <a href="${escHtml(r.website)}" target="_blank">${escHtml(r.website)}</a></div>` : ''}
-        <div class="request-field"><strong>Events:</strong> ${escHtml(eventLabels)}</div>
-        ${r.city ? `<div class="request-field"><strong>City:</strong> ${escHtml(r.city)}</div>` : ''}
-        ${r.discord_handle ? `<div class="request-field"><strong>Discord:</strong> ${escHtml(r.discord_handle)}</div>` : ''}
-        ${r.request_team ? '<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting team listing</strong></div>' : ''}
-        ${r.applicant_team_title ? `<div class="request-field" style="padding-left:1rem;"><strong>Title:</strong> ${escHtml(r.applicant_team_title)}</div>` : ''}
-        ${r.applicant_team_description ? `<div class="request-field" style="padding-left:1rem;"><strong>Role desc:</strong> ${escHtml(r.applicant_team_description)}</div>` : ''}
+      return `<div class="request-item" id="req-${esc(r.email)}">
+        <div class="request-name">${esc(r.name)}</div>
+        <div class="request-email">${esc(r.email)}</div>
+        ${r.bio ? `<div class="request-field"><strong>Bio:</strong> ${esc(r.bio)}</div>` : ''}
+        ${r.website ? `<div class="request-field"><strong>Website:</strong> <a href="${esc(r.website)}" target="_blank">${esc(r.website)}</a></div>` : ''}
+        <div class="request-field"><strong>Events:</strong> ${esc(eventLabels)}</div>
+        ${r.city ? `<div class="request-field"><strong>City:</strong> ${esc(r.city)}</div>` : ''}
+        ${r.discord_handle ? `<div class="request-field"><strong>Discord:</strong> ${esc(r.discord_handle)}</div>` : ''}
         ${r.request_consultant ? `<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>
         <div class="request-field" style="padding-left:1rem;">
           <label style="font-size:0.85rem;cursor:pointer;">
-            <input type="checkbox" class="consultant-approve-checkbox" data-email="${escHtml(r.email)}" checked>
+            <input type="checkbox" class="consultant-approve-checkbox" data-email="${esc(r.email)}" checked>
             Approve consultant status
           </label>
           <span style="font-size:0.78rem;color:#8A8A8A;margin-left:0.5rem;">(allowed by default; uncheck to approve membership only)</span>
         </div>` : ''}
-        ${r.consulting_expertise ? `<div class="request-field" style="padding-left:1rem;"><strong>Expertise:</strong> ${escHtml(r.consulting_expertise)}</div>` : ''}
-        ${r.consulting_contact ? `<div class="request-field" style="padding-left:1rem;"><strong>Contact:</strong> ${escHtml(r.consulting_contact)}</div>` : ''}
-        ${r.photo_url ? `<div class="request-field"><strong>Photo URL:</strong> <a href="${escHtml(r.photo_url)}" target="_blank">${escHtml(r.photo_url)}</a></div>` : ''}
-        ${r.applicant_notes ? `<div class="request-field"><strong>Notes:</strong> ${escHtml(r.applicant_notes)}</div>` : ''}
-        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${escHtml(r.created_at)}</div>
+        ${r.consulting_expertise ? `<div class="request-field" style="padding-left:1rem;"><strong>Expertise:</strong> ${esc(r.consulting_expertise)}</div>` : ''}
+        ${r.consulting_contact ? `<div class="request-field" style="padding-left:1rem;"><strong>Contact:</strong> ${esc(r.consulting_contact)}</div>` : ''}
+        ${r.photo_url ? `<div class="request-field"><strong>Photo URL:</strong> <a href="${esc(r.photo_url)}" target="_blank">${esc(r.photo_url)}</a></div>` : ''}
+        ${r.applicant_notes ? `<div class="request-field"><strong>Notes:</strong> ${esc(r.applicant_notes)}</div>` : ''}
+        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${esc(r.created_at)}</div>
         <div style="margin-top:0.75rem;">
           <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Slug override (optional)</label>
-          <input type="text" class="form-input slug-input" style="max-width:240px;margin-bottom:0.75rem;" placeholder="e.g. firstname-lastname" data-email="${escHtml(r.email)}">
+          <input type="text" class="form-input slug-input" style="max-width:240px;margin-bottom:0.75rem;" placeholder="e.g. firstname-lastname" data-email="${esc(r.email)}">
         </div>
         <div style="margin-top:0.5rem;">
           <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Admin notes (optional)</label>
-          <textarea class="form-textarea notes-input" style="min-height:60px;" data-email="${escHtml(r.email)}"></textarea>
+          <textarea class="form-textarea notes-input" style="min-height:60px;" data-email="${esc(r.email)}"></textarea>
         </div>
         <div class="request-actions">
-          <button class="form-btn approve-btn" data-email="${escHtml(r.email)}">Approve</button>
-          <button class="form-btn form-btn--secondary reject-btn" data-email="${escHtml(r.email)}">Reject</button>
+          <button class="form-btn approve-btn" data-email="${esc(r.email)}">Approve</button>
+          <button class="form-btn form-btn--secondary reject-btn" data-email="${esc(r.email)}">Reject</button>
         </div>
         <div class="form-msg" id="msg-${CSS.escape(r.email)}" style="display:none;"></div>
       </div>`;
     }).join('');
 
-    // Bind buttons
-    document.querySelectorAll('.approve-btn').forEach(btn => {
-      btn.addEventListener('click', () => handleAction(btn.dataset.email, 'approve'));
-    });
-    document.querySelectorAll('.reject-btn').forEach(btn => {
-      btn.addEventListener('click', () => handleAction(btn.dataset.email, 'reject'));
-    });
+    document.querySelectorAll('.approve-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleRequestAction(btn.dataset.email, 'approve')));
+    document.querySelectorAll('.reject-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleRequestAction(btn.dataset.email, 'reject')));
   }
 
-  async function handleAction(email, action) {
+  async function handleRequestAction(email, action) {
     const slugInput = document.querySelector(`.slug-input[data-email="${CSS.escape(email)}"]`);
     const notesInput = document.querySelector(`.notes-input[data-email="${CSS.escape(email)}"]`);
     const msg = document.getElementById(`msg-${CSS.escape(email)}`);
-
     const body = { email, action };
-    if (slugInput && slugInput.value.trim()) body.slug = slugInput.value.trim();
-    if (notesInput && notesInput.value.trim()) body.admin_notes = notesInput.value.trim();
-    const consultantCheckbox = document.querySelector(`.consultant-approve-checkbox[data-email="${CSS.escape(email)}"]`);
-    if (consultantCheckbox) body.consultant_approved = consultantCheckbox.checked;
+    if (slugInput?.value.trim()) body.slug = slugInput.value.trim();
+    if (notesInput?.value.trim()) body.admin_notes = notesInput.value.trim();
+    const cb = document.querySelector(`.consultant-approve-checkbox[data-email="${CSS.escape(email)}"]`);
+    if (cb) body.consultant_approved = cb.checked;
 
     const res = await fetch('/api/admin/members', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${adminKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-
     const data = await res.json();
     msg.style.display = '';
     if (res.ok) {
       msg.className = 'form-msg form-msg--success';
       msg.textContent = action === 'approve' ? 'Approved and added to member directory.' : 'Request rejected.';
-      // Dim the card
       document.getElementById(`req-${CSS.escape(email)}`).style.opacity = '0.4';
     } else {
       msg.className = 'form-msg form-msg--error';
@@ -156,15 +193,151 @@
     }
   }
 
-  document.getElementById('auth-btn').addEventListener('click', function () {
-    adminKey = document.getElementById('admin-key-input').value.trim();
-    if (!adminKey) return;
-    loadRequests();
-  });
+  // ── Tab 2: Member directory editor ───────────────────────────
+  let allMembers = [];
+  let expandedEmail = null;
 
-  document.getElementById('admin-key-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') document.getElementById('auth-btn').click();
-  });
+  async function loadDirectory() {
+    const res = await fetch('/api/admin/members?view=all', {
+      headers: { 'Authorization': `Bearer ${adminKey}` },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    allMembers = data.members || [];
+    renderDirectory();
+  }
+
+  function renderDirectory() {
+    const list = document.getElementById('members-list');
+    if (!allMembers.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;">No members found.</p>';
+      return;
+    }
+    list.innerHTML = allMembers.map(m => {
+      const isExpanded = expandedEmail === m.email;
+      return `<div class="member-row" data-email="${esc(m.email)}" onclick="toggleEdit('${esc(m.email)}')">
+        <span class="member-row-name">${esc(m.name || '(no name)')}</span>
+        <span class="member-row-email">${esc(m.email)}</span>
+        <span class="member-row-tier">${esc(m.tier || 'member')}</span>
+        <span style="font-size:0.8rem;color:#2A6B6B;">${isExpanded ? '▲ close' : '▼ edit'}</span>
+      </div>
+      ${isExpanded ? renderEditForm(m) : ''}`;
+    }).join('');
+  }
+
+  function renderEditForm(m) {
+    const tagChecks = EVENT_TAGS.map(k =>
+      `<label class="edit-checkbox"><input type="checkbox" data-field="${k}" ${m[k] ? 'checked' : ''}> ${TAG_LABELS[k] || k}</label>`
+    ).join('');
+
+    return `<div class="member-edit-form" id="edit-${CSS.escape(m.email)}">
+      <div class="edit-grid">
+        <div>
+          <label class="form-label">Name</label>
+          <input class="form-input" data-field="name" value="${esc(m.name || '')}">
+        </div>
+        <div>
+          <label class="form-label">Tier</label>
+          <select class="tier-select" data-field="tier">
+            <option value="member" ${m.tier==='member'?'selected':''}>member</option>
+            <option value="community_lead" ${m.tier==='community_lead'?'selected':''}>community_lead</option>
+            <option value="team" ${m.tier==='team'?'selected':''}>team</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Team title</label>
+          <input class="form-input" data-field="team_title" value="${esc(m.team_title || '')}">
+        </div>
+        <div>
+          <label class="form-label">Community lead title</label>
+          <input class="form-input" data-field="community_lead_title" value="${esc(m.community_lead_title || '')}">
+        </div>
+        <div class="full">
+          <label class="form-label">Bio</label>
+          <textarea class="form-textarea" data-field="bio" rows="3">${esc(m.bio || '')}</textarea>
+        </div>
+        <div>
+          <label class="form-label">Website</label>
+          <input class="form-input" data-field="website" value="${esc(m.website || '')}">
+        </div>
+        <div>
+          <label class="form-label">City</label>
+          <input class="form-input" data-field="city" value="${esc(m.city || '')}">
+        </div>
+        <div>
+          <label class="form-label">Discord handle</label>
+          <input class="form-input" data-field="discord_handle" value="${esc(m.discord_handle || '')}">
+        </div>
+        <div>
+          <label class="form-label">Photo R2 key</label>
+          <input class="form-input" data-field="photo_r2_key" value="${esc(m.photo_r2_key || '')}">
+        </div>
+
+        <div class="edit-section-label">Flags</div>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_consultant" ${m.is_consultant?'checked':''}> Consultant</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_public" ${m.is_public?'checked':''}> Public</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_admin" ${m.is_admin?'checked':''}> Admin</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="welcome_sent" ${m.welcome_sent?'checked':''}> Welcome sent</label>
+
+        <div class="edit-section-label">Event tags</div>
+        <div class="edit-checkbox-grid">${tagChecks}</div>
+
+        <div class="edit-actions">
+          <button class="form-btn save-btn" data-email="${esc(m.email)}">Save changes</button>
+          <button class="form-btn form-btn--secondary" onclick="cancelEdit()">Cancel</button>
+          <span class="form-msg" id="edit-msg-${CSS.escape(m.email)}" style="display:none;"></span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  window.toggleEdit = function(email) {
+    expandedEmail = expandedEmail === email ? null : email;
+    renderDirectory();
+    if (expandedEmail) {
+      // Bind save button after render
+      const btn = document.querySelector(`.save-btn[data-email="${CSS.escape(email)}"]`);
+      if (btn) btn.addEventListener('click', () => saveEdit(email));
+    }
+  };
+
+  window.cancelEdit = function() {
+    expandedEmail = null;
+    renderDirectory();
+  };
+
+  async function saveEdit(email) {
+    const form = document.getElementById(`edit-${CSS.escape(email)}`);
+    const updates = {};
+
+    form.querySelectorAll('[data-field]').forEach(el => {
+      const field = el.dataset.field;
+      if (el.type === 'checkbox') {
+        updates[field] = el.checked ? 1 : 0;
+      } else {
+        updates[field] = el.value.trim() || null;
+      }
+    });
+
+    const res = await fetch('/api/admin/members', {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, updates }),
+    });
+    const data = await res.json();
+    const msg = document.getElementById(`edit-msg-${CSS.escape(email)}`);
+    msg.style.display = '';
+    if (res.ok) {
+      msg.className = 'form-msg form-msg--success';
+      msg.textContent = 'Saved.';
+      // Refresh member list in background
+      const member = allMembers.find(m => m.email === email);
+      if (member) Object.assign(member, updates);
+    } else {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Save failed.';
+    }
+  }
 }());
 </script>
 </body>

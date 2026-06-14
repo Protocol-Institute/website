@@ -25,11 +25,13 @@ STRONG_TAGS = {
     'tag_sig':            'SIG member',
     'tag_datus_nusas':    'Datus & Nusas workshop',
     'tag_khlongs_subaks': 'Khlongs & Subaks workshop',
+    'tag_symposium_25':   'Symposium 2025',
 }
 
 MODERATE_TAGS = {
     'tag_protocolized_writer': 'Protocolized writer',
     'tag_protocol_kit':        'Protocol Kit',
+    'tag_guest_speaker':       'Guest speaker',
 }
 
 WEAK_TAGS = {
@@ -82,10 +84,46 @@ def section(title):
     print(f'{"─" * 60}')
 
 
+def backup():
+    """Export all member-related D1 tables to a dated JSON file in backups/."""
+    import os, datetime
+    today = datetime.date.today().isoformat()
+    out_dir = os.path.join(os.path.dirname(__file__), 'backups')
+    os.makedirs(out_dir, exist_ok=True)
+    out_path = os.path.join(out_dir, f'pi-members-{today}.json')
+
+    tables = {
+        'members':             'SELECT * FROM members ORDER BY name ASC',
+        'membership_requests': 'SELECT * FROM membership_requests ORDER BY created_at ASC',
+        'crm_contacts':        'SELECT * FROM crm_contacts ORDER BY email ASC',
+    }
+
+    data = {}
+    for table, sql in tables.items():
+        rows = query(sql)
+        data[table] = rows
+
+    import json as _json
+    with open(out_path, 'w') as f:
+        _json.dump(data, f, indent=2)
+
+    totals = {t: len(data[t]) for t in tables}
+    print(f'  ✓ Backup written: {out_path}')
+    print(f'    members={totals["members"]}, requests={totals["membership_requests"]}, crm={totals["crm_contacts"]}')
+    return out_path
+
+
 def main():
     print('\n╔══════════════════════════════════════════════════════════╗')
     print('║   Protocol Institute — Member Directory Startup Check   ║')
     print('╚══════════════════════════════════════════════════════════╝')
+
+    # ── 0. Backup ─────────────────────────────────────────────────
+    section('DATA BACKUP')
+    try:
+        backup()
+    except Exception as e:
+        print(f'  ✗ Backup failed: {e}')
 
     # ── 1. Pending requests ───────────────────────────────────────
     section('PENDING MEMBERSHIP REQUESTS')
