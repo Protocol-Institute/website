@@ -7,6 +7,36 @@
   <meta name="description" content="The Protocol Institute invites abstracts for short presentations and proposals for workshops at the Protocol Symposium 2026, September 21–25, 2026.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .vote-countdown {
+      border: 2px solid #2A6B6B;
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.75rem 0;
+      background: #F2F7F7;
+    }
+    .vote-countdown-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2A6B6B;
+      margin-bottom: 0.4rem;
+    }
+    .vote-countdown-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: #1A1A1A;
+      line-height: 1.1;
+    }
+    .vote-countdown-sub {
+      font-size: 0.82rem;
+      color: #5A5A5A;
+      margin-top: 0.4rem;
+    }
+    .vote-countdown-sub a { color: #2A6B6B; }
+  </style>
 </head>
 <body>
 
@@ -36,8 +66,15 @@
 
         <p>Submissions have closed for the main track. If you've submitted a proposal you'll hear from us soon. We will have a shortlist stage and an experimental PI member voting process to help shape the agenda. If you've arranged with us to curate a special session, we will be in touch for additional details shortly.</p>
 
-        <h2>Accepted Submissions</h2>
-        <p>Shortlisted talks and workshops are under review. <a href="/events/protocol-symposium-2026/submissions/">View accepted submissions &rarr;</a></p>
+        <h2>Draft Agenda &amp; Voting</h2>
+
+        <div class="vote-countdown" id="vote-countdown">
+          <div class="vote-countdown-label" id="countdown-label"></div>
+          <div class="vote-countdown-time" id="countdown-time"></div>
+          <div class="vote-countdown-sub" id="countdown-sub"></div>
+        </div>
+
+        <p><a href="/events/protocol-symposium-2026/submissions/">View draft agenda &rarr;</a></p>
 
       </div>
 
@@ -66,5 +103,46 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  const VOTE_START    = new Date('2026-06-17T14:00:00Z'); // June 17, 7 AM PDT
+  const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
+
+  function fmtCountdown(ms) {
+    if (ms <= 0) return null;
+    const s = Math.floor(ms / 1000);
+    const d = Math.floor(s / 86400);
+    const h = Math.floor((s % 86400) / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s % 60}s`;
+  }
+
+  function tick() {
+    const label = document.getElementById('countdown-label');
+    const time  = document.getElementById('countdown-time');
+    const sub   = document.getElementById('countdown-sub');
+    if (!label) return;
+    const n = new Date();
+    if (n < VOTE_START) {
+      label.textContent = 'Member voting opens in';
+      time.textContent  = fmtCountdown(VOTE_START - n);
+      sub.innerHTML     = 'Wednesday June 17 at 7 AM Pacific &mdash; Saturday June 20 at 7 AM Pacific';
+    } else if (n < VOTE_DEADLINE) {
+      label.textContent = 'Voting closes in';
+      time.textContent  = fmtCountdown(VOTE_DEADLINE - n);
+      sub.innerHTML     = '<a href="/events/protocol-symposium-2026/submissions/">Vote on the draft agenda &rarr;</a>';
+    } else {
+      label.textContent = '';
+      time.textContent  = 'Voting closed';
+      sub.innerHTML     = '<a href="/events/protocol-symposium-2026/submissions/">View draft agenda &rarr;</a>';
+    }
+  }
+
+  tick();
+  setInterval(tick, 30000);
+}());
+</script>
 </body>
 </html>

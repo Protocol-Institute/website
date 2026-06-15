@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accepted Submissions — Protocol Symposium 2026</title>
-  <meta name="description" content="Shortlisted talks and workshops for the 2026 Protocol Institute Symposium.">
+  <title>Draft Agenda — Protocol Symposium 2026</title>
+  <meta name="description" content="Draft agenda for the 2026 Protocol Institute Symposium — shortlisted talks and workshops open for member voting.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -103,6 +103,12 @@
     .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
     .gate-msg a { color:#2A6B6B; }
 
+    .vote-clock-mini {
+      border:1px solid #2A6B6B; border-radius:3px; padding:0.6rem 1rem;
+      margin-bottom:1.25rem; font-size:0.85rem; color:#2A6B6B;
+      background:#F2F7F7; display:inline-block;
+    }
+
     .session-filter-bar { display:flex; align-items:center; gap:0.6rem;
       padding:0.6rem 0 0.75rem; margin-top:0.25rem; }
     .session-filter-bar label { font-size:0.78rem; font-weight:500;
@@ -118,8 +124,10 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Accepted Submissions</h1>
+        <h1>Draft Agenda</h1>
       </div>
+
+      <div class="vote-clock-mini" id="vote-clock-mini"></div>
 
       <p style="color:#5A5A5A;margin-bottom:0.75rem;">Instead of regular peer review, we're experimenting with quadratically weighted approval voting, and all shortlisted proposals that attract interest above a threshold will be accepted. Interest level is not meant as a measure of either quality or importance, and will primarily be used to guide scheduling and gauge broad patterns of interest.</p>
       <p style="color:#5A5A5A;margin-bottom:0.5rem;">Shortlisted talks and workshops for <a href="/events/protocol-symposium-2026">Protocol Symposium 2026</a>. Voting is open to all PI members.</p>
@@ -176,8 +184,8 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const VOTE_START    = new Date('2026-06-18T07:00:00Z'); // midnight PDT Wednesday
-  const VOTE_DEADLINE = new Date('2026-07-01T00:00:00Z');
+  const VOTE_START    = new Date('2026-06-17T14:00:00Z'); // June 17, 7 AM PDT
+  const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
   const now = new Date();
   const votingOpen    = now >= VOTE_START && now < VOTE_DEADLINE;
   const votingPending = now < VOTE_START;
@@ -200,8 +208,8 @@
         document.getElementById('submit-votes-btn').disabled = true;
         document.getElementById('submit-votes-btn').textContent = votingPending ? 'Voting not yet open' : 'Voting closed';
         document.getElementById('deadline-line').textContent = votingPending
-          ? 'Voting opens Wednesday, June 18.'
-          : 'Voting closed June 30, 2026.';
+          ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
+          : 'Voting closed June 20, 2026 at 7 AM Pacific.';
       }
       return fetch('/api/symposium/proposals');
     })
@@ -506,6 +514,32 @@
       msg.textContent = e.message;
     }
   };
+
+  // ── Mini countdown clock ──────────────────────────────────────
+  function fmtCountdown(ms) {
+    if (ms <= 0) return null;
+    const s = Math.floor(ms / 1000);
+    const d = Math.floor(s / 86400);
+    const h = Math.floor((s % 86400) / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    if (d > 0) return `${d}d ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s % 60}s`;
+  }
+  function tickMini() {
+    const el = document.getElementById('vote-clock-mini');
+    if (!el) return;
+    const n = new Date();
+    if (n < VOTE_START) {
+      el.textContent = 'Voting opens in ' + fmtCountdown(VOTE_START - n);
+    } else if (n < VOTE_DEADLINE) {
+      el.textContent = 'Voting closes in ' + fmtCountdown(VOTE_DEADLINE - n);
+    } else {
+      el.textContent = 'Voting closed June 20, 2026.';
+    }
+  }
+  tickMini();
+  setInterval(tickMini, 30000);
 
   window.submitComment = async function (proposalId) {
     const input = document.getElementById('cmt-input-' + proposalId);

@@ -5,7 +5,7 @@
 
 import { getSession } from '../../_shared/session.js';
 
-const VOTE_DEADLINE = new Date('2026-07-01T00:00:00Z');
+const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
 
 export async function onRequestPost({ request, env }) {
   if (new Date() > VOTE_DEADLINE) {
