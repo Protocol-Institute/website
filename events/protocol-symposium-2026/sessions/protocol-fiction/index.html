@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protocol Fiction Special Session — Protocol Symposium 2026</title>
+  <meta name="description" content="Protocol Fiction special session at Protocol Symposium 2026.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .session-meta-table { width:100%; border-collapse:collapse; margin-bottom:2rem; font-size:0.9rem; }
+    .session-meta-table td { padding:0.45rem 0; vertical-align:top; }
+    .session-meta-table td:first-child { width:120px; font-weight:500; color:#5A5A5A;
+      font-size:0.78rem; letter-spacing:0.07em; text-transform:uppercase; padding-right:1.5rem; }
+    .stub { color:#8A8A8A; font-style:italic; }
+
+    .proposal-card { border:1px solid #D8D5CF; border-radius:4px; padding:1.25rem 1.5rem;
+      margin-bottom:0.75rem; background:#FAFAF7; }
+    .proposal-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem;
+      font-weight:600; color:#1A1A1A; margin-bottom:0.3rem; line-height:1.3; }
+    .proposal-speaker { font-size:0.82rem; font-weight:500; color:#5A5A5A;
+      text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.65rem; }
+    .proposal-abstract { font-size:0.92rem; color:#3A3A3A; line-height:1.65; }
+    .abstract-clamp { display:-webkit-box; -webkit-line-clamp:4;
+      -webkit-box-orient:vertical; overflow:hidden; }
+    .abstract-toggle { font-size:0.8rem; color:#2A6B6B; cursor:pointer;
+      background:none; border:none; padding:0; margin-top:0.4rem; display:block; }
+    .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
+    .gate-msg a { color:#2A6B6B; }
+    .talks-empty { color:#8A8A8A; font-style:italic; font-size:0.92rem; padding:1.5rem 0; }
+  </style>
+</head>
+<body>
+<div class="interior-wrapper">
+  <header id="site-header"></header>
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <p class="event-kicker">Special Session &mdash; Protocol Symposium 2026</p>
+        <h1>Protocol Fiction</h1>
+      </div>
+
+      <div id="gate-view" class="gate-msg" style="display:none;">
+        <p>Member access required. <a href="/members/join/">Log in →</a></p>
+      </div>
+
+      <div id="main-view" style="display:none;">
+
+        <div class="draft-banner">Session details in progress — date, times, and agenda to be confirmed</div>
+
+        <table class="session-meta-table">
+          <tr>
+            <td>Date</td>
+            <td class="stub">TBD</td>
+          </tr>
+          <tr>
+            <td>Start time</td>
+            <td class="stub">TBD</td>
+          </tr>
+          <tr>
+            <td>End time</td>
+            <td class="stub">TBD</td>
+          </tr>
+        </table>
+
+        <h2>About This Session</h2>
+        <p class="stub">Session description to be added.</p>
+
+        <h2>Agenda</h2>
+        <p class="stub">Agenda to be confirmed.</p>
+
+        <h2>Talks</h2>
+        <p id="talks-loading" style="color:#8A8A8A;font-style:italic;">Loading&hellip;</p>
+        <div id="talks-list"></div>
+
+        <div style="margin-top:2.5rem;font-size:0.85rem;">
+          <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← All submissions</a>
+          &ensp;&middot;&ensp;
+          <a href="/events/protocol-symposium-2026/" style="color:#2A6B6B;">Symposium 2026 →</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+</div>
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const SESSION = 'Protocol Fiction';
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  fetch('/api/members/me')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      if (!d.member || !d.member.is_admin) throw new Error();
+      document.getElementById('main-view').style.display = '';
+      return fetch('/api/symposium/proposals');
+    })
+    .then(r => r.json())
+    .then(data => {
+      const proposals = (data.proposals || [])
+        .filter(p => p.type === 'talk' && (p.session || 'General') === SESSION)
+        .sort((a, b) => {
+          const na = (a.speaker_name || '').split(/\s+/)[0].toLowerCase();
+          const nb = (b.speaker_name || '').split(/\s+/)[0].toLowerCase();
+          return na.localeCompare(nb);
+        });
+
+      document.getElementById('talks-loading').style.display = 'none';
+      const list = document.getElementById('talks-list');
+
+      if (!proposals.length) {
+        list.innerHTML = '<p class="talks-empty">No talks assigned to this session yet.</p>';
+        return;
+      }
+
+      list.innerHTML = proposals.map(p => `
+        <div class="proposal-card">
+          <div class="proposal-title">${esc(p.title)}</div>
+          <div class="proposal-speaker">${esc(p.speaker_name || '')}</div>
+          <div class="proposal-abstract">
+            <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
+            <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
+          </div>
+        </div>`).join('');
+    })
+    .catch(() => {
+      document.getElementById('gate-view').style.display = '';
+    });
+
+  window.toggleAbs = function (id) {
+    const el = document.getElementById('abs-' + id);
+    const btn = el.nextElementSibling;
+    const clamped = el.classList.toggle('abstract-clamp');
+    btn.textContent = clamped ? 'Show more ▾' : 'Show less ▴';
+  };
+}());
+</script>
+</body>
+</html>

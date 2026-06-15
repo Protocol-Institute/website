@@ -65,6 +65,8 @@
       border:1px solid #C8C5C0; text-align:center; }
     .vote-label { font-size:0.78rem; color:#8A8A8A; }
     .workshop-link { font-size:0.82rem; color:#2A6B6B; }
+    .proposal-session-link { font-size:0.78rem; margin-bottom:0.6rem; }
+    .proposal-session-link a { color:#2A6B6B; }
 
     .comment-section { margin-top:0.85rem; border-top:1px solid #EDEAE5; padding-top:0.6rem; }
     .comment-toggle { font-size:0.78rem; color:#2A6B6B; cursor:pointer;
@@ -214,6 +216,13 @@
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  const SESSION_SLUGS = {
+    'Memory':         'memory',
+    'Protocol Fiction': 'protocol-fiction',
+    'Psychohistory':  'psychohistory',
+    'Southeast Asia': 'southeast-asia',
+  };
+
   // ── Render ────────────────────────────────────────────────────
   function firstName(p) {
     const name = p.speaker_name || p.organizer_name || '';
@@ -255,11 +264,16 @@
     const workshopLink = isWorkshop && p.slug
       ? `<a class="workshop-link" href="/events/protocol-symposium-2026/submissions/workshops/${esc(p.slug)}/">Workshop details →</a>`
       : '';
+    const sessionSlug = SESSION_SLUGS[p.session];
+    const sessionLink = (!isWorkshop && sessionSlug)
+      ? `<div class="proposal-session-link"><a href="/events/protocol-symposium-2026/sessions/${sessionSlug}/">${esc(p.session)} special session →</a></div>`
+      : '';
 
     return `<div class="proposal-card" data-id="${p.id}">
       <div class="proposal-title">${esc(p.title)}</div>
       <div class="proposal-speaker">${speaker}</div>
       <div class="proposal-track">${esc(p.track || '')}</div>
+      ${sessionLink}
       <div class="proposal-abstract">
         <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
         <button class="abstract-toggle" onclick="toggleAbstract(${p.id})">Show more ▾</button>
