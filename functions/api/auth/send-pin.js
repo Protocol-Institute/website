@@ -34,7 +34,8 @@ export async function onRequestPost({ request, env }) {
   }
 
   // For edit flow: silently skip if email not in members table (avoids enumeration)
-  // For join flow: any email can request a PIN to verify ownership
+  // For join flow: any email can request a PIN to verify ownership,
+  //   except emails with a pending membership_request (show review message instead)
   let memberName = null;
   if (purpose === 'edit') {
     const member = await env.DB.prepare(
@@ -42,6 +43,21 @@ export async function onRequestPost({ request, env }) {
     ).bind(email).first();
     if (!member) return Response.json({ ok: true });
     memberName = member.name;
+  } else {
+    // join flow: block if a pending application exists and not yet approved
+    const isMember = await env.DB.prepare(
+      'SELECT 1 FROM members WHERE email = ?'
+    ).bind(email).first();
+    if (!isMember) {
+      const request = await env.DB.prepare(
+        "SELECT status FROM membership_requests WHERE email = ?"
+      ).bind(email).first();
+      if (request && request.status === 'pending') {
+        return Response.json({
+          error: 'Your application is being reviewed. You will be notified by email when it is approved.',
+        }, { status: 400 });
+      }
+    }
   }
 
   const pin = generatePin();
