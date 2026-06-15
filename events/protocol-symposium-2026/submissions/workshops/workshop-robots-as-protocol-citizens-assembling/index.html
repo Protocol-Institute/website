@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robots as Protocol Citizens: Assembling One Into the YakRover Protocol Stack — Protocol Symposium 2026</title>
+  <meta name="description" content="Workshop details for Robots as Protocol Citizens: Assembling One Into the YakRover Protocol Stack at Protocol Symposium 2026.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .section-label { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:600;
+      letter-spacing:0.06em; text-transform:uppercase; color:#8A8A8A;
+      border-top:1px solid #E0DDD8; padding-top:1.5rem; margin-top:1.5rem; margin-bottom:0.6rem; }
+    .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
+  </style>
+</head>
+<body>
+<div class="interior-wrapper">
+  <header id="site-header"></header>
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="gate-view" class="gate-msg" style="display:none;">
+        <p>This page is available to Protocol Institute members.<br>
+        <a href="/members/join?return=/events/protocol-symposium-2026/submissions/workshops/workshop-robots-as-protocol-citizens-assembling/" style="color:#2A6B6B;">Log in →</a></p>
+      </div>
+
+      <div id="main-view" style="display:none;">
+        <p style="margin-bottom:1rem;font-size:0.85rem;">
+          <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← Accepted Submissions</a>
+        </p>
+
+        <div class="page-header">
+          <h1>Robots as Protocol Citizens: Assembling One Into the YakRover Protocol Stack</h1>
+        </div>
+
+        <p style="font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A8A;margin-bottom:1.5rem;">Workshop · DRG (Distributed Robotics Group)</p>
+
+        <h2 class="section-label">Abstract</h2>
+        <p style="line-height:1.7;">Today, controlling a robot usually means the manufacturer&#x27;s app, on the manufacturer&#x27;s cloud, over a closed protocol. But what if a physical robot were a first-class citizen of an open stack? What if each robot had its own on-chain identity, was discoverable on a public marketplace, and was controllable by anyone or any agent it authorizes, over open rails? This workshop is the hands-on, full-stack answer. Over two days, participants go from a box of parts to a working robot wired into the complete YakRover protocol: they assemble the robot, get fluent in the stack, register its identity on-chain, publish and find it on the marketplace, and drive it remotely through MCP — commanding a physical machine over the same open rails an AI agent would use. Every layer is touched by hand, end to end. This sits at an emerging frontier: decentralized robot identity, on-chain robot marketplaces, and agent-addressable physical machines are all young, under-tooled, and barely documented. It&#x27;s deliberately interdisciplinary — protocol and crypto people who&#x27;ve never driven a robot, roboticists who&#x27;ve never touched on-chain identity. The cross-pollination is the point: protocol architects see their code move real motors; roboticists meet decentralized frameworks where machines act as autonomous economic agents. By the end, each participant will have a working robot they assembled, registered on-chain, listed on the marketplace, and remotely controlled via MCP — plus a working understanding of each protocol layer solid enough to extend it.
+</p>
+        
+      <h2 class="section-label">Audience</h2>
+      <p>Engineers and Protocol Researchers ( Programming background will help )</p>
+        
+      <h2 class="section-label">What participants will take away</h2>
+      <p>The skill on offer is full-stack literacy in turning a piece of hardware into a protocol-native participant.</p>
+        
+      <h2 class="section-label">What participants will do</h2>
+      <p>Each participant will have a working robot they assembled, registered on-chain, listed on the marketplace, and remotely controlled via MCP — plus a working understanding of each protocol layer solid enough to extend it.</p>
+
+        <h2 class="section-label">Organizers</h2>
+        <div class="team-member">
+          <div class="team-bio">
+            <h3 class="team-name">Anuraj R</h3>
+            <p>Anuraj has been building hardware and software professionally for around 15 years. He has been exploring blockchain for robotics since 2021. He build the first crypto robot operated via a decentralized social network farcaster with crypto payment gates in 2024. He has designed some of the core layers of the YakRover Protocol Stack.</p>
+          </div>
+        </div>
+      <div class="team-member" style="margin-top:1.5rem;">
+        <div class="team-bio">
+          <h3 class="team-name">Rafael Fernandez</h3>
+          <p>Director of the ZKsync Association — architected and deployed ZKsync’s governance smart-contract system, live since 2024. Core researcher in the Summer of Protocols. Rafael has architected the marketplace protocol in the YakRover Protocol Stack.</p>
+        </div>
+      </div>
+
+        
+      <h2 class="section-label">Notes</h2>
+      <p>NOTE: This workshop would need a minimum budget of ~1500 Euros(robot cost)+infra overhead if we plan a shared access of 10 robots between the participants. If we want to provide robots to 25 participants then ~3750 Euros(robot cost)+some infra cost would be the budget.</p>
+      </div>
+
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+</div>
+<script src="/js/main.js"></script>
+<script>
+fetch('/api/members/me')
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(() => { document.getElementById('main-view').style.display = ''; })
+  .catch(() => { document.getElementById('gate-view').style.display = ''; });
+</script>
+</body>
+</html>
