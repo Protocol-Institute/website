@@ -125,8 +125,15 @@
       pendingVotes = { ...myVotes };
       renderAll();
     })
-    .catch(() => {
-      document.getElementById('gate-view').style.display = '';
+    .catch((err) => {
+      const msg = err && err.message ? err.message : String(err);
+      if (msg === 'not admin') {
+        document.getElementById('gate-view').style.display = '';
+      } else {
+        document.getElementById('gate-view').innerHTML =
+          `<p style="color:#8A1F2E;">Error loading page: <code>${msg}</code><br>Try <a href="/members/join">logging in again</a> or contact team.</p>`;
+        document.getElementById('gate-view').style.display = '';
+      }
     });
 
   // ── Tabs ──────────────────────────────────────────────────────
