@@ -86,6 +86,13 @@
 
     .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
     .gate-msg a { color:#2A6B6B; }
+
+    .session-filter-bar { display:flex; align-items:center; gap:0.6rem;
+      padding:0.6rem 0 0.75rem; margin-top:0.25rem; }
+    .session-filter-bar label { font-size:0.78rem; font-weight:500;
+      letter-spacing:0.07em; text-transform:uppercase; color:#5A5A5A; white-space:nowrap; }
+    .session-filter-bar select { font-family:inherit; font-size:0.85rem;
+      padding:0.25rem 0.5rem; border:1px solid #C8C5C0; background:#fff; color:#1A1A1A; }
   </style>
 </head>
 <body>
@@ -127,6 +134,18 @@
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
         </div>
 
+        <div class="session-filter-bar" id="session-filter-bar">
+          <label for="session-select">Session:</label>
+          <select id="session-select">
+            <option value="all">All</option>
+            <option value="General">General</option>
+            <option value="Memory">Memory</option>
+            <option value="Protocol Fiction">Protocol Fiction</option>
+            <option value="Psychohistory">Psychohistory</option>
+            <option value="Southeast Asia">Southeast Asia</option>
+          </select>
+        </div>
+
         <div class="sub-panel active" id="panel-talks"></div>
         <div class="sub-panel" id="panel-workshops"></div>
 
@@ -144,6 +163,7 @@
 
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
+  let currentSession = 'all';
 
   // ── Auth check ────────────────────────────────────────────────
   fetch('/api/members/me')
@@ -179,6 +199,14 @@
     document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    document.getElementById('session-filter-bar').style.display =
+      btn.dataset.tab === 'talks' ? '' : 'none';
+  });
+
+  // ── Session filter ────────────────────────────────────────────
+  document.getElementById('session-select').addEventListener('change', function () {
+    currentSession = this.value;
+    renderAll();
   });
 
   // ── Helpers ───────────────────────────────────────────────────
@@ -187,9 +215,24 @@
   }
 
   // ── Render ────────────────────────────────────────────────────
+  function firstName(p) {
+    const name = p.speaker_name || p.organizer_name || '';
+    return name.split(/\s+/)[0].toLowerCase();
+  }
+
   function renderAll() {
-    const talks     = proposals.filter(p => p.type === 'talk');
+    const allTalks = proposals.filter(p => p.type === 'talk');
     const workshops = proposals.filter(p => p.type === 'workshop');
+
+    // Sort both by first name
+    allTalks.sort((a, b) => firstName(a).localeCompare(firstName(b)));
+    workshops.sort((a, b) => firstName(a).localeCompare(firstName(b)));
+
+    // Filter talks by selected session
+    const talks = currentSession === 'all'
+      ? allTalks
+      : allTalks.filter(p => (p.session || 'General') === currentSession);
+
     document.getElementById('talks-count').textContent    = talks.length;
     document.getElementById('workshops-count').textContent = workshops.length;
     document.getElementById('panel-talks').innerHTML    = talks.map(renderCard).join('');
