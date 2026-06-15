@@ -118,7 +118,7 @@
             <span class="save-msg" id="save-msg" style="display:none;"></span>
           </div>
           <div class="vote-meta-row">
-            <span>Effective weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> of max)</span>
+            <span>Total Effective Weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> of votes cast)</span>
             <span id="deadline-line">You can edit your votes until Jun 30.</span>
           </div>
         </div>
@@ -281,7 +281,7 @@
     let effWeight = 0;
     Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += Math.sqrt(n); });
     effWeight = Math.round(effWeight * 100) / 100;
-    const ratio = (effWeight / budget).toFixed(2);
+    const ratio = used > 0 ? (effWeight / used).toFixed(2) : '0.00';
     document.getElementById('effective-weight').textContent = effWeight;
     document.getElementById('effective-ratio').textContent = ratio;
   }
