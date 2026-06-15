@@ -176,8 +176,11 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  const VOTE_START    = new Date('2026-06-18T07:00:00Z'); // midnight PDT Wednesday
   const VOTE_DEADLINE = new Date('2026-07-01T00:00:00Z');
-  const votingOpen = new Date() < VOTE_DEADLINE;
+  const now = new Date();
+  const votingOpen    = now >= VOTE_START && now < VOTE_DEADLINE;
+  const votingPending = now < VOTE_START;
 
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
@@ -195,8 +198,10 @@
       document.getElementById('main-view').style.display = '';
       if (!votingOpen) {
         document.getElementById('submit-votes-btn').disabled = true;
-        document.getElementById('submit-votes-btn').textContent = 'Voting closed';
-        document.getElementById('deadline-line').textContent = 'Voting closed June 30, 2026.';
+        document.getElementById('submit-votes-btn').textContent = votingPending ? 'Voting not yet open' : 'Voting closed';
+        document.getElementById('deadline-line').textContent = votingPending
+          ? 'Voting opens Wednesday, June 18.'
+          : 'Voting closed June 30, 2026.';
       }
       return fetch('/api/symposium/proposals');
     })
