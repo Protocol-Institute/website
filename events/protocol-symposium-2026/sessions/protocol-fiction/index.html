@@ -186,7 +186,7 @@
           </div>
           ${isAdmin ? `
           <div class="edit-bar">
-            <a class="edit-own-btn" href="/admin/proposals.html?id=${p.id}">You own this item — edit details</a>
+            <a class="edit-own-btn" href="/events/protocol-symposium-2026/submissions/edit-proposal.html?id=${p.id}">You own this item — edit details</a>
           </div>` : isOwner ? `
           <div class="edit-bar" id="edit-bar-${p.id}">
             <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
