@@ -15,7 +15,13 @@
     .stub { color:#8A8A8A; font-style:italic; }
 
     .proposal-card { border:1px solid #D8D5CF; border-radius:4px; padding:1.25rem 1.5rem;
-      margin-bottom:0.75rem; background:#FAFAF7; }
+      margin-bottom:0.75rem; background:#F5EEFF; border-color:#D5C0EE; }
+    .edit-own-btn {
+      display:inline-block; margin-top:0.75rem; padding:0.4rem 0.9rem;
+      background:#C0392B; color:#fff; font-family:inherit;
+      font-size:0.8rem; font-weight:600; letter-spacing:0.04em;
+      border:none; cursor:pointer; }
+    .edit-own-btn:hover { background:#A93226; }
     .proposal-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem;
       font-weight:600; color:#1A1A1A; margin-bottom:0.3rem; line-height:1.3; }
     .proposal-speaker { font-size:0.82rem; font-weight:500; color:#5A5A5A;
@@ -66,12 +72,6 @@
 
         <div class="draft-banner" id="draft-banner">Session details in progress — date, times, and agenda to be confirmed</div>
 
-        <table class="session-meta-table">
-          <tr><td>Date</td>      <td id="meta-date"  class="stub">TBD</td></tr>
-          <tr><td>Start time</td><td id="meta-start" class="stub">TBD</td></tr>
-          <tr><td>End time</td>  <td id="meta-end"   class="stub">TBD</td></tr>
-        </table>
-
         <h2>About This Session</h2>
         <p id="meta-description" class="stub">Session description to be added.</p>
 
@@ -79,15 +79,9 @@
         <p id="meta-agenda" class="stub">Agenda to be confirmed.</p>
 
         <div id="session-edit-bar" style="display:none;margin-bottom:1.5rem;">
-          <button class="edit-link" onclick="startSessionEdit()">Edit session details</button>
+          <button class="edit-own-btn" onclick="startSessionEdit()">You own this item — edit details</button>
         </div>
         <div id="session-edit-form" class="edit-form" style="display:none;margin-bottom:2rem;">
-          <div class="session-field-group"><label class="session-field-label">Date</label>
-            <input class="edit-title-input" type="text" id="edit-date" placeholder="e.g. September 22, 2026"></div>
-          <div class="session-field-group"><label class="session-field-label">Start time</label>
-            <input class="edit-title-input" type="text" id="edit-start" placeholder="e.g. 10:00 AM PDT"></div>
-          <div class="session-field-group"><label class="session-field-label">End time</label>
-            <input class="edit-title-input" type="text" id="edit-end" placeholder="e.g. 1:00 PM PDT"></div>
           <div class="session-field-group"><label class="session-field-label">About this session</label>
             <textarea class="edit-abstract-input" id="edit-description" style="min-height:80px;"></textarea></div>
           <div class="session-field-group"><label class="session-field-label">Agenda</label>
@@ -147,12 +141,9 @@
         if (val) { el.textContent = val; el.classList.remove('stub'); }
         else { el.textContent = fallback; el.classList.add('stub'); }
       }
-      setMeta('meta-date',        sess.date,        'TBD');
-      setMeta('meta-start',       sess.start_time,  'TBD');
-      setMeta('meta-end',         sess.end_time,    'TBD');
       setMeta('meta-description', sess.description, 'Session description to be added.');
       setMeta('meta-agenda',      sess.agenda,      'Agenda to be confirmed.');
-      const allFilled = sess.date && sess.start_time && sess.end_time && sess.description && sess.agenda;
+      const allFilled = sess.description && sess.agenda;
       if (allFilled) document.getElementById('draft-banner').style.display = 'none';
       const isOwner = sess.owner_email && memberEmail === sess.owner_email.toLowerCase();
       if (isAdmin || isOwner) document.getElementById('session-edit-bar').style.display = '';
@@ -195,7 +186,7 @@
           </div>
           ${canEdit ? `
           <div class="edit-bar" id="edit-bar-${p.id}">
-            <button class="edit-link" onclick="startEdit(${p.id})">Edit title &amp; abstract</button>
+            <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
           </div>
           <div class="edit-form" id="edit-form-${p.id}" style="display:none;">
             <input class="edit-title-input" id="edit-title-${p.id}" type="text">
@@ -216,9 +207,6 @@
   window.startSessionEdit = function () {
     document.getElementById('session-edit-form').style.display = '';
     document.getElementById('session-edit-bar').style.display = 'none';
-    document.getElementById('edit-date').value        = document.getElementById('meta-date').classList.contains('stub')        ? '' : document.getElementById('meta-date').textContent;
-    document.getElementById('edit-start').value       = document.getElementById('meta-start').classList.contains('stub')       ? '' : document.getElementById('meta-start').textContent;
-    document.getElementById('edit-end').value         = document.getElementById('meta-end').classList.contains('stub')         ? '' : document.getElementById('meta-end').textContent;
     document.getElementById('edit-description').value = document.getElementById('meta-description').classList.contains('stub') ? '' : document.getElementById('meta-description').textContent;
     document.getElementById('edit-agenda').value      = document.getElementById('meta-agenda').classList.contains('stub')      ? '' : document.getElementById('meta-agenda').textContent;
   };
@@ -230,9 +218,6 @@
   window.saveSessionEdit = async function () {
     const msg = document.getElementById('session-edit-msg');
     const body = {
-      date:        document.getElementById('edit-date').value.trim(),
-      start_time:  document.getElementById('edit-start').value.trim(),
-      end_time:    document.getElementById('edit-end').value.trim(),
       description: document.getElementById('edit-description').value.trim(),
       agenda:      document.getElementById('edit-agenda').value.trim(),
     };
@@ -249,12 +234,9 @@
         if (val) { el.textContent = val; el.classList.remove('stub'); }
         else { el.textContent = fallback; el.classList.add('stub'); }
       }
-      setMeta('meta-date',        body.date,        'TBD');
-      setMeta('meta-start',       body.start_time,  'TBD');
-      setMeta('meta-end',         body.end_time,    'TBD');
       setMeta('meta-description', body.description, 'Session description to be added.');
       setMeta('meta-agenda',      body.agenda,      'Agenda to be confirmed.');
-      const allFilled = body.date && body.start_time && body.end_time && body.description && body.agenda;
+      const allFilled = body.description && body.agenda;
       document.getElementById('draft-banner').style.display = allFilled ? 'none' : '';
       cancelSessionEdit();
     } catch (e) { msg.textContent = e.message; }

@@ -296,8 +296,9 @@
     const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
     const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
+    const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : '';
 
-    return `<div class="proposal-card" data-id="${p.id}">
+    return `<div class="proposal-card ${colorClass}" data-id="${p.id}">
       <div class="proposal-title" id="title-${p.id}">${esc(p.title)}</div>
       <div class="proposal-speaker">${speaker}</div>
       <div class="proposal-track">${esc(p.track || '')}</div>
@@ -308,7 +309,7 @@
       </div>
       ${canEdit ? `
       <div class="edit-bar" id="edit-bar-${p.id}">
-        <button class="edit-link" onclick="startEdit(${p.id})">Edit title &amp; abstract</button>
+        <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
       </div>
       <div class="edit-form" id="edit-form-${p.id}" style="display:none;">
         <input class="edit-title-input" id="edit-title-${p.id}" type="text">

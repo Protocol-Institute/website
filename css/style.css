@@ -2150,3 +2150,25 @@ a:hover {
 .program-projects-link:hover {
   text-decoration: underline;
 }
+
+/* ── Symposium session-colored proposal cards ────────────────────── */
+.proposal-card.proposal-card--memory           { background:#EBF2FF; border-color:#C0D4F0; }
+.proposal-card.proposal-card--protocol-fiction { background:#F5EEFF; border-color:#D5C0EE; }
+.proposal-card.proposal-card--psychohistory    { background:#FEF9EC; border-color:#EAD8A0; }
+.proposal-card.proposal-card--southeast-asia   { background:#E8F5EE; border-color:#A8D4BC; }
+
+/* ── Owner-edit button ───────────────────────────────────────────── */
+.edit-own-btn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  background: #C0392B;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  cursor: pointer;
+}
+.edit-own-btn:hover { background: #A93226; }
