@@ -25,7 +25,8 @@ export async function onRequestGet({ request, env }) {
           ELSE 1.0
         END * SQRT(CAST(v.votes AS REAL))
       ), 0), 2) AS score,
-      COUNT(DISTINCT v.member_email) AS voter_count
+      COUNT(DISTINCT v.member_email) AS voter_count,
+      (SELECT COUNT(*) FROM symposium_comments c WHERE c.proposal_id = p.id) AS comment_count
     FROM symposium_proposals p
     LEFT JOIN symposium_votes v ON v.proposal_id = p.id AND v.votes > 0
     LEFT JOIN members m ON m.email = v.member_email

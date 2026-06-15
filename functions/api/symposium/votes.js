@@ -1,11 +1,16 @@
 // POST /api/symposium/votes
 // Body: { votes: { "<proposal_id>": <n>, ... } }
 // Replaces all existing vote allocations for the current member.
-// Total votes must not exceed the member's budget (50 for team, 30 for others).
+// Voting closes at end of June 30, 2026 UTC.
 
 import { getSession } from '../../_shared/session.js';
 
+const VOTE_DEADLINE = new Date('2026-07-01T00:00:00Z');
+
 export async function onRequestPost({ request, env }) {
+  if (new Date() > VOTE_DEADLINE) {
+    return Response.json({ error: 'Voting closed on June 30, 2026.' }, { status: 403 });
+  }
   const email = await getSession(request, env);
   if (!email) return Response.json({ error: 'Not authenticated' }, { status: 401 });
 

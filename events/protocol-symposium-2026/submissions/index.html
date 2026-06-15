@@ -17,16 +17,29 @@
 
     .vote-budget {
       position:sticky; top:0; z-index:10; background:#FAFAF7;
-      border-bottom:1px solid #E0DDD8; padding:0.75rem 0;
+      border-bottom:1px solid #E0DDD8; padding:0.75rem 0 0;
+      margin-bottom:0;
+    }
+    .vote-budget-row {
       display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
-      margin-bottom:1.5rem;
+      padding-bottom:0.5rem;
     }
     .budget-label { font-size:0.82rem; color:#5A5A5A; }
     .budget-remaining { font-weight:600; color:#2A6B6B; }
+    .budget-remaining.over { color:#8A1F2E; }
     .budget-bar-track { width:180px; height:6px; background:#E0DDD8; border-radius:3px; }
     .budget-bar-fill { height:6px; background:#2A6B6B; border-radius:3px; transition:width 0.2s; }
     .budget-bar-fill.over { background:#8A1F2E; }
     .vote-submit-btn { margin-left:auto; }
+    .vote-meta-row {
+      font-size:0.78rem; color:#5A5A5A; padding:0.3rem 0 0.6rem;
+      display:flex; gap:2rem; flex-wrap:wrap;
+    }
+    .effective-weight-val { font-weight:600; color:#1A1A1A; }
+
+    .save-msg { font-size:0.82rem; margin-left:0.5rem; }
+    .save-msg.ok { color:#2A6B6B; }
+    .save-msg.err { color:#8A1F2E; }
 
     .proposal-card {
       border:1px solid #D8D5CF; border-radius:4px; padding:1.25rem 1.5rem;
@@ -53,12 +66,26 @@
     .vote-label { font-size:0.78rem; color:#8A8A8A; }
     .workshop-link { font-size:0.82rem; color:#2A6B6B; }
 
+    .comment-section { margin-top:0.85rem; border-top:1px solid #EDEAE5; padding-top:0.6rem; }
+    .comment-toggle { font-size:0.78rem; color:#2A6B6B; cursor:pointer;
+      background:none; border:none; padding:0; }
+    .comments-body { margin-top:0.65rem; }
+    .comment-item { padding:0.5rem 0; border-bottom:1px solid #F0EDE8; }
+    .comment-item:last-child { border-bottom:none; }
+    .comment-author { font-size:0.75rem; font-weight:500; color:#8A8A8A; margin-bottom:0.2rem; }
+    .comment-text { font-size:0.88rem; color:#3A3A3A; line-height:1.55; }
+    .comment-compose { margin-top:0.65rem; }
+    .comment-input { width:100%; box-sizing:border-box; font-family:inherit; font-size:0.88rem;
+      padding:0.5rem; border:1px solid #C8C5C0; min-height:60px; resize:vertical;
+      background:#fff; }
+    .comment-submit-btn { font-family:inherit; font-size:0.78rem; font-weight:500;
+      padding:0.3rem 0.8rem; background:#2A6B6B; color:#fff; border:none; cursor:pointer;
+      margin-top:0.4rem; }
+    .comment-submit-btn:disabled { opacity:0.5; cursor:default; }
+    .comment-msg { font-size:0.78rem; margin-left:0.5rem; }
+
     .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
     .gate-msg a { color:#2A6B6B; }
-
-    .save-msg { font-size:0.82rem; margin-left:0.75rem; }
-    .save-msg.ok { color:#2A6B6B; }
-    .save-msg.err { color:#8A1F2E; }
   </style>
 </head>
 <body>
@@ -70,6 +97,8 @@
       <div class="page-header">
         <h1>Accepted Submissions</h1>
       </div>
+
+      <p style="color:#5A5A5A;margin-bottom:0.75rem;">Instead of regular peer review, we're experimenting with quadratically weighted approval voting, and all shortlisted proposals that attract interest above a threshold will be accepted. Interest level is not meant as a measure of either quality or importance, and will primarily be used to guide scheduling and gauge broad patterns of interest.</p>
       <p style="color:#5A5A5A;margin-bottom:0.5rem;">Shortlisted talks and workshops for <a href="/events/protocol-symposium-2026">Protocol Symposium 2026</a>. Voting is open to all PI members.</p>
       <p style="font-size:0.85rem;color:#8A8A8A;margin-bottom:1.5rem;">Each member receives a vote budget (30 votes; 50 for team members). Votes per proposal are quadratically weighted: <em>n</em> votes → √<em>n</em> weight. Team members vote at 3×, community leads at 2×, regular members at 1×.</p>
 
@@ -82,10 +111,16 @@
 
         <!-- Budget bar -->
         <div class="vote-budget" id="budget-bar">
-          <span class="budget-label">Votes remaining: <span class="budget-remaining" id="remaining-display">—</span> / <span id="budget-display">—</span></span>
-          <div class="budget-bar-track"><div class="budget-bar-fill" id="budget-fill" style="width:100%"></div></div>
-          <button class="form-btn vote-submit-btn" id="submit-votes-btn">Save votes</button>
-          <span class="save-msg" id="save-msg" style="display:none;"></span>
+          <div class="vote-budget-row">
+            <span class="budget-label">Votes remaining: <span class="budget-remaining" id="remaining-display">—</span> / <span id="budget-display">—</span></span>
+            <div class="budget-bar-track"><div class="budget-bar-fill" id="budget-fill" style="width:100%"></div></div>
+            <button class="form-btn vote-submit-btn" id="submit-votes-btn">Save votes</button>
+            <span class="save-msg" id="save-msg" style="display:none;"></span>
+          </div>
+          <div class="vote-meta-row">
+            <span>Effective weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> of max)</span>
+            <span id="deadline-line">You can edit your votes until Jun 30.</span>
+          </div>
         </div>
 
         <div class="sub-tabs" id="sub-tabs">
@@ -105,6 +140,9 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  const VOTE_DEADLINE = new Date('2026-07-01T00:00:00Z');
+  const votingOpen = new Date() < VOTE_DEADLINE;
+
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
 
@@ -114,6 +152,11 @@
     .then(data => {
       if (!data.member || !data.member.is_admin) throw new Error('not admin');
       document.getElementById('main-view').style.display = '';
+      if (!votingOpen) {
+        document.getElementById('submit-votes-btn').disabled = true;
+        document.getElementById('submit-votes-btn').textContent = 'Voting closed';
+        document.getElementById('deadline-line').textContent = 'Voting closed June 30, 2026.';
+      }
       return fetch('/api/symposium/proposals');
     })
     .then(r => r.json())
@@ -146,11 +189,12 @@
     document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
   });
 
-  // ── Render ────────────────────────────────────────────────────
+  // ── Helpers ───────────────────────────────────────────────────
   function esc(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // ── Render ────────────────────────────────────────────────────
   function renderAll() {
     const talks     = proposals.filter(p => p.type === 'talk');
     const workshops = proposals.filter(p => p.type === 'workshop');
@@ -158,6 +202,9 @@
     document.getElementById('workshops-count').textContent = workshops.length;
     document.getElementById('panel-talks').innerHTML    = talks.map(renderCard).join('');
     document.getElementById('panel-workshops').innerHTML = workshops.map(renderCard).join('');
+    if (!votingOpen) {
+      document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
+    }
     bindInputs();
     updateBudget();
   }
@@ -167,9 +214,9 @@
     const speaker = isWorkshop
       ? esc(p.organizer_name) + (p.co_organizer_name ? ` &amp; ${esc(p.co_organizer_name)}` : '')
       : esc(p.speaker_name)  + (p.co_speakers ? ` · ${esc(p.co_speakers)}` : '');
-    const abstract = esc(p.abstract || '');
-    const score    = parseFloat(p.score || 0).toFixed(2);
-    const myN      = pendingVotes[p.id] || 0;
+    const score       = parseFloat(p.score || 0).toFixed(2);
+    const myN         = pendingVotes[p.id] || 0;
+    const commentCount = p.comment_count || 0;
     const workshopLink = isWorkshop && p.slug
       ? `<a class="workshop-link" href="/events/protocol-symposium-2026/submissions/workshops/${esc(p.slug)}/">Workshop details →</a>`
       : '';
@@ -179,16 +226,29 @@
       <div class="proposal-speaker">${speaker}</div>
       <div class="proposal-track">${esc(p.track || '')}</div>
       <div class="proposal-abstract">
-        <div class="abstract-clamp" id="abs-${p.id}">${abstract}</div>
+        <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
         <button class="abstract-toggle" onclick="toggleAbstract(${p.id})">Show more ▾</button>
       </div>
       <div class="proposal-footer">
-        <span class="score-display">Score: <span class="score-value" id="score-${p.id}">${score}</span></span>
+        <span class="score-display">Current interest: <span class="score-value" id="score-${p.id}">${score}</span></span>
         ${workshopLink}
         <div class="vote-input-group">
           <label class="vote-label" for="vote-${p.id}">Votes:</label>
           <input class="vote-input" type="number" id="vote-${p.id}" data-id="${p.id}"
-            min="0" max="${budget}" value="${myN}" placeholder="0">
+            min="0" max="${budget}" value="${myN}" placeholder="0"${!votingOpen ? ' disabled' : ''}>
+        </div>
+      </div>
+      <div class="comment-section">
+        <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${commentCount}) ▾</button>
+        <div class="comments-body" id="cmts-${p.id}" style="display:none;">
+          <div class="comments-list" id="cmt-list-${p.id}"></div>
+          <div class="comment-compose">
+            <textarea class="comment-input" id="cmt-input-${p.id}"
+              placeholder="Suggestions for the speaker/organizer…" rows="3"></textarea>
+            <br>
+            <button class="comment-submit-btn" onclick="submitComment(${p.id})">Post</button>
+            <span class="comment-msg" id="cmt-msg-${p.id}"></span>
+          </div>
         </div>
       </div>
     </div>`;
@@ -197,8 +257,7 @@
   function bindInputs() {
     document.querySelectorAll('.vote-input').forEach(inp => {
       inp.addEventListener('input', function () {
-        const id = parseInt(this.dataset.id);
-        pendingVotes[id] = parseInt(this.value) || 0;
+        pendingVotes[parseInt(this.dataset.id)] = parseInt(this.value) || 0;
         updateBudget();
       });
     });
@@ -207,23 +266,33 @@
   function updateBudget() {
     const used = Object.values(pendingVotes).reduce((s, n) => s + (n||0), 0);
     const remaining = budget - used;
-    document.getElementById('remaining-display').textContent = remaining;
+
+    const remEl = document.getElementById('remaining-display');
+    remEl.textContent = remaining;
+    remEl.classList.toggle('over', remaining < 0);
+
     document.getElementById('budget-display').textContent = budget;
+
     const fill = document.getElementById('budget-fill');
-    const pct = Math.max(0, Math.min(100, (remaining / budget) * 100));
-    fill.style.width = pct + '%';
+    fill.style.width = Math.max(0, Math.min(100, (remaining / budget) * 100)) + '%';
     fill.classList.toggle('over', remaining < 0);
+
+    // Effective weight = Σ sqrt(n) for each proposal
+    let effWeight = 0;
+    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += Math.sqrt(n); });
+    effWeight = Math.round(effWeight * 100) / 100;
+    const ratio = (effWeight / budget).toFixed(2);
+    document.getElementById('effective-weight').textContent = effWeight;
+    document.getElementById('effective-ratio').textContent = ratio;
   }
 
-  // ── Submit ────────────────────────────────────────────────────
+  // ── Submit votes ──────────────────────────────────────────────
   document.getElementById('submit-votes-btn').addEventListener('click', async function () {
     const used = Object.values(pendingVotes).reduce((s, n) => s + (n||0), 0);
     if (used > budget) {
-      showSaveMsg(`Over budget by ${used - budget} votes. Reduce allocations first.`, true);
-      return;
+      showSaveMsg(`Over budget by ${used - budget} votes.`, true); return;
     }
-    this.disabled = true;
-    this.textContent = 'Saving…';
+    this.disabled = true; this.textContent = 'Saving…';
     try {
       const res = await fetch('/api/symposium/votes', {
         method: 'POST',
@@ -233,18 +302,14 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
       showSaveMsg('Votes saved.', false);
-      // Refresh scores
       fetch('/api/symposium/proposals').then(r => r.json()).then(d => {
         (d.proposals||[]).forEach(p => {
           const el = document.getElementById('score-' + p.id);
           if (el) el.textContent = parseFloat(p.score||0).toFixed(2);
         });
       });
-    } catch (e) {
-      showSaveMsg(e.message, true);
-    }
-    this.disabled = false;
-    this.textContent = 'Save votes';
+    } catch (e) { showSaveMsg(e.message, true); }
+    this.disabled = false; this.textContent = 'Save votes';
   });
 
   function showSaveMsg(text, isErr) {
@@ -259,13 +324,80 @@
   window.toggleAbstract = function (id) {
     const el = document.getElementById('abs-' + id);
     const btn = el.nextElementSibling;
-    if (el.classList.contains('abstract-clamp')) {
-      el.classList.remove('abstract-clamp');
-      btn.textContent = 'Show less ▴';
+    const clamped = el.classList.toggle('abstract-clamp');
+    btn.textContent = clamped ? 'Show more ▾' : 'Show less ▴';
+  };
+
+  // ── Comments ──────────────────────────────────────────────────
+  const loadedComments = {};
+
+  window.toggleComments = function (id) {
+    const body = document.getElementById('cmts-' + id);
+    const isOpen = body.style.display !== 'none';
+    const tgl = document.getElementById('cmttgl-' + id);
+    if (isOpen) {
+      body.style.display = 'none';
+      tgl.textContent = tgl.textContent.replace('▴', '▾');
     } else {
-      el.classList.add('abstract-clamp');
-      btn.textContent = 'Show more ▾';
+      body.style.display = '';
+      tgl.textContent = tgl.textContent.replace('▾', '▴');
+      if (!loadedComments[id]) loadComments(id);
     }
+  };
+
+  async function loadComments(proposalId) {
+    const list = document.getElementById('cmt-list-' + proposalId);
+    list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;">Loading…</p>';
+    try {
+      const res = await fetch(`/api/symposium/comments?proposal_id=${proposalId}`);
+      const data = await res.json();
+      const comments = data.comments || [];
+      loadedComments[proposalId] = true;
+      if (!comments.length) {
+        list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">No comments yet.</p>';
+      } else {
+        list.innerHTML = comments.map(c => `<div class="comment-item">
+          <div class="comment-author">${esc(c.member_name)} · ${c.created_at.slice(0,10)}</div>
+          <div class="comment-text">${esc(c.body)}</div>
+        </div>`).join('');
+      }
+    } catch {
+      list.innerHTML = '<p style="color:#8A1F2E;font-size:0.82rem;">Failed to load comments.</p>';
+    }
+  }
+
+  window.submitComment = async function (proposalId) {
+    const input = document.getElementById('cmt-input-' + proposalId);
+    const msg   = document.getElementById('cmt-msg-' + proposalId);
+    const btn   = input.nextElementSibling.nextElementSibling; // the Post button sibling
+    const text  = input.value.trim();
+    if (!text) return;
+
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/symposium/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ proposal_id: proposalId, body: text }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      input.value = '';
+      msg.textContent = 'Posted.';
+      msg.style.color = '#2A6B6B';
+      setTimeout(() => { msg.textContent = ''; }, 3000);
+      loadedComments[proposalId] = false;
+      loadComments(proposalId);
+      // Update comment count on toggle button
+      const tgl = document.getElementById('cmttgl-' + proposalId);
+      const match = tgl.textContent.match(/\d+/);
+      const newCount = match ? parseInt(match[0]) + 1 : 1;
+      tgl.textContent = tgl.textContent.replace(/\d+/, newCount);
+    } catch (e) {
+      msg.textContent = e.message;
+      msg.style.color = '#8A1F2E';
+    }
+    btn.disabled = false;
   };
 }());
 </script>
