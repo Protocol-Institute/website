@@ -42,6 +42,9 @@
     .edit-cancel { font-family:inherit; font-size:0.85rem; color:#5A5A5A; cursor:pointer;
       background:none; border:none; padding:0; text-decoration:underline; }
     .edit-msg { font-size:0.8rem; color:#8A1F2E; }
+    .session-field-group { margin-bottom:0.85rem; }
+    .session-field-label { display:block; font-size:0.75rem; font-weight:500;
+      letter-spacing:0.08em; text-transform:uppercase; color:#5A5A5A; margin-bottom:0.3rem; }
   </style>
 </head>
 <body>
@@ -61,28 +64,40 @@
 
       <div id="main-view" style="display:none;">
 
-        <div class="draft-banner">Session details in progress — date, times, and agenda to be confirmed</div>
+        <div class="draft-banner" id="draft-banner">Session details in progress — date, times, and agenda to be confirmed</div>
 
         <table class="session-meta-table">
-          <tr>
-            <td>Date</td>
-            <td class="stub">TBD</td>
-          </tr>
-          <tr>
-            <td>Start time</td>
-            <td class="stub">TBD</td>
-          </tr>
-          <tr>
-            <td>End time</td>
-            <td class="stub">TBD</td>
-          </tr>
+          <tr><td>Date</td>      <td id="meta-date"  class="stub">TBD</td></tr>
+          <tr><td>Start time</td><td id="meta-start" class="stub">TBD</td></tr>
+          <tr><td>End time</td>  <td id="meta-end"   class="stub">TBD</td></tr>
         </table>
 
         <h2>About This Session</h2>
-        <p class="stub">Session description to be added.</p>
+        <p id="meta-description" class="stub">Session description to be added.</p>
 
         <h2>Agenda</h2>
-        <p class="stub">Agenda to be confirmed.</p>
+        <p id="meta-agenda" class="stub">Agenda to be confirmed.</p>
+
+        <div id="session-edit-bar" style="display:none;margin-bottom:1.5rem;">
+          <button class="edit-link" onclick="startSessionEdit()">Edit session details</button>
+        </div>
+        <div id="session-edit-form" class="edit-form" style="display:none;margin-bottom:2rem;">
+          <div class="session-field-group"><label class="session-field-label">Date</label>
+            <input class="edit-title-input" type="text" id="edit-date" placeholder="e.g. September 22, 2026"></div>
+          <div class="session-field-group"><label class="session-field-label">Start time</label>
+            <input class="edit-title-input" type="text" id="edit-start" placeholder="e.g. 10:00 AM PDT"></div>
+          <div class="session-field-group"><label class="session-field-label">End time</label>
+            <input class="edit-title-input" type="text" id="edit-end" placeholder="e.g. 1:00 PM PDT"></div>
+          <div class="session-field-group"><label class="session-field-label">About this session</label>
+            <textarea class="edit-abstract-input" id="edit-description" style="min-height:80px;"></textarea></div>
+          <div class="session-field-group"><label class="session-field-label">Agenda</label>
+            <textarea class="edit-abstract-input" id="edit-agenda" style="min-height:80px;"></textarea></div>
+          <div class="edit-actions">
+            <button class="form-btn" onclick="saveSessionEdit()">Save</button>
+            <button class="edit-cancel" onclick="cancelSessionEdit()">Cancel</button>
+            <span class="edit-msg" id="session-edit-msg"></span>
+          </div>
+        </div>
 
         <h2>Talks</h2>
         <p id="talks-loading" style="color:#8A8A8A;font-style:italic;">Loading&hellip;</p>
@@ -109,6 +124,7 @@
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  const SESSION_SLUG = SESSION.toLowerCase().replace(/\s+/g, '-');
   let memberEmail = '', isAdmin = false;
   const store = {};
 
@@ -119,10 +135,34 @@
       memberEmail = (d.member.email || '').toLowerCase();
       isAdmin = !!d.member.is_admin;
       document.getElementById('main-view').style.display = '';
-      return fetch('/api/symposium/proposals');
+      return Promise.all([
+        fetch('/api/symposium/sessions/' + SESSION_SLUG).then(r => r.json()),
+        fetch('/api/symposium/proposals').then(r => r.json()),
+      ]);
     })
-    .then(r => r.json())
-    .then(data => {
+    .then(([sessionData, proposalsData]) => {
+      // Populate session metadata
+      const sess = sessionData.session || {};
+      function setMeta(id, val, fallback) {
+        const el = document.getElementById(id);
+        if (val) { el.textContent = val; el.classList.remove('stub'); }
+        else { el.textContent = fallback; el.classList.add('stub'); }
+      }
+      setMeta('meta-date',        sess.date,        'TBD');
+      setMeta('meta-start',       sess.start_time,  'TBD');
+      setMeta('meta-end',         sess.end_time,    'TBD');
+      setMeta('meta-description', sess.description, 'Session description to be added.');
+      setMeta('meta-agenda',      sess.agenda,      'Agenda to be confirmed.');
+
+      // Hide draft banner once all metadata fields are filled
+      const allFilled = sess.date && sess.start_time && sess.end_time && sess.description && sess.agenda;
+      if (allFilled) document.getElementById('draft-banner').style.display = 'none';
+
+      // Show edit bar for owner or admin
+      const isOwner = sess.owner_email && memberEmail === sess.owner_email.toLowerCase();
+      if (isAdmin || isOwner) document.getElementById('session-edit-bar').style.display = '';
+
+      const data = proposalsData;
       const proposals = (data.proposals || [])
         .filter(p => p.type === 'talk' && (p.session || 'General') === SESSION)
         .sort((a, b) => {
@@ -171,6 +211,57 @@
     .catch(() => {
       document.getElementById('gate-view').style.display = '';
     });
+
+  window.startSessionEdit = function () {
+    document.getElementById('session-edit-form').style.display = '';
+    document.getElementById('session-edit-bar').style.display = 'none';
+    document.getElementById('edit-date').value        = document.getElementById('meta-date').classList.contains('stub')  ? '' : document.getElementById('meta-date').textContent;
+    document.getElementById('edit-start').value       = document.getElementById('meta-start').classList.contains('stub') ? '' : document.getElementById('meta-start').textContent;
+    document.getElementById('edit-end').value         = document.getElementById('meta-end').classList.contains('stub')   ? '' : document.getElementById('meta-end').textContent;
+    document.getElementById('edit-description').value = document.getElementById('meta-description').classList.contains('stub') ? '' : document.getElementById('meta-description').textContent;
+    document.getElementById('edit-agenda').value      = document.getElementById('meta-agenda').classList.contains('stub')      ? '' : document.getElementById('meta-agenda').textContent;
+  };
+
+  window.cancelSessionEdit = function () {
+    document.getElementById('session-edit-form').style.display = 'none';
+    document.getElementById('session-edit-bar').style.display = '';
+    document.getElementById('session-edit-msg').textContent = '';
+  };
+
+  window.saveSessionEdit = async function () {
+    const msg = document.getElementById('session-edit-msg');
+    const body = {
+      date:        document.getElementById('edit-date').value.trim(),
+      start_time:  document.getElementById('edit-start').value.trim(),
+      end_time:    document.getElementById('edit-end').value.trim(),
+      description: document.getElementById('edit-description').value.trim(),
+      agenda:      document.getElementById('edit-agenda').value.trim(),
+    };
+    try {
+      const res = await fetch('/api/symposium/sessions/' + SESSION_SLUG, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      function setMeta(id, val, fallback) {
+        const el = document.getElementById(id);
+        if (val) { el.textContent = val; el.classList.remove('stub'); }
+        else { el.textContent = fallback; el.classList.add('stub'); }
+      }
+      setMeta('meta-date',        body.date,        'TBD');
+      setMeta('meta-start',       body.start_time,  'TBD');
+      setMeta('meta-end',         body.end_time,    'TBD');
+      setMeta('meta-description', body.description, 'Session description to be added.');
+      setMeta('meta-agenda',      body.agenda,      'Agenda to be confirmed.');
+      const allFilled = body.date && body.start_time && body.end_time && body.description && body.agenda;
+      document.getElementById('draft-banner').style.display = allFilled ? 'none' : '';
+      cancelSessionEdit();
+    } catch (e) {
+      msg.textContent = e.message;
+    }
+  };
 
   window.toggleAbs = function (id) {
     const el = document.getElementById('abs-' + id);
