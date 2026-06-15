@@ -76,7 +76,7 @@
 <script>
 fetch('/api/members/me')
   .then(r => r.ok ? r.json() : Promise.reject())
-  .then(data => { if (!data.member || !data.member.is_admin) throw new Error(); document.getElementById('main-view').style.display = ''; })
+  .then(data => { if (!data.member) throw new Error(); document.getElementById('main-view').style.display = ''; })
   .catch(() => { document.getElementById('gate-view').style.display = ''; });
 </script>
 </body>
