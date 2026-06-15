@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Add Proposal</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .admin-form { max-width: 640px; }
+    .field-group { margin-bottom: 1.25rem; }
+    .field-group label { display: block; font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase; color: #5A5A5A; margin-bottom: 0.35rem; }
+    .field-group input[type="text"],
+    .field-group input[type="email"],
+    .field-group input[type="url"],
+    .field-group select,
+    .field-group textarea { width: 100%; box-sizing: border-box; font-family: inherit;
+      font-size: 0.92rem; padding: 0.45rem 0.6rem; border: 1px solid #C8C5C0; background: #fff; }
+    .field-group textarea { min-height: 120px; resize: vertical; }
+    .field-hint { font-size: 0.78rem; color: #8A8A8A; margin-top: 0.2rem; }
+    .field-row { display: flex; gap: 1rem; }
+    .field-row .field-group { flex: 1; }
+    .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #2A6B6B; border-bottom: 1px solid #E0DDD8;
+      padding-bottom: 0.3rem; margin: 1.75rem 0 1rem; }
+    .type-panel { display: none; }
+    .type-panel.active { display: block; }
+    .submit-row { margin-top: 1.75rem; display: flex; align-items: center; gap: 1rem; }
+    .result-msg { font-size: 0.85rem; }
+    .result-msg.ok { color: #2A6B6B; }
+    .result-msg.err { color: #8A1F2E; }
+    .gate-msg { padding: 4rem 0; color: #8A8A8A; text-align: center; }
+    .gate-msg a { color: #2A6B6B; }
+    .check-row { display: flex; align-items: center; gap: 0.5rem; }
+    .check-row label { margin-bottom: 0; text-transform: none; letter-spacing: 0; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<div class="interior-wrapper">
+  <header id="site-header"></header>
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Add Proposal</h1>
+        <p style="color:#5A5A5A;font-size:0.9rem;">Admin only — add a talk or workshop to the symposium proposals database.</p>
+      </div>
+
+      <div id="gate-view" class="gate-msg" style="display:none;">
+        <p>Admin access required. <a href="/members/join/">Log in →</a></p>
+      </div>
+
+      <div id="main-view" style="display:none;">
+
+        <form class="admin-form" id="proposal-form" autocomplete="off">
+
+          <div class="section-label">Proposal basics</div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label for="f-type">Type *</label>
+              <select id="f-type" name="type" required>
+                <option value="talk">Talk</option>
+                <option value="workshop">Workshop</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="f-session">Session</label>
+              <input type="text" id="f-session" name="session" value="General">
+              <p class="field-hint">e.g. "General", "DRG Special Session"</p>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="f-title">Title *</label>
+            <input type="text" id="f-title" name="title" required>
+          </div>
+
+          <div class="field-group">
+            <label for="f-slug">Slug (auto-generated; edit if needed)</label>
+            <input type="text" id="f-slug" name="slug">
+            <p class="field-hint">URL key — letters, numbers, hyphens only</p>
+          </div>
+
+          <div class="field-group">
+            <label for="f-track">Track / SIG</label>
+            <select id="f-track" name="track">
+              <option value="General">General</option>
+              <option value="MRG">MRG — Memory Research Group</option>
+              <option value="SIGPfB">SIGPfB — Protocols for Business</option>
+              <option value="SIGFPT">SIGFPT — Formal Protocol Theory</option>
+              <option value="SIGPSY">SIGPSY — Historical Modeling / Psychohistory</option>
+              <option value="DRG">DRG — Distributed Robotics Group</option>
+              <option value="ProtFiSIG">ProtFiSIG — Protocol Fiction</option>
+              <option value="Alumni">Alumni — SoP 23–25 Cohorts</option>
+              <option value="Long Now Labs">Long Now Labs</option>
+              <option value="Latin America">Latin America</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="f-abstract">Abstract *</label>
+            <textarea id="f-abstract" name="abstract" required></textarea>
+          </div>
+
+          <!-- Talk fields -->
+          <div class="type-panel active" id="panel-talk">
+            <div class="section-label">Speaker</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-spk-name">Speaker name *</label>
+                <input type="text" id="f-spk-name" name="speaker_name">
+              </div>
+              <div class="field-group">
+                <label for="f-spk-email">Speaker email</label>
+                <input type="email" id="f-spk-email" name="speaker_email">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-spk-web">Speaker website</label>
+                <input type="url" id="f-spk-web" name="speaker_website">
+              </div>
+              <div class="field-group">
+                <label for="f-co-speakers">Co-speakers</label>
+                <input type="text" id="f-co-speakers" name="co_speakers">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-artifact">Artifact type</label>
+              <select id="f-artifact" name="artifact_type">
+                <option value="">— none specified —</option>
+                <option value="General audience essay draft">General audience essay draft</option>
+                <option value="Academic preprint (arXiv style)">Academic preprint</option>
+                <option value="Other type of artifact (eg: demo, website, etc.)">Other (demo, website, etc.)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Workshop fields -->
+          <div class="type-panel" id="panel-workshop">
+            <div class="section-label">Primary organizer</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-org-name">Name *</label>
+                <input type="text" id="f-org-name" name="organizer_name">
+              </div>
+              <div class="field-group">
+                <label for="f-org-email">Email</label>
+                <input type="email" id="f-org-email" name="organizer_email">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-org-bio">Bio</label>
+              <textarea id="f-org-bio" name="organizer_bio" style="min-height:70px;"></textarea>
+            </div>
+
+            <div class="section-label">Secondary organizer (optional)</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-org2-name">Name</label>
+                <input type="text" id="f-org2-name" name="co_organizer_name">
+              </div>
+              <div class="field-group">
+                <label for="f-org2-email">Email</label>
+                <input type="email" id="f-org2-email" name="co_organizer_email">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-org2-bio">Bio</label>
+              <textarea id="f-org2-bio" name="co_organizer_bio" style="min-height:70px;"></textarea>
+            </div>
+
+            <div class="section-label">Workshop details</div>
+            <div class="field-group">
+              <label for="f-audience">Target audience</label>
+              <textarea id="f-audience" name="audience" style="min-height:70px;"></textarea>
+            </div>
+            <div class="field-group">
+              <label for="f-takeaways">Participant takeaways</label>
+              <textarea id="f-takeaways" name="takeaways" style="min-height:70px;"></textarea>
+            </div>
+            <div class="field-group">
+              <label for="f-activities">Participant activities / outputs</label>
+              <textarea id="f-activities" name="activities" style="min-height:70px;"></textarea>
+            </div>
+            <div class="field-group">
+              <label for="f-max-part">Max participants</label>
+              <input type="text" id="f-max-part" name="max_participants">
+            </div>
+          </div>
+
+          <div class="section-label">Admin fields</div>
+
+          <div class="field-group">
+            <label for="f-comments">Internal notes / submitter comments</label>
+            <textarea id="f-comments" name="comments" style="min-height:70px;"></textarea>
+          </div>
+
+          <div class="field-group">
+            <div class="check-row">
+              <input type="checkbox" id="f-shortlisted" name="is_shortlisted" checked>
+              <label for="f-shortlisted">Shortlisted (visible in voting interface)</label>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="form-btn" id="submit-btn">Add proposal</button>
+            <span class="result-msg" id="result-msg" style="display:none;"></span>
+          </div>
+
+        </form>
+
+        <div style="margin-top:2rem;">
+          <a href="/events/protocol-symposium-2026/submissions/" style="font-size:0.85rem;color:#2A6B6B;">View submissions page →</a>
+          &ensp;·&ensp;
+          <a href="/admin/members.html" style="font-size:0.85rem;color:#2A6B6B;">Members admin →</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  // Auth gate — admin only
+  fetch('/api/members/me')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      if (!d.member || !d.member.is_admin) throw new Error();
+      document.getElementById('main-view').style.display = '';
+    })
+    .catch(() => {
+      document.getElementById('gate-view').style.display = '';
+    });
+
+  // Type toggle
+  document.getElementById('f-type').addEventListener('change', function () {
+    const isTalk = this.value === 'talk';
+    document.getElementById('panel-talk').classList.toggle('active', isTalk);
+    document.getElementById('panel-workshop').classList.toggle('active', !isTalk);
+    document.getElementById('f-spk-name').required = isTalk;
+    document.getElementById('f-org-name').required = !isTalk;
+  });
+
+  // Auto-slug from title
+  document.getElementById('f-title').addEventListener('input', function () {
+    const slug = this.value.toLowerCase()
+      .replace(/['']/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 80);
+    document.getElementById('f-slug').value = slug;
+  });
+
+  // Form submit
+  document.getElementById('proposal-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('result-msg');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    const type = document.getElementById('f-type').value;
+    const payload = {
+      type,
+      title:           document.getElementById('f-title').value.trim(),
+      slug:            document.getElementById('f-slug').value.trim() || null,
+      track:           document.getElementById('f-track').value || null,
+      abstract:        document.getElementById('f-abstract').value.trim() || null,
+      session:         document.getElementById('f-session').value.trim() || 'General',
+      is_shortlisted:  document.getElementById('f-shortlisted').checked ? 1 : 0,
+      comments:        document.getElementById('f-comments').value.trim() || null,
+    };
+
+    if (type === 'talk') {
+      payload.speaker_name    = document.getElementById('f-spk-name').value.trim() || null;
+      payload.speaker_email   = document.getElementById('f-spk-email').value.trim() || null;
+      payload.speaker_website = document.getElementById('f-spk-web').value.trim() || null;
+      payload.co_speakers     = document.getElementById('f-co-speakers').value.trim() || null;
+      payload.artifact_type   = document.getElementById('f-artifact').value || null;
+    } else {
+      payload.organizer_name      = document.getElementById('f-org-name').value.trim() || null;
+      payload.organizer_email     = document.getElementById('f-org-email').value.trim() || null;
+      payload.organizer_bio       = document.getElementById('f-org-bio').value.trim() || null;
+      payload.co_organizer_name   = document.getElementById('f-org2-name').value.trim() || null;
+      payload.co_organizer_email  = document.getElementById('f-org2-email').value.trim() || null;
+      payload.co_organizer_bio    = document.getElementById('f-org2-bio').value.trim() || null;
+      payload.audience            = document.getElementById('f-audience').value.trim() || null;
+      payload.takeaways           = document.getElementById('f-takeaways').value.trim() || null;
+      payload.activities          = document.getElementById('f-activities').value.trim() || null;
+      payload.max_participants    = document.getElementById('f-max-part').value.trim() || null;
+    }
+
+    try {
+      const res = await fetch('/api/symposium/admin/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+
+      msg.textContent = 'Added — ID ' + data.id + '. Form cleared.';
+      msg.className = 'result-msg ok';
+      msg.style.display = '';
+      e.target.reset();
+      document.getElementById('f-session').value = 'General';
+      document.getElementById('f-shortlisted').checked = true;
+      document.getElementById('panel-talk').classList.add('active');
+      document.getElementById('panel-workshop').classList.remove('active');
+      setTimeout(() => { msg.style.display = 'none'; }, 5000);
+    } catch (err) {
+      msg.textContent = err.message;
+      msg.className = 'result-msg err';
+      msg.style.display = '';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Add proposal';
+  });
+}());
+</script>
+</body>
+</html>
