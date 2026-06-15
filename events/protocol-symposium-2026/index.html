@@ -23,33 +23,21 @@
       </div>
 
       <div class="symposium-banner-wrap symposium-banner-wrap--page">
-        <img src="/assets/nn_banner6.png" alt="Protocol Symposium 2026 — September 21–25 — Abstracts due June 14" class="symposium-banner-img">
+        <img src="/assets/nn_dates_banner.webp" alt="Protocol Symposium 2026 — September 21–25" class="symposium-banner-img">
       </div>
 
       <div class="event-body">
 
-        <p>The Protocol Institute is convening the Protocol Symposium 2026 in September 2026. The symposium brings together researchers, practitioners, and institutions working across the challenges and opportunities of protocolization. We invite submissions for talks and workshops. <strong>Submission deadline is <span style="color:#c0392b;">Sunday, June 14</span>.</strong></p>
+        <p>The Protocol Institute is convening the Protocol Symposium 2026 in September 2026. The symposium brings together researchers, practitioners, and institutions working across the challenges and opportunities of protocolization.</p>
 
-        <p>The theme of the 2026 symposium is <em>New Nature</em>. Full details on the theme are in <a href="https://protocolized.io/p/2026-protocol-symposium-new-nature">this Protocolized essay</a>. If you are looking for ideas for submissions, the <a href="/challenges">Protocol Institute Challenges page</a> is a good place to start.</p>
+        <p>The theme of the 2026 symposium is <em>New Nature</em>. Full details on the theme are in <a href="https://protocolized.io/p/2026-protocol-symposium-new-nature">this Protocolized essay</a>.</p>
 
-        <h2>Call for Submissions</h2>
+        <h2>Submissions Update</h2>
 
-        <p>We invite submissions of two kinds:</p>
-
-        <p><strong>Short presentations</strong> (25 minutes + 5 minutes Q&amp;A): Completed or in-progress work on any aspect of protocol research — theoretical, applied, historical, or speculative.</p>
-
-        <p><strong>Workshop proposals</strong>: A facilitated session on a specific protocol-related theme, challenge, or practice. Workshops run as 4 Zoom sessions over 2 days (September 21–22).</p>
-
-        <p><strong>Special Sessions:</strong> If you're interested in hosting a special session (4 talks) please contact <a href="/team#venkatesh-rao">Venkatesh Rao</a>.</p>
-
-        <div class="symposium-cta">
-          <div class="symposium-deadline">Submission deadline: <strong style="color:#c0392b;">Sunday, June 14</strong></div>
-          <div id="deadline-ticker" style="font-size:0.85em;margin-top:0.4rem;opacity:0.8;"></div>
-          <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSeSQz3ZYtKl9nZw3r4ZTdgZJGyYafXR6aIEh6CyYHw7L8xZEg/viewform">Submit an abstract or workshop proposal &rarr;</a></p>
-        </div>
+        <p>Submissions have closed for the main track. If you've submitted a proposal you'll hear from us soon. We will have a shortlist stage and an experimental PI member voting process to help shape the agenda. If you've arranged with us to curate a special session, we will be in touch for additional details shortly.</p>
 
         <h2>Accepted Submissions</h2>
-        <p>Shortlisted talks and workshops are under review. Voting will open soon. <a href="/events/protocol-symposium-2026/submissions/">View accepted submissions &rarr;</a></p>
+        <p>Shortlisted talks and workshops are under review. <a href="/events/protocol-symposium-2026/submissions/">View accepted submissions &rarr;</a></p>
 
       </div>
 
@@ -78,24 +66,5 @@
 </div>
 
 <script src="/js/main.js"></script>
-<script>
-(function () {
-  var deadline = new Date('2026-06-15T07:00:00Z'); // midnight PDT June 14
-  function update() {
-    var el = document.getElementById('deadline-ticker');
-    if (!el) return;
-    var diff = deadline - Date.now();
-    if (diff <= 0) {
-      el.textContent = 'Submission deadline has passed.';
-      return;
-    }
-    var h = Math.floor(diff / 3600000);
-    var m = Math.floor((diff % 3600000) / 60000);
-    el.textContent = 'Time to deadline: ' + h + 'h ' + m + 'm';
-    setTimeout(update, 60000);
-  }
-  update();
-})();
-</script>
 </body>
 </html>

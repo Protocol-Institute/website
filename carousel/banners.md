@@ -5,4 +5,4 @@ Add a row per banner; drop the image file into R2 as `/assets/<file>`.
 
 | file | weight | link | alt |
 |------|--------|------|-----|
-| nn_banner6.png | 100 | /events/protocol-symposium-2026 | Protocol Symposium 2026 — September 21–25 — Abstracts due June 14 |
+| nn_dates_banner.webp | 100 | /events/protocol-symposium-2026 | Protocol Symposium 2026 — September 21–25 |
