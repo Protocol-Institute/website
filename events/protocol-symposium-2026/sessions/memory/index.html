@@ -209,9 +209,6 @@
   window.startSessionEdit = function () {
     document.getElementById('session-edit-form').style.display = '';
     document.getElementById('session-edit-bar').style.display = 'none';
-    document.getElementById('edit-date').value        = document.getElementById('meta-date').classList.contains('stub')  ? '' : document.getElementById('meta-date').textContent;
-    document.getElementById('edit-start').value       = document.getElementById('meta-start').classList.contains('stub') ? '' : document.getElementById('meta-start').textContent;
-    document.getElementById('edit-end').value         = document.getElementById('meta-end').classList.contains('stub')   ? '' : document.getElementById('meta-end').textContent;
     document.getElementById('edit-description').value = document.getElementById('meta-description').classList.contains('stub') ? '' : document.getElementById('meta-description').textContent;
     document.getElementById('edit-agenda').value      = document.getElementById('meta-agenda').classList.contains('stub')      ? '' : document.getElementById('meta-agenda').textContent;
   };
