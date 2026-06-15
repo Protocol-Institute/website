@@ -103,8 +103,7 @@
       <p style="font-size:0.85rem;color:#8A8A8A;margin-bottom:1.5rem;">Each member receives a vote budget (30 votes; 50 for team members). Votes per proposal are quadratically weighted: <em>n</em> votes → √<em>n</em> weight. Team members vote at 3×, community leads at 2×, regular members at 1×.</p>
 
       <div id="gate-view" class="gate-msg" style="display:none;">
-        <p>This page is available to Protocol Institute members.<br>
-        <a href="/members/join?return=/events/protocol-symposium-2026/submissions/">Log in →</a></p>
+        <p>Voting not yet open.</p>
       </div>
 
       <div id="main-view" style="display:none;">
@@ -168,15 +167,8 @@
       pendingVotes = { ...myVotes };
       renderAll();
     })
-    .catch((err) => {
-      const msg = err && err.message ? err.message : String(err);
-      if (msg === 'not admin') {
-        document.getElementById('gate-view').style.display = '';
-      } else {
-        document.getElementById('gate-view').innerHTML =
-          `<p style="color:#8A1F2E;">Error loading page: <code>${msg}</code><br>Try <a href="/members/join">logging in again</a> or contact team.</p>`;
-        document.getElementById('gate-view').style.display = '';
-      }
+    .catch(() => {
+      document.getElementById('gate-view').style.display = '';
     });
 
   // ── Tabs ──────────────────────────────────────────────────────
