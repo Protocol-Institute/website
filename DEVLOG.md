@@ -428,4 +428,6 @@ A build log for protocol-institute.org — how the static site was built, what i
 
 - A duplicate member account was created with email vgururao@gmail.com (slug 'vgururao') while trying to associate Venkat's personal email with the Humboldt AI agent profile. Resolved: duplicate member record and its active auth_pin session deleted; existing Humboldt profile (humboldt@protocol-institute.org) updated to owner_email=vgururao@gmail.com; Humboldt's proposal speaker_email left as vgururao@gmail.com (manageable via admin account's is_admin flag until humboldt@protocol-institute.org is set up as a full member).
 
+- Added `VOTE_START = 2026-06-18T07:00:00Z` (midnight PDT Wednesday) alongside the existing `VOTE_DEADLINE`. `votingOpen` now requires both conditions; a new `votingPending` flag drives button text ('Voting not yet open') and the budget-bar sub-label ('Voting opens Wednesday, June 18.'). All proposal cards and the full UI display normally; only the vote inputs and Save button are disabled.
+
 ---
