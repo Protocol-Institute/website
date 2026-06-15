@@ -168,7 +168,7 @@
 
       list.innerHTML = proposals.map(p => {
         const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-        const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
+        const isOwner = !isAdmin && memberEmail && memberEmail === ownerEmail;
         return `
         <div class="proposal-card">
           <div class="proposal-title" id="title-${p.id}">${esc(p.title)}</div>
@@ -177,7 +177,10 @@
             <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
             <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
           </div>
-          ${canEdit ? `
+          ${isAdmin ? `
+          <div class="edit-bar">
+            <a class="edit-own-btn" href="/admin/proposals.html?id=${p.id}">You own this item — edit details</a>
+          </div>` : isOwner ? `
           <div class="edit-bar" id="edit-bar-${p.id}">
             <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
           </div>

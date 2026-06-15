@@ -294,7 +294,7 @@
       : '';
 
     const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-    const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
+    const isOwner = !isAdmin && memberEmail && memberEmail === ownerEmail;
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
     const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : '';
 
@@ -307,7 +307,10 @@
         <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
         <button class="abstract-toggle" onclick="toggleAbstract(${p.id})">Show more ▾</button>
       </div>
-      ${canEdit ? `
+      ${isAdmin ? `
+      <div class="edit-bar">
+        <a class="edit-own-btn" href="/admin/proposals.html?id=${p.id}">You own this item — edit details</a>
+      </div>` : isOwner ? `
       <div class="edit-bar" id="edit-bar-${p.id}">
         <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
       </div>

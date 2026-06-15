@@ -229,12 +229,60 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  const editId = new URLSearchParams(window.location.search).get('id');
+
+  if (editId) {
+    document.querySelector('h1').textContent = 'Edit Proposal #' + editId;
+    document.getElementById('submit-btn').textContent = 'Update proposal';
+  }
+
+  function applyTypeToggle(type) {
+    const isTalkLike = type === 'talk' || type === 'interactive';
+    const isWorkshop = type === 'workshop';
+    document.getElementById('panel-talk').classList.toggle('active', isTalkLike);
+    document.getElementById('panel-workshop').classList.toggle('active', isWorkshop);
+    document.getElementById('f-spk-name').required = isTalkLike;
+    document.getElementById('f-org-name').required = isWorkshop;
+  }
+
   // Auth gate — admin only
   fetch('/api/members/me')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
       if (!d.member || !d.member.is_admin) throw new Error();
       document.getElementById('main-view').style.display = '';
+      if (editId) return fetch('/api/symposium/proposals/' + editId).then(r => r.json());
+    })
+    .then(data => {
+      if (!data) return;
+      const p = data.proposal;
+      document.getElementById('f-type').value = p.type || 'talk';
+      applyTypeToggle(p.type || 'talk');
+      document.getElementById('f-title').value    = p.title || '';
+      document.getElementById('f-slug').value     = p.slug || '';
+      document.getElementById('f-track').value    = p.track || 'General';
+      document.getElementById('f-abstract').value = p.abstract || '';
+      document.getElementById('f-session').value  = p.session || 'General';
+      document.getElementById('f-shortlisted').checked = !!p.is_shortlisted;
+      document.getElementById('f-comments').value = p.comments || '';
+      if (p.type === 'talk' || p.type === 'interactive') {
+        document.getElementById('f-spk-name').value    = p.speaker_name || '';
+        document.getElementById('f-spk-email').value   = p.speaker_email || '';
+        document.getElementById('f-spk-web').value     = p.speaker_website || '';
+        document.getElementById('f-co-speakers').value = p.co_speakers || '';
+        document.getElementById('f-artifact').value    = p.artifact_type || '';
+      } else if (p.type === 'workshop') {
+        document.getElementById('f-org-name').value    = p.organizer_name || '';
+        document.getElementById('f-org-email').value   = p.organizer_email || '';
+        document.getElementById('f-org-bio').value     = p.organizer_bio || '';
+        document.getElementById('f-org2-name').value   = p.co_organizer_name || '';
+        document.getElementById('f-org2-email').value  = p.co_organizer_email || '';
+        document.getElementById('f-org2-bio').value    = p.co_organizer_bio || '';
+        document.getElementById('f-audience').value    = p.audience || '';
+        document.getElementById('f-takeaways').value   = p.takeaways || '';
+        document.getElementById('f-activities').value  = p.activities || '';
+        document.getElementById('f-max-part').value    = p.max_participants || '';
+      }
     })
     .catch(() => {
       document.getElementById('gate-view').style.display = '';
@@ -242,15 +290,12 @@
 
   // Type toggle
   document.getElementById('f-type').addEventListener('change', function () {
-    const isTalk = this.value === 'talk';
-    document.getElementById('panel-talk').classList.toggle('active', isTalk);
-    document.getElementById('panel-workshop').classList.toggle('active', !isTalk);
-    document.getElementById('f-spk-name').required = isTalk;
-    document.getElementById('f-org-name').required = !isTalk;
+    applyTypeToggle(this.value);
   });
 
-  // Auto-slug from title
+  // Auto-slug from title (new mode only)
   document.getElementById('f-title').addEventListener('input', function () {
+    if (editId) return;
     const slug = this.value.toLowerCase()
       .replace(/['']/g, '')
       .replace(/[^a-z0-9]+/g, '-')
@@ -279,7 +324,7 @@
       comments:        document.getElementById('f-comments').value.trim() || null,
     };
 
-    if (type === 'talk') {
+    if (type === 'talk' || type === 'interactive') {
       payload.speaker_name    = document.getElementById('f-spk-name').value.trim() || null;
       payload.speaker_email   = document.getElementById('f-spk-email').value.trim() || null;
       payload.speaker_website = document.getElementById('f-spk-web').value.trim() || null;
@@ -299,22 +344,28 @@
     }
 
     try {
-      const res = await fetch('/api/symposium/admin/proposals', {
-        method: 'POST',
+      const url     = editId ? '/api/symposium/proposals/' + editId : '/api/symposium/admin/proposals';
+      const method  = editId ? 'PATCH' : 'POST';
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed');
 
-      msg.textContent = 'Added — ID ' + data.id + '. Form cleared.';
+      if (editId) {
+        msg.textContent = 'Saved.';
+      } else {
+        msg.textContent = 'Added — ID ' + data.id + '. Form cleared.';
+        e.target.reset();
+        document.getElementById('f-session').value = 'General';
+        document.getElementById('f-shortlisted').checked = true;
+        document.getElementById('panel-talk').classList.add('active');
+        document.getElementById('panel-workshop').classList.remove('active');
+      }
       msg.className = 'result-msg ok';
       msg.style.display = '';
-      e.target.reset();
-      document.getElementById('f-session').value = 'General';
-      document.getElementById('f-shortlisted').checked = true;
-      document.getElementById('panel-talk').classList.add('active');
-      document.getElementById('panel-workshop').classList.remove('active');
       setTimeout(() => { msg.style.display = 'none'; }, 5000);
     } catch (err) {
       msg.textContent = err.message;
