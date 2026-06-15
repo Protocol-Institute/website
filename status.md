@@ -7,7 +7,7 @@
 <!-- planned changes or features -->
 - Promote Network page to main nav once member content is added
 - Link SIG organizer names to member profiles as remaining organizers (Kei Kreutler, Spencer Nitkey) get onboarded — Patrick Nast, Anuraj R., Aneesh Sathe now linked
-- Open symposium voting to all members (remove is_admin gate from /submissions/ pages)
+- Invite symposium proposers to create member profiles (pre-approval and voting system now ready)
 - SIG mailing lists (blocked on creating sigs@protocol-institute.org in Resend first)
 - Afeez Oladimeji (dimejibusiness) needs photo before appearing in consultant view
 - Fill in detail pages for external projects: worldmachines, jamverse, protocolized-dev, longnow, humboldt — currently minimal stubs
@@ -54,6 +54,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-15** — Session 25: Pre-invite hardening for symposium — 49 proposer emails pre-approved in CRM (tag_symposium_26, migration 021); email case/trim bugs fixed; flat 50-vote budget; voting window Jun 17–20 PDT; "Draft Agenda" rename; countdown boxes on symposium + agenda pages; SIG timezone abbreviation fix; session reassignments (3 talks Memory→General); deleted Ashton Keys + Varun proposals (6 total); symposium page layout rearranged.
 - **2026-06-15** — Session 24 (continued): Voting gated until Wednesday June 18 midnight PDT (VOTE_START constant); button reads "Voting not yet open"; auto-opens on schedule.
 - **2026-06-15** — Session 24: Post-deadline symposium: new banner images (webp, R2), post-deadline blurb on symposium page; 55 proposals seeded from final Excel (de-dup, title extraction for early rows, email list); D1 migrations 018–020 (session field, interactive type, symposium_sessions table); 4 special sessions (Memory, Protocol Fiction, Psychohistory, Southeast Asia) with session pages, colors, editable metadata; Spencer Nitkey entry split into 3 records (Liz Maher, Spencer, Spencer+Sachin interactive); admin proposal form + PATCH endpoint (full-field for admins, title+abstract for owners); inline editing with red owner button; form moved out of CF Access gate; session filter + alpha sort on submissions page; welcome email flow fixed (no PIN); pre-approval login gate; Samuel Chua profile + Seapunk Worlds; Humboldt/vgururao account merge.
 - **2026-06-14** — Session 23: Member tier system (Team/Community Lead/Member); photos migrated to R2; rich card views; /team+/consulting consolidated into filtered /members views; CRM import (165 contacts) + auto-approve; admin member editor tab; new tags (symposium_25, guest_speaker); startup backup ritual; Symposium 2026 submissions page with quadratic voting, comments system, Total Effective Weight display; voting deadline June 30.

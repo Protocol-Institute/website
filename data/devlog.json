@@ -895,6 +895,44 @@
           "html": "<p>Added <code>VOTE_START = 2026-06-18T07:00:00Z</code> (midnight PDT Wednesday) alongside the existing <code>VOTE_DEADLINE</code>. <code>votingOpen</code> now requires both conditions; a new <code>votingPending</code> flag drives button text ('Voting not yet open') and the budget-bar sub-label ('Voting opens Wednesday, June 18.'). All proposal cards and the full UI display normally; only the vote inputs and Save button are disabled.</p>"
         }
       ]
+    },
+    {
+      "id": 25,
+      "sort_key": 25,
+      "label": "Session 25",
+      "title": "Pre-invite hardening, voting window, Draft Agenda, proposal cleanup",
+      "date": "2026-06-15",
+      "time_pt": "",
+      "tracks": ["member-directory", "static-site"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium 2026 pre-approval: CRM + tag_symposium_26",
+          "html": "<p>49 symposium proposer emails inserted into <code>crm_contacts</code> with affiliation '2026 Symposium', excluding Ashton Keys. Anika Meier (co-organizer) added separately. D1 migration 021 adds <code>tag_symposium_26</code> column to <code>members</code> and <code>membership_requests</code>. <code>EVENT_TAGS</code>, <code>CRM_TAG_MAP</code>, <code>js/tags.js</code>, and the join form checkbox were all updated. Proposers who sign up at /members/join will be auto-approved and tagged.</p>"
+        },
+        {
+          "title": "Pre-invite bug fixes: email case, trailing space, budget, gate message",
+          "html": "<p>Four bugs found in audit and fixed before inviting proposers: (1) <code>proposals/[id].js</code> owner check was case-sensitive — server used raw DB email, client lowercased; affected Sean Stevenson, Kei Kreutler, Kaliya Young, Florian Lohse. Fixed with <code>LOWER(TRIM())</code> on comparison. (2) Patrick Atwater's email stored with trailing space in DB — normalized. (3) Vote budget was 30/50 (member/team split); changed to flat 50 for everyone, tier multiplier (1×/2×/3×) is the only differentiation. (4) Non-authenticated visitors saw 'Voting not yet open' gate message — now shows a login link instead.</p>"
+        },
+        {
+          "title": "Voting window: Jun 17–20 PDT; 'Draft Agenda' rename; countdown boxes",
+          "html": "<p>Voting window changed to June 17, 7 AM PDT → June 20, 7 AM PDT (72 hours). VOTE_START/DEADLINE updated in <code>votes.js</code> (server-side enforcement) and <code>submissions/index.html</code> (client-side display). 'Accepted Submissions' page retitled 'Draft Agenda' (title, h1, meta). Countdown boxes added: a prominent yellow-background box on the main symposium page (shows time-to-open, time-to-close with 'Vote now' link, or 'Voting closed'), and a smaller inline bar on the Draft Agenda page. Both refresh every 30s.</p>"
+        },
+        {
+          "title": "Symposium page layout redesign",
+          "html": "<p>Main symposium page restructured: removed theme blurb and subheadings; lead text is now just the submissions-closed paragraph. Banner image reduced to 380px (half content width), centered. Countdown box moved to top, image to middle, blurb to bottom. Box background changed from teal-tinted white to light yellow (#FFF8E7) for better contrast; 'View draft agenda' CTA always inside the box.</p>"
+        },
+        {
+          "title": "SIG timezone abbreviation in local time display",
+          "html": "<p>Added <code>timeZoneName: 'short'</code> to the <code>toLocaleTimeString</code> call in <code>main.js</code>. SIG pages now show e.g. '17:00 WEST your local time' instead of '17:00 your local time', allowing users to self-diagnose timezone mismatches. Prompted by a Portugal (WEST) user reporting 1-hour offset — root cause was likely OS timezone set to WET instead of WEST, not a code bug.</p>"
+        },
+        {
+          "title": "Proposal session reassignments and deletions",
+          "html": "<p>Three talks moved from Memory special session back to General: Venkatesh Rao ('Artisanal Bots'), Stanislav Lvovsky ('Provenance Against Fluency'), Daniel Schmidt ('Don't Cross the Lines'). Memory session now has 5 real proposals. Six proposals deleted entirely: 5 from Ashton Keys (all tracks) and 1 from Varun Adibhatla. 55 proposals remain, all shortlisted.</p>"
+        }
+      ]
     }
   ]
 }

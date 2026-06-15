@@ -431,3 +431,23 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Added `VOTE_START = 2026-06-18T07:00:00Z` (midnight PDT Wednesday) alongside the existing `VOTE_DEADLINE`. `votingOpen` now requires both conditions; a new `votingPending` flag drives button text ('Voting not yet open') and the budget-bar sub-label ('Voting opens Wednesday, June 18.'). All proposal cards and the full UI display normally; only the vote inputs and Save button are disabled.
 
 ---
+
+## Session 25: Pre-invite hardening, voting window, Draft Agenda, proposal cleanup
+
+*2026-06-15*
+
+**Tracks:** member-directory, static-site
+
+- 49 symposium proposer emails inserted into `crm_contacts` with affiliation '2026 Symposium', excluding Ashton Keys. Anika Meier (co-organizer) added separately. D1 migration 021 adds `tag_symposium_26` column to `members` and `membership_requests`. `EVENT_TAGS`, `CRM_TAG_MAP`, `js/tags.js`, and the join form checkbox were all updated. Proposers who sign up at /members/join will be auto-approved and tagged.
+
+- Four bugs found in audit and fixed before inviting proposers: (1) `proposals/[id].js` owner check was case-sensitive — server used raw DB email, client lowercased; affected Sean Stevenson, Kei Kreutler, Kaliya Young, Florian Lohse. Fixed with `LOWER(TRIM())` on comparison. (2) Patrick Atwater's email stored with trailing space in DB — normalized. (3) Vote budget was 30/50 (member/team split); changed to flat 50 for everyone, tier multiplier (1×/2×/3×) is the only differentiation. (4) Non-authenticated visitors saw 'Voting not yet open' gate message — now shows a login link instead.
+
+- Voting window changed to June 17, 7 AM PDT → June 20, 7 AM PDT (72 hours). VOTE_START/DEADLINE updated in `votes.js` (server-side enforcement) and `submissions/index.html` (client-side display). 'Accepted Submissions' page retitled 'Draft Agenda' (title, h1, meta). Countdown boxes added: a prominent yellow-background box on the main symposium page (shows time-to-open, time-to-close with 'Vote now' link, or 'Voting closed'), and a smaller inline bar on the Draft Agenda page. Both refresh every 30s.
+
+- Main symposium page restructured: removed theme blurb and subheadings; lead text is now just the submissions-closed paragraph. Banner image reduced to 380px (half content width), centered. Countdown box moved to top, image to middle, blurb to bottom. Box background changed from teal-tinted white to light yellow (#FFF8E7) for better contrast; 'View draft agenda' CTA always inside the box.
+
+- Added `timeZoneName: 'short'` to the `toLocaleTimeString` call in `main.js`. SIG pages now show e.g. '17:00 WEST your local time' instead of '17:00 your local time', allowing users to self-diagnose timezone mismatches. Prompted by a Portugal (WEST) user reporting 1-hour offset — root cause was likely OS timezone set to WET instead of WEST, not a code bug.
+
+- Three talks moved from Memory special session back to General: Venkatesh Rao ('Artisanal Bots'), Stanislav Lvovsky ('Provenance Against Fluency'), Daniel Schmidt ('Don't Cross the Lines'). Memory session now has 5 real proposals. Six proposals deleted entirely: 5 from Ashton Keys (all tracks) and 1 from Varun Adibhatla. 55 proposals remain, all shortlisted.
+
+---
