@@ -9,7 +9,7 @@ import { EVENT_TAGS as TAG_COLUMNS } from '../../_shared/tags.js';
 import { sendWelcomeEmail } from '../../_shared/welcome.js';
 
 const EDITABLE_FIELDS = new Set([
-  'name', 'bio', 'website', 'photo_r2_key', 'city', 'discord_handle',
+  'email', 'name', 'bio', 'website', 'photo_r2_key', 'city', 'discord_handle',
   'tier', 'community_lead_title', 'team_title',
   'is_consultant', 'is_public', 'is_admin', 'is_team', 'welcome_sent',
   ...TAG_COLUMNS,
@@ -73,9 +73,9 @@ export async function onRequestPatch({ request, env }) {
     return Response.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { email, updates } = body;
-  if (!email || !updates || typeof updates !== 'object') {
-    return Response.json({ error: 'email and updates required' }, { status: 400 });
+  const { slug, updates } = body;
+  if (!slug || !updates || typeof updates !== 'object') {
+    return Response.json({ error: 'slug and updates required' }, { status: 400 });
   }
 
   const safe = Object.entries(updates).filter(([k]) => EDITABLE_FIELDS.has(k));
@@ -85,8 +85,8 @@ export async function onRequestPatch({ request, env }) {
   const values = safe.map(([, v]) => v);
 
   await env.DB.prepare(
-    `UPDATE members SET ${setClauses}, updated_at = ? WHERE email = ?`
-  ).bind(...values, new Date().toISOString(), email).run();
+    `UPDATE members SET ${setClauses}, updated_at = ? WHERE slug = ?`
+  ).bind(...values, new Date().toISOString(), slug).run();
 
   return Response.json({ ok: true });
 }

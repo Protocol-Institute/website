@@ -195,7 +195,7 @@
 
   // ── Tab 2: Member directory editor ───────────────────────────
   let allMembers = [];
-  let expandedEmail = null;
+  let expandedSlug = null;
 
   async function loadDirectory() {
     const res = await fetch('/api/admin/members?view=all', {
@@ -214,8 +214,8 @@
       return;
     }
     list.innerHTML = allMembers.map(m => {
-      const isExpanded = expandedEmail === m.email;
-      return `<div class="member-row" data-email="${esc(m.email)}" onclick="toggleEdit('${esc(m.email)}')">
+      const isExpanded = expandedSlug === m.slug;
+      return `<div class="member-row" data-slug="${esc(m.slug)}" onclick="toggleEdit('${esc(m.slug)}')">
         <span class="member-row-name">${esc(m.name || '(no name)')}</span>
         <span class="member-row-email">${esc(m.email)}</span>
         <span class="member-row-tier">${esc(m.tier || 'member')}</span>
@@ -230,11 +230,15 @@
       `<label class="edit-checkbox"><input type="checkbox" data-field="${k}" ${m[k] ? 'checked' : ''}> ${TAG_LABELS[k] || k}</label>`
     ).join('');
 
-    return `<div class="member-edit-form" id="edit-${CSS.escape(m.email)}">
+    return `<div class="member-edit-form" id="edit-${CSS.escape(m.slug)}">
       <div class="edit-grid">
         <div>
           <label class="form-label">Name</label>
           <input class="form-input" data-field="name" value="${esc(m.name || '')}">
+        </div>
+        <div>
+          <label class="form-label">Email</label>
+          <input class="form-input" data-field="email" value="${esc(m.email || '')}">
         </div>
         <div>
           <label class="form-label">Tier</label>
@@ -283,31 +287,30 @@
         <div class="edit-checkbox-grid">${tagChecks}</div>
 
         <div class="edit-actions">
-          <button class="form-btn save-btn" data-email="${esc(m.email)}">Save changes</button>
+          <button class="form-btn save-btn" data-slug="${esc(m.slug)}">Save changes</button>
           <button class="form-btn form-btn--secondary" onclick="cancelEdit()">Cancel</button>
-          <span class="form-msg" id="edit-msg-${CSS.escape(m.email)}" style="display:none;"></span>
+          <span class="form-msg" id="edit-msg-${CSS.escape(m.slug)}" style="display:none;"></span>
         </div>
       </div>
     </div>`;
   }
 
-  window.toggleEdit = function(email) {
-    expandedEmail = expandedEmail === email ? null : email;
+  window.toggleEdit = function(slug) {
+    expandedSlug = expandedSlug === slug ? null : slug;
     renderDirectory();
-    if (expandedEmail) {
-      // Bind save button after render
-      const btn = document.querySelector(`.save-btn[data-email="${CSS.escape(email)}"]`);
-      if (btn) btn.addEventListener('click', () => saveEdit(email));
+    if (expandedSlug) {
+      const btn = document.querySelector(`.save-btn[data-slug="${CSS.escape(slug)}"]`);
+      if (btn) btn.addEventListener('click', () => saveEdit(slug));
     }
   };
 
   window.cancelEdit = function() {
-    expandedEmail = null;
+    expandedSlug = null;
     renderDirectory();
   };
 
-  async function saveEdit(email) {
-    const form = document.getElementById(`edit-${CSS.escape(email)}`);
+  async function saveEdit(slug) {
+    const form = document.getElementById(`edit-${CSS.escape(slug)}`);
     const updates = {};
 
     form.querySelectorAll('[data-field]').forEach(el => {
@@ -322,16 +325,15 @@
     const res = await fetch('/api/admin/members', {
       method: 'PATCH',
       headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, updates }),
+      body: JSON.stringify({ slug, updates }),
     });
     const data = await res.json();
-    const msg = document.getElementById(`edit-msg-${CSS.escape(email)}`);
+    const msg = document.getElementById(`edit-msg-${CSS.escape(slug)}`);
     msg.style.display = '';
     if (res.ok) {
       msg.className = 'form-msg form-msg--success';
       msg.textContent = 'Saved.';
-      // Refresh member list in background
-      const member = allMembers.find(m => m.email === email);
+      const member = allMembers.find(m => m.slug === slug);
       if (member) Object.assign(member, updates);
     } else {
       msg.className = 'form-msg form-msg--error';
