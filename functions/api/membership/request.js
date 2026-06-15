@@ -11,6 +11,7 @@ const CRM_TAG_MAP = {
   'SoP25':                    'tag_sop25',
   '2025 Protocol School':     'tag_ps25',
   '2025 Foundations Workshop':'tag_symposium_25',
+  '2026 Symposium':           'tag_symposium_26',
   'Protocolized Writer':      'tag_protocolized_writer',
   'Guest Speaker':            'tag_guest_speaker',
 };
