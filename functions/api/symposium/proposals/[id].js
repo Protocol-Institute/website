@@ -29,7 +29,6 @@ export async function onRequestGet({ request, env, params }) {
 
   const auth = await resolve(request, env, id);
   if (auth.err) return Response.json({ error: auth.err }, { status: auth.status });
-  if (!auth.isAdmin) return Response.json({ error: 'Admin required' }, { status: 403 });
 
   return Response.json({ proposal: auth.proposal });
 }

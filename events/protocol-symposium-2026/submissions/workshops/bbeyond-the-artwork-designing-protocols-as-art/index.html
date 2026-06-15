@@ -19,64 +19,61 @@
   <header id="site-header"></header>
   <main class="interior-main">
     <div class="container">
-
       <div id="gate-view" class="gate-msg" style="display:none;">
         <p>This page is available to Protocol Institute members.<br>
         <a href="/members/join?return=/events/protocol-symposium-2026/submissions/workshops/bbeyond-the-artwork-designing-protocols-as-art/" style="color:#2A6B6B;">Log in →</a></p>
       </div>
-
       <div id="main-view" style="display:none;">
         <p style="margin-bottom:1rem;font-size:0.85rem;">
           <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← Accepted Submissions</a>
         </p>
-
-        <div class="page-header">
-          <h1>Beyond the Artwork: Designing Protocols as Art</h1>
-        </div>
-
-        <p style="font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A8A;margin-bottom:1.5rem;">Workshop · Alumni Track</p>
-
-        <h2 class="section-label">Abstract</h2>
-        <p style="line-height:1.7;">Protocol Art is emerging as a practice in which the artwork is not a finite object but a set of rules that others (human or machine) instantiate into an indefinite number of unique works. From Fluxus event scores and Oulipo constraints to Sol LeWitt's instructional drawings, from on-chain generative systems to autonomous, self-reproducing artworks, the field has been forming for decades, even if it has only recently been named and recognized as such. This workshop convenes artists, curators, scholars, and theorists to engage with Protocol Art. Across four sessions, participants will learn to distinguish between art made as, with, and about protocols, in order to better understand this emerging field. Each participant will come up with a protocol artwork of their own, map existing works onto the framework, and contribute to a shared field glossary published as a workshop output. The workshop is designed not only to teach Protocol Art, but also to invite participants to shape the field as it forms.</p>
-
-        <h2 class="section-label">Audience</h2>
-        <p style="line-height:1.7;">This workshop is designed for practitioners, theorists, curators, and researchers working at the intersection of art, protocols, and emerging media. Most notably: (a) Artists already working with rule-based, generative, on-chain, AI-driven, or instructional practices. (b) Curators, critics, and writers engaging with generative art, blockchain art, or AI art, who want to develop a more rigorous vocabulary for protocol-based works. (c) Researchers and theorists in art history, media studies, science and technology studies (STS), and legal scholarship addressing questions of authorship, instantiation, and emergence. (d) Collectors, advisors, and institutional actors interested in exploring how protocol-based works can enter the art market and the broader cultural infrastructure.</p>
-        <p style="line-height:1.7;">Participants are not expected to have a technical background, but we do expect engagement with the substantive issues at stake: authorship, instantiation, emergence, ownership, and the relationship between protocols and the works they generate. If applications exceed capacity, priority goes to: (1) demonstrated practice or research engagement with protocol-based, rule-based, generative, or on-chain art; (2) diversity of perspective across artists, curators, scholars, and institutional actors; and (3) geographic and disciplinary breadth, with particular attention to participants from outside the dominant US/Western European Web3 art axis.</p>
-
-        <h2 class="section-label">What participants will take away</h2>
-        <p style="line-height:1.7;">(1) A working vocabulary for Protocol Art, with the ability to distinguish between art made as, with, or about protocols, and to situate specific works within this framework. (2) Clarity on where Protocol Art comes from (Fluxus, Oulipo, conceptual and generative art, on-chain art) and where it is heading (biological protocols, self-perpetuating systems, distributed authorship). (3) A position in a field that is still being defined with regard to its vocabulary, canon, and institutional shape.</p>
-
-        <h2 class="section-label">What participants will do</h2>
-        <p style="line-height:1.7;">Across the four sessions of the workshop, participants will: (1) Come up with new ideas and specifications for protocol artworks, articulating its rules, affordances, and the discretion left to instantiators. (2) Describe an existing protocol artwork: a short written analysis (300–500 words) situating an existing work of art as, with, or about a protocol, with specific attention to edge cases and hybrid forms. (3) Deliver a lightning talk (5 mins) presenting either their drafted protocol or their mapped analysis to the group, with structured peer feedback. (4) Contribute to a shared repository: a collaboratively edited working glossary and case-study repository on Protocol Art, which will be published openly as a workshop output.</p>
-
-        <h2 class="section-label">Organizers</h2>
-        <div class="team-member">
-          <div class="team-bio">
-            <h3 class="team-name">Primavera De Filippi</h3>
-            <p>Primavera De Filippi is both a legal scholar (research director at CNRS and faculty associate at the Berkman Klein Center for Internet &amp; Society at Harvard) and an artist working with emergent technologies, with a particular focus on blockchain and AI. She is the author of two landmark books in the field: <em>Blockchain and the Law</em> (Harvard University Press, 2018) and <em>Blockchain Governance</em> (MIT Press, 2024).</p>
-            <p>Primavera has been both a practising protocol artist and a theorist of the field since before it had a name. In 2019, she drafted the Protocolism Manifesto, one of the earliest attempts to delineate Protocol Art as a coherent movement, defining its constitutive elements, lifecycle, and relationship to adjacent fields. Her Plantoids artworks are currently exhibited at Palazzo Diedo (Berggruen Arts, Venice) as part of the Strange Rules exhibition — the first museum-scale curatorial statement on Protocol Art, curated by Mat Dryhurst, Holly Herndon and Hans Ulrich Obrist. She is also contributing to the forthcoming publication that will serve as the first comprehensive account of the protocol art field.</p>
-          </div>
-        </div>
-        <div class="team-member" style="margin-top:1.5rem;">
-          <div class="team-bio">
-            <h3 class="team-name">Anika Meier</h3>
-            <p>Anika Meier is a writer, curator, art critic, lecturer, and digital strategist based in Berlin. She teaches at the Department of Digital Art (Class of UBERMORGEN) at the University of Applied Arts Vienna and is the co-founder of The Second-Guess, a curatorial collective based in Berlin and Los Angeles exploring the relationship between humans and technology. She is also the curator and program lead of the objkt labs Residency.</p>
-            <p>Her editorial practice has consistently treated rule-based, generative, and protocol-driven works as central to contemporary art history. As curator, she has organized landmark exhibitions of generative and on-chain artists (among them Casey Reas, Tyler Hobbs, Rafaël Rozendaal, Aranda\Mens) and emerging protocol-native practices, and has interviewed many of the figures whose work can be described as Protocol Art. She brings to this workshop a sharp curatorial eye, as well as direct working relationships with many of the artists, collectors, and platforms currently shaping the field.</p>
-          </div>
-        </div>
-
+        <div id="proposal-body"></div>
       </div>
-
     </div>
   </main>
   <footer class="site-footer"></footer>
 </div>
 <script src="/js/main.js"></script>
 <script>
-fetch('/api/members/me')
-  .then(r => r.ok ? r.json() : Promise.reject())
-  .then(data => { if (!data.member) throw new Error(); document.getElementById('main-view').style.display = ''; })
-  .catch(() => { document.getElementById('gate-view').style.display = ''; });
+const PROPOSAL_ID = 75;
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderInline(s){return s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');}
+function renderText(text){
+  if(!text||text.trim()===''||text.trim().toLowerCase()==='n/a') return '';
+  return esc(text).split(/\n\n+/).map(block=>{
+    const lines=block.split('\n').map(l=>l.trimEnd());
+    const nonempty=lines.filter(l=>l.trim());
+    if(nonempty.length>1&&nonempty.every(l=>l.trim().startsWith('- ')))
+      return '<ul style="line-height:1.8;padding-left:1.4rem;">'+nonempty.map(l=>`<li>${renderInline(l.replace(/^- /,''))}</li>`).join('')+'</ul>';
+    return `<p style="line-height:1.7;">${renderInline(block.replace(/\n/g,'<br>'))}</p>`;
+  }).join('');
+}
+const TRACK_LABELS={'SIGPfB':'SIGPfB (Protocols for Business)','SIGFPT':'SIGFPT (Formal Protocol Theory)','MRG':'MRG (Model Roundtable)','ProtFiSIG':'ProtFiSIG (Protocol Fiction)','Alumni':'Alumni Track'};
+function renderProposal(p){
+  const track=TRACK_LABELS[p.track]||p.track||'';
+  const sec=t=>`<h2 class="section-label">${t}</h2>`;
+  let html=`<div class="page-header"><h1>${esc(p.title)}</h1></div>
+    <p style="font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A8A;margin-bottom:1.5rem;">Workshop${track?' · '+esc(track):''}</p>`;
+  if(p.abstract)   html+=sec('Abstract')+renderText(p.abstract);
+  if(p.audience)   html+=sec('Audience')+renderText(p.audience);
+  if(p.takeaways)  html+=sec('What participants will take away')+renderText(p.takeaways);
+  if(p.activities) html+=sec('What participants will do')+renderText(p.activities);
+  const orgs=[];
+  if(p.organizer_name)    orgs.push({name:p.organizer_name,bio:p.organizer_bio});
+  if(p.co_organizer_name) orgs.push({name:p.co_organizer_name,bio:p.co_organizer_bio});
+  if(orgs.length){
+    html+=sec('Organizers');
+    html+=orgs.map((o,i)=>`<div class="team-member"${i?' style="margin-top:1.5rem;"':''}>
+      <div class="team-bio"><h3 class="team-name">${esc(o.name)}</h3>${renderText(o.bio)}</div></div>`).join('');
+  }
+  if(p.comments&&p.comments.trim()&&p.comments.trim().toLowerCase()!=='n/a')
+    html+=sec('Notes')+renderText(p.comments);
+  return html;
+}
+fetch(`/api/symposium/proposals/${PROPOSAL_ID}`)
+  .then(r=>{if(r.status===401||r.status===403){document.getElementById('gate-view').style.display='';return null;}if(!r.ok)throw new Error();return r.json();})
+  .then(data=>{if(!data)return;document.getElementById('proposal-body').innerHTML=renderProposal(data.proposal);document.getElementById('main-view').style.display='';})
+  .catch(()=>{document.getElementById('gate-view').style.display='';});
 </script>
 </body>
 </html>
