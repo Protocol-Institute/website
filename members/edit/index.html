@@ -74,6 +74,12 @@
           </div>
 
           <div class="form-group">
+            <label class="form-label">Email address</label>
+            <p id="email-readonly" class="form-input" style="background:#F5F3EF;color:#5A5A5A;cursor:default;margin:0;"></p>
+            <p class="form-hint">To update your email address, contact <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.</p>
+          </div>
+
+          <div class="form-group">
             <label class="form-label" for="bio-input">Short bio</label>
             <textarea class="form-textarea" id="bio-input" rows="4"></textarea>
           </div>
@@ -226,6 +232,7 @@
   function populateForm(profile) {
     currentProfile = profile;
     document.getElementById('name-input').value = profile.name || '';
+    document.getElementById('email-readonly').textContent = profile.email || '';
     document.getElementById('bio-input').value = profile.bio || '';
     document.getElementById('website-input').value = profile.website || '';
     document.getElementById('city-input').value = profile.city || '';
