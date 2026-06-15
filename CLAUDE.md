@@ -52,11 +52,16 @@ admin/              /admin/members — admin review panel (CF Access gated)
 functions/          Cloudflare Pages Functions (API endpoints)
   assets/[[path]].js  R2 proxy — intercepts ALL /assets/* requests, serves from pi-assets R2 bucket
   _shared/tags.js   Canonical tag definitions — imported by all Workers
-  api/              /api/* endpoints (members, auth, membership, admin)
+  _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
+  _shared/session.js  Shared pi_session cookie validator
+  api/              /api/* endpoints (members, auth, membership, admin, symposium)
+events/protocol-symposium-2026/submissions/  /submissions — shortlisted proposals + quadratic voting (admin-gated until voting opens)
+  workshops/        Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
 data/
   devlog.json       Build log source of truth
   alumni.json       SoP23–25 alumni reference data (70 entries)
+backups/            D1 JSON exports written by check_members.py at session start (gitignored)
 assets/             SVG files only — binary assets (PNG/JPG/WEBP) are in R2, not git
   logo-animated.svg   Animated logo — used only on index.html
 inbox/              Local staging for new assets before R2 upload — gitignored

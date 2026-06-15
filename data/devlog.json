@@ -758,6 +758,44 @@
       ]
     },
     {
+      "id": 23,
+      "sort_key": 23.0,
+      "label": "Session 23",
+      "title": "Member tier system, CRM auto-approve, symposium voting",
+      "date": "2026-06-14",
+      "time_pt": "",
+      "tracks": ["static-site", "member-directory", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Member tier system (D1 migration 014)",
+          "html": "<p>Replaced the flat <code>is_team</code>/<code>is_consultant</code> flag model with a three-tier hierarchy: <strong>team</strong>, <strong>community_lead</strong>, <strong>member</strong>. New columns <code>tier TEXT DEFAULT 'member'</code> and <code>community_lead_title TEXT</code> added to <code>members</code>. All <code>is_team=1</code> records backfilled to <code>tier='team'</code>. Aneesh Sathe corrected from team to <code>community_lead / SIG Host</code>; Patrick Nast, Rafael Fernandez, Sachin Benny, Anuraj R. also promoted to community_lead. <code>is_team</code> and <code>is_consultant</code> flags retained for backward compatibility but <code>tier</code> is now the authoritative classification.</p><p>Team badge: white on filled teal. SIG Host badge: white on deep crimson (#8A1F2E). Members page filters: All / Team / Community Leads / Consultants / event tags. /team and /consulting deleted and redirected (301) to /members?filter=team and /members?filter=consultant. Filter blurbs show contextual descriptions per filter. URL param <code>?filter=X</code> is bookmarkable.</p>"
+        },
+        {
+          "title": "Rich card views and photo hosting",
+          "html": "<p>Team and Consultant filtered views render styled card boxes (border, background, padding) with 96px profile photos. All member photos previously stored as external URLs (aneesh, anuraj, kaliya, amber) were downloaded and uploaded to R2 as <code>beings/slug.ext</code>, then <code>photo_r2_key</code> updated in D1. All photos now served via the R2 proxy — no external image dependencies remain. Consultants without photos are silently excluded from the consultant card view; Afeez Oladimeji remains excluded until he adds a photo. Consultant cards show expertise chips and contact/portfolio links. Members page is alphabetically sorted (name ASC) across all views.</p>"
+        },
+        {
+          "title": "CRM import, auto-approve, shared modules (D1 migration 015)",
+          "html": "<p>165 CRM contacts (email + affiliation string) imported into new <code>crm_contacts</code> table. On every join form submission, <code>/api/membership/request</code> queries <code>crm_contacts</code> for the email; if matched, the member record is created immediately (CRM affiliation tags merged with form tags), the request is marked approved, and a welcome email is sent — bypassing the admin queue entirely. Falls back gracefully to pending review if the CRM check errors.</p><p>Affiliation → tag mapping: SoP23/24/25, 2025 Protocol School, 2025 Foundations Workshop (→ tag_symposium_25), Protocolized Writer, Guest Speaker (→ tag_guest_speaker). Two new event tags added to <code>members</code>, <code>membership_requests</code>, join form, and members filter bar.</p><p>Shared modules extracted: <code>functions/_shared/welcome.js</code> (PIN generation, Resend call, welcome_sent flag update) and <code>functions/_shared/session.js</code> (pi_session cookie validator). Previously duplicated inline in multiple handlers.</p><p>check_members.py: new section 0 exports members, membership_requests, and crm_contacts to <code>backups/pi-members-YYYY-MM-DD.json</code> on every startup run. Directory gitignored.</p>"
+        },
+        {
+          "title": "Admin panel: member editor tab",
+          "html": "<p>Admin panel at <code>/admin/members</code> gained a second tab: <strong>Member Directory</strong>. Loads all members via <code>GET /api/admin/members?view=all</code> (ADMIN_KEY gated). Each row is click-to-expand, opening an inline edit form with all profile fields (name, bio, website, city, discord, photo_r2_key), role fields (tier, community_lead_title, team_title), flag checkboxes (is_consultant, is_public, is_admin, welcome_sent), and all event tag checkboxes. Save calls new <code>PATCH /api/admin/members</code> endpoint which builds a whitelisted <code>UPDATE members SET … WHERE email = ?</code>. The approval tab is unchanged.</p>"
+        },
+        {
+          "title": "Symposium 2026 submissions page with quadratic voting (D1 migrations 016–017)",
+          "html": "<p>New page at <code>/events/protocol-symposium-2026/submissions/</code> (currently gated to <code>is_admin=1</code>; opens to all members when voting launches). 36 proposals imported from the call-for-abstracts CSV: 27 talks + 3 workshops shortlisted; Ashton Keys (5 submissions) and Varun Adibhatla (1) not shortlisted. Missing titles for early submissions extracted from abstract text or set manually (Nathan Schneider: \"Virtues for a Protocol Society\").</p><p>Voting model: each member gets a budget of 30 votes (50 for team). Allocating <em>n</em> votes to a proposal contributes <em>tier_weight × √n</em> to its aggregate score (team=3×, community_lead=2×, member=1×). Scores computed in SQL via a single correlated GROUP BY with SQRT(). Budget bar shows votes remaining, Total Effective Weight (Σ√n across all allocations), and ratio of votes cast. Voting closes June 30 UTC — the API rejects saves after the deadline and the UI disables inputs.</p><p>Three workshop detail pages generated statically from D1 data, each with full abstract, organizer bios, audience, takeaways, and activities. All pages share the same is_admin session gate.</p><p>Comment system (migration 017): any logged-in member can post comments on any shortlisted proposal. <code>symposium_comments</code> table stores member_email, member_name, body. Comments are loaded on-demand per card; count badge updates after posting. Intended for suggestions to speakers/organizers.</p>"
+        },
+        {
+          "title": "SIG organizer links and consulting policies page",
+          "html": "<p>All six SIG index pages updated: organizer names in <code>.sig-meta</code> now link to <code>/members#slug</code> for members in the directory. Kei Kreutler (MRG) and Spencer Nitkey (ProtFiSIG) still not linked — not yet in the member directory.</p><p>New stub page <code>/consulting/policies/</code> documenting consulting network eligibility, conduct standards, and removal policy. Linked from the consultant checkbox note on the join form.</p>"
+        }
+      ]
+    },
+    {
       "id": 22,
       "sort_key": 22.0,
       "label": "Session 22",
