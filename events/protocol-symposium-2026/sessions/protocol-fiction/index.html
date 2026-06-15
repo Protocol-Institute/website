@@ -28,6 +28,20 @@
     .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
     .gate-msg a { color:#2A6B6B; }
     .talks-empty { color:#8A8A8A; font-style:italic; font-size:0.92rem; padding:1.5rem 0; }
+    .edit-bar { margin-top:0.6rem; }
+    .edit-link { font-size:0.78rem; color:#2A6B6B; cursor:pointer;
+      background:none; border:none; padding:0; text-decoration:underline; }
+    .edit-form { margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid #E0DDD8; }
+    .edit-title-input { width:100%; box-sizing:border-box; font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; font-weight:600; padding:0.35rem 0.5rem;
+      border:1px solid #C8C5C0; margin-bottom:0.5rem; }
+    .edit-abstract-input { width:100%; box-sizing:border-box; font-family:inherit;
+      font-size:0.9rem; padding:0.4rem 0.5rem; border:1px solid #C8C5C0;
+      min-height:120px; resize:vertical; line-height:1.6; margin-bottom:0.5rem; }
+    .edit-actions { display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
+    .edit-cancel { font-family:inherit; font-size:0.85rem; color:#5A5A5A; cursor:pointer;
+      background:none; border:none; padding:0; text-decoration:underline; }
+    .edit-msg { font-size:0.8rem; color:#8A1F2E; }
   </style>
 </head>
 <body>
@@ -95,10 +109,15 @@
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  let memberEmail = '', isAdmin = false;
+  const store = {};
+
   fetch('/api/members/me')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
-      if (!d.member || !d.member.is_admin) throw new Error();
+      if (!d.member) throw new Error();
+      memberEmail = (d.member.email || '').toLowerCase();
+      isAdmin = !!d.member.is_admin;
       document.getElementById('main-view').style.display = '';
       return fetch('/api/symposium/proposals');
     })
@@ -124,15 +143,37 @@
         return;
       }
 
-      list.innerHTML = all.map(p => `
+      all.forEach(p => { store[p.id] = { title: p.title, abstract: p.abstract || '' }; });
+
+      list.innerHTML = all.map(p => {
+        const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
+        const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
+        const interactiveBadge = p.type === 'interactive'
+          ? ' <span style="font-size:0.72rem;color:#2A6B6B;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;vertical-align:middle;">Interactive</span>'
+          : '';
+        return `
         <div class="proposal-card">
-          <div class="proposal-title">${esc(p.title)}${p.type === 'interactive' ? ' <span style="font-size:0.72rem;color:#2A6B6B;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;vertical-align:middle;">Interactive</span>' : ''}</div>
+          <div class="proposal-title" id="title-${p.id}">${esc(p.title)}${interactiveBadge}</div>
           <div class="proposal-speaker">${esc(p.speaker_name || '')}${p.co_speakers ? ' &amp; ' + esc(p.co_speakers) : ''}</div>
-          <div class="proposal-abstract">
+          <div class="proposal-abstract" id="abs-wrap-${p.id}">
             <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
             <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
           </div>
-        </div>`).join('');
+          ${canEdit ? `
+          <div class="edit-bar" id="edit-bar-${p.id}">
+            <button class="edit-link" onclick="startEdit(${p.id})">Edit title &amp; abstract</button>
+          </div>
+          <div class="edit-form" id="edit-form-${p.id}" style="display:none;">
+            <input class="edit-title-input" id="edit-title-${p.id}" type="text">
+            <textarea class="edit-abstract-input" id="edit-abstract-${p.id}"></textarea>
+            <div class="edit-actions">
+              <button class="form-btn" onclick="saveEdit(${p.id})">Save</button>
+              <button class="edit-cancel" onclick="cancelEdit(${p.id})">Cancel</button>
+              <span class="edit-msg" id="edit-msg-${p.id}"></span>
+            </div>
+          </div>` : ''}
+        </div>`;
+      }).join('');
     })
     .catch(() => {
       document.getElementById('gate-view').style.display = '';
@@ -143,6 +184,45 @@
     const btn = el.nextElementSibling;
     const clamped = el.classList.toggle('abstract-clamp');
     btn.textContent = clamped ? 'Show more ▾' : 'Show less ▴';
+  };
+
+  window.startEdit = function (id) {
+    const d = store[id];
+    document.getElementById('edit-title-' + id).value = d.title;
+    document.getElementById('edit-abstract-' + id).value = d.abstract;
+    document.getElementById('title-' + id).style.display = 'none';
+    document.getElementById('abs-wrap-' + id).style.display = 'none';
+    document.getElementById('edit-bar-' + id).style.display = 'none';
+    document.getElementById('edit-form-' + id).style.display = '';
+  };
+
+  window.cancelEdit = function (id) {
+    document.getElementById('title-' + id).style.display = '';
+    document.getElementById('abs-wrap-' + id).style.display = '';
+    document.getElementById('edit-bar-' + id).style.display = '';
+    document.getElementById('edit-form-' + id).style.display = 'none';
+  };
+
+  window.saveEdit = async function (id) {
+    const title    = document.getElementById('edit-title-' + id).value.trim();
+    const abstract = document.getElementById('edit-abstract-' + id).value.trim();
+    const msg      = document.getElementById('edit-msg-' + id);
+    if (!title) { msg.textContent = 'Title required.'; return; }
+    try {
+      const res = await fetch('/api/symposium/proposals/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, abstract }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      store[id] = { title, abstract };
+      document.getElementById('title-' + id).textContent = title;
+      document.getElementById('abs-' + id).textContent = abstract;
+      cancelEdit(id);
+    } catch (e) {
+      msg.textContent = e.message;
+    }
   };
 }());
 </script>

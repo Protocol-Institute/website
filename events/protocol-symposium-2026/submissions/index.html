@@ -67,6 +67,20 @@
     .workshop-link { font-size:0.82rem; color:#2A6B6B; }
     .proposal-session-link { font-size:0.78rem; margin-bottom:0.6rem; }
     .proposal-session-link a { color:#2A6B6B; }
+    .edit-bar { margin-top:0.5rem; }
+    .edit-link { font-size:0.78rem; color:#2A6B6B; cursor:pointer;
+      background:none; border:none; padding:0; text-decoration:underline; }
+    .edit-form { margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid #E0DDD8; }
+    .edit-title-input { width:100%; box-sizing:border-box; font-family:'Cormorant Garamond',serif;
+      font-size:1.1rem; font-weight:600; padding:0.35rem 0.5rem;
+      border:1px solid #C8C5C0; margin-bottom:0.5rem; }
+    .edit-abstract-input { width:100%; box-sizing:border-box; font-family:inherit;
+      font-size:0.9rem; padding:0.4rem 0.5rem; border:1px solid #C8C5C0;
+      min-height:120px; resize:vertical; line-height:1.6; margin-bottom:0.5rem; }
+    .edit-actions { display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; }
+    .edit-cancel { font-family:inherit; font-size:0.85rem; color:#5A5A5A; cursor:pointer;
+      background:none; border:none; padding:0; text-decoration:underline; }
+    .edit-msg { font-size:0.8rem; color:#8A1F2E; }
 
     .comment-section { margin-top:0.85rem; border-top:1px solid #EDEAE5; padding-top:0.6rem; }
     .comment-toggle { font-size:0.78rem; color:#2A6B6B; cursor:pointer;
@@ -168,12 +182,16 @@
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
   let currentSession = 'all';
+  let memberEmail = '', isAdmin = false;
+  const store = {};
 
   // ── Auth check ────────────────────────────────────────────────
   fetch('/api/members/me')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(data => {
-      if (!data.member || !data.member.is_admin) throw new Error('not admin');
+      if (!data.member) throw new Error('not a member');
+      memberEmail = (data.member.email || '').toLowerCase();
+      isAdmin = !!data.member.is_admin;
       document.getElementById('main-view').style.display = '';
       if (!votingOpen) {
         document.getElementById('submit-votes-btn').disabled = true;
@@ -275,15 +293,32 @@
       ? `<div class="proposal-session-link"><a href="/events/protocol-symposium-2026/sessions/${sessionSlug}/">${esc(p.session)} special session →</a></div>`
       : '';
 
+    const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
+    const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
+    store[p.id] = { title: p.title, abstract: p.abstract || '' };
+
     return `<div class="proposal-card" data-id="${p.id}">
-      <div class="proposal-title">${esc(p.title)}</div>
+      <div class="proposal-title" id="title-${p.id}">${esc(p.title)}</div>
       <div class="proposal-speaker">${speaker}</div>
       <div class="proposal-track">${esc(p.track || '')}</div>
       ${sessionLink}
-      <div class="proposal-abstract">
+      <div class="proposal-abstract" id="abs-wrap-${p.id}">
         <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
         <button class="abstract-toggle" onclick="toggleAbstract(${p.id})">Show more ▾</button>
       </div>
+      ${canEdit ? `
+      <div class="edit-bar" id="edit-bar-${p.id}">
+        <button class="edit-link" onclick="startEdit(${p.id})">Edit title &amp; abstract</button>
+      </div>
+      <div class="edit-form" id="edit-form-${p.id}" style="display:none;">
+        <input class="edit-title-input" id="edit-title-${p.id}" type="text">
+        <textarea class="edit-abstract-input" id="edit-abstract-${p.id}"></textarea>
+        <div class="edit-actions">
+          <button class="form-btn" onclick="saveEdit(${p.id})">Save</button>
+          <button class="edit-cancel" onclick="cancelEdit(${p.id})">Cancel</button>
+          <span class="edit-msg" id="edit-msg-${p.id}"></span>
+        </div>
+      </div>` : ''}
       <div class="proposal-footer">
         <span class="score-display">Current interest: <span class="score-value" id="score-${p.id}">${score}</span></span>
         ${workshopLink}
@@ -420,6 +455,48 @@
       list.innerHTML = '<p style="color:#8A1F2E;font-size:0.82rem;">Failed to load comments.</p>';
     }
   }
+
+  // ── Inline edit ───────────────────────────────────────────────
+  window.startEdit = function (id) {
+    const d = store[id];
+    document.getElementById('edit-title-' + id).value = d.title;
+    document.getElementById('edit-abstract-' + id).value = d.abstract;
+    document.getElementById('title-' + id).style.display = 'none';
+    document.getElementById('abs-wrap-' + id).style.display = 'none';
+    document.getElementById('edit-bar-' + id).style.display = 'none';
+    document.getElementById('edit-form-' + id).style.display = '';
+  };
+
+  window.cancelEdit = function (id) {
+    document.getElementById('title-' + id).style.display = '';
+    document.getElementById('abs-wrap-' + id).style.display = '';
+    document.getElementById('edit-bar-' + id).style.display = '';
+    document.getElementById('edit-form-' + id).style.display = 'none';
+  };
+
+  window.saveEdit = async function (id) {
+    const title    = document.getElementById('edit-title-' + id).value.trim();
+    const abstract = document.getElementById('edit-abstract-' + id).value.trim();
+    const msg      = document.getElementById('edit-msg-' + id);
+    if (!title) { msg.textContent = 'Title required.'; return; }
+    try {
+      const res = await fetch('/api/symposium/proposals/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, abstract }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      store[id] = { title, abstract };
+      const idx = proposals.findIndex(p => p.id === id);
+      if (idx >= 0) { proposals[idx].title = title; proposals[idx].abstract = abstract; }
+      document.getElementById('title-' + id).textContent = title;
+      document.getElementById('abs-' + id).textContent = abstract;
+      cancelEdit(id);
+    } catch (e) {
+      msg.textContent = e.message;
+    }
+  };
 
   window.submitComment = async function (proposalId) {
     const input = document.getElementById('cmt-input-' + proposalId);
