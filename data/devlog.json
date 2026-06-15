@@ -764,7 +764,11 @@
       "title": "Member tier system, CRM auto-approve, symposium voting",
       "date": "2026-06-14",
       "time_pt": "",
-      "tracks": ["static-site", "member-directory", "operations"],
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "operations"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -775,23 +779,23 @@
         },
         {
           "title": "Rich card views and photo hosting",
-          "html": "<p>Team and Consultant filtered views render styled card boxes (border, background, padding) with 96px profile photos. All member photos previously stored as external URLs (aneesh, anuraj, kaliya, amber) were downloaded and uploaded to R2 as <code>beings/slug.ext</code>, then <code>photo_r2_key</code> updated in D1. All photos now served via the R2 proxy — no external image dependencies remain. Consultants without photos are silently excluded from the consultant card view; Afeez Oladimeji remains excluded until he adds a photo. Consultant cards show expertise chips and contact/portfolio links. Members page is alphabetically sorted (name ASC) across all views.</p>"
+          "html": "<p>Team and Consultant filtered views render styled card boxes (border, background, padding) with 96px profile photos. All member photos previously stored as external URLs (aneesh, anuraj, kaliya, amber) were downloaded and uploaded to R2 as <code>beings/slug.ext</code>, then <code>photo_r2_key</code> updated in D1. All photos now served via the R2 proxy \u2014 no external image dependencies remain. Consultants without photos are silently excluded from the consultant card view; Afeez Oladimeji remains excluded until he adds a photo. Consultant cards show expertise chips and contact/portfolio links. Members page is alphabetically sorted (name ASC) across all views.</p>"
         },
         {
           "title": "CRM import, auto-approve, shared modules (D1 migration 015)",
-          "html": "<p>165 CRM contacts (email + affiliation string) imported into new <code>crm_contacts</code> table. On every join form submission, <code>/api/membership/request</code> queries <code>crm_contacts</code> for the email; if matched, the member record is created immediately (CRM affiliation tags merged with form tags), the request is marked approved, and a welcome email is sent — bypassing the admin queue entirely. Falls back gracefully to pending review if the CRM check errors.</p><p>Affiliation → tag mapping: SoP23/24/25, 2025 Protocol School, 2025 Foundations Workshop (→ tag_symposium_25), Protocolized Writer, Guest Speaker (→ tag_guest_speaker). Two new event tags added to <code>members</code>, <code>membership_requests</code>, join form, and members filter bar.</p><p>Shared modules extracted: <code>functions/_shared/welcome.js</code> (PIN generation, Resend call, welcome_sent flag update) and <code>functions/_shared/session.js</code> (pi_session cookie validator). Previously duplicated inline in multiple handlers.</p><p>check_members.py: new section 0 exports members, membership_requests, and crm_contacts to <code>backups/pi-members-YYYY-MM-DD.json</code> on every startup run. Directory gitignored.</p>"
+          "html": "<p>165 CRM contacts (email + affiliation string) imported into new <code>crm_contacts</code> table. On every join form submission, <code>/api/membership/request</code> queries <code>crm_contacts</code> for the email; if matched, the member record is created immediately (CRM affiliation tags merged with form tags), the request is marked approved, and a welcome email is sent \u2014 bypassing the admin queue entirely. Falls back gracefully to pending review if the CRM check errors.</p><p>Affiliation \u2192 tag mapping: SoP23/24/25, 2025 Protocol School, 2025 Foundations Workshop (\u2192 tag_symposium_25), Protocolized Writer, Guest Speaker (\u2192 tag_guest_speaker). Two new event tags added to <code>members</code>, <code>membership_requests</code>, join form, and members filter bar.</p><p>Shared modules extracted: <code>functions/_shared/welcome.js</code> (PIN generation, Resend call, welcome_sent flag update) and <code>functions/_shared/session.js</code> (pi_session cookie validator). Previously duplicated inline in multiple handlers.</p><p>check_members.py: new section 0 exports members, membership_requests, and crm_contacts to <code>backups/pi-members-YYYY-MM-DD.json</code> on every startup run. Directory gitignored.</p>"
         },
         {
           "title": "Admin panel: member editor tab",
-          "html": "<p>Admin panel at <code>/admin/members</code> gained a second tab: <strong>Member Directory</strong>. Loads all members via <code>GET /api/admin/members?view=all</code> (ADMIN_KEY gated). Each row is click-to-expand, opening an inline edit form with all profile fields (name, bio, website, city, discord, photo_r2_key), role fields (tier, community_lead_title, team_title), flag checkboxes (is_consultant, is_public, is_admin, welcome_sent), and all event tag checkboxes. Save calls new <code>PATCH /api/admin/members</code> endpoint which builds a whitelisted <code>UPDATE members SET … WHERE email = ?</code>. The approval tab is unchanged.</p>"
+          "html": "<p>Admin panel at <code>/admin/members</code> gained a second tab: <strong>Member Directory</strong>. Loads all members via <code>GET /api/admin/members?view=all</code> (ADMIN_KEY gated). Each row is click-to-expand, opening an inline edit form with all profile fields (name, bio, website, city, discord, photo_r2_key), role fields (tier, community_lead_title, team_title), flag checkboxes (is_consultant, is_public, is_admin, welcome_sent), and all event tag checkboxes. Save calls new <code>PATCH /api/admin/members</code> endpoint which builds a whitelisted <code>UPDATE members SET \u2026 WHERE email = ?</code>. The approval tab is unchanged.</p>"
         },
         {
-          "title": "Symposium 2026 submissions page with quadratic voting (D1 migrations 016–017)",
-          "html": "<p>New page at <code>/events/protocol-symposium-2026/submissions/</code> (currently gated to <code>is_admin=1</code>; opens to all members when voting launches). 36 proposals imported from the call-for-abstracts CSV: 27 talks + 3 workshops shortlisted; Ashton Keys (5 submissions) and Varun Adibhatla (1) not shortlisted. Missing titles for early submissions extracted from abstract text or set manually (Nathan Schneider: \"Virtues for a Protocol Society\").</p><p>Voting model: each member gets a budget of 30 votes (50 for team). Allocating <em>n</em> votes to a proposal contributes <em>tier_weight × √n</em> to its aggregate score (team=3×, community_lead=2×, member=1×). Scores computed in SQL via a single correlated GROUP BY with SQRT(). Budget bar shows votes remaining, Total Effective Weight (Σ√n across all allocations), and ratio of votes cast. Voting closes June 30 UTC — the API rejects saves after the deadline and the UI disables inputs.</p><p>Three workshop detail pages generated statically from D1 data, each with full abstract, organizer bios, audience, takeaways, and activities. All pages share the same is_admin session gate.</p><p>Comment system (migration 017): any logged-in member can post comments on any shortlisted proposal. <code>symposium_comments</code> table stores member_email, member_name, body. Comments are loaded on-demand per card; count badge updates after posting. Intended for suggestions to speakers/organizers.</p>"
+          "title": "Symposium 2026 submissions page with quadratic voting (D1 migrations 016\u2013017)",
+          "html": "<p>New page at <code>/events/protocol-symposium-2026/submissions/</code> (currently gated to <code>is_admin=1</code>; opens to all members when voting launches). 36 proposals imported from the call-for-abstracts CSV: 27 talks + 3 workshops shortlisted; Ashton Keys (5 submissions) and Varun Adibhatla (1) not shortlisted. Missing titles for early submissions extracted from abstract text or set manually (Nathan Schneider: \"Virtues for a Protocol Society\").</p><p>Voting model: each member gets a budget of 30 votes (50 for team). Allocating <em>n</em> votes to a proposal contributes <em>tier_weight \u00d7 \u221an</em> to its aggregate score (team=3\u00d7, community_lead=2\u00d7, member=1\u00d7). Scores computed in SQL via a single correlated GROUP BY with SQRT(). Budget bar shows votes remaining, Total Effective Weight (\u03a3\u221an across all allocations), and ratio of votes cast. Voting closes June 30 UTC \u2014 the API rejects saves after the deadline and the UI disables inputs.</p><p>Three workshop detail pages generated statically from D1 data, each with full abstract, organizer bios, audience, takeaways, and activities. All pages share the same is_admin session gate.</p><p>Comment system (migration 017): any logged-in member can post comments on any shortlisted proposal. <code>symposium_comments</code> table stores member_email, member_name, body. Comments are loaded on-demand per card; count badge updates after posting. Intended for suggestions to speakers/organizers.</p>"
         },
         {
           "title": "SIG organizer links and consulting policies page",
-          "html": "<p>All six SIG index pages updated: organizer names in <code>.sig-meta</code> now link to <code>/members#slug</code> for members in the directory. Kei Kreutler (MRG) and Spencer Nitkey (ProtFiSIG) still not linked — not yet in the member directory.</p><p>New stub page <code>/consulting/policies/</code> documenting consulting network eligibility, conduct standards, and removal policy. Linked from the consultant checkbox note on the join form.</p>"
+          "html": "<p>All six SIG index pages updated: organizer names in <code>.sig-meta</code> now link to <code>/members#slug</code> for members in the directory. Kei Kreutler (MRG) and Spencer Nitkey (ProtFiSIG) still not linked \u2014 not yet in the member directory.</p><p>New stub page <code>/consulting/policies/</code> documenting consulting network eligibility, conduct standards, and removal policy. Linked from the consultant checkbox note on the join form.</p>"
         }
       ]
     },
@@ -844,8 +848,7 @@
           "html": "<p>Join page: intro split into two paragraphs; eligibility paragraph gains closing sentence linking to the Members page. Added bold spam-guidance paragraph (PIN instant, approval days-to-a-week, sender address, check spam, mark not-spam) followed by an unbolded Discord #bugs-and-tests fallback. Email hint under input simplified to 'We'll send you a 6-digit code to log on.'</p><p>Welcome email template: 'Welcome!' added to first paragraph; new paragraph before sign-off mentions Challenges as a members-only feature and asks recipients to mark not-spam if it landed there.</p>"
         }
       ]
-    }
-  ,
+    },
     {
       "id": 24,
       "sort_key": 24.0,
@@ -853,34 +856,38 @@
       "title": "Symposium 2026: Submissions Pipeline, Special Sessions, Inline Editing",
       "date": "2026-06-15",
       "time_pt": "",
-      "tracks": ["static-site", "member-directory", "content"],
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
       "items": [
         {
           "title": "Post-deadline symposium page + banner images",
-          "html": "<p>Submission deadline (June 14) passed. Symposium page updated: call-for-submissions section replaced with post-deadline blurb, countdown ticker removed, form link removed. Two new banner images (newnature_dates_1333x1000 and newnature_dates_1000x1000) resized to WebP via Pillow (1440×1080 at 500KB for banners, 400×400 at 66KB for events index thumbnail) and uploaded to R2 as <code>nn_dates_banner.webp</code> and <code>nn_dates_square.webp</code>. Carousel config and events.json updated. The old <code>nn_banner6.png</code> had the deadline text baked in — new images are date-only.</p>"
+          "html": "<p>Submission deadline (June 14) passed. Symposium page updated: call-for-submissions section replaced with post-deadline blurb, countdown ticker removed, form link removed. Two new banner images (newnature_dates_1333x1000 and newnature_dates_1000x1000) resized to WebP via Pillow (1440\u00d71080 at 500KB for banners, 400\u00d7400 at 66KB for events index thumbnail) and uploaded to R2 as <code>nn_dates_banner.webp</code> and <code>nn_dates_square.webp</code>. Carousel config and events.json updated. The old <code>nn_banner6.png</code> had the deadline text baked in \u2014 new images are date-only.</p>"
         },
         {
           "title": "55 proposals seeded from final Excel submission",
-          "html": "<p>Final Google Form export (57 rows) processed via Python/openpyxl: Ayse Demir duplicate removed (same abstract, two email addresses 1 min apart — kept outlook.com); titles manually extracted for 6 early submissions where the Title of talk column was blank (submitted before the field was added to the form); track names normalised (SIGP4B→SIGPfB, SIGFIC→ProtFiSIG, etc.). 55 proposals inserted into <code>symposium_proposals</code> via <code>db/seed_proposals.sql</code>. 47-address email list exported to inbox for personal outreach. Varun Adibhatla and Ashton Keys' proposals pre-marked <code>is_shortlisted=0</code> (preserved from prior session).</p><p>Migration 018 added <code>session TEXT DEFAULT 'General'</code> to symposium_proposals. Migration 019 added <code>type='interactive'</code> to the CHECK constraint via table recreation (positional SELECT * column-order bug hit; fixed with UPDATE swap). Migration 020 created <code>symposium_sessions</code> table (slug, name, owner_email, date, start_time, end_time, description, agenda).</p>"
+          "html": "<p>Final Google Form export (57 rows) processed via Python/openpyxl: Ayse Demir duplicate removed (same abstract, two email addresses 1 min apart \u2014 kept outlook.com); titles manually extracted for 6 early submissions where the Title of talk column was blank (submitted before the field was added to the form); track names normalised (SIGP4B\u2192SIGPfB, SIGFIC\u2192ProtFiSIG, etc.). 55 proposals inserted into <code>symposium_proposals</code> via <code>db/seed_proposals.sql</code>. 47-address email list exported to inbox for personal outreach. Varun Adibhatla and Ashton Keys' proposals pre-marked <code>is_shortlisted=0</code> (preserved from prior session).</p><p>Migration 018 added <code>session TEXT DEFAULT 'General'</code> to symposium_proposals. Migration 019 added <code>type='interactive'</code> to the CHECK constraint via table recreation (positional SELECT * column-order bug hit; fixed with UPDATE swap). Migration 020 created <code>symposium_sessions</code> table (slug, name, owner_email, date, start_time, end_time, description, agenda).</p>"
         },
         {
           "title": "4 special sessions with D1 ownership and editable pages",
-          "html": "<p>Four special sessions defined: Memory (MRG-track talks), Protocol Fiction (Spencer Nitkey entry, split — see below), Psychohistory (Aneesh Sathe, Sean Stevenson, Florian Lohse), Southeast Asia (Samuel Chua as owner). Each has a page at <code>/events/protocol-symposium-2026/sessions/{slug}/</code> fetching session metadata and proposals from D1 in parallel. GET/PATCH <code>/api/symposium/sessions/:slug</code> handles metadata; session owners and admins see an 'Edit session details' form for description and agenda (date/time fields hidden — to be added via backend later). Draft banner auto-hides when description and agenda are both filled.</p><p>Session colors applied to proposal cards: Memory #EBF2FF, Protocol Fiction #F5EEFF, Psychohistory #FEF9EC, Southeast Asia #E8F5EE. Double-class specificity in style.css beats inline .proposal-card rules. Submissions index gains a Session filter dropdown and alphabetical sort by first name.</p>"
+          "html": "<p>Four special sessions defined: Memory (MRG-track talks), Protocol Fiction (Spencer Nitkey entry, split \u2014 see below), Psychohistory (Aneesh Sathe, Sean Stevenson, Florian Lohse), Southeast Asia (Samuel Chua as owner). Each has a page at <code>/events/protocol-symposium-2026/sessions/{slug}/</code> fetching session metadata and proposals from D1 in parallel. GET/PATCH <code>/api/symposium/sessions/:slug</code> handles metadata; session owners and admins see an 'Edit session details' form for description and agenda (date/time fields hidden \u2014 to be added via backend later). Draft banner auto-hides when description and agenda are both filled.</p><p>Session colors applied to proposal cards: Memory #EBF2FF, Protocol Fiction #F5EEFF, Psychohistory #FEF9EC, Southeast Asia #E8F5EE. Double-class specificity in style.css beats inline .proposal-card rules. Submissions index gains a Session filter dropdown and alphabetical sort by first name.</p>"
         },
         {
           "title": "Spencer Nitkey entry split into 3 records",
-          "html": "<p>Spencer Nitkey's original submission was a special session proposal disguising 3 separate items within the abstract paragraphs. Split into: (1) <em>Myth-Making in New Nature</em> — talk by Liz Maher (lizmaherland@gmail.com), (2) <em>Story-Shaping in New Nature</em> — talk by Spencer Nitkey, (3) <em>Creating New Genres for New Nature</em> — interactive component by Spencer + Sachin Benny. Migration 019 added 'interactive' as a valid type via table recreation. All three tagged session='Protocol Fiction', is_shortlisted=1. Original ID 31 deleted.</p>"
+          "html": "<p>Spencer Nitkey's original submission was a special session proposal disguising 3 separate items within the abstract paragraphs. Split into: (1) <em>Myth-Making in New Nature</em> \u2014 talk by Liz Maher (lizmaherland@gmail.com), (2) <em>Story-Shaping in New Nature</em> \u2014 talk by Spencer Nitkey, (3) <em>Creating New Genres for New Nature</em> \u2014 interactive component by Spencer + Sachin Benny. Migration 019 added 'interactive' as a valid type via table recreation. All three tagged session='Protocol Fiction', is_shortlisted=1. Original ID 31 deleted.</p>"
         },
         {
           "title": "Inline title/abstract editing + admin full-field edit form",
-          "html": "<p>PATCH <code>/api/symposium/proposals/:id</code>: owners (speaker_email/organizer_email match) can update title and abstract; admins can update all 19 fields. GET on same endpoint returns full row (admin only) for form pre-fill.</p><p>On session pages and submissions index: proposal owners see a red 'You own this item — edit details' button that reveals an inline title+abstract form. Admins see the same button as a link to <code>/events/protocol-symposium-2026/submissions/edit-proposal.html?id=N</code> — the admin proposals form in edit mode, which pre-fills all fields and PATCHes on submit. Form was moved from <code>/admin/proposals.html</code> to this path to avoid requiring Cloudflare Zero Trust authentication in addition to the site's own is_admin check.</p>"
+          "html": "<p>PATCH <code>/api/symposium/proposals/:id</code>: owners (speaker_email/organizer_email match) can update title and abstract; admins can update all 19 fields. GET on same endpoint returns full row (admin only) for form pre-fill.</p><p>On session pages and submissions index: proposal owners see a red 'You own this item \u2014 edit details' button that reveals an inline title+abstract form. Admins see the same button as a link to <code>/events/protocol-symposium-2026/submissions/edit-proposal.html?id=N</code> \u2014 the admin proposals form in edit mode, which pre-fills all fields and PATCHes on submit. Form was moved from <code>/admin/proposals.html</code> to this path to avoid requiring Cloudflare Zero Trust authentication in addition to the site's own is_admin check.</p>"
         },
         {
           "title": "Welcome email flow fix + pre-approval login gate",
-          "html": "<p>Welcome email previously sent a PIN, but navigating to the login page to enter it would first trigger a new-PIN request on step 1, invalidating the welcome-email PIN. Fixed by removing the PIN from welcome.js entirely — the email now just says 'approved, go to /members/join and request a code.'</p><p>Pre-approval gate: <code>send-pin.js</code> (join flow) now checks <code>membership_requests</code> before issuing a PIN. If the email has a pending application and no members row, returns 400 with 'Your application is being reviewed' — the user sees this inline on step 1 and never reaches the PIN entry step.</p>"
+          "html": "<p>Welcome email previously sent a PIN, but navigating to the login page to enter it would first trigger a new-PIN request on step 1, invalidating the welcome-email PIN. Fixed by removing the PIN from welcome.js entirely \u2014 the email now just says 'approved, go to /members/join and request a code.'</p><p>Pre-approval gate: <code>send-pin.js</code> (join flow) now checks <code>membership_requests</code> before issuing a PIN. If the email has a pending application and no members row, returns 400 with 'Your application is being reviewed' \u2014 the user sees this inline on step 1 and never reaches the PIN entry step.</p>"
         },
         {
           "title": "Samuel Chua member profile + Seapunk Worlds proposal",
@@ -903,7 +910,10 @@
       "title": "Pre-invite hardening, voting window, Draft Agenda, proposal cleanup",
       "date": "2026-06-15",
       "time_pt": "",
-      "tracks": ["member-directory", "static-site"],
+      "tracks": [
+        "member-directory",
+        "static-site"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -914,11 +924,11 @@
         },
         {
           "title": "Pre-invite bug fixes: email case, trailing space, budget, gate message",
-          "html": "<p>Four bugs found in audit and fixed before inviting proposers: (1) <code>proposals/[id].js</code> owner check was case-sensitive — server used raw DB email, client lowercased; affected Sean Stevenson, Kei Kreutler, Kaliya Young, Florian Lohse. Fixed with <code>LOWER(TRIM())</code> on comparison. (2) Patrick Atwater's email stored with trailing space in DB — normalized. (3) Vote budget was 30/50 (member/team split); changed to flat 50 for everyone, tier multiplier (1×/2×/3×) is the only differentiation. (4) Non-authenticated visitors saw 'Voting not yet open' gate message — now shows a login link instead.</p>"
+          "html": "<p>Four bugs found in audit and fixed before inviting proposers: (1) <code>proposals/[id].js</code> owner check was case-sensitive \u2014 server used raw DB email, client lowercased; affected Sean Stevenson, Kei Kreutler, Kaliya Young, Florian Lohse. Fixed with <code>LOWER(TRIM())</code> on comparison. (2) Patrick Atwater's email stored with trailing space in DB \u2014 normalized. (3) Vote budget was 30/50 (member/team split); changed to flat 50 for everyone, tier multiplier (1\u00d7/2\u00d7/3\u00d7) is the only differentiation. (4) Non-authenticated visitors saw 'Voting not yet open' gate message \u2014 now shows a login link instead.</p>"
         },
         {
-          "title": "Voting window: Jun 17–20 PDT; 'Draft Agenda' rename; countdown boxes",
-          "html": "<p>Voting window changed to June 17, 7 AM PDT → June 20, 7 AM PDT (72 hours). VOTE_START/DEADLINE updated in <code>votes.js</code> (server-side enforcement) and <code>submissions/index.html</code> (client-side display). 'Accepted Submissions' page retitled 'Draft Agenda' (title, h1, meta). Countdown boxes added: a prominent yellow-background box on the main symposium page (shows time-to-open, time-to-close with 'Vote now' link, or 'Voting closed'), and a smaller inline bar on the Draft Agenda page. Both refresh every 30s.</p>"
+          "title": "Voting window: Jun 17\u201320 PDT; 'Draft Agenda' rename; countdown boxes",
+          "html": "<p>Voting window changed to June 17, 7 AM PDT \u2192 June 20, 7 AM PDT (72 hours). VOTE_START/DEADLINE updated in <code>votes.js</code> (server-side enforcement) and <code>submissions/index.html</code> (client-side display). 'Accepted Submissions' page retitled 'Draft Agenda' (title, h1, meta). Countdown boxes added: a prominent yellow-background box on the main symposium page (shows time-to-open, time-to-close with 'Vote now' link, or 'Voting closed'), and a smaller inline bar on the Draft Agenda page. Both refresh every 30s.</p>"
         },
         {
           "title": "Symposium page layout redesign",
@@ -926,11 +936,44 @@
         },
         {
           "title": "SIG timezone abbreviation in local time display",
-          "html": "<p>Added <code>timeZoneName: 'short'</code> to the <code>toLocaleTimeString</code> call in <code>main.js</code>. SIG pages now show e.g. '17:00 WEST your local time' instead of '17:00 your local time', allowing users to self-diagnose timezone mismatches. Prompted by a Portugal (WEST) user reporting 1-hour offset — root cause was likely OS timezone set to WET instead of WEST, not a code bug.</p>"
+          "html": "<p>Added <code>timeZoneName: 'short'</code> to the <code>toLocaleTimeString</code> call in <code>main.js</code>. SIG pages now show e.g. '17:00 WEST your local time' instead of '17:00 your local time', allowing users to self-diagnose timezone mismatches. Prompted by a Portugal (WEST) user reporting 1-hour offset \u2014 root cause was likely OS timezone set to WET instead of WEST, not a code bug.</p>"
         },
         {
           "title": "Proposal session reassignments and deletions",
           "html": "<p>Three talks moved from Memory special session back to General: Venkatesh Rao ('Artisanal Bots'), Stanislav Lvovsky ('Provenance Against Fluency'), Daniel Schmidt ('Don't Cross the Lines'). Memory session now has 5 real proposals. Six proposals deleted entirely: 5 from Ashton Keys (all tracks) and 1 from Varun Adibhatla. 55 proposals remain, all shortlisted.</p>"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "sort_key": 26.0,
+      "label": "Session 26",
+      "title": "Workshop pages live from D1; admin email editing; session audit",
+      "date": "2026-06-15",
+      "time_pt": "",
+      "tracks": [
+        "member-directory",
+        "static-site"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Workshop detail pages: missing pages + dynamic rendering",
+          "html": "<p>Two workshop detail pages were missing entirely (proposals 75 \u2014 Beyond the Artwork, and 79 \u2014 Protocolize Your Book), causing 404s on their submission links. Both were created. Separately, all 5 workshop pages had two compounding bugs: (1) the auth gate checked <code>is_admin</code> rather than any authenticated member, blocking logged-in non-admin proposers; (2) pages were static HTML generated once from D1, so owner edits via the inline editor on the submissions page were never reflected. Fixed both: gate now checks <code>data.member</code> only, and all 5 pages were rewritten to fetch <code>/api/symposium/proposals/:id</code> on every load and render dynamically. A lightweight <code>renderText()</code> function handles <code>**bold**</code> and <code>- bullet</code> markdown in the raw proposal data. The proposals GET endpoint was relaxed from admin-only to any authenticated member to support this.</p>"
+        },
+        {
+          "title": "Admin member editor: email now editable via slug lookup",
+          "html": "<p>Email was the <code>TEXT PRIMARY KEY</code> in the <code>members</code> schema and was used as the PATCH lookup key in both the admin UI and API, making it impossible to edit. Switched the admin member editor to use <code>slug</code> (UNIQUE NOT NULL, stable) as the lookup key throughout: frontend keyed on <code>data-slug</code>, API changed to <code>WHERE slug = ?</code>, and <code>email</code> added to <code>EDITABLE_FIELDS</code>. Email input added to the edit form. Separately, the member Edit Profile page now shows email as a read-only field with a note directing members to contact an admin to change it.</p>"
+        },
+        {
+          "title": "Special session pages audit: Memory startSessionEdit bug fixed",
+          "html": "<p>Audited all 4 special session pages (Memory, Protocol Fiction, Psychohistory, Southeast Asia) and the submissions index for correct member gating, owner edit wiring, and live edit reflection. All were correct except the Memory session: its <code>startSessionEdit()</code> function referenced <code>meta-date</code>, <code>meta-start</code>, <code>meta-end</code>, <code>edit-date</code>, <code>edit-start</code>, <code>edit-end</code> \u2014 DOM elements that were removed in an earlier refactor. Clicking the edit button threw a TypeError silently. Removed the three stale lines; the other 3 session pages already had the corrected version.</p>"
+        },
+        {
+          "title": "James Langdon email update and membership approval",
+          "html": "<p>James Langdon's member record email was updated directly in D1 from <code>james@protocolized.io</code> to <code>editor@protocolized.io</code>. He subsequently signed up via the join form with <code>editor@protocolized.io</code> and the request was approved via the admin panel. The approval's <code>INSERT OR IGNORE INTO members</code> correctly detected the existing record and skipped insertion, preserving his team-level member record. Resend API key is stored but is send-only restricted; bounce status for the old <code>james@</code> welcome email must be checked in the Resend dashboard.</p>"
         }
       ]
     }

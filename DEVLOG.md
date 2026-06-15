@@ -451,3 +451,19 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Three talks moved from Memory special session back to General: Venkatesh Rao ('Artisanal Bots'), Stanislav Lvovsky ('Provenance Against Fluency'), Daniel Schmidt ('Don't Cross the Lines'). Memory session now has 5 real proposals. Six proposals deleted entirely: 5 from Ashton Keys (all tracks) and 1 from Varun Adibhatla. 55 proposals remain, all shortlisted.
 
 ---
+
+## Session 26: Workshop pages live from D1; admin email editing; session audit
+
+*2026-06-15*
+
+**Tracks:** member-directory, static-site
+
+- Two workshop detail pages were missing entirely (proposals 75 — Beyond the Artwork, and 79 — Protocolize Your Book), causing 404s on their submission links. Both were created. Separately, all 5 workshop pages had two compounding bugs: (1) the auth gate checked `is_admin` rather than any authenticated member, blocking logged-in non-admin proposers; (2) pages were static HTML generated once from D1, so owner edits via the inline editor on the submissions page were never reflected. Fixed both: gate now checks `data.member` only, and all 5 pages were rewritten to fetch `/api/symposium/proposals/:id` on every load and render dynamically. A lightweight `renderText()` function handles `**bold**` and `- bullet` markdown in the raw proposal data. The proposals GET endpoint was relaxed from admin-only to any authenticated member to support this.
+
+- Email was the `TEXT PRIMARY KEY` in the `members` schema and was used as the PATCH lookup key in both the admin UI and API, making it impossible to edit. Switched the admin member editor to use `slug` (UNIQUE NOT NULL, stable) as the lookup key throughout: frontend keyed on `data-slug`, API changed to `WHERE slug = ?`, and `email` added to `EDITABLE_FIELDS`. Email input added to the edit form. Separately, the member Edit Profile page now shows email as a read-only field with a note directing members to contact an admin to change it.
+
+- Audited all 4 special session pages (Memory, Protocol Fiction, Psychohistory, Southeast Asia) and the submissions index for correct member gating, owner edit wiring, and live edit reflection. All were correct except the Memory session: its `startSessionEdit()` function referenced `meta-date`, `meta-start`, `meta-end`, `edit-date`, `edit-start`, `edit-end` — DOM elements that were removed in an earlier refactor. Clicking the edit button threw a TypeError silently. Removed the three stale lines; the other 3 session pages already had the corrected version.
+
+- James Langdon's member record email was updated directly in D1 from `james@protocolized.io` to `editor@protocolized.io`. He subsequently signed up via the join form with `editor@protocolized.io` and the request was approved via the admin panel. The approval's `INSERT OR IGNORE INTO members` correctly detected the existing record and skipped insertion, preserving his team-level member record. Resend API key is stored but is send-only restricted; bounce status for the old `james@` welcome email must be checked in the Resend dashboard.
+
+---
