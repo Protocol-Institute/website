@@ -14,7 +14,7 @@ export async function sendWelcomeEmail(env, email, firstName) {
       html: `<p>Hi ${firstName},</p>
 <p>Your application to the Protocol Institute member network has been approved. You can now log in to view and update your profile, and access members-only features of the site.</p>
 <p>To log in, visit <a href="https://protocol-institute.org/members/join">protocol-institute.org/members/join</a>, enter your email address, and request a sign-in code.</p>
-<p>Once logged in you'll have access to members-only features such as submitting <a href="https://protocol-institute.org/challenges">Challenges</a>. More features will be added over time.</p>
+<p>Once logged in you'll be able to view and comment on <a href="https://protocol-institute.org/events/protocol-symposium-2026/submissions/">Protocol Symposium 2026 submissions</a>, cast your votes (opening June 18), and submit <a href="https://protocol-institute.org/challenges">Challenges</a>. More features will be added over time.</p>
 <p>If this email landed in spam, mark it not-spam and add noreply@protocol-institute.org to your contacts so future emails reach you.</p>
 <p>— Protocol Institute</p>`,
     }),

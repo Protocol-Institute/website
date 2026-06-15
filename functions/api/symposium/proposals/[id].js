@@ -42,7 +42,8 @@ export async function onRequestPatch({ request, env, params }) {
   if (auth.err) return Response.json({ error: auth.err }, { status: auth.status });
 
   const { email, proposal, isAdmin } = auth;
-  const isOwner = email === proposal.speaker_email || email === proposal.organizer_email;
+  const isOwner = email === (proposal.speaker_email || '').trim().toLowerCase()
+               || email === (proposal.organizer_email || '').trim().toLowerCase();
   if (!isAdmin && !isOwner) return Response.json({ error: 'Not authorized' }, { status: 403 });
 
   let body;

@@ -47,7 +47,7 @@ export async function onRequestGet({ request, env }) {
     myTotal += v.votes;
   });
 
-  const budget = member.tier === 'team' ? 50 : 30;
+  const budget = 50;
 
   return Response.json({
     proposals: proposals || [],
