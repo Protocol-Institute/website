@@ -159,7 +159,7 @@ var FOOTER_HTML =
     var utcTime = utcH + ':' + utcM;
 
     // Local time via browser timezone
-    var localTime = next.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+    var localTime = next.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', timeZoneName: 'short'});
 
     // Append local day name only when the meeting crosses midnight for this viewer
     var localDow = DOW[next.getDay()];
