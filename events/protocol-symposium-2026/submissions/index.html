@@ -134,6 +134,7 @@
         <div class="sub-tabs" id="sub-tabs">
           <button class="sub-tab active" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
+          <button class="sub-tab" data-tab="interactive">Interactive (<span id="interactive-count">—</span>)</button>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar">
@@ -150,6 +151,7 @@
 
         <div class="sub-panel active" id="panel-talks"></div>
         <div class="sub-panel" id="panel-workshops"></div>
+        <div class="sub-panel" id="panel-interactive"></div>
 
       </div>
 
@@ -202,7 +204,7 @@
     btn.classList.add('active');
     document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
     document.getElementById('session-filter-bar').style.display =
-      btn.dataset.tab === 'talks' ? '' : 'none';
+      (btn.dataset.tab === 'talks' || btn.dataset.tab === 'interactive') ? '' : 'none';
   });
 
   // ── Session filter ────────────────────────────────────────────
@@ -230,22 +232,26 @@
   }
 
   function renderAll() {
-    const allTalks = proposals.filter(p => p.type === 'talk');
-    const workshops = proposals.filter(p => p.type === 'workshop');
+    const allTalks       = proposals.filter(p => p.type === 'talk');
+    const workshops      = proposals.filter(p => p.type === 'workshop');
+    const allInteractive = proposals.filter(p => p.type === 'interactive');
 
-    // Sort both by first name
-    allTalks.sort((a, b) => firstName(a).localeCompare(firstName(b)));
-    workshops.sort((a, b) => firstName(a).localeCompare(firstName(b)));
+    // Sort all groups by first name
+    [allTalks, workshops, allInteractive].forEach(arr =>
+      arr.sort((a, b) => firstName(a).localeCompare(firstName(b)))
+    );
 
-    // Filter talks by selected session
-    const talks = currentSession === 'all'
-      ? allTalks
-      : allTalks.filter(p => (p.session || 'General') === currentSession);
+    // Apply session filter to talks and interactive
+    const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
+    const talks       = allTalks.filter(sessionFilter);
+    const interactive = allInteractive.filter(sessionFilter);
 
-    document.getElementById('talks-count').textContent    = talks.length;
-    document.getElementById('workshops-count').textContent = workshops.length;
-    document.getElementById('panel-talks').innerHTML    = talks.map(renderCard).join('');
-    document.getElementById('panel-workshops').innerHTML = workshops.map(renderCard).join('');
+    document.getElementById('talks-count').textContent       = talks.length;
+    document.getElementById('workshops-count').textContent   = workshops.length;
+    document.getElementById('interactive-count').textContent = interactive.length;
+    document.getElementById('panel-talks').innerHTML       = talks.map(renderCard).join('');
+    document.getElementById('panel-workshops').innerHTML   = workshops.map(renderCard).join('');
+    document.getElementById('panel-interactive').innerHTML = interactive.map(renderCard).join('');
     if (!votingOpen) {
       document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
     }

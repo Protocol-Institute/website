@@ -20,8 +20,8 @@ export async function onRequestPost({ request, env }) {
   }
 
   const type = body.type;
-  if (!['talk', 'workshop'].includes(type)) {
-    return Response.json({ error: 'type must be talk or workshop' }, { status: 400 });
+  if (!['talk', 'workshop', 'interactive'].includes(type)) {
+    return Response.json({ error: 'type must be talk, workshop, or interactive' }, { status: 400 });
   }
   if (!body.title || !body.title.trim()) {
     return Response.json({ error: 'title is required' }, { status: 400 });

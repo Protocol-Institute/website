@@ -104,26 +104,30 @@
     })
     .then(r => r.json())
     .then(data => {
-      const proposals = (data.proposals || [])
-        .filter(p => p.type === 'talk' && (p.session || 'General') === SESSION)
-        .sort((a, b) => {
+      function sortByFirst(arr) {
+        return arr.sort((a, b) => {
           const na = (a.speaker_name || '').split(/\s+/)[0].toLowerCase();
           const nb = (b.speaker_name || '').split(/\s+/)[0].toLowerCase();
           return na.localeCompare(nb);
         });
+      }
+      const inSession = (data.proposals || []).filter(p => (p.session || 'General') === SESSION);
+      const talks       = sortByFirst(inSession.filter(p => p.type === 'talk'));
+      const interactive = sortByFirst(inSession.filter(p => p.type === 'interactive'));
+      const all = [...talks, ...interactive];
 
       document.getElementById('talks-loading').style.display = 'none';
       const list = document.getElementById('talks-list');
 
-      if (!proposals.length) {
+      if (!all.length) {
         list.innerHTML = '<p class="talks-empty">No talks assigned to this session yet.</p>';
         return;
       }
 
-      list.innerHTML = proposals.map(p => `
+      list.innerHTML = all.map(p => `
         <div class="proposal-card">
-          <div class="proposal-title">${esc(p.title)}</div>
-          <div class="proposal-speaker">${esc(p.speaker_name || '')}</div>
+          <div class="proposal-title">${esc(p.title)}${p.type === 'interactive' ? ' <span style="font-size:0.72rem;color:#2A6B6B;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;vertical-align:middle;">Interactive</span>' : ''}</div>
+          <div class="proposal-speaker">${esc(p.speaker_name || '')}${p.co_speakers ? ' &amp; ' + esc(p.co_speakers) : ''}</div>
           <div class="proposal-abstract">
             <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
             <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
