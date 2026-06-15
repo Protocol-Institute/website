@@ -845,5 +845,52 @@
         }
       ]
     }
+  ,
+    {
+      "id": 24,
+      "sort_key": 24.0,
+      "label": "Session 24",
+      "title": "Symposium 2026: Submissions Pipeline, Special Sessions, Inline Editing",
+      "date": "2026-06-15",
+      "time_pt": "",
+      "tracks": ["static-site", "member-directory", "content"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Post-deadline symposium page + banner images",
+          "html": "<p>Submission deadline (June 14) passed. Symposium page updated: call-for-submissions section replaced with post-deadline blurb, countdown ticker removed, form link removed. Two new banner images (newnature_dates_1333x1000 and newnature_dates_1000x1000) resized to WebP via Pillow (1440×1080 at 500KB for banners, 400×400 at 66KB for events index thumbnail) and uploaded to R2 as <code>nn_dates_banner.webp</code> and <code>nn_dates_square.webp</code>. Carousel config and events.json updated. The old <code>nn_banner6.png</code> had the deadline text baked in — new images are date-only.</p>"
+        },
+        {
+          "title": "55 proposals seeded from final Excel submission",
+          "html": "<p>Final Google Form export (57 rows) processed via Python/openpyxl: Ayse Demir duplicate removed (same abstract, two email addresses 1 min apart — kept outlook.com); titles manually extracted for 6 early submissions where the Title of talk column was blank (submitted before the field was added to the form); track names normalised (SIGP4B→SIGPfB, SIGFIC→ProtFiSIG, etc.). 55 proposals inserted into <code>symposium_proposals</code> via <code>db/seed_proposals.sql</code>. 47-address email list exported to inbox for personal outreach. Varun Adibhatla and Ashton Keys' proposals pre-marked <code>is_shortlisted=0</code> (preserved from prior session).</p><p>Migration 018 added <code>session TEXT DEFAULT 'General'</code> to symposium_proposals. Migration 019 added <code>type='interactive'</code> to the CHECK constraint via table recreation (positional SELECT * column-order bug hit; fixed with UPDATE swap). Migration 020 created <code>symposium_sessions</code> table (slug, name, owner_email, date, start_time, end_time, description, agenda).</p>"
+        },
+        {
+          "title": "4 special sessions with D1 ownership and editable pages",
+          "html": "<p>Four special sessions defined: Memory (MRG-track talks), Protocol Fiction (Spencer Nitkey entry, split — see below), Psychohistory (Aneesh Sathe, Sean Stevenson, Florian Lohse), Southeast Asia (Samuel Chua as owner). Each has a page at <code>/events/protocol-symposium-2026/sessions/{slug}/</code> fetching session metadata and proposals from D1 in parallel. GET/PATCH <code>/api/symposium/sessions/:slug</code> handles metadata; session owners and admins see an 'Edit session details' form for description and agenda (date/time fields hidden — to be added via backend later). Draft banner auto-hides when description and agenda are both filled.</p><p>Session colors applied to proposal cards: Memory #EBF2FF, Protocol Fiction #F5EEFF, Psychohistory #FEF9EC, Southeast Asia #E8F5EE. Double-class specificity in style.css beats inline .proposal-card rules. Submissions index gains a Session filter dropdown and alphabetical sort by first name.</p>"
+        },
+        {
+          "title": "Spencer Nitkey entry split into 3 records",
+          "html": "<p>Spencer Nitkey's original submission was a special session proposal disguising 3 separate items within the abstract paragraphs. Split into: (1) <em>Myth-Making in New Nature</em> — talk by Liz Maher (lizmaherland@gmail.com), (2) <em>Story-Shaping in New Nature</em> — talk by Spencer Nitkey, (3) <em>Creating New Genres for New Nature</em> — interactive component by Spencer + Sachin Benny. Migration 019 added 'interactive' as a valid type via table recreation. All three tagged session='Protocol Fiction', is_shortlisted=1. Original ID 31 deleted.</p>"
+        },
+        {
+          "title": "Inline title/abstract editing + admin full-field edit form",
+          "html": "<p>PATCH <code>/api/symposium/proposals/:id</code>: owners (speaker_email/organizer_email match) can update title and abstract; admins can update all 19 fields. GET on same endpoint returns full row (admin only) for form pre-fill.</p><p>On session pages and submissions index: proposal owners see a red 'You own this item — edit details' button that reveals an inline title+abstract form. Admins see the same button as a link to <code>/events/protocol-symposium-2026/submissions/edit-proposal.html?id=N</code> — the admin proposals form in edit mode, which pre-fills all fields and PATCHes on submit. Form was moved from <code>/admin/proposals.html</code> to this path to avoid requiring Cloudflare Zero Trust authentication in addition to the site's own is_admin check.</p>"
+        },
+        {
+          "title": "Welcome email flow fix + pre-approval login gate",
+          "html": "<p>Welcome email previously sent a PIN, but navigating to the login page to enter it would first trigger a new-PIN request on step 1, invalidating the welcome-email PIN. Fixed by removing the PIN from welcome.js entirely — the email now just says 'approved, go to /members/join and request a code.'</p><p>Pre-approval gate: <code>send-pin.js</code> (join flow) now checks <code>membership_requests</code> before issuing a PIN. If the email has a pending application and no members row, returns 400 with 'Your application is being reviewed' — the user sees this inline on step 1 and never reaches the PIN entry step.</p>"
+        },
+        {
+          "title": "Samuel Chua member profile + Seapunk Worlds proposal",
+          "html": "<p>Samuel Chua (samuelthechua@gmail.com) added directly to <code>members</code> table (tier=member, welcome_sent=1, pre-approved). Stub talk proposal 'Seapunk Worlds' created with abstract 'An overview talk about protocols research and exploration in Southeast Asia', session=Southeast Asia, is_shortlisted=1. Samuel set as owner_email on the southeast-asia symposium_sessions row, giving him the red edit button for both the session metadata and his own talk.</p>"
+        },
+        {
+          "title": "Humboldt account merge",
+          "html": "<p>A duplicate member account was created with email vgururao@gmail.com (slug 'vgururao') while trying to associate Venkat's personal email with the Humboldt AI agent profile. Resolved: duplicate member record and its active auth_pin session deleted; existing Humboldt profile (humboldt@protocol-institute.org) updated to owner_email=vgururao@gmail.com; Humboldt's proposal speaker_email left as vgururao@gmail.com (manageable via admin account's is_admin flag until humboldt@protocol-institute.org is set up as a full member).</p>"
+        }
+      ]
+    }
   ]
 }
