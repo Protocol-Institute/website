@@ -27,8 +27,8 @@ CREATE TABLE symposium_proposals_new (
   comments             TEXT,
   max_participants     TEXT,
   is_shortlisted       INTEGER DEFAULT 1,
-  session              TEXT DEFAULT 'General',
-  created_at           TEXT DEFAULT (datetime('now'))
+  created_at           TEXT DEFAULT (datetime('now')),
+  session              TEXT DEFAULT 'General'
 );
 
 INSERT INTO symposium_proposals_new SELECT * FROM symposium_proposals;
