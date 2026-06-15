@@ -111,7 +111,8 @@
   // ── Auth check ────────────────────────────────────────────────
   fetch('/api/members/me')
     .then(r => r.ok ? r.json() : Promise.reject())
-    .then(() => {
+    .then(data => {
+      if (!data.member || !data.member.is_admin) throw new Error('not admin');
       document.getElementById('main-view').style.display = '';
       return fetch('/api/symposium/proposals');
     })
