@@ -147,6 +147,7 @@
             <span class="budget-label">Votes remaining: <span class="budget-remaining" id="remaining-display">—</span> / <span id="budget-display">—</span></span>
             <div class="budget-bar-track"><div class="budget-bar-fill" id="budget-fill" style="width:100%"></div></div>
             <button class="form-btn vote-submit-btn" id="submit-votes-btn">Save votes</button>
+            <button class="form-btn" id="clear-votes-btn" style="background:#fff;color:#5A5A5A;border:1px solid #C8C5C0;">Clear votes</button>
             <span class="save-msg" id="save-msg" style="display:none;"></span>
           </div>
           <div class="vote-meta-row">
@@ -159,6 +160,16 @@
           <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
           <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
+        </div>
+
+        <div class="session-filter-bar" id="sort-bar" style="padding-bottom:0;">
+          <label style="font-size:0.78rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:#5A5A5A;white-space:nowrap;">Sort by:</label>
+          <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+            <input type="radio" name="sort-mode" value="alpha" checked> Alphabetical
+          </label>
+          <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+            <input type="radio" name="sort-mode" value="votes"> My votes
+          </label>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
@@ -190,7 +201,7 @@
 
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
-  let currentSession = 'all';
+  let currentSession = 'all', sortMode = 'alpha';
   let memberEmail = '', isAdmin = false, isEarlyVoter = false, canVote = false;
   const store = {};
 
@@ -228,6 +239,7 @@
       if (!canVote) {
         document.getElementById('submit-votes-btn').disabled = true;
         document.getElementById('submit-votes-btn').textContent = votingPending && !isEarlyVoter ? 'Voting not yet open' : 'Voting closed';
+        document.getElementById('clear-votes-btn').disabled = true;
         document.getElementById('deadline-line').textContent = (votingPending && !isEarlyVoter)
           ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
           : 'Voting closed June 20, 2026 at 7 AM Pacific.';
@@ -258,6 +270,20 @@
     renderAll();
   });
 
+  // ── Sort mode ─────────────────────────────────────────────────
+  document.getElementById('sort-bar').addEventListener('change', function (e) {
+    if (e.target.name === 'sort-mode') { sortMode = e.target.value; renderAll(); }
+  });
+
+  // ── Clear votes ───────────────────────────────────────────────
+  document.getElementById('clear-votes-btn').addEventListener('click', function () {
+    if (!canVote) return;
+    Object.keys(pendingVotes).forEach(k => { pendingVotes[k] = 0; });
+    document.querySelectorAll('.vote-input').forEach(el => { el.value = 0; });
+    document.querySelectorAll('[id^="my-weight-"]').forEach(el => { el.textContent = 0; });
+    updateBudget();
+  });
+
   // ── Helpers ───────────────────────────────────────────────────
   function esc(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -281,31 +307,36 @@
     return name.split(/\s+/)[0].toLowerCase();
   }
 
+  function sortArr(arr) {
+    if (sortMode === 'votes') {
+      const hasVotes = arr.some(p => (pendingVotes[p.id] || 0) > 0);
+      if (hasVotes) {
+        return [...arr].sort((a, b) => (pendingVotes[b.id] || 0) - (pendingVotes[a.id] || 0));
+      }
+    }
+    return [...arr].sort((a, b) => firstName(a).localeCompare(firstName(b)));
+  }
+
   function renderAll() {
     const allTalks       = proposals.filter(p => p.type === 'talk');
     const workshops      = proposals.filter(p => p.type === 'workshop');
     const allInteractive = proposals.filter(p => p.type === 'interactive');
 
-    // Sort all groups by first name
-    [allTalks, workshops, allInteractive].forEach(arr =>
-      arr.sort((a, b) => firstName(a).localeCompare(firstName(b)))
-    );
-
     // Apply session filter to talks (which now includes interactive)
     const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
-    const talksAndInteractive = [...allTalks, ...allInteractive]
-      .sort((a, b) => firstName(a).localeCompare(firstName(b)))
-      .filter(sessionFilter);
+    const talksAndInteractive = sortArr([...allTalks, ...allInteractive].filter(sessionFilter));
 
-    // All tab: full list sorted by first name
-    const everything = [...proposals].sort((a, b) => firstName(a).localeCompare(firstName(b)));
+    // All tab: full list with current sort
+    const everything = sortArr(proposals);
+
+    const sortedWorkshops = sortArr(workshops);
 
     document.getElementById('all-count').textContent         = everything.length;
     document.getElementById('talks-count').textContent       = talksAndInteractive.length;
-    document.getElementById('workshops-count').textContent   = workshops.length;
+    document.getElementById('workshops-count').textContent   = sortedWorkshops.length;
     document.getElementById('panel-all').innerHTML         = everything.map(renderCard).join('');
     document.getElementById('panel-talks').innerHTML       = talksAndInteractive.map(renderCard).join('');
-    document.getElementById('panel-workshops').innerHTML   = workshops.map(renderCard).join('');
+    document.getElementById('panel-workshops').innerHTML   = sortedWorkshops.map(renderCard).join('');
     if (!canVote) {
       document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
     }
