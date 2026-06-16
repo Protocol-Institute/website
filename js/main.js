@@ -48,6 +48,15 @@ var FOOTER_HTML =
       memberLink.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
     }
 
+    // Add ?return= to any bare /members/join links in page content
+    if (window.location.pathname.indexOf('/members/join') !== 0) {
+      document.querySelectorAll('a[href^="/members/join"]').forEach(function (a) {
+        if (a.getAttribute('href').indexOf('return=') === -1) {
+          a.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+        }
+      });
+    }
+
     // Session check — swap login link for member dropdown if authenticated
     fetch('/api/members/me')
       .then(function (r) { return r.ok ? r.json() : null; })
