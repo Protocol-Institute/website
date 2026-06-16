@@ -48,7 +48,7 @@ export async function onRequestGet({ request, env }) {
     myTotal += v.votes;
   });
 
-  const budget = 50;
+  const budget = 55;
 
   return Response.json({
     proposals: proposals || [],

@@ -31,7 +31,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   const votesMap = body.votes || {};
-  const budget = 50;
+  const budget = 55;
 
   const totalVotes = Object.values(votesMap).reduce((s, n) => s + (parseInt(n) || 0), 0);
   if (totalVotes > budget) {
