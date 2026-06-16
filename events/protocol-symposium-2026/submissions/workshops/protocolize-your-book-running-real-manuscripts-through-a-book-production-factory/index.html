@@ -12,6 +12,10 @@
       letter-spacing:0.06em; text-transform:uppercase; color:#8A8A8A;
       border-top:1px solid #E0DDD8; padding-top:1.5rem; margin-top:1.5rem; margin-bottom:0.6rem; }
     .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
+    .edit-own-btn { display:inline-block; padding:0.4rem 0.9rem; background:#C0392B; color:#fff;
+      font-family:inherit; font-size:0.8rem; font-weight:600; letter-spacing:0.04em;
+      border:none; cursor:pointer; }
+    .edit-own-btn:hover { background:#A93226; }
     .comment-section { margin-top:1.5rem; padding-top:1rem; border-top:1px solid #E0DDD8; }
     .comment-toggle { font-size:0.82rem; color:#2A6B6B; cursor:pointer; background:none; border:none; padding:0; font-family:inherit; }
     .comments-body { margin-top:0.75rem; }
@@ -42,6 +46,18 @@
           <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← Draft Agenda</a>
         </p>
         <div id="proposal-body"></div>
+        <div id="workshop-edit-bar" style="display:none;margin-top:1rem;padding-top:0.75rem;border-top:1px solid #E0DDD8;">
+          <button class="edit-own-btn" onclick="startWorkshopEdit()">You own this item — edit title</button>
+        </div>
+        <div id="workshop-edit-form" style="display:none;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #E0DDD8;">
+          <input id="we-title" type="text" style="width:100%;box-sizing:border-box;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;padding:0.35rem 0.5rem;border:1px solid #C8C5C0;margin-bottom:0.5rem;">
+          <textarea id="we-abstract" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:0.9rem;padding:0.4rem 0.5rem;border:1px solid #C8C5C0;min-height:120px;resize:vertical;line-height:1.6;margin-bottom:0.5rem;"></textarea>
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <button class="form-btn" onclick="saveWorkshopEdit()">Save</button>
+            <button onclick="cancelWorkshopEdit()" style="font-family:inherit;font-size:0.85rem;color:#5A5A5A;cursor:pointer;background:none;border:none;padding:0;text-decoration:underline;">Cancel</button>
+            <span id="we-msg" style="font-size:0.8rem;color:#8A1F2E;"></span>
+          </div>
+        </div>
         <div id="comment-section" class="comment-section" style="display:none;">
           <button class="comment-toggle" id="comment-toggle-btn" onclick="toggleComments()">Comments ▾</button>
           <div id="comments-body" style="display:none;">
@@ -95,10 +111,55 @@ function renderProposal(p){
     html+=sec('Notes')+renderText(p.comments);
   return html;
 }
-fetch(`/api/symposium/proposals/${PROPOSAL_ID}`)
+let _proposal=null,_memberEmail='',_isAdmin=false;
+fetch('/api/members/me')
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(d=>{
+    if(!d.member)throw new Error();
+    _memberEmail=(d.member.email||'').toLowerCase();
+    _isAdmin=!!d.member.is_admin;
+    return fetch(`/api/symposium/proposals/${PROPOSAL_ID}`);
+  })
   .then(r=>{if(r.status===401||r.status===403){document.getElementById('gate-view').style.display='';return null;}if(!r.ok)throw new Error();return r.json();})
-  .then(data=>{if(!data)return;document.getElementById('proposal-body').innerHTML=renderProposal(data.proposal);document.getElementById('main-view').style.display='';document.getElementById('comment-section').style.display='';})
+  .then(data=>{
+    if(!data)return;
+    _proposal=data.proposal;
+    document.getElementById('proposal-body').innerHTML=renderProposal(_proposal);
+    document.getElementById('main-view').style.display='';
+    document.getElementById('comment-section').style.display='';
+    const ownerEmail=(_proposal.organizer_email||_proposal.speaker_email||'').toLowerCase();
+    if(_isAdmin||(_memberEmail&&_memberEmail===ownerEmail))
+      document.getElementById('workshop-edit-bar').style.display='';
+  })
   .catch(()=>{document.getElementById('gate-view').style.display='';});
+function startWorkshopEdit(){
+  document.getElementById('we-title').value=_proposal.title||'';
+  document.getElementById('we-abstract').value=_proposal.abstract||'';
+  document.getElementById('workshop-edit-bar').style.display='none';
+  document.getElementById('workshop-edit-form').style.display='';
+}
+function cancelWorkshopEdit(){
+  document.getElementById('workshop-edit-form').style.display='none';
+  document.getElementById('workshop-edit-bar').style.display='';
+  document.getElementById('we-msg').textContent='';
+}
+async function saveWorkshopEdit(){
+  const title=document.getElementById('we-title').value.trim();
+  const abstract=document.getElementById('we-abstract').value.trim();
+  const msg=document.getElementById('we-msg');
+  if(!title){msg.textContent='Title required.';return;}
+  try{
+    const res=await fetch('/api/symposium/proposals/'+PROPOSAL_ID,{
+      method:'PATCH',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title,abstract}),
+    });
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error||'Failed');
+    _proposal={..._proposal,title,abstract};
+    document.getElementById('proposal-body').innerHTML=renderProposal(_proposal);
+    cancelWorkshopEdit();
+  }catch(e){msg.textContent=e.message;}
+}
 let commentsLoaded=false;
 function toggleComments(){
   const body=document.getElementById('comments-body');
