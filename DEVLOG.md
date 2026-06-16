@@ -490,4 +490,8 @@ A build log for protocol-institute.org — how the static site was built, what i
 
 - Added `docs/authentication.md` documenting the full auth system: member states, the join/apply/edit flows, D1 table schemas, API endpoint reference, nav behaviour per state, mobile behaviour, security notes, and a section of known limitations and future improvements (rate limiting on send-pin, session revocation on email change, no active-session list, fixed TTL, CSRF).
 
+- Two gaps in the edit profile page. (1) The photo upload section was shown to all members even though regular member photos appear nowhere on the site. Fixed: `photo-field-group` now starts hidden and is revealed only when `is_team || is_consultant` (or always for admins). (2) Regular members had no self-service path to the consulting directory. Fixed: a 'List me in the PI Consulting Network' checkbox appears for non-consultant members; checking it expands the consulting fields and photo section; on Save, `is_consultant = 1` is written and the opt-in toggle collapses. `is_consultant` moved to `SELF_EDITABLE` in `update.js` — consistent with the stated 'approved by default' policy. Admins retain override via `ADMIN_EDITABLE`. After save, UI updates in-place without a reload.
+
+- D1 update: `is_team = 1`, `tier = 'team'`, `team_title = 'Book Editor'`, `photo_r2_key = 'jennadixon.webp'`. Photo uploaded from inbox to R2 bucket `pi-assets` as `jennadixon.webp` (WebP). She now appears in the team view at `/members` with her photo.
+
 ---
