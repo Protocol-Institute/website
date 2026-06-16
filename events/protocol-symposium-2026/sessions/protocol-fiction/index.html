@@ -189,7 +189,7 @@
 
       list.innerHTML = all.map(p => {
         const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-        const canEdit = isAdmin || (memberEmail && memberEmail === ownerEmail);
+        const isOwner = !isAdmin && memberEmail && memberEmail === ownerEmail;
         const key = p.slug || ('p' + p.id);
         const interactiveBadge = p.type === 'interactive'
           ? ' <span style="font-size:0.72rem;color:#2A6B6B;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;vertical-align:middle;">Interactive</span>'
@@ -197,14 +197,10 @@
         return `
         <div class="proposal-card">
           <div class="proposal-title" id="title-${key}">${esc(p.title)}${interactiveBadge}</div>
-          <div class="proposal-speaker">${esc(p.speaker_name || '')}${p.co_speakers ? ' &amp; ' + esc(p.co_speakers) : ''}</div>
-          <div class="proposal-abstract" id="abs-wrap-${p.id}">
-            <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
-            <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
-          </div>
-          ${canEdit ? `
+          ${isAdmin ? `
+          <div class="edit-bar"><a class="edit-own-btn" href="/events/protocol-symposium-2026/submissions/edit-proposal.html?id=${p.id}" style="text-decoration:none;display:inline-block;">Edit details</a></div>` : isOwner ? `
           <div class="edit-bar" id="edit-bar-${key}">
-            <button class="edit-own-btn" onclick="startEdit('${key}')">You own this item — edit title</button>
+            <button class="edit-own-btn" onclick="startEdit('${key}')">Edit details</button>
           </div>
           <div class="edit-form" id="edit-form-${key}" style="display:none;">
             <input class="edit-title-input" id="edit-title-${key}" type="text">
@@ -215,6 +211,11 @@
               <span class="edit-msg" id="edit-msg-${key}"></span>
             </div>
           </div>` : ''}
+          <div class="proposal-speaker">${esc(p.speaker_name || '')}${p.co_speakers ? ' &amp; ' + esc(p.co_speakers) : ''}</div>
+          <div class="proposal-abstract" id="abs-wrap-${p.id}">
+            <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
+            <button class="abstract-toggle" onclick="toggleAbs(${p.id})">Show more ▾</button>
+          </div>
           <div class="comment-section">
             <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${p.comment_count || 0}) ▾</button>
             <div class="comments-body" id="cmts-${p.id}" style="display:none;">
@@ -283,15 +284,12 @@
     document.getElementById('edit-title-' + key).value = d.title;
     document.getElementById('edit-abstract-' + key).value = d.abstract;
     document.getElementById('title-' + key).style.display = 'none';
-    document.getElementById('abs-wrap-' + d.id).style.display = 'none';
     document.getElementById('edit-bar-' + key).style.display = 'none';
     document.getElementById('edit-form-' + key).style.display = '';
   };
 
   window.cancelEdit = function (key) {
-    const d = storeByKey[key];
     document.getElementById('title-' + key).style.display = '';
-    document.getElementById('abs-wrap-' + d.id).style.display = '';
     document.getElementById('edit-bar-' + key).style.display = '';
     document.getElementById('edit-form-' + key).style.display = 'none';
   };

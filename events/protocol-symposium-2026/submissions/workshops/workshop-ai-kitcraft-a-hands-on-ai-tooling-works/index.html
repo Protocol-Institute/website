@@ -45,11 +45,8 @@
         <p style="margin-bottom:1rem;font-size:0.85rem;">
           <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← Draft Agenda</a>
         </p>
-        <div id="proposal-body"></div>
-        <div id="workshop-edit-bar" style="display:none;margin-top:1rem;padding-top:0.75rem;border-top:1px solid #E0DDD8;">
-          <button class="edit-own-btn" onclick="startWorkshopEdit()">You own this item — edit title</button>
-        </div>
-        <div id="workshop-edit-form" style="display:none;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #E0DDD8;">
+        <div id="workshop-edit-bar" style="display:none;margin-bottom:0.75rem;"></div>
+        <div id="workshop-edit-form" style="display:none;margin-bottom:0.75rem;padding:0.75rem;border:1px solid #E0DDD8;background:#FAFAF7;">
           <input id="we-title" type="text" style="width:100%;box-sizing:border-box;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;padding:0.35rem 0.5rem;border:1px solid #C8C5C0;margin-bottom:0.5rem;">
           <textarea id="we-abstract" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:0.9rem;padding:0.4rem 0.5rem;border:1px solid #C8C5C0;min-height:120px;resize:vertical;line-height:1.6;margin-bottom:0.5rem;"></textarea>
           <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
@@ -58,6 +55,7 @@
             <span id="we-msg" style="font-size:0.8rem;color:#8A1F2E;"></span>
           </div>
         </div>
+        <div id="proposal-body"></div>
         <div id="comment-section" class="comment-section" style="display:none;">
           <button class="comment-toggle" id="comment-toggle-btn" onclick="toggleComments()">Comments ▾</button>
           <div id="comments-body" style="display:none;">
@@ -128,8 +126,15 @@ fetch('/api/members/me')
     document.getElementById('main-view').style.display='';
     document.getElementById('comment-section').style.display='';
     const ownerEmail=(_proposal.organizer_email||_proposal.speaker_email||'').toLowerCase();
-    if(_isAdmin||(_memberEmail&&_memberEmail===ownerEmail))
-      document.getElementById('workshop-edit-bar').style.display='';
+    const isOwner=!_isAdmin&&_memberEmail&&_memberEmail===ownerEmail;
+    const bar=document.getElementById('workshop-edit-bar');
+    if(_isAdmin){
+      bar.innerHTML='<a class="edit-own-btn" href="/events/protocol-symposium-2026/submissions/edit-proposal.html?id='+PROPOSAL_ID+'" style="text-decoration:none;display:inline-block;">Edit details</a>';
+      bar.style.display='';
+    }else if(isOwner){
+      bar.innerHTML='<button class="edit-own-btn" onclick="startWorkshopEdit()">Edit details</button>';
+      bar.style.display='';
+    }
   })
   .catch(()=>{document.getElementById('gate-view').style.display='';});
 function startWorkshopEdit(){
