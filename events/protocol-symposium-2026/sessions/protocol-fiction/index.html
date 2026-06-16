@@ -130,13 +130,11 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const SESSION = 'Protocol Fiction';
+  const SESSION_SLUG = 'protocol-fiction';
 
   function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
-  const SESSION_SLUG = SESSION.toLowerCase().replace(/\s+/g, '-');
   let memberEmail = '', isAdmin = false;
   const storeByKey = {};
 
@@ -174,7 +172,7 @@
           return na.localeCompare(nb);
         });
       }
-      const inSession = (data.proposals || []).filter(p => (p.session || 'General') === SESSION);
+      const inSession = (data.proposals || []).filter(p => (p.session || 'General') === sess.name);
       const talks       = sortByFirst(inSession.filter(p => p.type === 'talk'));
       const interactive = sortByFirst(inSession.filter(p => p.type === 'interactive'));
       const all = [...talks, ...interactive];

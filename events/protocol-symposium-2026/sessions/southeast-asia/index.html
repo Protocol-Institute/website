@@ -130,13 +130,11 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const SESSION = 'Southeast Asia';
+  const SESSION_SLUG = 'southeast-asia';
 
   function esc(s) {
     return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
-  const SESSION_SLUG = SESSION.toLowerCase().replace(/\s+/g, '-');
   let memberEmail = '', isAdmin = false;
   const storeByKey = {};
 
@@ -168,7 +166,7 @@
       if (isAdmin || isOwner) document.getElementById('session-edit-bar').style.display = '';
       const data = proposalsData;
       const proposals = (data.proposals || [])
-        .filter(p => p.type === 'talk' && (p.session || 'General') === SESSION)
+        .filter(p => p.type === 'talk' && (p.session || 'General') === sess.name)
         .sort((a, b) => {
           const na = (a.speaker_name || '').split(/\s+/)[0].toLowerCase();
           const nb = (b.speaker_name || '').split(/\s+/)[0].toLowerCase();
