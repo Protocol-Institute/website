@@ -517,3 +517,25 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Three sessions were renamed (Memory → 'The Art of Memory', Protocol Fiction → 'Worldbuilding in New Nature', Psychohistory → 'Inventing Psychohistory') before the cascade fix was in place. 11 proposals (5+3+3) still had the old names and therefore matched nothing in the dropdown. Fixed with three direct D1 UPDATE statements. Going forward the PATCH cascade ensures this stays in sync automatically.
 
 ---
+
+## Session 29: Voting UX Overhaul + Program Rename
+
+*2026-06-16*
+
+**Tracks:** member-directory, static-site
+
+- Each voter now sees only their own contribution: *Your interest weight* (tier × √n) and *Your votes* input. Admins additionally see *Total interest weight* and *Total votes* per card. proposals.js adds total_votes to the aggregate query. The previous design showed the aggregate score to all voters, which would have been gameable signal during the voting window.
+
+- Added `is_early_voter INTEGER DEFAULT 0` to members. Members with this flag can cast votes before VOTE_START. Both the votes API and the frontend gate on `canVote = (votingOpen || isEarlyVoter) &amp;&amp; before deadline`. venkat@protocol-institute.org, timber@protocol-institute.org, and hi@timbeiko.com seeded as early voters. Tim Beiko also promoted to is_admin=1.
+
+- Added an All tab (all 55 proposals, alphabetical by first name) as the default starting view for easy vote distribution. The separate Interactive tab was removed; interactive proposals now appear in the Talks tab with a *· Interactive* italic tag on the track line. The type field is preserved in the DB.
+
+- The submissions directory was renamed to program via `git mv`, preserving history. Page title changed to &ldquo;Draft Program&rdquo;. All internal links across session pages, workshop pages, edit-proposal, and the symposium index CTA updated. Redirect added: `/events/protocol-symposium-2026/submissions → /program`. Slug will remain /program after voting ends; title will drop &ldquo;Draft&rdquo;.
+
+- Budget bar restructured: Save / Distribute Evenly / Clear Votes buttons in a right-aligned column; meta (Your total interest weight + bold deadline) stacked left; Sort by radio row inside the sticky area. Budget raised 50→55 to match proposal count. Distribute Evenly fills floor(budget/n) per proposal (exactly 1 each at 55/55). All controls disabled when voting is closed.
+
+- Each session page hardcoded `const SESSION = 'Memory'` (or 'Protocol Fiction', 'Psychohistory') to filter proposals. After Session 28 renames, proposal session fields cascaded correctly but these constants were never updated, so no talks appeared. Fixed by removing the constant and filtering on `sess.name` from the live API response, making future renames safe.
+
+- Three issues found via Playwright at 390px: (1) Sticky bar 362px tall (43% of viewport) — compact button padding at ≤600px brings it to 265px. (2) Progress bar orphaned on its own flex row — hidden on mobile since the text label already conveys the count. (3) Deadline line not bold — DM Sans only loads weights 300/400/500, so `&lt;strong&gt;` (700) had no matching face; fixed with explicit `font-weight:600` CSS rule.
+
+---
