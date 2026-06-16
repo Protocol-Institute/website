@@ -156,12 +156,13 @@
         </div>
 
         <div class="sub-tabs" id="sub-tabs">
-          <button class="sub-tab active" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
+          <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
+          <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
           <button class="sub-tab" data-tab="interactive">Interactive (<span id="interactive-count">—</span>)</button>
         </div>
 
-        <div class="session-filter-bar" id="session-filter-bar">
+        <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
           <label for="session-select">Session:</label>
           <select id="session-select">
             <option value="all">All</option>
@@ -169,7 +170,8 @@
           </select>
         </div>
 
-        <div class="sub-panel active" id="panel-talks"></div>
+        <div class="sub-panel active" id="panel-all"></div>
+        <div class="sub-panel" id="panel-talks"></div>
         <div class="sub-panel" id="panel-workshops"></div>
         <div class="sub-panel" id="panel-interactive"></div>
 
@@ -296,9 +298,14 @@
     const talks       = allTalks.filter(sessionFilter);
     const interactive = allInteractive.filter(sessionFilter);
 
+    // All tab: full list sorted by first name
+    const everything = [...proposals].sort((a, b) => firstName(a).localeCompare(firstName(b)));
+
+    document.getElementById('all-count').textContent         = everything.length;
     document.getElementById('talks-count').textContent       = talks.length;
     document.getElementById('workshops-count').textContent   = workshops.length;
     document.getElementById('interactive-count').textContent = interactive.length;
+    document.getElementById('panel-all').innerHTML         = everything.map(renderCard).join('');
     document.getElementById('panel-talks').innerHTML       = talks.map(renderCard).join('');
     document.getElementById('panel-workshops').innerHTML   = workshops.map(renderCard).join('');
     document.getElementById('panel-interactive').innerHTML = interactive.map(renderCard).join('');
