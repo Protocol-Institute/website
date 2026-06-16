@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Draft Agenda — Protocol Symposium 2026</title>
-  <meta name="description" content="Draft agenda for the 2026 Protocol Institute Symposium — shortlisted talks and workshops open for member voting.">
+  <title>Draft Program — Protocol Symposium 2026</title>
+  <meta name="description" content="Draft program for the 2026 Protocol Institute Symposium — shortlisted talks and workshops open for member voting.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -126,7 +126,7 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Draft Agenda</h1>
+        <h1>Draft Program</h1>
       </div>
 
       <div class="vote-clock-mini" id="vote-clock-mini"></div>
@@ -356,7 +356,7 @@
     const commentCount = p.comment_count || 0;
     const workshopLink = '';
     const titleContent = isWorkshop && p.slug
-      ? `<a href="/events/protocol-symposium-2026/submissions/workshops/${esc(p.slug)}/">${esc(p.title)}</a>`
+      ? `<a href="/events/protocol-symposium-2026/program/workshops/${esc(p.slug)}/">${esc(p.title)}</a>`
       : esc(p.title);
     const sessionSlug = SESSION_SLUGS[p.session];
     const sessionLink = (!isWorkshop && sessionSlug)
@@ -379,7 +379,7 @@
       </div>
       ${isAdmin ? `
       <div class="edit-bar">
-        <a class="edit-own-btn" href="/events/protocol-symposium-2026/submissions/edit-proposal.html?id=${p.id}">You own this item — edit details</a>
+        <a class="edit-own-btn" href="/events/protocol-symposium-2026/program/edit-proposal.html?id=${p.id}">You own this item — edit details</a>
       </div>` : isOwner ? `
       <div class="edit-bar" id="edit-bar-${p.id}">
         <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>

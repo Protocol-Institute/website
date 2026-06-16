@@ -55,7 +55,7 @@ functions/          Cloudflare Pages Functions (API endpoints)
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
   _shared/session.js  Shared pi_session cookie validator
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
-events/protocol-symposium-2026/submissions/  /submissions — shortlisted proposals + quadratic voting (admin-gated until voting opens)
+events/protocol-symposium-2026/program/  /program — Draft Program (shortlisted proposals + quadratic voting); slug stays /program after voting ends, title becomes "Program"
   workshops/        Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
 data/

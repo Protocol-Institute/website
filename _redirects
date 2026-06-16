@@ -9,6 +9,9 @@
 /projects    /programs?view=flattened    301
 /projects/   /programs?view=flattened    301
 
+/events/protocol-symposium-2026/submissions    /events/protocol-symposium-2026/program   301
+/events/protocol-symposium-2026/submissions/   /events/protocol-symposium-2026/program/  301
+
 /events/protocol-foundations-workshop-2025   /events/protocol-symposium-2025   301
 /events/protocol-foundations-workshop-2025/  /events/protocol-symposium-2025/  301
 /events/protocol-school-2025                 /events/protocol-symposium-2025   301
