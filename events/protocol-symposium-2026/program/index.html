@@ -30,14 +30,16 @@
     .budget-bar-track { width:180px; height:6px; background:#E0DDD8; border-radius:3px; }
     .budget-bar-fill { height:6px; background:#2A6B6B; border-radius:3px; transition:width 0.2s; }
     .budget-bar-fill.over { background:#8A1F2E; }
-    .vote-submit-btn { margin-left:auto; }
+    .vote-btn-col { display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem; margin-left:auto; }
     .vote-meta-row {
-      font-size:0.78rem; color:#5A5A5A; padding:0.3rem 0 0.6rem;
-      display:flex; gap:2rem; flex-wrap:wrap;
+      font-size:0.78rem; color:#5A5A5A; padding:0.2rem 0 0.5rem;
+      display:flex; flex-direction:column; align-items:flex-start; gap:0.15rem;
     }
     .effective-weight-val { font-weight:600; color:#1A1A1A; }
+    .vote-sort-row { display:flex; align-items:center; gap:0.75rem; padding:0.45rem 0 0.5rem;
+      border-top:1px solid #E0DDD8; }
 
-    .save-msg { font-size:0.82rem; margin-left:0.5rem; }
+    .save-msg { font-size:0.82rem; }
     .save-msg.ok { color:#2A6B6B; }
     .save-msg.err { color:#8A1F2E; }
 
@@ -146,13 +148,24 @@
           <div class="vote-budget-row">
             <span class="budget-label">Votes remaining: <span class="budget-remaining" id="remaining-display">—</span> / <span id="budget-display">—</span></span>
             <div class="budget-bar-track"><div class="budget-bar-fill" id="budget-fill" style="width:100%"></div></div>
-            <button class="form-btn vote-submit-btn" id="submit-votes-btn">Save votes</button>
-            <button class="form-btn" id="clear-votes-btn" style="background:#fff;color:#5A5A5A;border:1px solid #C8C5C0;">Clear votes</button>
-            <span class="save-msg" id="save-msg" style="display:none;"></span>
+            <div class="vote-btn-col">
+              <button class="form-btn" id="submit-votes-btn">Save votes</button>
+              <button class="form-btn" id="clear-votes-btn" style="background:#fff;color:#5A5A5A;border:1px solid #C8C5C0;">Clear votes</button>
+              <span class="save-msg" id="save-msg" style="display:none;"></span>
+            </div>
           </div>
           <div class="vote-meta-row">
             <span>Your total interest weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> per vote cast)</span>
-            <span id="deadline-line">You can edit your votes until Jun 20.</span>
+            <strong id="deadline-line">You can edit your votes until Jun 20.</strong>
+          </div>
+          <div class="vote-sort-row" id="sort-bar">
+            <span style="font-size:0.78rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:#5A5A5A;">Sort by:</span>
+            <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+              <input type="radio" name="sort-mode" value="alpha" checked> Alphabetical
+            </label>
+            <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
+              <input type="radio" name="sort-mode" value="votes"> My votes
+            </label>
           </div>
         </div>
 
@@ -160,16 +173,6 @@
           <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
           <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
-        </div>
-
-        <div class="session-filter-bar" id="sort-bar" style="padding-bottom:0;">
-          <label style="font-size:0.78rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:#5A5A5A;white-space:nowrap;">Sort by:</label>
-          <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-            <input type="radio" name="sort-mode" value="alpha" checked> Alphabetical
-          </label>
-          <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-            <input type="radio" name="sort-mode" value="votes"> My votes
-          </label>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
