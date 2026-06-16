@@ -34,7 +34,7 @@ export async function onRequestPatch({ request, params, env }) {
     return Response.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const allowed = ['date', 'start_time', 'end_time', 'description', 'agenda'];
+  const allowed = ['name', 'date', 'start_time', 'end_time', 'description', 'agenda'];
   const sets = [], vals = [];
   for (const field of allowed) {
     if (body[field] !== undefined) {

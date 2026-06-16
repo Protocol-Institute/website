@@ -75,7 +75,7 @@
 
       <div class="page-header">
         <p class="event-kicker">Special Session &mdash; Protocol Symposium 2026</p>
-        <h1>Protocol Fiction</h1>
+        <h1 id="session-title">Protocol Fiction</h1>
       </div>
 
       <div id="gate-view" class="gate-msg" style="display:none;">
@@ -93,9 +93,11 @@
         <p id="meta-agenda" class="stub">Agenda to be confirmed.</p>
 
         <div id="session-edit-bar" style="display:none;margin-bottom:1.5rem;">
-          <button class="edit-own-btn" onclick="startSessionEdit()">You own this item — edit details</button>
+          <button class="edit-own-btn" onclick="startSessionEdit()">Edit details</button>
         </div>
         <div id="session-edit-form" class="edit-form" style="display:none;margin-bottom:2rem;">
+          <div class="session-field-group"><label class="session-field-label">Title</label>
+            <input class="edit-title-input" type="text" id="edit-name"></div>
           <div class="session-field-group"><label class="session-field-label">About this session</label>
             <textarea class="edit-abstract-input" id="edit-description" style="min-height:80px;"></textarea></div>
           <div class="session-field-group"><label class="session-field-label">Agenda</label>
@@ -237,6 +239,7 @@
   window.startSessionEdit = function () {
     document.getElementById('session-edit-form').style.display = '';
     document.getElementById('session-edit-bar').style.display = 'none';
+    document.getElementById('edit-name').value = document.getElementById('session-title').textContent.trim();
     document.getElementById('edit-description').value = document.getElementById('meta-description').classList.contains('stub') ? '' : document.getElementById('meta-description').textContent;
     document.getElementById('edit-agenda').value      = document.getElementById('meta-agenda').classList.contains('stub')      ? '' : document.getElementById('meta-agenda').textContent;
   };
@@ -248,6 +251,7 @@
   window.saveSessionEdit = async function () {
     const msg = document.getElementById('session-edit-msg');
     const body = {
+      name:        document.getElementById('edit-name').value.trim(),
       description: document.getElementById('edit-description').value.trim(),
       agenda:      document.getElementById('edit-agenda').value.trim(),
     };
@@ -264,6 +268,7 @@
         if (val) { el.textContent = val; el.classList.remove('stub'); }
         else { el.textContent = fallback; el.classList.add('stub'); }
       }
+      if (body.name) document.getElementById('session-title').textContent = body.name;
       setMeta('meta-description', body.description, 'Session description to be added.');
       setMeta('meta-agenda',      body.agenda,      'Agenda to be confirmed.');
       const allFilled = body.description && body.agenda;
