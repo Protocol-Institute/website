@@ -1726,6 +1726,25 @@ a:hover {
   background: #F0F7F7;
 }
 
+@media (max-width: 768px) {
+  .form-btn {
+    padding: 0.9em 1.6em;
+    font-size: 0.92rem;
+  }
+  .form-input {
+    padding: 0.75rem 0.8rem;
+    font-size: 1rem; /* prevents iOS auto-zoom (requires ≥16px) */
+  }
+  .form-checkbox {
+    padding: 0.3rem 0;
+  }
+  .form-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 0.05rem;
+  }
+}
+
 .form-msg {
   font-size: 0.88rem;
   padding: 0.6rem 0.9rem;
