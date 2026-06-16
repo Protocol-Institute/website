@@ -19,9 +19,20 @@ var NAV_HTML =
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
       '<li><a href="/sigs">SIGs</a></li>' +
-      '<li><a href="/calendar">Calendar</a></li>' +
+      '<li><a href="/events">Events</a></li>' +
       '<li><a href="/challenges">Challenges <span class="beta-badge">Beta</span></a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
+      '<li class="nav-more-menu" id="nav-more-menu">' +
+        '<button class="nav-more-toggle" id="nav-more-toggle" aria-expanded="false" aria-haspopup="true">More <span class="nav-member-caret">&#9662;</span></button>' +
+        '<ul class="nav-more-dropdown" id="nav-more-dropdown">' +
+          '<li><a href="/about">About</a></li>' +
+          '<li><a href="/network">Network</a></li>' +
+          '<li><a href="/events/protocol-symposium-2026">Symposium</a></li>' +
+          '<li><a href="/contact">Contact</a></li>' +
+          '<li><a href="/members">Members</a></li>' +
+          '<li><a href="/support">Support Us</a></li>' +
+        '</ul>' +
+      '</li>' +
       '<li class="nav-mobile-auth" id="nav-mobile-auth"><a href="/members/join" id="nav-mobile-login-link">' + PERSON_ICON + ' Member Login / Register</a></li>' +
     '</ul>' +
   '</nav>';
@@ -135,6 +146,26 @@ var FOOTER_HTML =
         a.setAttribute('aria-current', 'page');
       }
     });
+
+    // More dropdown
+    var moreToggle = document.getElementById('nav-more-toggle');
+    var moreDropdown = document.getElementById('nav-more-dropdown');
+    if (moreToggle && moreDropdown) {
+      if (moreDropdown.querySelector('a.active')) {
+        moreToggle.classList.add('active');
+      }
+      moreToggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = moreDropdown.classList.toggle('is-open');
+        moreToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+      document.addEventListener('click', function () {
+        if (moreDropdown.classList.contains('is-open')) {
+          moreDropdown.classList.remove('is-open');
+          moreToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
   }
 
   // Inject footer

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Us — The Protocol Institute</title>
+  <meta name="description" content="Support the Protocol Institute's mission to further the study and application of protocols.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .pitch-deck-container {
+      margin: 2.5rem 0 1.5rem;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      aspect-ratio: 16 / 9;
+      background: #e8f0f0;
+    }
+    .pitch-deck-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .pitch-deck-caption {
+      font-size: 0.8rem;
+      color: #888;
+      text-align: right;
+      margin-top: 0.4rem;
+    }
+    .pitch-deck-caption a {
+      color: #2A6B6B;
+      text-decoration: none;
+    }
+    .pitch-deck-caption a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Support Us</h1>
+      </div>
+
+      <div class="about-body">
+        <p>The Protocol Institute is actively seeking donor and partner support. Our work is outlined in the deck below.</p>
+
+        <div class="pitch-deck-container">
+          <iframe src="/pitchdeck/deck.html"
+                  title="Protocol Institute — Support Deck"
+                  class="pitch-deck-frame"
+                  loading="lazy"
+                  allowfullscreen></iframe>
+        </div>
+        <p class="pitch-deck-caption">
+          Use ← → arrow keys to navigate &middot;
+          <a href="/pitchdeck/deck.html" target="_blank" rel="noopener">Open full screen ↗</a>
+        </p>
+
+        <p>If you're interested in supporting our mission, please contact the Managing Director, <a href="team.html#timber">Timber Stinson-Schroff</a> at <a href="mailto:timber@protocol-institute.org">timber@protocol-institute.org</a>, or the Director of Research, <a href="team.html#venkat">Venkatesh Rao</a> at <a href="mailto:venkat@protocol-institute.org">venkat@protocol-institute.org</a>.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

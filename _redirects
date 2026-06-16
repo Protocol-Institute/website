@@ -1,4 +1,6 @@
 # Legacy URL redirects
+/calendar    /events    301
+/calendar/   /events    301
 /home        /           301
 
 # Team and Consulting pages consolidated into filtered Members view

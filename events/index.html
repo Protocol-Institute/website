@@ -4,9 +4,54 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Events — The Protocol Institute</title>
-  <meta name="description" content="A history of Protocol Institute events: symposia, workshops, and residential gatherings from 2024 onward.">
+  <meta name="description" content="Protocol Institute event calendar and history — SIG meetings, symposia, workshops, and residential gatherings.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .calendar-embed-wrap {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .calendar-embed-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 580px;
+      border: 1px solid #E0DDD8;
+    }
+    .cal-key {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0.8rem;
+    }
+    .cal-key li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+      color: #2C2C2C;
+      margin-bottom: 0.35rem;
+    }
+    .cal-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      top: 1px;
+    }
+    .cal-key a {
+      color: #2A6B6B;
+      font-size: 0.85rem;
+    }
+    .cal-key a:hover { text-decoration: underline; }
+    .cal-note {
+      font-size: 0.82rem;
+      color: #8A8A8A;
+      margin-bottom: 1.2rem;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
 
@@ -21,30 +66,65 @@
         <h1>Events</h1>
       </div>
 
-      <p class="events-intro">Symposia, workshops, and residential gatherings organized by the Protocol Institute and its predecessor program, the Summer of Protocols.</p>
+      <div class="view-tabs" role="tablist">
+        <button class="view-tab" id="tab-calendar" role="tab" aria-selected="true" aria-controls="view-calendar">Calendar</button>
+        <button class="view-tab" id="tab-history" role="tab" aria-selected="false" aria-controls="view-history">Events History</button>
+      </div>
 
-      <p class="events-loading" id="events-loading">Loading&hellip;</p>
-      <ul class="event-list" id="event-list"></ul>
+      <div id="view-calendar" role="tabpanel" aria-labelledby="tab-calendar">
+
+        <ul class="cal-key">
+          <li>
+            <span class="cal-dot" style="background:#C17F24;"></span>
+            PI Community Calendar — SIG meetings and member-organized events.
+            <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe &rarr;</a>
+          </li>
+          <li>
+            <span class="cal-dot" style="background:#2A6B6B;"></span>
+            PI Institute Calendar — town halls, symposium, and curated Institute events.
+            <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe &rarr;</a>
+          </li>
+        </ul>
+
+        <p class="cal-note">Click on individual events below to add to your calendar. To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
+
+        <div class="calendar-embed-wrap">
+          <iframe
+            src="https://calendar.google.com/calendar/embed?src=sigs%40protocol-institute.org&color=%23C17F24&src=c_39064bd346954b73835545c21dd13f812700b44c0fbb0723f390211473dded5c%40group.calendar.google.com&color=%232A6B6B&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=1&showTz=1&mode=AGENDA&wkst=1&hl=en"
+            frameborder="0"
+            scrolling="no"
+            title="Protocol Institute Calendar"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+
+      </div><!-- #view-calendar -->
+
+      <div id="view-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+
+        <p class="events-intro">Symposia, workshops, and residential gatherings organized by the Protocol Institute and its predecessor program, the Summer of Protocols.</p>
+
+        <p class="events-loading" id="events-loading">Loading&hellip;</p>
+        <ul class="event-list" id="event-list"></ul>
+
+      </div><!-- #view-history -->
 
     </div>
   </main>
 
-  <footer class="site-footer">
-    <nav class="footer-nav" aria-label="Footer navigation">
-      <a href="/team">Team</a>
-      <a href="/network">Network</a>
-      <a href="/consulting">Consulting</a>
-      <a href="/symposium-2026">Symposium 2026</a>
-      <a href="/contact">Contact</a>
-    </nav>
-    <p>&copy; 2025 The Protocol Institute</p>
-  </footer>
+  <footer class="site-footer"></footer>
 
 </div>
 
 <script src="/js/main.js"></script>
 <script>
 (function () {
+  var tabCal   = document.getElementById('tab-calendar');
+  var tabHist  = document.getElementById('tab-history');
+  var panelCal = document.getElementById('view-calendar');
+  var panelHist = document.getElementById('view-history');
+  var histLoaded = false;
+
   var TYPE_LABELS = {
     symposium:  'Symposium',
     workshop:   'Workshop',
@@ -53,52 +133,72 @@
     retreat:    'Researcher Retreat'
   };
 
-  fetch('/data/events.json')
-    .then(function (r) { return r.json(); })
-    .then(function (events) {
-      events.sort(function (a, b) {
-        return b.date_start.localeCompare(a.date_start);
+  function loadHistory() {
+    if (histLoaded) return;
+    histLoaded = true;
+    fetch('/data/events.json')
+      .then(function (r) { return r.json(); })
+      .then(function (events) {
+        events.sort(function (a, b) {
+          return b.date_start.localeCompare(a.date_start);
+        });
+        var list    = document.getElementById('event-list');
+        var loading = document.getElementById('events-loading');
+        events.forEach(function (ev) {
+          var li = document.createElement('li');
+          li.className = 'event-item';
+          var thumb = ev.image
+            ? '<img src="' + ev.image + '" alt="" class="event-thumbnail">'
+            : '<div class="event-thumbnail-placeholder"></div>';
+          var links = '<a href="/events/' + ev.id + '/" class="event-card-link">Details &rarr;</a>';
+          if (ev.resources_url) {
+            links += '<a href="' + ev.resources_url + '" class="event-card-link" target="_blank" rel="noopener noreferrer">Research archive &rarr;</a>';
+          }
+          var typeLabel = TYPE_LABELS[ev.type] || ev.type;
+          var upcomingBadge = ev.status === 'upcoming'
+            ? '<span class="event-upcoming-badge">Upcoming</span>'
+            : '';
+          li.innerHTML =
+            '<div class="event-thumbnail-wrap">' + thumb + '</div>' +
+            '<div class="event-card-body">' +
+              '<div class="event-type-badge">' + typeLabel + upcomingBadge + '</div>' +
+              '<div class="event-card-title"><a href="/events/' + ev.id + '/">' + ev.title + '</a></div>' +
+              '<div class="event-card-meta">' + ev.date_display + ' &middot; ' + ev.location + '</div>' +
+              '<p class="event-card-description">' + ev.short_description + '</p>' +
+              '<div class="event-card-links">' + links + '</div>' +
+            '</div>';
+          list.appendChild(li);
+        });
+        loading.style.display = 'none';
+      })
+      .catch(function () {
+        document.getElementById('events-loading').textContent = 'Events could not be loaded.';
       });
+  }
 
-      var list    = document.getElementById('event-list');
-      var loading = document.getElementById('events-loading');
+  function showTab(which) {
+    var isHistory = which === 'history';
+    tabCal.classList.toggle('active', !isHistory);
+    tabHist.classList.toggle('active', isHistory);
+    tabCal.setAttribute('aria-selected', String(!isHistory));
+    tabHist.setAttribute('aria-selected', String(isHistory));
+    panelCal.hidden = isHistory;
+    panelHist.hidden = !isHistory;
+    if (isHistory) loadHistory();
+    var url = new URL(window.location.href);
+    if (isHistory) { url.searchParams.set('view', 'history'); }
+    else { url.searchParams.delete('view'); }
+    history.replaceState(null, '', url.toString());
+  }
 
-      events.forEach(function (ev) {
-        var li = document.createElement('li');
-        li.className = 'event-item';
+  tabCal.addEventListener('click', function () { showTab('calendar'); });
+  tabHist.addEventListener('click', function () { showTab('history'); });
 
-        var thumb = ev.image
-          ? '<img src="' + ev.image + '" alt="" class="event-thumbnail">'
-          : '<div class="event-thumbnail-placeholder"></div>';
-
-        var links = '<a href="/events/' + ev.id + '/" class="event-card-link">Details &rarr;</a>';
-        if (ev.resources_url) {
-          links += '<a href="' + ev.resources_url + '" class="event-card-link" target="_blank" rel="noopener noreferrer">Research archive &rarr;</a>';
-        }
-
-        var typeLabel = TYPE_LABELS[ev.type] || ev.type;
-        var upcomingBadge = ev.status === 'upcoming'
-          ? '<span class="event-upcoming-badge">Upcoming</span>'
-          : '';
-
-        li.innerHTML =
-          '<div class="event-thumbnail-wrap">' + thumb + '</div>' +
-          '<div class="event-card-body">' +
-            '<div class="event-type-badge">' + typeLabel + upcomingBadge + '</div>' +
-            '<div class="event-card-title"><a href="/events/' + ev.id + '/">' + ev.title + '</a></div>' +
-            '<div class="event-card-meta">' + ev.date_display + ' &middot; ' + ev.location + '</div>' +
-            '<p class="event-card-description">' + ev.short_description + '</p>' +
-            '<div class="event-card-links">' + links + '</div>' +
-          '</div>';
-
-        list.appendChild(li);
-      });
-
-      loading.style.display = 'none';
-    })
-    .catch(function () {
-      document.getElementById('events-loading').textContent = 'Events could not be loaded.';
-    });
+  if (new URLSearchParams(window.location.search).get('view') === 'history') {
+    showTab('history');
+  } else {
+    tabCal.classList.add('active');
+  }
 }());
 </script>
 </body>

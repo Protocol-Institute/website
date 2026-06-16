@@ -141,6 +141,51 @@ a:hover {
 .nav-member-dropdown li a:hover,
 .nav-member-dropdown li button:hover { background: #F0EDE8; color: #1A1A1A; }
 
+/* More dropdown */
+.nav-more-menu { position: relative; }
+.nav-more-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5A5A5A;
+  transition: color 0.2s ease;
+}
+.nav-more-toggle:hover,
+.nav-more-toggle.active { color: #2A6B6B; }
+.nav-more-dropdown {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.75rem);
+  min-width: 155px;
+  background: #FAFAF7;
+  border: 1px solid #E0DDD8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  list-style: none;
+  padding: 0.35rem 0;
+  margin: 0;
+  z-index: 200;
+}
+.nav-more-dropdown.is-open { display: block; }
+.nav-more-dropdown li a {
+  display: block;
+  padding: 0.45rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  color: #3A3A3A;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-more-dropdown li a:hover { background: #F0EDE8; color: #1A1A1A; }
+.nav-more-dropdown li a.active { color: #2A6B6B; }
+
 .beta-badge {
   display: inline-block;
   font-family: 'DM Sans', sans-serif;
@@ -953,6 +998,27 @@ a:hover {
 
   .nav-links a {
     font-size: 0.9rem;
+  }
+
+  .nav-more-toggle { display: none; }
+  .nav-more-dropdown {
+    display: block;
+    position: static;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0;
+  }
+  .site-nav .nav-links li.nav-more-menu {
+    padding: 0;
+    border-bottom: none;
+  }
+  .nav-more-dropdown li a {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+    color: #5A5A5A;
+    padding: 0;
   }
 
   .container {
