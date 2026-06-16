@@ -976,6 +976,52 @@
           "html": "<p>James Langdon's member record email was updated directly in D1 from <code>james@protocolized.io</code> to <code>editor@protocolized.io</code>. He subsequently signed up via the join form with <code>editor@protocolized.io</code> and the request was approved via the admin panel. The approval's <code>INSERT OR IGNORE INTO members</code> correctly detected the existing record and skipped insertion, preserving his team-level member record. Resend API key is stored but is send-only restricted; bounce status for the old <code>james@</code> welcome email must be checked in the Resend dashboard.</p>"
         }
       ]
+    },
+    {
+      "id": 27,
+      "sort_key": 27.0,
+      "label": "Session 27",
+      "title": "Login flow overhaul: pending state, mobile nav, touch targets",
+      "date": "2026-06-15",
+      "time_pt": "",
+      "tracks": ["member-directory", "static-site"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Humboldt account: email changed to vgururao@gmail.com",
+          "html": "<p>The <code>humboldt</code> member record's email was <code>humboldt@protocol-institute.org</code> (a non-existent address). Logging in as <code>vgururao@gmail.com</code> (the owner email) caused <code>/api/members/me</code> to return 404, dropping the user into the apply form. D1 was updated directly: <code>UPDATE members SET email = 'vgururao@gmail.com', owner_email = NULL WHERE slug = 'humboldt'</code>. A stale <code>membership_requests</code> row created when Venkat went through the apply flow to diagnose the bug was also deleted. <code>humboldt@protocol-institute.org</code> has never existed; when it is created it can be set as the email again.</p>"
+        },
+        {
+          "title": "membership/request.js: fix re-submission HTML 500",
+          "html": "<p>The pending check in <code>request.js</code> filtered on <code>status = 'pending'</code> only. If a user submitted, was auto-approved (changing status to 'approved'), then submitted again, the check passed, the second <code>INSERT INTO membership_requests</code> hit a PRIMARY KEY conflict, the Worker crashed, and CF returned a 500 HTML page. <code>res.json()</code> on that HTML threw 'Unexpected token &lt;' as the visible error. Fixed: the check now queries for any existing row (any status) and returns a status-specific JSON 409 message. Also wrapped <code>res.json()</code> in try/catch in the join page so a future Worker crash shows 'Server error. Please try again.' instead of a raw parse exception.</p>"
+        },
+        {
+          "title": "me.js: pending state instead of 404",
+          "html": "<p><code>/api/members/me</code> previously returned 404 for any email with a valid session but no member row. It now checks <code>membership_requests</code> first: if a pending row exists, it returns <code>{ pending: true, email }</code> with status 200. 404 is reserved for emails with no member record and no pending application. This is the pivot that makes all the pending-state UI work without extra API endpoints.</p>"
+        },
+        {
+          "title": "join/index.html: full login flow redesign",
+          "html": "<p>Major rewrite of the join page logic. (1) On page load, checks for an existing session: approved member → redirect, pending → skip to pending state, no session → show step 1 as before. (2) After PIN verify, the same three-way dispatch replaces the old binary check. (3) After apply submit: <code>auto_approved: true</code> → 'Your email was on the pre-approved list…' welcome state with member directory link; pending → pending state (same UI as the returning-visitor case). (4) Pending state: grey box with email address and Log out button — no apply form shown. (5) Log out button in pending state uses the same <code>doLogout</code> helper as the nav.</p>"
+        },
+        {
+          "title": "edit/index.html: removed embedded auth steps",
+          "html": "<p>The Edit Profile page previously contained a full Email → Verify → Edit wizard, duplicating the join page's auth logic. This was confusing for existing members who were not logged in (they saw a login wizard inside what should be a profile editor). Removed steps 1 and 2 entirely. The page now shows only the edit form. On load it calls <code>/api/members/me</code>: if the response is not a full member record (unauthenticated, pending, or 404), it immediately redirects to <code>/members/join?return=/members/edit</code>. The nav's Edit Profile link only appears for approved members, so pending users are never pointed here.</p>"
+        },
+        {
+          "title": "main.js: nav auth states + mobile hamburger auth item",
+          "html": "<p>Nav session check updated to handle three states: (1) approved member — name + dropdown with Edit Profile and Log out (unchanged); (2) pending — 'Pending Approval' label + Log out only, no Edit Profile; (3) not authenticated — login link (unchanged). On mobile (≤768px), the desktop auth element was <code>display:none</code> with nothing replacing it — logged-out users had no login link and logged-in users had no profile menu. Fixed by adding a <code>nav-mobile-auth</code> list item as the last item in the hamburger menu, separated by a border, populated with the same three states. A shared <code>doLogout</code> helper is used by both desktop and mobile logout buttons. All <code>/members/join</code> anchors without a <code>return=</code> param are now updated with <code>?return=&lt;current-path&gt;</code> in a single <code>querySelectorAll</code> pass, covering both the nav link and all in-page gate links.</p>"
+        },
+        {
+          "title": "Mobile touch targets: buttons, inputs, checkboxes",
+          "html": "<p>On mobile (17px base font), form elements were below the 44px touch-target minimum. Buttons: <code>padding: 0.7em → 0.9em</code> vertical (~39px → ~45px). Inputs: <code>padding: 0.6rem → 0.75rem</code> vertical and <code>font-size: 0.95rem → 1rem</code> (~40px → ~45px; also prevents iOS auto-zoom which triggers below 16px effective font size). Checkboxes: box size 15px → 20px with 0.3rem row padding on the label. All overrides applied in a <code>@media (max-width: 768px)</code> block to leave desktop layout unchanged.</p>"
+        },
+        {
+          "title": "docs/authentication.md",
+          "html": "<p>Added <code>docs/authentication.md</code> documenting the full auth system: member states, the join/apply/edit flows, D1 table schemas, API endpoint reference, nav behaviour per state, mobile behaviour, security notes, and a section of known limitations and future improvements (rate limiting on send-pin, session revocation on email change, no active-session list, fixed TTL, CSRF).</p>"
+        }
+      ]
     }
   ]
 }

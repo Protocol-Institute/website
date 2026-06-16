@@ -467,3 +467,27 @@ A build log for protocol-institute.org — how the static site was built, what i
 - James Langdon's member record email was updated directly in D1 from `james@protocolized.io` to `editor@protocolized.io`. He subsequently signed up via the join form with `editor@protocolized.io` and the request was approved via the admin panel. The approval's `INSERT OR IGNORE INTO members` correctly detected the existing record and skipped insertion, preserving his team-level member record. Resend API key is stored but is send-only restricted; bounce status for the old `james@` welcome email must be checked in the Resend dashboard.
 
 ---
+
+## Session 27: Login flow overhaul: pending state, mobile nav, touch targets
+
+*2026-06-15*
+
+**Tracks:** member-directory, static-site
+
+- The `humboldt` member record's email was `humboldt@protocol-institute.org` (a non-existent address). Logging in as `vgururao@gmail.com` (the owner email) caused `/api/members/me` to return 404, dropping the user into the apply form. D1 was updated directly: `UPDATE members SET email = 'vgururao@gmail.com', owner_email = NULL WHERE slug = 'humboldt'`. A stale `membership_requests` row created when Venkat went through the apply flow to diagnose the bug was also deleted. `humboldt@protocol-institute.org` has never existed; when it is created it can be set as the email again.
+
+- The pending check in `request.js` filtered on `status = 'pending'` only. If a user submitted, was auto-approved (changing status to 'approved'), then submitted again, the check passed, the second `INSERT INTO membership_requests` hit a PRIMARY KEY conflict, the Worker crashed, and CF returned a 500 HTML page. `res.json()` on that HTML threw 'Unexpected token &lt;' as the visible error. Fixed: the check now queries for any existing row (any status) and returns a status-specific JSON 409 message. Also wrapped `res.json()` in try/catch in the join page so a future Worker crash shows 'Server error. Please try again.' instead of a raw parse exception.
+
+- `/api/members/me` previously returned 404 for any email with a valid session but no member row. It now checks `membership_requests` first: if a pending row exists, it returns `{ pending: true, email }` with status 200. 404 is reserved for emails with no member record and no pending application. This is the pivot that makes all the pending-state UI work without extra API endpoints.
+
+- Major rewrite of the join page logic. (1) On page load, checks for an existing session: approved member → redirect, pending → skip to pending state, no session → show step 1 as before. (2) After PIN verify, the same three-way dispatch replaces the old binary check. (3) After apply submit: `auto_approved: true` → 'Your email was on the pre-approved list…' welcome state with member directory link; pending → pending state (same UI as the returning-visitor case). (4) Pending state: grey box with email address and Log out button — no apply form shown. (5) Log out button in pending state uses the same `doLogout` helper as the nav.
+
+- The Edit Profile page previously contained a full Email → Verify → Edit wizard, duplicating the join page's auth logic. This was confusing for existing members who were not logged in (they saw a login wizard inside what should be a profile editor). Removed steps 1 and 2 entirely. The page now shows only the edit form. On load it calls `/api/members/me`: if the response is not a full member record (unauthenticated, pending, or 404), it immediately redirects to `/members/join?return=/members/edit`. The nav's Edit Profile link only appears for approved members, so pending users are never pointed here.
+
+- Nav session check updated to handle three states: (1) approved member — name + dropdown with Edit Profile and Log out (unchanged); (2) pending — 'Pending Approval' label + Log out only, no Edit Profile; (3) not authenticated — login link (unchanged). On mobile (≤768px), the desktop auth element was `display:none` with nothing replacing it — logged-out users had no login link and logged-in users had no profile menu. Fixed by adding a `nav-mobile-auth` list item as the last item in the hamburger menu, separated by a border, populated with the same three states. A shared `doLogout` helper is used by both desktop and mobile logout buttons. All `/members/join` anchors without a `return=` param are now updated with `?return=&lt;current-path&gt;` in a single `querySelectorAll` pass, covering both the nav link and all in-page gate links.
+
+- On mobile (17px base font), form elements were below the 44px touch-target minimum. Buttons: `padding: 0.7em → 0.9em` vertical (~39px → ~45px). Inputs: `padding: 0.6rem → 0.75rem` vertical and `font-size: 0.95rem → 1rem` (~40px → ~45px; also prevents iOS auto-zoom which triggers below 16px effective font size). Checkboxes: box size 15px → 20px with 0.3rem row padding on the label. All overrides applied in a `@media (max-width: 768px)` block to leave desktop layout unchanged.
+
+- Added `docs/authentication.md` documenting the full auth system: member states, the join/apply/edit flows, D1 table schemas, API endpoint reference, nav behaviour per state, mobile behaviour, security notes, and a section of known limitations and future improvements (rate limiting on send-pin, session revocation on email change, no active-session list, fixed TTL, CSRF).
+
+---
