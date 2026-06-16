@@ -159,6 +159,7 @@
         if (val) { el.textContent = val; el.classList.remove('stub'); }
         else { el.textContent = fallback; el.classList.add('stub'); }
       }
+      if (sess.name) document.getElementById('session-title').textContent = sess.name;
       setMeta('meta-description', sess.description, 'Session description to be added.');
       setMeta('meta-agenda',      sess.agenda,      'Agenda to be confirmed.');
       const allFilled = sess.description && sess.agenda;
