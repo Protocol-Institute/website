@@ -22,6 +22,7 @@ var NAV_HTML =
       '<li><a href="/calendar">Calendar</a></li>' +
       '<li><a href="/challenges">Challenges <span class="beta-badge">Beta</span></a></li>' +
       '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
+      '<li class="nav-mobile-auth" id="nav-mobile-auth"><a href="/members/join" id="nav-mobile-login-link">' + PERSON_ICON + ' Member Login / Register</a></li>' +
     '</ul>' +
   '</nav>';
 
@@ -42,72 +43,84 @@ var FOOTER_HTML =
   if (header) {
     header.innerHTML = NAV_HTML;
 
-    // Set ?return= on login link so auth flow can redirect back
+    // Set ?return= on all /members/join links (nav + mobile + in-page gates)
     var memberLink = document.getElementById('nav-member-link');
-    if (memberLink && window.location.pathname.indexOf('/members/join') !== 0) {
-      memberLink.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
-    }
-
-    // Add ?return= to any bare /members/join links in page content
     if (window.location.pathname.indexOf('/members/join') !== 0) {
+      var returnHref = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
       document.querySelectorAll('a[href^="/members/join"]').forEach(function (a) {
         if (a.getAttribute('href').indexOf('return=') === -1) {
-          a.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+          a.href = returnHref;
         }
       });
+    }
+
+    function doLogout() {
+      fetch('/api/auth/logout', { method: 'POST' })
+        .then(function () { window.location.reload(); })
+        .catch(function () { window.location.reload(); });
     }
 
     // Session check — swap login link for member dropdown if authenticated
     fetch('/api/members/me')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (!data || !memberLink) return;
-        var label, editItem;
+        if (!data) return;
+        var mobileAuth = document.getElementById('nav-mobile-auth');
+        var label, editItem, mobileHTML;
+
         if (data.member) {
           label = data.member.name.replace(/[&<>"]/g, function (c) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
           });
           editItem = '<li><a href="/members/edit">Edit profile</a></li>';
+          mobileHTML = '<a href="/members/edit">Edit profile</a>' +
+            '<button class="nav-mobile-logout" id="nav-mobile-logout-btn">Log out</button>';
         } else if (data.pending) {
           label = 'Pending Approval';
           editItem = '';
+          mobileHTML = '<span class="nav-mobile-pending">Pending Approval</span>' +
+            '<button class="nav-mobile-logout" id="nav-mobile-logout-btn">Log out</button>';
         } else {
           return;
         }
-        var wrapper = document.createElement('div');
-        wrapper.className = 'nav-member-menu';
-        wrapper.innerHTML =
-          '<button class="nav-member-link nav-member-link--authed nav-member-toggle" id="nav-member-toggle" aria-expanded="false" aria-haspopup="true">' +
-            PERSON_ICON + label + '<span class="nav-member-caret">&#9662;</span>' +
-          '</button>' +
-          '<ul class="nav-member-dropdown" id="nav-member-dropdown" hidden>' +
-            editItem +
-            '<li><button id="nav-logout-btn">Log out</button></li>' +
-          '</ul>';
-        memberLink.replaceWith(wrapper);
 
-        var toggle = document.getElementById('nav-member-toggle');
-        var dropdown = document.getElementById('nav-member-dropdown');
+        // Desktop dropdown
+        if (memberLink) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'nav-member-menu';
+          wrapper.innerHTML =
+            '<button class="nav-member-link nav-member-link--authed nav-member-toggle" id="nav-member-toggle" aria-expanded="false" aria-haspopup="true">' +
+              PERSON_ICON + label + '<span class="nav-member-caret">&#9662;</span>' +
+            '</button>' +
+            '<ul class="nav-member-dropdown" id="nav-member-dropdown" hidden>' +
+              editItem +
+              '<li><button id="nav-logout-btn">Log out</button></li>' +
+            '</ul>';
+          memberLink.replaceWith(wrapper);
 
-        toggle.addEventListener('click', function (e) {
-          e.stopPropagation();
-          var isOpen = !dropdown.hidden;
-          dropdown.hidden = isOpen;
-          toggle.setAttribute('aria-expanded', String(!isOpen));
-        });
+          var toggle = document.getElementById('nav-member-toggle');
+          var dropdown = document.getElementById('nav-member-dropdown');
+          toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var isOpen = !dropdown.hidden;
+            dropdown.hidden = isOpen;
+            toggle.setAttribute('aria-expanded', String(!isOpen));
+          });
+          document.addEventListener('click', function () {
+            if (!dropdown.hidden) {
+              dropdown.hidden = true;
+              toggle.setAttribute('aria-expanded', 'false');
+            }
+          });
+          document.getElementById('nav-logout-btn').addEventListener('click', doLogout);
+        }
 
-        document.addEventListener('click', function () {
-          if (!dropdown.hidden) {
-            dropdown.hidden = true;
-            toggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-
-        document.getElementById('nav-logout-btn').addEventListener('click', function () {
-          fetch('/api/auth/logout', { method: 'POST' })
-            .then(function () { window.location.reload(); })
-            .catch(function () { window.location.reload(); });
-        });
+        // Mobile hamburger auth item
+        if (mobileAuth) {
+          mobileAuth.innerHTML = mobileHTML;
+          var mobileLogout = document.getElementById('nav-mobile-logout-btn');
+          if (mobileLogout) mobileLogout.addEventListener('click', doLogout);
+        }
       })
       .catch(function () {});
 

@@ -240,6 +240,27 @@ a:hover {
   line-height: 1;
 }
 
+/* Mobile-only auth item inside hamburger — hidden on desktop */
+.nav-mobile-auth { display: none; }
+.nav-mobile-pending {
+  display: block;
+  font-size: 0.9rem;
+  color: #8A8A8A;
+  padding: 0.1rem 0 0.3rem;
+}
+.nav-mobile-logout {
+  display: block;
+  margin-top: 0.3rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #8A8A8A;
+  cursor: pointer;
+  text-align: left;
+}
+
 /* ---- Page Header (interior pages) ---- */
 
 .page-header {
@@ -890,6 +911,13 @@ a:hover {
 
   .nav-toggle {
     display: block;
+  }
+
+  .nav-mobile-auth {
+    display: block;
+    border-top: 1px solid #E0DDD8;
+    margin-top: 0.3rem;
+    padding-top: 0.6rem;
   }
 
   .site-nav .nav-links {
