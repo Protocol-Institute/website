@@ -159,7 +159,6 @@
           <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
           <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
           <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
-          <button class="sub-tab" data-tab="interactive">Interactive (<span id="interactive-count">—</span>)</button>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
@@ -173,7 +172,6 @@
         <div class="sub-panel active" id="panel-all"></div>
         <div class="sub-panel" id="panel-talks"></div>
         <div class="sub-panel" id="panel-workshops"></div>
-        <div class="sub-panel" id="panel-interactive"></div>
 
       </div>
 
@@ -251,7 +249,7 @@
     btn.classList.add('active');
     document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
     document.getElementById('session-filter-bar').style.display =
-      (btn.dataset.tab === 'talks' || btn.dataset.tab === 'interactive') ? '' : 'none';
+      btn.dataset.tab === 'talks' ? '' : 'none';
   });
 
   // ── Session filter ────────────────────────────────────────────
@@ -293,22 +291,21 @@
       arr.sort((a, b) => firstName(a).localeCompare(firstName(b)))
     );
 
-    // Apply session filter to talks and interactive
+    // Apply session filter to talks (which now includes interactive)
     const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
-    const talks       = allTalks.filter(sessionFilter);
-    const interactive = allInteractive.filter(sessionFilter);
+    const talksAndInteractive = [...allTalks, ...allInteractive]
+      .sort((a, b) => firstName(a).localeCompare(firstName(b)))
+      .filter(sessionFilter);
 
     // All tab: full list sorted by first name
     const everything = [...proposals].sort((a, b) => firstName(a).localeCompare(firstName(b)));
 
     document.getElementById('all-count').textContent         = everything.length;
-    document.getElementById('talks-count').textContent       = talks.length;
+    document.getElementById('talks-count').textContent       = talksAndInteractive.length;
     document.getElementById('workshops-count').textContent   = workshops.length;
-    document.getElementById('interactive-count').textContent = interactive.length;
     document.getElementById('panel-all').innerHTML         = everything.map(renderCard).join('');
-    document.getElementById('panel-talks').innerHTML       = talks.map(renderCard).join('');
+    document.getElementById('panel-talks').innerHTML       = talksAndInteractive.map(renderCard).join('');
     document.getElementById('panel-workshops').innerHTML   = workshops.map(renderCard).join('');
-    document.getElementById('panel-interactive').innerHTML = interactive.map(renderCard).join('');
     if (!canVote) {
       document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
     }
@@ -343,7 +340,7 @@
     return `<div class="proposal-card ${colorClass}" data-id="${p.id}">
       <div class="proposal-title" id="title-${p.id}">${titleContent}</div>
       <div class="proposal-speaker">${speaker}</div>
-      <div class="proposal-track">${esc(p.track || '')}</div>
+      <div class="proposal-track">${esc(p.track || '')}${p.type === 'interactive' ? ' · <em>Interactive</em>' : ''}</div>
       ${sessionLink}
       <div class="proposal-abstract" id="abs-wrap-${p.id}">
         <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
