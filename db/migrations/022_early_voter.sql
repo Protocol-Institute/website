@@ -1,0 +1,1 @@
+ALTER TABLE members ADD COLUMN is_early_voter INTEGER DEFAULT 0;

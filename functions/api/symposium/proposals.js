@@ -10,7 +10,7 @@ export async function onRequestGet({ request, env }) {
   if (!email) return Response.json({ error: 'Not authenticated' }, { status: 401 });
 
   const member = await env.DB.prepare(
-    'SELECT tier FROM members WHERE email = ? AND is_public = 1'
+    'SELECT tier, is_admin, is_early_voter FROM members WHERE email = ? AND is_public = 1'
   ).bind(email).first();
   if (!member) return Response.json({ error: 'Not a member' }, { status: 403 });
 
@@ -55,5 +55,7 @@ export async function onRequestGet({ request, env }) {
     my_total: myTotal,
     budget,
     tier: member.tier,
+    is_admin: !!member.is_admin,
+    is_early_voter: !!member.is_early_voter,
   });
 }

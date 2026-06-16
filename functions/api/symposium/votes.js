@@ -1,23 +1,29 @@
 // POST /api/symposium/votes
 // Body: { votes: { "<proposal_id>": <n>, ... } }
 // Replaces all existing vote allocations for the current member.
-// Voting closes at end of June 30, 2026 UTC.
 
 import { getSession } from '../../_shared/session.js';
 
+const VOTE_START    = new Date('2026-06-17T14:00:00Z'); // June 17, 7 AM PDT
 const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
 
 export async function onRequestPost({ request, env }) {
-  if (new Date() > VOTE_DEADLINE) {
-    return Response.json({ error: 'Voting closed on June 30, 2026.' }, { status: 403 });
-  }
   const email = await getSession(request, env);
   if (!email) return Response.json({ error: 'Not authenticated' }, { status: 401 });
 
   const member = await env.DB.prepare(
-    'SELECT tier FROM members WHERE email = ? AND is_public = 1'
+    'SELECT tier, is_early_voter FROM members WHERE email = ? AND is_public = 1'
   ).bind(email).first();
   if (!member) return Response.json({ error: 'Not a member' }, { status: 403 });
+
+  const now = new Date();
+  const isEarlyVoter = !!member.is_early_voter;
+  if (now > VOTE_DEADLINE) {
+    return Response.json({ error: 'Voting closed on June 20, 2026.' }, { status: 403 });
+  }
+  if (!isEarlyVoter && now < VOTE_START) {
+    return Response.json({ error: 'Voting has not opened yet.' }, { status: 403 });
+  }
 
   let body;
   try { body = await request.json(); } catch {

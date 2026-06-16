@@ -191,7 +191,7 @@
   let proposals = [], myVotes = {}, budget = 30, tier = 'member';
   let pendingVotes = {};
   let currentSession = 'all';
-  let memberEmail = '', isAdmin = false;
+  let memberEmail = '', isAdmin = false, isEarlyVoter = false, canVote = false;
   const store = {};
 
   // ── Auth check ────────────────────────────────────────────────
@@ -202,13 +202,6 @@
       memberEmail = (data.member.email || '').toLowerCase();
       isAdmin = !!data.member.is_admin;
       document.getElementById('main-view').style.display = '';
-      if (!votingOpen) {
-        document.getElementById('submit-votes-btn').disabled = true;
-        document.getElementById('submit-votes-btn').textContent = votingPending ? 'Voting not yet open' : 'Voting closed';
-        document.getElementById('deadline-line').textContent = votingPending
-          ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
-          : 'Voting closed June 20, 2026 at 7 AM Pacific.';
-      }
       return Promise.all([
         fetch('/api/symposium/proposals').then(r => r.json()),
         fetch('/api/symposium/sessions').then(r => r.json()),
@@ -223,10 +216,23 @@
         opt.textContent = s.name;
         select.appendChild(opt);
       });
-      proposals = proposalsData.proposals || [];
-      myVotes   = proposalsData.my_votes || {};
-      budget    = proposalsData.budget || 50;
-      tier      = proposalsData.tier || 'member';
+      proposals     = proposalsData.proposals || [];
+      myVotes       = proposalsData.my_votes || {};
+      budget        = proposalsData.budget || 50;
+      tier          = proposalsData.tier || 'member';
+      isAdmin       = proposalsData.is_admin || isAdmin;
+      isEarlyVoter  = proposalsData.is_early_voter || false;
+
+      // Determine effective voting state: early voters can vote before VOTE_START
+      canVote = (votingOpen || isEarlyVoter) && now < VOTE_DEADLINE;
+      if (!canVote) {
+        document.getElementById('submit-votes-btn').disabled = true;
+        document.getElementById('submit-votes-btn').textContent = votingPending && !isEarlyVoter ? 'Voting not yet open' : 'Voting closed';
+        document.getElementById('deadline-line').textContent = (votingPending && !isEarlyVoter)
+          ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
+          : 'Voting closed June 20, 2026 at 7 AM Pacific.';
+      }
+
       pendingVotes = { ...myVotes };
       renderAll();
     })
@@ -286,7 +292,7 @@
     document.getElementById('panel-talks').innerHTML       = talks.map(renderCard).join('');
     document.getElementById('panel-workshops').innerHTML   = workshops.map(renderCard).join('');
     document.getElementById('panel-interactive').innerHTML = interactive.map(renderCard).join('');
-    if (!votingOpen) {
+    if (!canVote) {
       document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
     }
     bindInputs();
@@ -346,7 +352,7 @@
         <div class="vote-input-group">
           <label class="vote-label" for="vote-${p.id}">Votes:</label>
           <input class="vote-input" type="number" id="vote-${p.id}" data-id="${p.id}"
-            min="0" max="${budget}" value="${myN}" placeholder="0"${!votingOpen ? ' disabled' : ''}>
+            min="0" max="${budget}" value="${myN}" placeholder="0"${!canVote ? ' disabled' : ''}>
         </div>
       </div>
       <div class="comment-section">
