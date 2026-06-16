@@ -1031,5 +1031,48 @@
         }
       ]
     }
+  ,
+    {
+      "id": 28,
+      "sort_key": 28.0,
+      "label": "Session 28",
+      "title": "Symposium nav polish: comments, edit buttons, dynamic sessions",
+      "date": "2026-06-15",
+      "time_pt": "",
+      "tracks": ["member-directory", "static-site"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Comments on all submission views",
+          "html": "<p>Added the expandable comments section (toggle → lazy-load → compose/post) to every view where a proposal appears: the Draft Agenda index page already had it; added it to all 5 workshop detail pages and all 4 special session pages. Each card shows <code>Comments (N) ▾</code>; first expand fetches <code>/api/symposium/comments?proposal_id=</code>; count updates after posting. Workshop detail pages required a separate <code>toggleComments / loadComments / submitComment</code> implementation (single-proposal scope, no shared IDs). Session pages share the index-page pattern (per-proposal IDs passed as arguments).</p>"
+        },
+        {
+          "title": "Workshop title links + back navigation",
+          "html": "<p>Workshop titles on the Draft Agenda index are now links to their detail pages (inheriting title colour, underline on hover); the redundant 'Workshop details →' footer link removed. The <code>saveEdit</code> function updated to preserve the anchor after inline title edits. All workshop detail pages and all session pages received a '← Draft Agenda' back link at the top of the authenticated view, and the label on workshop pages was updated from the stale '← Accepted Submissions'.</p>"
+        },
+        {
+          "title": "Edit buttons on workshop detail and session pages",
+          "html": "<p>Workshop detail pages previously had no edit affordance once you navigated there from the index. Added: the page now calls <code>/api/members/me</code> first to resolve email and isAdmin; after the proposal renders, admin gets a red link to <code>edit-proposal.html?id=PROPOSAL_ID</code> (full form, all fields) and non-admin organiser gets an inline title/abstract form. The bar is dynamically populated via <code>innerHTML</code> after auth resolves so there is only one element in the HTML. Session pages similarly got an 'Edit details' button above the title; admin → link to full form, session owner → inline form. The edit button and form are positioned above the <code>page-header / h1</code> (inside <code>main-view</code>) so they appear at the top of the authenticated view rather than after the body content.</p>"
+        },
+        {
+          "title": "Session edit form: title field + API cascade",
+          "html": "<p>The session-level edit form previously only offered 'About this session' and 'Agenda'. Added a 'Title' (name) field. Backend: <code>name</code> added to the allowed PATCH fields in <code>sessions/[slug].js</code>. On page load, <code>sess.name</code> (returned by the GET endpoint) is now applied to <code>#session-title</code>, fixing a bug where the hardcoded HTML h1 silently overrode any saved name on every reload. After save, the h1 is updated in-place. The PATCH handler now also fetches the old name before writing; if the name changed, it runs <code>UPDATE symposium_proposals SET session = new WHERE session = old</code> — cascading the rename to all affected proposals automatically. Prior to this fix, renaming a session left proposals pointing at the old name, breaking the filter.</p>"
+        },
+        {
+          "title": "Dynamic session dropdown: GET /api/symposium/sessions",
+          "html": "<p>The Draft Agenda page had a hardcoded <code>&lt;select&gt;</code> and <code>SESSION_SLUGS</code> map that listed 'Memory', 'Protocol Fiction', 'Psychohistory', 'Southeast Asia'. These would fall out of sync any time a session was renamed. Replaced with: a new public endpoint <code>GET /api/symposium/sessions</code> (<code>functions/api/symposium/sessions/index.js</code>) that returns <code>[{slug, name}]</code> ordered alphabetically; the page now fetches this in parallel with proposals after auth, builds <code>SESSION_SLUGS</code> from the response, and appends <code>&lt;option&gt;</code> elements to the dropdown dynamically. The hardcoded values are gone.</p>"
+        },
+        {
+          "title": "Slug typo fix: bbeyond → beyond",
+          "html": "<p>The workshop 'Beyond the Artwork' had a doubled 'b' in its directory slug and D1 record. Fixed: <code>git mv</code> to rename the directory, login return URL in the HTML corrected, D1 updated via <code>UPDATE symposium_proposals SET slug = 'beyond-...' WHERE id = 75</code>. The index page generates workshop links from <code>p.slug</code> via the API so no other file changes were needed.</p>"
+        },
+        {
+          "title": "Backfill: proposal session names after three renames",
+          "html": "<p>Three sessions were renamed (Memory → 'The Art of Memory', Protocol Fiction → 'Worldbuilding in New Nature', Psychohistory → 'Inventing Psychohistory') before the cascade fix was in place. 11 proposals (5+3+3) still had the old names and therefore matched nothing in the dropdown. Fixed with three direct D1 UPDATE statements. Going forward the PATCH cascade ensures this stays in sync automatically.</p>"
+        }
+      ]
+    }
   ]
 }

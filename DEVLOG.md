@@ -495,3 +495,25 @@ A build log for protocol-institute.org — how the static site was built, what i
 - D1 update: `is_team = 1`, `tier = 'team'`, `team_title = 'Book Editor'`, `photo_r2_key = 'jennadixon.webp'`. Photo uploaded from inbox to R2 bucket `pi-assets` as `jennadixon.webp` (WebP). She now appears in the team view at `/members` with her photo.
 
 ---
+
+## Session 28: Symposium nav polish: comments, edit buttons, dynamic sessions
+
+*2026-06-15*
+
+**Tracks:** member-directory, static-site
+
+- Added the expandable comments section (toggle → lazy-load → compose/post) to every view where a proposal appears: the Draft Agenda index page already had it; added it to all 5 workshop detail pages and all 4 special session pages. Each card shows `Comments (N) ▾`; first expand fetches `/api/symposium/comments?proposal_id=`; count updates after posting. Workshop detail pages required a separate `toggleComments / loadComments / submitComment` implementation (single-proposal scope, no shared IDs). Session pages share the index-page pattern (per-proposal IDs passed as arguments).
+
+- Workshop titles on the Draft Agenda index are now links to their detail pages (inheriting title colour, underline on hover); the redundant 'Workshop details →' footer link removed. The `saveEdit` function updated to preserve the anchor after inline title edits. All workshop detail pages and all session pages received a '← Draft Agenda' back link at the top of the authenticated view, and the label on workshop pages was updated from the stale '← Accepted Submissions'.
+
+- Workshop detail pages previously had no edit affordance once you navigated there from the index. Added: the page now calls `/api/members/me` first to resolve email and isAdmin; after the proposal renders, admin gets a red link to `edit-proposal.html?id=PROPOSAL_ID` (full form, all fields) and non-admin organiser gets an inline title/abstract form. The bar is dynamically populated via `innerHTML` after auth resolves so there is only one element in the HTML. Session pages similarly got an 'Edit details' button above the title; admin → link to full form, session owner → inline form. The edit button and form are positioned above the `page-header / h1` (inside `main-view`) so they appear at the top of the authenticated view rather than after the body content.
+
+- The session-level edit form previously only offered 'About this session' and 'Agenda'. Added a 'Title' (name) field. Backend: `name` added to the allowed PATCH fields in `sessions/[slug].js`. On page load, `sess.name` (returned by the GET endpoint) is now applied to `#session-title`, fixing a bug where the hardcoded HTML h1 silently overrode any saved name on every reload. After save, the h1 is updated in-place. The PATCH handler now also fetches the old name before writing; if the name changed, it runs `UPDATE symposium_proposals SET session = new WHERE session = old` — cascading the rename to all affected proposals automatically. Prior to this fix, renaming a session left proposals pointing at the old name, breaking the filter.
+
+- The Draft Agenda page had a hardcoded `&lt;select&gt;` and `SESSION_SLUGS` map that listed 'Memory', 'Protocol Fiction', 'Psychohistory', 'Southeast Asia'. These would fall out of sync any time a session was renamed. Replaced with: a new public endpoint `GET /api/symposium/sessions` (`functions/api/symposium/sessions/index.js`) that returns `[{slug, name}]` ordered alphabetically; the page now fetches this in parallel with proposals after auth, builds `SESSION_SLUGS` from the response, and appends `&lt;option&gt;` elements to the dropdown dynamically. The hardcoded values are gone.
+
+- The workshop 'Beyond the Artwork' had a doubled 'b' in its directory slug and D1 record. Fixed: `git mv` to rename the directory, login return URL in the HTML corrected, D1 updated via `UPDATE symposium_proposals SET slug = 'beyond-...' WHERE id = 75`. The index page generates workshop links from `p.slug` via the API so no other file changes were needed.
+
+- Three sessions were renamed (Memory → 'The Art of Memory', Protocol Fiction → 'Worldbuilding in New Nature', Psychohistory → 'Inventing Psychohistory') before the cascade fix was in place. 11 proposals (5+3+3) still had the old names and therefore matched nothing in the dropdown. Fixed with three direct D1 UPDATE statements. Going forward the PATCH cascade ensures this stays in sync automatically.
+
+---
