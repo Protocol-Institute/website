@@ -45,10 +45,17 @@ export async function onRequestPost({ request, env }) {
   const existing = await env.DB.prepare('SELECT email FROM members WHERE email = ?').bind(email).first();
   if (existing) return Response.json({ error: 'This email is already registered. Use the edit page to update your profile.' }, { status: 409 });
 
-  const pending = await env.DB.prepare(
-    'SELECT email FROM membership_requests WHERE email = ? AND status = ?'
-  ).bind(email, 'pending').first();
-  if (pending) return Response.json({ error: 'A request from this email is already pending review.' }, { status: 409 });
+  const existingReq = await env.DB.prepare(
+    'SELECT status FROM membership_requests WHERE email = ?'
+  ).bind(email).first();
+  if (existingReq) {
+    const msg = existingReq.status === 'approved'
+      ? 'This email has already been approved. Try logging in again.'
+      : existingReq.status === 'rejected'
+      ? 'A previous application from this email was not approved. Contact team@protocol-institute.org for help.'
+      : 'A request from this email is already pending review.';
+    return Response.json({ error: msg }, { status: 409 });
+  }
 
   // Insert pending request
   await env.DB.prepare(`
