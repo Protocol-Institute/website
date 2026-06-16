@@ -51,6 +51,20 @@
     .session-field-group { margin-bottom:0.85rem; }
     .session-field-label { display:block; font-size:0.75rem; font-weight:500;
       letter-spacing:0.08em; text-transform:uppercase; color:#5A5A5A; margin-bottom:0.3rem; }
+    .comment-section { margin-top:0.85rem; border-top:1px solid #EDEAE5; padding-top:0.6rem; }
+    .comment-toggle { font-size:0.78rem; color:#2A6B6B; cursor:pointer; background:none; border:none; padding:0; }
+    .comments-body { margin-top:0.65rem; }
+    .comment-item { padding:0.5rem 0; border-bottom:1px solid #F0EDE8; }
+    .comment-item:last-child { border-bottom:none; }
+    .comment-author { font-size:0.75rem; font-weight:500; color:#8A8A8A; margin-bottom:0.2rem; }
+    .comment-text { font-size:0.88rem; color:#3A3A3A; line-height:1.55; }
+    .comment-compose { margin-top:0.65rem; }
+    .comment-input { width:100%; box-sizing:border-box; font-family:inherit; font-size:0.88rem;
+      padding:0.5rem; border:1px solid #C8C5C0; min-height:60px; resize:vertical; background:#fff; }
+    .comment-submit-btn { font-family:inherit; font-size:0.78rem; font-weight:500;
+      padding:0.3rem 0.8rem; background:#2A6B6B; color:#fff; border:none; cursor:pointer; margin-top:0.4rem; }
+    .comment-submit-btn:disabled { opacity:0.5; cursor:default; }
+    .comment-msg { font-size:0.78rem; margin-left:0.5rem; }
   </style>
 </head>
 <body>
@@ -98,7 +112,7 @@
         <div id="talks-list"></div>
 
         <div style="margin-top:2.5rem;font-size:0.85rem;">
-          <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← All submissions</a>
+          <a href="/events/protocol-symposium-2026/submissions/" style="color:#2A6B6B;">← Draft Agenda</a>
           &ensp;&middot;&ensp;
           <a href="/events/protocol-symposium-2026/" style="color:#2A6B6B;">Symposium 2026 →</a>
         </div>
@@ -200,6 +214,17 @@
               <span class="edit-msg" id="edit-msg-${p.id}"></span>
             </div>
           </div>` : ''}
+          <div class="comment-section">
+            <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${p.comment_count || 0}) ▾</button>
+            <div class="comments-body" id="cmts-${p.id}" style="display:none;">
+              <div class="comments-list" id="cmt-list-${p.id}"></div>
+              <div class="comment-compose">
+                <textarea class="comment-input" id="cmt-input-${p.id}" placeholder="Suggestions for the speaker/organizer…" rows="3"></textarea><br>
+                <button class="comment-submit-btn" id="cmt-btn-${p.id}" onclick="submitComment(${p.id})">Post</button>
+                <span class="comment-msg" id="cmt-msg-${p.id}"></span>
+              </div>
+            </div>
+          </div>
         </div>`;
       }).join('');
     })
@@ -289,6 +314,71 @@
     } catch (e) {
       msg.textContent = e.message;
     }
+  };
+
+  const loadedComments = {};
+  window.toggleComments = function (id) {
+    const body = document.getElementById('cmts-' + id);
+    const tgl = document.getElementById('cmttgl-' + id);
+    const isOpen = body.style.display !== 'none';
+    if (isOpen) {
+      body.style.display = 'none';
+      tgl.textContent = tgl.textContent.replace('▴', '▾');
+    } else {
+      body.style.display = '';
+      tgl.textContent = tgl.textContent.replace('▾', '▴');
+      if (!loadedComments[id]) loadCommentsFor(id);
+    }
+  };
+  async function loadCommentsFor(proposalId) {
+    const list = document.getElementById('cmt-list-' + proposalId);
+    list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;">Loading…</p>';
+    try {
+      const res = await fetch(`/api/symposium/comments?proposal_id=${proposalId}`);
+      const data = await res.json();
+      const comments = data.comments || [];
+      loadedComments[proposalId] = true;
+      const tgl = document.getElementById('cmttgl-' + proposalId);
+      const open = document.getElementById('cmts-' + proposalId).style.display !== 'none';
+      tgl.textContent = `Comments (${comments.length}) ${open ? '▴' : '▾'}`;
+      if (!comments.length) {
+        list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">No comments yet.</p>';
+      } else {
+        list.innerHTML = comments.map(c => `<div class="comment-item">
+          <div class="comment-author">${esc(c.member_name)} · ${c.created_at.slice(0,10)}</div>
+          <div class="comment-text">${esc(c.body)}</div>
+        </div>`).join('');
+      }
+    } catch {
+      list.innerHTML = '<p style="color:#8A1F2E;font-size:0.82rem;">Failed to load comments.</p>';
+    }
+  }
+  window.submitComment = async function (proposalId) {
+    const input = document.getElementById('cmt-input-' + proposalId);
+    const msg = document.getElementById('cmt-msg-' + proposalId);
+    const btn = document.getElementById('cmt-btn-' + proposalId);
+    const text = input.value.trim();
+    if (!text) return;
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/symposium/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ proposal_id: proposalId, body: text }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      input.value = '';
+      msg.textContent = 'Posted.';
+      msg.style.color = '#2A6B6B';
+      setTimeout(() => { msg.textContent = ''; }, 3000);
+      loadedComments[proposalId] = false;
+      loadCommentsFor(proposalId);
+    } catch (e) {
+      msg.textContent = e.message;
+      msg.style.color = '#8A1F2E';
+    }
+    btn.disabled = false;
   };
 }());
 </script>
