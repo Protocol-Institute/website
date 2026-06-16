@@ -90,17 +90,26 @@ export async function onRequestPost({ request, env }) {
 
       const memberSlug = email.split('@')[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase();
 
+      // Grant early voter status to shortlisted symposium proposers
+      const proposer = await env.DB.prepare(
+        `SELECT 1 FROM symposium_proposals
+         WHERE is_shortlisted = 1
+           AND (lower(trim(speaker_email)) = ? OR lower(trim(organizer_email)) = ?)
+         LIMIT 1`
+      ).bind(email, email).first();
+      const isEarlyVoter = proposer ? 1 : 0;
+
       await env.DB.prepare(`
         INSERT OR IGNORE INTO members
           (email, slug, name, bio, website, photo_r2_key,
-           is_consultant, is_team,
+           is_consultant, is_team, is_early_voter,
            consulting_expertise, consulting_contact, consulting_portfolio,
            city, discord_handle, owner_email,
            ${EVENT_TAGS.join(', ')})
-        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
+        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
       `).bind(
         email, memberSlug, name, bio || null, website || null, photo_url || null,
-        request_consultant,
+        request_consultant, isEarlyVoter,
         consulting_expertise || null, consulting_contact || null, consulting_portfolio || null,
         city || null, discord_handle || null, email,
         ...tagValues
