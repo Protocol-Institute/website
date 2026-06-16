@@ -166,10 +166,6 @@
           <select id="session-select">
             <option value="all">All</option>
             <option value="General">General</option>
-            <option value="Memory">Memory</option>
-            <option value="Protocol Fiction">Protocol Fiction</option>
-            <option value="Psychohistory">Psychohistory</option>
-            <option value="Southeast Asia">Southeast Asia</option>
           </select>
         </div>
 
@@ -213,14 +209,24 @@
           ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
           : 'Voting closed June 20, 2026 at 7 AM Pacific.';
       }
-      return fetch('/api/symposium/proposals');
+      return Promise.all([
+        fetch('/api/symposium/proposals').then(r => r.json()),
+        fetch('/api/symposium/sessions').then(r => r.json()),
+      ]);
     })
-    .then(r => r.json())
-    .then(data => {
-      proposals = data.proposals || [];
-      myVotes   = data.my_votes || {};
-      budget    = data.budget || 50;
-      tier      = data.tier || 'member';
+    .then(([proposalsData, sessionsData]) => {
+      const select = document.getElementById('session-select');
+      (sessionsData.sessions || []).forEach(s => {
+        SESSION_SLUGS[s.name] = s.slug;
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name;
+        select.appendChild(opt);
+      });
+      proposals = proposalsData.proposals || [];
+      myVotes   = proposalsData.my_votes || {};
+      budget    = proposalsData.budget || 50;
+      tier      = proposalsData.tier || 'member';
       pendingVotes = { ...myVotes };
       renderAll();
     })
@@ -251,12 +257,7 @@
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  const SESSION_SLUGS = {
-    'Memory':         'memory',
-    'Protocol Fiction': 'protocol-fiction',
-    'Psychohistory':  'psychohistory',
-    'Southeast Asia': 'southeast-asia',
-  };
+  const SESSION_SLUGS = {};
 
   // ── Render ────────────────────────────────────────────────────
   function firstName(p) {
