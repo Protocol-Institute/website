@@ -21,41 +21,8 @@
         <h1>Edit Profile</h1>
       </div>
 
-      <div class="auth-steps">
-        <span class="auth-step-label active" id="step-label-1">1. Email</span>
-        <span class="auth-step-label" id="step-label-2">2. Verify</span>
-        <span class="auth-step-label" id="step-label-3">3. Edit</span>
-      </div>
-
-      <!-- Step 1: Email -->
-      <div id="step-1" class="pi-form">
-        <div class="form-group">
-          <label class="form-label" for="email-input">Your member email address</label>
-          <input class="form-input" type="email" id="email-input" placeholder="you@example.com" autocomplete="email">
-          <p class="form-hint">The email address associated with your PI membership.</p>
-        </div>
-        <div class="form-actions">
-          <button class="form-btn" id="send-pin-btn">Send code</button>
-        </div>
-        <div id="step1-msg"></div>
-      </div>
-
-      <!-- Step 2: PIN -->
-      <div id="step-2" class="pi-form" style="display:none">
-        <p style="margin-bottom:1.5rem;color:#5A5A5A;">A 6-digit code was sent to <strong id="email-display"></strong>. Enter it below.</p>
-        <div class="form-group">
-          <label class="form-label" for="pin-input">Verification code</label>
-          <input class="form-input" type="text" id="pin-input" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" style="max-width:180px;font-size:1.4rem;letter-spacing:0.25em;">
-        </div>
-        <div class="form-actions">
-          <button class="form-btn" id="verify-pin-btn">Verify code</button>
-          <button class="form-btn form-btn--secondary" id="resend-btn">Resend</button>
-        </div>
-        <div id="step2-msg"></div>
-      </div>
-
-      <!-- Step 3: Edit form -->
-      <div id="step-3" style="display:none">
+      <!-- Edit form (shown after session confirmed) -->
+      <div id="edit-form" style="display:none">
 
         <!-- Profile selector (shown if user owns bot records, or for admins) -->
         <div id="profile-selector" style="display:none;margin-bottom:2rem;">
@@ -180,7 +147,7 @@
           <div class="form-actions">
             <button class="form-btn" id="save-btn">Save changes</button>
           </div>
-          <div id="step3-msg"></div>
+          <div id="save-msg"></div>
         </div>
       </div>
 
@@ -213,14 +180,6 @@
     el.className = 'form-msg ' + (isError ? 'form-msg--error' : 'form-msg--success');
     el.textContent = text;
     el.style.display = text ? '' : 'none';
-  }
-
-  function setStep(n) {
-    [1,2,3].forEach(i => {
-      document.getElementById('step-' + i).style.display = i === n ? '' : 'none';
-      const lbl = document.getElementById('step-label-' + i);
-      lbl.className = 'auth-step-label' + (i === n ? ' active' : i < n ? ' done' : '');
-    });
   }
 
   function photoSrc(key) {
@@ -321,7 +280,7 @@
       }
     }
 
-    setStep(3);
+    document.getElementById('edit-form').style.display = '';
     const ownProfile = profiles.find(p => p.email === userEmail) || profiles[0];
     populateForm(ownProfile);
 
@@ -330,13 +289,17 @@
     }
   }
 
-  // On load: check for an existing valid session and skip auth steps if found
-  (async function checkExistingSession() {
+  // On load: require a full member session; redirect to join if not
+  (async function checkSession() {
     try {
       const meRes = await fetch('/api/members/me');
-      if (!meRes.ok) return;
-      await loadAndSetup(await meRes.json());
-    } catch {}
+      if (!meRes.ok) throw new Error();
+      const data = await meRes.json();
+      if (!data.member) throw new Error();
+      await loadAndSetup(data);
+    } catch {
+      window.location.href = '/members/join?return=' + encodeURIComponent(window.location.pathname);
+    }
   }());
 
   // Photo upload
@@ -381,79 +344,6 @@
     }
   });
 
-  // Step 1: send PIN
-  document.getElementById('send-pin-btn').addEventListener('click', async function () {
-    const email = document.getElementById('email-input').value.trim();
-    if (!email) { showMsg('step1-msg', 'Please enter your email address.', true); return; }
-    this.disabled = true;
-    this.textContent = 'Sending…';
-    showMsg('step1-msg', '', false);
-
-    try {
-      const res = await fetch('/api/auth/send-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed');
-      userEmail = email;
-      document.getElementById('email-display').textContent = email;
-      setStep(2);
-    } catch (e) {
-      showMsg('step1-msg', e.message || 'Something went wrong.', true);
-      this.disabled = false;
-      this.textContent = 'Send code';
-    }
-  });
-
-  // Resend
-  document.getElementById('resend-btn').addEventListener('click', async function () {
-    this.disabled = true;
-    await fetch('/api/auth/send-pin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail }),
-    });
-    showMsg('step2-msg', 'A new code has been sent.', false);
-    this.disabled = false;
-  });
-
-  // Step 2: verify PIN
-  document.getElementById('verify-pin-btn').addEventListener('click', async function () {
-    const pin = document.getElementById('pin-input').value.trim();
-    if (!pin || pin.length < 6) { showMsg('step2-msg', 'Please enter the 6-digit code.', true); return; }
-    this.disabled = true;
-    this.textContent = 'Verifying…';
-    showMsg('step2-msg', '', false);
-
-    try {
-      const res = await fetch('/api/auth/verify-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, pin }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Invalid code');
-      }
-
-      const meRes = await fetch('/api/members/me');
-      if (!meRes.ok) {
-        showMsg('step2-msg', 'Your email is not in the member directory. Please apply at /members/join.', true);
-        this.disabled = false;
-        this.textContent = 'Verify code';
-        return;
-      }
-
-      await loadAndSetup(await meRes.json());
-    } catch (e) {
-      showMsg('step2-msg', e.message || 'Something went wrong.', true);
-      this.disabled = false;
-      this.textContent = 'Verify code';
-    }
-  });
-
   // Save changes
   document.getElementById('save-btn').addEventListener('click', async function () {
     const tagFields = {};
@@ -483,11 +373,11 @@
       });
     }
 
-    if (!fields.name) { showMsg('step3-msg', 'Name cannot be empty.', true); return; }
+    if (!fields.name) { showMsg('save-msg', 'Name cannot be empty.', true); return; }
 
     this.disabled = true;
     this.textContent = 'Saving…';
-    showMsg('step3-msg', '', false);
+    showMsg('save-msg', '', false);
 
     const body = { fields };
     if (currentProfile && currentProfile.email !== userEmail) {
@@ -502,14 +392,14 @@
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed');
-      showMsg('step3-msg', 'Changes saved.', false);
+      showMsg('save-msg', 'Changes saved.', false);
       // Sync local profile object with saved admin fields
       if (isAdmin) {
         const p = profiles.find(x => x.email === (currentProfile.email));
         if (p) Object.assign(p, fields);
       }
     } catch (e) {
-      showMsg('step3-msg', e.message || 'Something went wrong.', true);
+      showMsg('save-msg', e.message || 'Something went wrong.', true);
     } finally {
       this.disabled = false;
       this.textContent = 'Save changes';

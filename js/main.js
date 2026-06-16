@@ -52,18 +52,27 @@ var FOOTER_HTML =
     fetch('/api/members/me')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (!data || !data.member || !memberLink) return;
-        var safeName = data.member.name.replace(/[&<>"]/g, function (c) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-        });
+        if (!data || !memberLink) return;
+        var label, editItem;
+        if (data.member) {
+          label = data.member.name.replace(/[&<>"]/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+          });
+          editItem = '<li><a href="/members/edit">Edit profile</a></li>';
+        } else if (data.pending) {
+          label = 'Pending Approval';
+          editItem = '';
+        } else {
+          return;
+        }
         var wrapper = document.createElement('div');
         wrapper.className = 'nav-member-menu';
         wrapper.innerHTML =
           '<button class="nav-member-link nav-member-link--authed nav-member-toggle" id="nav-member-toggle" aria-expanded="false" aria-haspopup="true">' +
-            PERSON_ICON + safeName + '<span class="nav-member-caret">&#9662;</span>' +
+            PERSON_ICON + label + '<span class="nav-member-caret">&#9662;</span>' +
           '</button>' +
           '<ul class="nav-member-dropdown" id="nav-member-dropdown" hidden>' +
-            '<li><a href="/members/edit">Edit profile</a></li>' +
+            editItem +
             '<li><button id="nav-logout-btn">Log out</button></li>' +
           '</ul>';
         memberLink.replaceWith(wrapper);

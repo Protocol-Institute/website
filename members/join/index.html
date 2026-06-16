@@ -158,10 +158,18 @@
         <div id="step3-msg"></div>
       </div>
 
-      <!-- Success state -->
-      <div id="step-done" style="display:none;padding:2rem 0;">
-        <p style="font-size:1.1rem;color:#1A5A3A;">Your application has been submitted. The PI team will review it and notify you by email when approved.</p>
-        <p style="margin-top:1rem;"><a href="/members">View the member directory →</a></p>
+      <!-- Pending state (shown when returning with active session, or after submitting non-CRM application) -->
+      <div id="step-pending" style="display:none;padding:2rem 0;">
+        <p style="font-size:1.05rem;color:#5A5A5A;">Your application is under review. You'll receive an email at <strong id="pending-email-display"></strong> when it's approved.</p>
+        <p style="margin-top:1.5rem;"><button class="form-btn form-btn--secondary" id="pending-logout-btn">Log out</button></p>
+      </div>
+
+      <!-- Auto-approved success state -->
+      <div id="step-approved" style="display:none;padding:2rem 0;">
+        <p style="font-size:1.1rem;color:#1A5A3A;">Welcome to the Protocol Institute member network.</p>
+        <p style="margin-top:0.75rem;color:#5A5A5A;">Your profile is now active.</p>
+        <p style="margin-top:1.25rem;"><a href="/members/edit" class="form-btn" style="display:inline-block;text-decoration:none;">Edit your profile →</a></p>
+        <p style="margin-top:0.75rem;"><a href="/members">View the member directory →</a></p>
       </div>
 
     </div>
@@ -199,6 +207,43 @@
       lbl.className = 'auth-step-label' + (i === n ? ' active' : i < n ? ' done' : '');
     });
   }
+
+  function hideFlow() {
+    [1,2,3].forEach(i => document.getElementById('step-' + i).style.display = 'none');
+    document.querySelectorAll('.auth-steps').forEach(el => el.style.display = 'none');
+  }
+
+  function showPending(email) {
+    hideFlow();
+    document.getElementById('pending-email-display').textContent = email || userEmail;
+    document.getElementById('step-pending').style.display = '';
+  }
+
+  function showApproved() {
+    hideFlow();
+    document.getElementById('step-approved').style.display = '';
+  }
+
+  // On load: check for an existing session
+  (async function checkExistingSession() {
+    try {
+      const meRes = await fetch('/api/members/me');
+      if (!meRes.ok) return;
+      const data = await meRes.json();
+      if (data.member) {
+        const returnTo = new URLSearchParams(window.location.search).get('return');
+        window.location.href = (returnTo && returnTo.startsWith('/') && returnTo.indexOf('//') !== 0) ? returnTo : '/members';
+      } else if (data.pending) {
+        showPending(data.email);
+      }
+    } catch {}
+  }());
+
+  document.getElementById('pending-logout-btn').addEventListener('click', function () {
+    fetch('/api/auth/logout', { method: 'POST' })
+      .then(function () { window.location.reload(); })
+      .catch(function () { window.location.reload(); });
+  });
 
   // Step 1: send PIN
   document.getElementById('send-pin-btn').addEventListener('click', async function () {
@@ -238,7 +283,7 @@
     this.disabled = false;
   });
 
-  // Step 2: verify PIN
+  // Step 2: verify PIN → dispatch on member status
   document.getElementById('verify-pin-btn').addEventListener('click', async function () {
     const pin = document.getElementById('pin-input').value.trim();
     if (!pin || pin.length < 6) { showMsg('step2-msg', 'Please enter the 6-digit code.', true); return; }
@@ -255,15 +300,21 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Invalid code');
 
-      // Check if already a member
-      const me = await fetch('/api/members/me');
-      if (me.ok) {
-        // Already a member — redirect to return param or members page
-        var returnTo = new URLSearchParams(window.location.search).get('return');
-        window.location.href = (returnTo && returnTo.startsWith('/') && returnTo.indexOf('//') !== 0) ? returnTo : '/members';
-        return;
+      const meRes = await fetch('/api/members/me');
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        if (meData.member) {
+          const returnTo = new URLSearchParams(window.location.search).get('return');
+          window.location.href = (returnTo && returnTo.startsWith('/') && returnTo.indexOf('//') !== 0) ? returnTo : '/members';
+          return;
+        }
+        if (meData.pending) {
+          showPending(userEmail);
+          return;
+        }
       }
 
+      // No member record and not pending — new applicant
       setStep(3);
     } catch (e) {
       showMsg('step2-msg', e.message || 'Something went wrong.', true);
@@ -329,10 +380,11 @@
       try { data = await res.json(); } catch { throw new Error('Server error. Please try again.'); }
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
-      // Hide all steps, show done
-      [1,2,3].forEach(i => document.getElementById('step-' + i).style.display = 'none');
-      document.querySelectorAll('.auth-steps').forEach(el => el.style.display = 'none');
-      document.getElementById('step-done').style.display = '';
+      if (data.auto_approved) {
+        showApproved();
+      } else {
+        showPending(userEmail);
+      }
     } catch (e) {
       showMsg('step3-msg', e.message || 'Something went wrong. Please try again.', true);
       this.disabled = false;

@@ -41,6 +41,12 @@ export async function onRequestGet({ request, env }) {
   // Fetch own profile
   const own = await env.DB.prepare('SELECT * FROM members WHERE email = ?').bind(email).first();
   if (!own) {
+    const req = await env.DB.prepare(
+      'SELECT status FROM membership_requests WHERE email = ?'
+    ).bind(email).first();
+    if (req && req.status === 'pending') {
+      return Response.json({ pending: true, email });
+    }
     return Response.json({ error: 'Member not found' }, { status: 404 });
   }
   // Include email so client can reconstruct session state after page reload
