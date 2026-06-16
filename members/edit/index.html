@@ -67,6 +67,15 @@
             <p class="form-hint">Your handle on the <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">PI Discord server</a>.</p>
           </div>
 
+          <!-- Shown for non-admin non-consultant members -->
+          <div id="consultant-opt-in" style="display:none;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid #E0DDD8;">
+            <label class="form-checkbox">
+              <input type="checkbox" id="consultant-toggle">
+              <span>List me in the <a href="/consulting">PI Consulting Network</a></span>
+            </label>
+            <p class="form-hint" style="margin-top:0.4rem;margin-left:1.6rem;">Your name, areas of expertise, and contact preference appear publicly on the consulting directory. PI may revoke listing if the <a href="/consulting/policies" target="_blank" rel="noopener noreferrer">network policies</a> are not followed.</p>
+          </div>
+
           <div id="consulting-fields" style="display:none">
             <p class="form-section-title">Consulting</p>
 
@@ -87,7 +96,7 @@
             </div>
           </div>
 
-          <div id="photo-field-group">
+          <div id="photo-field-group" style="display:none">
             <p class="form-section-title">Profile photo</p>
             <div class="form-group">
               <div style="display:flex;align-items:flex-start;gap:1.25rem;flex-wrap:wrap;">
@@ -218,6 +227,16 @@
 
     document.getElementById('consulting-fields').style.display = profile.is_consultant ? '' : 'none';
 
+    // Photo: show for admins (editing any profile) and for team/consultant members
+    document.getElementById('photo-field-group').style.display =
+      (isAdmin || profile.is_team || profile.is_consultant) ? '' : 'none';
+
+    if (!isAdmin) {
+      // Opt-in toggle: shown only for non-consultants
+      document.getElementById('consultant-opt-in').style.display = profile.is_consultant ? 'none' : '';
+      document.getElementById('consultant-toggle').checked = false;
+    }
+
     if (isAdmin) {
       // Admin: editable toggles replace the read-only team badge
       document.getElementById('team-tag-display').style.display = 'none';
@@ -264,6 +283,7 @@
       });
       document.getElementById('admin-is-consultant').addEventListener('change', function () {
         document.getElementById('consulting-fields').style.display = this.checked ? '' : 'none';
+        document.getElementById('photo-field-group').style.display = ''; // always show for admins
       });
 
       const listRes = await fetch('/api/admin/member-list');
@@ -278,6 +298,13 @@
       if (meData.owned && meData.owned.length) {
         profiles = profiles.concat(meData.owned);
       }
+      // Non-admin: consultant opt-in toggle
+      document.getElementById('consultant-toggle').addEventListener('change', function () {
+        const on = this.checked;
+        document.getElementById('consulting-fields').style.display = on ? '' : 'none';
+        document.getElementById('photo-field-group').style.display =
+          (on || !!(currentProfile && currentProfile.is_team)) ? '' : 'none';
+      });
     }
 
     document.getElementById('edit-form').style.display = '';
@@ -371,6 +398,12 @@
         is_consultant: document.getElementById('admin-is-consultant').checked ? 1 : 0,
         is_public: document.getElementById('admin-is-public').checked ? 1 : 0,
       });
+    } else {
+      // Non-admin consultant opt-in (only when opt-in section is visible, i.e. not already consultant)
+      const optIn = document.getElementById('consultant-opt-in');
+      if (optIn && optIn.style.display !== 'none') {
+        fields.is_consultant = document.getElementById('consultant-toggle').checked ? 1 : 0;
+      }
     }
 
     if (!fields.name) { showMsg('save-msg', 'Name cannot be empty.', true); return; }
@@ -393,10 +426,15 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed');
       showMsg('save-msg', 'Changes saved.', false);
-      // Sync local profile object with saved admin fields
-      if (isAdmin) {
-        const p = profiles.find(x => x.email === (currentProfile.email));
-        if (p) Object.assign(p, fields);
+      // Sync local profile
+      if (currentProfile) Object.assign(currentProfile, fields);
+      const savedP = profiles.find(x => x.email === (currentProfile && currentProfile.email));
+      if (savedP) Object.assign(savedP, fields);
+      // If just opted into consulting, switch from opt-in toggle to live fields + photo
+      if (!isAdmin && fields.is_consultant === 1) {
+        document.getElementById('consultant-opt-in').style.display = 'none';
+        document.getElementById('consulting-fields').style.display = '';
+        document.getElementById('photo-field-group').style.display = '';
       }
     } catch (e) {
       showMsg('save-msg', e.message || 'Something went wrong.', true);

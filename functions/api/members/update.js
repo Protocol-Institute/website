@@ -5,6 +5,7 @@
 const SELF_EDITABLE = new Set([
   'name', 'bio', 'website', 'photo_r2_key',
   'city', 'discord_handle',
+  'is_consultant', // self-service opt-in; admin can revoke via ADMIN_EDITABLE
   // Event/credential tags — self-service (team tags excluded)
   'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
   'tag_datus_nusas', 'tag_khlongs_subaks', 'tag_town_hall',
