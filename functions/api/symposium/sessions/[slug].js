@@ -16,7 +16,7 @@ export async function onRequestPatch({ request, params, env }) {
   if (!email) return Response.json({ error: 'Not authenticated' }, { status: 401 });
 
   const session = await env.DB.prepare(
-    'SELECT owner_email FROM symposium_sessions WHERE slug = ?'
+    'SELECT owner_email, name FROM symposium_sessions WHERE slug = ?'
   ).bind(params.slug).first();
   if (!session) return Response.json({ error: 'Not found' }, { status: 404 });
 
@@ -48,6 +48,12 @@ export async function onRequestPatch({ request, params, env }) {
   await env.DB.prepare(
     `UPDATE symposium_sessions SET ${sets.join(', ')} WHERE slug = ?`
   ).bind(...vals).run();
+
+  if (body.name && body.name !== session.name) {
+    await env.DB.prepare(
+      'UPDATE symposium_proposals SET session = ? WHERE session = ?'
+    ).bind(body.name, session.name).run();
+  }
 
   return Response.json({ ok: true });
 }
