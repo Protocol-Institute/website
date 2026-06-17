@@ -477,9 +477,9 @@
     fill.style.width = Math.max(0, Math.min(100, (remaining / budget) * 100)) + '%';
     fill.classList.toggle('over', remaining < 0);
 
-    // Effective weight = Σ sqrt(n) for each proposal
+    // Effective weight = Σ tierWeight × sqrt(n) for each proposal
     let effWeight = 0;
-    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += Math.sqrt(n); });
+    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += tierWeight() * Math.sqrt(n); });
     effWeight = Math.round(effWeight * 100) / 100;
     const ratio = used > 0 ? (effWeight / used).toFixed(2) : '0.00';
     document.getElementById('effective-weight').textContent = effWeight;
