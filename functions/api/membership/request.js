@@ -94,9 +94,11 @@ export async function onRequestPost({ request, env }) {
       const proposer = await env.DB.prepare(
         `SELECT 1 FROM symposium_proposals
          WHERE is_shortlisted = 1
-           AND (lower(trim(speaker_email)) = ? OR lower(trim(organizer_email)) = ?)
+           AND (lower(trim(speaker_email)) = ?
+             OR lower(trim(organizer_email)) = ?
+             OR lower(trim(co_organizer_email)) = ?)
          LIMIT 1`
-      ).bind(email, email).first();
+      ).bind(email, email, email).first();
       const isEarlyVoter = proposer ? 1 : 0;
 
       await env.DB.prepare(`
