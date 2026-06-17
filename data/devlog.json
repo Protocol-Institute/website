@@ -1173,6 +1173,35 @@
           "html": "Two new TEXT fields added to members: member_since (signup date, YYYY-MM-DD) and membership_expires (signup + 1 year). Set at member creation in both the CRM auto-approve path (request.js) and admin manual approval (admin/members.js). 36 existing members backfilled from created_at. Fields are informational only; expiration enforcement, renewal logic, and notification emails are documented as a backlog item in ROADMAP.md. A provisional status line added to both the join page (Step 3) and edit profile page: \u201cMembership status is currently free, and based on ongoing qualifying contributions to PI activities.\u201d"
         }
       ]
+    },
+    {
+      "id": 31,
+      "sort_key": 31.0,
+      "label": "Session 31",
+      "title": "Voting analytics admin dashboard",
+      "date": "2026-06-17",
+      "time_pt": "",
+      "tracks": [
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Migration 024: symposium_vote_saves",
+          "html": "New table <code>symposium_vote_saves(member_email PK, save_count INTEGER, last_saved_at TEXT)</code> tracks how many times each voter has clicked the Save Votes button. votes.js previously DELETE+INSERT on each save with no audit trail; now also UPSERTs to this table (increment save_count, update last_saved_at). Save counts before this deploy are 0 \u2014 historical vote totals are accurate from symposium_votes."
+        },
+        {
+          "title": "GET /api/symposium/analytics \u2014 admin-only endpoint",
+          "html": "New CF Pages Function returns real-time stats aggregated from D1: total_members, total_voters, ratio, total_votes_cast at the top level; per-registrant rows with name, email, registered_at, save_count, votes_placed, proposals_touched, and an is_indifferent flag (true when max_vote &le; 1 and votes_placed &gt; 0 \u2014 signals the voter spread at most 1 vote per proposal, the quadratic voting analog of indifference). Auth: must have a valid pi_session cookie with is_admin = 1 in D1."
+        },
+        {
+          "title": "/admin/symposium-analytics \u2014 live voting dashboard",
+          "html": "New admin page at /admin/symposium-analytics (CF Access gated via the /admin/* policy). Four stat cards at top: Voters, Members, Participation %, Total Votes Cast. Registrant table ordered newest-first: Name, Email, Registered (full timestamp), Saves, Votes Placed, Proposals Touched, Distribution badge (Indifferent / Engaged / No vote). Page auto-refreshes every 30 seconds with a visible countdown. Entirely server-driven \u2014 no cron, no laptop required; every load queries live D1 via the analytics endpoint."
+        }
+      ]
     }
   ]
 }

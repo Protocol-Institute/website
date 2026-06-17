@@ -563,3 +563,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Two new TEXT fields added to members: member_since (signup date, YYYY-MM-DD) and membership_expires (signup + 1 year). Set at member creation in both the CRM auto-approve path (request.js) and admin manual approval (admin/members.js). 36 existing members backfilled from created_at. Fields are informational only; expiration enforcement, renewal logic, and notification emails are documented as a backlog item in ROADMAP.md. A provisional status line added to both the join page (Step 3) and edit profile page: “Membership status is currently free, and based on ongoing qualifying contributions to PI activities.”
 
 ---
+
+## Session 31: Voting analytics admin dashboard
+
+*2026-06-17*
+
+**Tracks:** member-directory, operations
+
+- New table `symposium_vote_saves(member_email PK, save_count INTEGER, last_saved_at TEXT)` tracks how many times each voter has clicked the Save Votes button. votes.js previously DELETE+INSERT on each save with no audit trail; now also UPSERTs to this table (increment save_count, update last_saved_at). Save counts before this deploy are 0 — historical vote totals are accurate from symposium_votes.
+
+- New CF Pages Function returns real-time stats aggregated from D1: total_members, total_voters, ratio, total_votes_cast at the top level; per-registrant rows with name, email, registered_at, save_count, votes_placed, proposals_touched, and an is_indifferent flag (true when max_vote &le; 1 and votes_placed &gt; 0 — signals the voter spread at most 1 vote per proposal, the quadratic voting analog of indifference). Auth: must have a valid pi_session cookie with is_admin = 1 in D1.
+
+- New admin page at /admin/symposium-analytics (CF Access gated via the /admin/* policy). Four stat cards at top: Voters, Members, Participation %, Total Votes Cast. Registrant table ordered newest-first: Name, Email, Registered (full timestamp), Saves, Votes Placed, Proposals Touched, Distribution badge (Indifferent / Engaged / No vote). Page auto-refreshes every 30 seconds with a visible countdown. Entirely server-driven — no cron, no laptop required; every load queries live D1 via the analytics endpoint.
+
+---
