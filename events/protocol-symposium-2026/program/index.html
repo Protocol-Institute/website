@@ -168,6 +168,7 @@
             <span>Your total interest weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> per vote cast)</span>
             <span id="deadline-line">You can edit your votes until Jun 20.</span>
           </div>
+          <div id="tier-note" style="display:none;font-size:0.75rem;color:#5A5A5A;padding:0.2rem 0 0.4rem;"></div>
           <div class="vote-sort-row" id="sort-bar">
             <span style="font-size:0.78rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:#5A5A5A;">Sort by:</span>
             <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
@@ -260,6 +261,14 @@
       }
 
       pendingVotes = { ...myVotes };
+      const tierNote = document.getElementById('tier-note');
+      if (tier === 'team') {
+        tierNote.textContent = 'Your votes count 3× a regular member\'s in the final tally.';
+        tierNote.style.display = '';
+      } else if (tier === 'community_lead') {
+        tierNote.textContent = 'Your votes count 2× a regular member\'s in the final tally.';
+        tierNote.style.display = '';
+      }
       renderAll();
     })
     .catch(() => {
@@ -330,7 +339,7 @@
   }
 
   function myWeightFor(n) {
-    return n > 0 ? Math.round(tierWeight() * Math.sqrt(n) * 100) / 100 : 0;
+    return n > 0 ? Math.round(Math.sqrt(n) * 100) / 100 : 0;
   }
 
   const SESSION_SLUGS = {};
@@ -477,9 +486,9 @@
     fill.style.width = Math.max(0, Math.min(100, (remaining / budget) * 100)) + '%';
     fill.classList.toggle('over', remaining < 0);
 
-    // Effective weight = Σ tierWeight × sqrt(n) for each proposal
+    // Effective weight = Σ sqrt(n) — tier multiplier applied server-side in aggregation
     let effWeight = 0;
-    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += tierWeight() * Math.sqrt(n); });
+    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += Math.sqrt(n); });
     effWeight = Math.round(effWeight * 100) / 100;
     const ratio = used > 0 ? (effWeight / used).toFixed(2) : '0.00';
     document.getElementById('effective-weight').textContent = effWeight;
