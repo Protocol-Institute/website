@@ -171,6 +171,22 @@ Phase 0 (CF migration)
   └── Phase 5 (symposium) — Phase 1 Google Form is the interim; Sessionize is independent
 ```
 
+## Backlog — Membership Expiration Scheme
+
+**TODO: Design and implement a membership expiration and renewal scheme.**
+
+`member_since` and `membership_expires` fields now exist on the `members` table (migration 023), set to signup date and signup date + 1 year respectively. Backfilled for existing members from `created_at`. Both API paths (CRM auto-approve and admin manual approval) now populate these fields.
+
+What still needs to be designed and built:
+
+- **Renewal logic** — what does renewal mean when membership is contribution-based, not paid? Options: auto-renew on any qualifying activity (SIG attendance, Protocolized contribution, event attendance); admin-triggered renewal; self-service renewal with activity attestation.
+- **Expiration enforcement** — currently the fields are informational only. Decide whether expired members lose directory visibility (`is_public` gated on `membership_expires`), lose login access, or simply get a nudge email.
+- **Notification emails** — 30-day and 7-day expiration warnings via Resend; renewal confirmation email.
+- **Admin tooling** — bulk renewal view in `/admin/members`; ability to extend individual memberships.
+- **Member-facing display** — show `member_since` and `membership_expires` on the Edit Profile page once the scheme is finalized and the status line is no longer provisional.
+
+---
+
 ## Open Questions
 
 - Resend vs Mailgun vs another email API? (Needed for contact form and Phase 2 PIN auth.)

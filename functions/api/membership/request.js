@@ -89,6 +89,8 @@ export async function onRequestPost({ request, env }) {
       const tagValues = EVENT_TAGS.map(col => tagSet.has(col) ? 1 : 0);
 
       const memberSlug = email.split('@')[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+      const today = new Date().toISOString().slice(0, 10);
+      const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
       // Grant early voter status to shortlisted symposium proposers
       const proposer = await env.DB.prepare(
@@ -107,13 +109,15 @@ export async function onRequestPost({ request, env }) {
            is_consultant, is_team, is_early_voter,
            consulting_expertise, consulting_contact, consulting_portfolio,
            city, discord_handle, owner_email,
+           member_since, membership_expires,
            ${EVENT_TAGS.join(', ')})
-        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
+        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
       `).bind(
         email, memberSlug, name, bio || null, website || null, photo_url || null,
         request_consultant, isEarlyVoter,
         consulting_expertise || null, consulting_contact || null, consulting_portfolio || null,
         city || null, discord_handle || null, email,
+        today, expires,
         ...tagValues
       ).run();
 

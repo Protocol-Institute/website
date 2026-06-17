@@ -134,6 +134,8 @@ export async function onRequestPost({ request, env }) {
   const memberSlug = slug || email.split('@')[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase();
   const events = JSON.parse(req.qualifying_events || '[]');
   const tagValues = TAG_COLUMNS.map(col => events.includes(col) ? 1 : 0);
+  const today = new Date().toISOString().slice(0, 10);
+  const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   await env.DB.prepare(`
     INSERT OR IGNORE INTO members
@@ -141,8 +143,9 @@ export async function onRequestPost({ request, env }) {
        is_consultant, is_team,
        consulting_expertise, consulting_contact, consulting_portfolio,
        city, discord_handle, owner_email,
+       member_since, membership_expires,
        ${TAG_COLUMNS.join(', ')})
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${TAG_COLUMNS.map(() => '?').join(', ')})
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${TAG_COLUMNS.map(() => '?').join(', ')})
   `).bind(
     email, memberSlug, req.name, req.bio || null, req.website || null,
     req.photo_url || null,
@@ -150,6 +153,7 @@ export async function onRequestPost({ request, env }) {
     req.request_team ? 1 : 0,
     req.consulting_expertise || null, req.consulting_contact || null, req.consulting_portfolio || null,
     req.city || null, req.discord_handle || null, email,
+    today, expires,
     ...tagValues
   ).run();
 
