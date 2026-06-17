@@ -5,7 +5,7 @@
 import { getSession } from '../../_shared/session.js';
 
 const VOTE_START    = new Date('2026-06-17T00:00:00Z'); // voting open to all members
-const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
+const VOTE_DEADLINE = new Date('2026-06-21T00:00:00Z'); // Saturday June 20, midnight UTC
 
 export async function onRequestPost({ request, env }) {
   const email = await getSession(request, env);

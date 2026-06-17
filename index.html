@@ -7,6 +7,34 @@
   <meta name="description" content="An independent research organization dedicated to the study of protocols.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .symposium-vote-cta {
+      text-align: center;
+      margin: 0 0 1.25rem;
+    }
+    .symposium-vote-btn {
+      display: inline-block;
+      background: #2A6B6B;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.6rem 1.5rem;
+      text-decoration: none;
+    }
+    .symposium-vote-btn:hover { background: #1A4A4A; color: #fff; }
+    .symposium-members-only {
+      font-size: 0.78rem;
+      color: #8A8A8A;
+      margin: 0.35rem 0 0;
+    }
+    .symposium-vote-countdown {
+      font-size: 0.88rem;
+      color: #5A5A5A;
+      margin: 0.4rem 0 0;
+    }
+  </style>
 </head>
 <body>
 
@@ -23,6 +51,12 @@
 
       <div class="about-body">
         <p>The Protocol Institute is a research, education, media, and scene-making organization dedicated to advancing protocols and protocolization worldwide.</p>
+      </div>
+
+      <div class="symposium-vote-cta">
+        <a href="/events/protocol-symposium-2026/program/" class="symposium-vote-btn">Symposium Voting Open</a>
+        <p class="symposium-members-only">(members only)</p>
+        <p class="symposium-vote-countdown" id="vote-countdown-home"></p>
       </div>
 
       <div id="banner-carousel" class="symposium-banner-wrap symposium-banner-wrap--page"></div>
@@ -45,6 +79,20 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  var VOTE_DEADLINE = new Date('2026-06-21T00:00:00Z'); // Saturday June 20, midnight UTC
+  var el = document.getElementById('vote-countdown-home');
+  function tickHome() {
+    var ms = VOTE_DEADLINE - new Date();
+    if (ms <= 0) { el.textContent = 'Voting closed.'; return; }
+    var d = Math.floor(ms / 86400000);
+    var h = Math.floor((ms % 86400000) / 3600000);
+    el.textContent = 'Voting closes in ' + d + ' day' + (d !== 1 ? 's' : '') + ', ' + h + ' hour' + (h !== 1 ? 's' : '') + '.';
+  }
+  if (el) { tickHome(); setInterval(tickHome, 60000); }
+}());
+</script>
 <script>
 (function () {
   function parseCarouselMd(text) {
