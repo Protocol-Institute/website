@@ -47,15 +47,25 @@ export async function onRequestPost({ request, env }) {
   // Replace this member's votes
   await env.DB.prepare('DELETE FROM symposium_votes WHERE member_email = ?').bind(email).run();
 
+  const now = new Date().toISOString();
+
   for (const [pid, rawVotes] of Object.entries(votesMap)) {
     const id = parseInt(pid);
     const n = parseInt(rawVotes) || 0;
     if (n > 0 && validIds.has(id)) {
       await env.DB.prepare(
         'INSERT INTO symposium_votes (member_email, proposal_id, votes, updated_at) VALUES (?, ?, ?, ?)'
-      ).bind(email, id, n, new Date().toISOString()).run();
+      ).bind(email, id, n, now).run();
     }
   }
+
+  await env.DB.prepare(`
+    INSERT INTO symposium_vote_saves (member_email, save_count, last_saved_at)
+    VALUES (?, 1, ?)
+    ON CONFLICT(member_email) DO UPDATE SET
+      save_count    = save_count + 1,
+      last_saved_at = excluded.last_saved_at
+  `).bind(email, now).run();
 
   return Response.json({ ok: true, total_spent: totalVotes, budget });
 }

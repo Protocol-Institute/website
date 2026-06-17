@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Voting Analytics</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 600px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .stat-card {
+      border: 1px solid #E0DDD8;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      background: #fff;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8A8A8A;
+      margin-bottom: 0.35rem;
+    }
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 500;
+      color: #1A1A1A;
+      line-height: 1;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .stat-sub {
+      font-size: 0.75rem;
+      color: #8A8A8A;
+      margin-top: 0.25rem;
+    }
+
+    .analytics-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    .analytics-table th {
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8A8A8A;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid #E0DDD8;
+      white-space: nowrap;
+    }
+    .analytics-table td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid #F0EDE8;
+      vertical-align: middle;
+    }
+    .analytics-table tr:last-child td { border-bottom: none; }
+    .analytics-table tr:hover td { background: #FAFAF7; }
+
+    .voted-yes { color: #2A6B6B; font-weight: 500; }
+    .voted-no  { color: #C0BDB8; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+    }
+    .badge-indifferent { background: #FFF3CD; color: #7A6020; }
+    .badge-engaged     { background: #E6F0EF; color: #1F5050; }
+    .badge-novote      { background: #F5F3F0; color: #A0A0A0; }
+
+    .refresh-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      color: #8A8A8A;
+    }
+    .refresh-btn {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid #C8C5C0;
+      background: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      color: #1A1A1A;
+    }
+    .refresh-btn:hover { background: #F5F3F0; }
+    .countdown { font-variant-numeric: tabular-nums; }
+
+    .error-msg { color: #C44; font-size: 0.9rem; padding: 1rem 0; }
+    .loading   { color: #8A8A8A; font-size: 0.9rem; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Voting Analytics</h1>
+        <p style="color:#8A8A8A;font-size:0.85rem;margin-top:0.25rem;">
+          Admin — Symposium 2026 early voting
+        </p>
+      </div>
+
+      <div id="auth-gate" style="display:none;">
+        <p class="error-msg">You must be logged in as an admin member to view this page.
+          <a href="/members/join/">Log in</a></p>
+      </div>
+
+      <div id="dashboard" style="display:none;">
+        <div class="stat-grid" id="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Voters</div>
+            <div class="stat-value" id="s-voters">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Members</div>
+            <div class="stat-value" id="s-members">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Participation</div>
+            <div class="stat-value" id="s-ratio">—</div>
+            <div class="stat-sub">voters / members</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Votes Cast</div>
+            <div class="stat-value" id="s-votes">—</div>
+          </div>
+        </div>
+
+        <div class="refresh-bar">
+          <span>Updated: <span id="generated-at">—</span> &nbsp;·&nbsp; Next refresh in <span class="countdown" id="countdown">—</span>s</span>
+          <button class="refresh-btn" onclick="fetchData()">Refresh now</button>
+        </div>
+
+        <table class="analytics-table" id="reg-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Registered</th>
+              <th>Saves</th>
+              <th>Votes Placed</th>
+              <th>Proposals Touched</th>
+              <th>Distribution</th>
+            </tr>
+          </thead>
+          <tbody id="reg-tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="loading" class="loading">Loading…</div>
+
+    </div>
+  </main>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+  const REFRESH_INTERVAL = 30; // seconds
+  let countdown = REFRESH_INTERVAL;
+  let timer;
+
+  function fmt(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleString('en-US', {
+      month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+      timeZoneName: 'short'
+    });
+  }
+
+  function fmtTime(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+  }
+
+  async function fetchData() {
+    clearInterval(timer);
+    countdown = REFRESH_INTERVAL;
+
+    try {
+      const res = await fetch('/api/symposium/analytics', { credentials: 'include' });
+      if (res.status === 401 || res.status === 403) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('auth-gate').style.display = 'block';
+        return;
+      }
+      if (!res.ok) throw new Error('API error ' + res.status);
+
+      const data = await res.json();
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+
+      // Stats
+      document.getElementById('s-voters').textContent  = data.stats.total_voters;
+      document.getElementById('s-members').textContent = data.stats.total_members;
+      document.getElementById('s-ratio').textContent   = Math.round(data.stats.ratio * 100) + '%';
+      document.getElementById('s-votes').textContent   = data.stats.total_votes_cast;
+      document.getElementById('generated-at').textContent = fmtTime(data.generated_at);
+
+      // Table
+      const tbody = document.getElementById('reg-tbody');
+      tbody.innerHTML = '';
+      for (const r of data.registrants) {
+        const hasVoted = r.votes_placed > 0;
+        let distBadge;
+        if (!hasVoted) {
+          distBadge = '<span class="badge badge-novote">No vote</span>';
+        } else if (r.is_indifferent) {
+          distBadge = '<span class="badge badge-indifferent">Indifferent</span>';
+        } else {
+          distBadge = '<span class="badge badge-engaged">Engaged</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:500">${r.name || '—'}</td>
+          <td style="color:#6A6A6A;font-size:0.8rem">${r.email}</td>
+          <td style="font-size:0.8rem;white-space:nowrap">${fmt(r.registered_at)}</td>
+          <td style="text-align:center">${r.save_count > 0 ? r.save_count : '<span class="voted-no">—</span>'}</td>
+          <td class="${hasVoted ? 'voted-yes' : 'voted-no'}" style="text-align:center">
+            ${hasVoted ? r.votes_placed : '—'}
+          </td>
+          <td style="text-align:center;color:#6A6A6A">${hasVoted ? r.proposals_touched : '—'}</td>
+          <td>${distBadge}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+    } catch (e) {
+      document.getElementById('loading').textContent = 'Error loading data: ' + e.message;
+    }
+
+    // Restart countdown
+    timer = setInterval(() => {
+      countdown--;
+      const el = document.getElementById('countdown');
+      if (el) el.textContent = countdown;
+      if (countdown <= 0) fetchData();
+    }, 1000);
+    document.getElementById('countdown').textContent = countdown;
+  }
+
+  fetchData();
+</script>
+</body>
+</html>
