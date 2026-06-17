@@ -113,7 +113,7 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const VOTE_START    = new Date('2026-06-17T14:00:00Z'); // June 17, 7 AM PDT
+  const VOTE_START    = new Date('2026-06-17T00:00:00Z'); // voting open to all members
   const VOTE_DEADLINE = new Date('2026-06-20T14:00:00Z'); // June 20, 7 AM PDT
 
   function fmtCountdown(ms) {
@@ -140,10 +140,10 @@
       sub.textContent   = 'Wed Jun 17 – Sat Jun 20, 7 AM Pacific';
       cta.textContent   = 'View draft agenda →';
     } else if (n < VOTE_DEADLINE) {
-      label.textContent = 'Voting closes in';
+      label.textContent = 'Voting now open';
       time.textContent  = fmtCountdown(VOTE_DEADLINE - n);
-      sub.textContent   = '';
-      cta.textContent   = 'Vote on the draft agenda →';
+      sub.textContent   = 'Closes Jun 20 at 7 AM Pacific';
+      cta.textContent   = 'Voting now open →';
     } else {
       label.textContent = '';
       time.textContent  = 'Voting closed';
