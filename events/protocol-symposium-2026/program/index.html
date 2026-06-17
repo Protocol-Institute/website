@@ -8,7 +8,7 @@
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .sub-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin:1.5rem 0; }
+    .sub-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin:0.5rem 0 0; }
     .sub-tab { font-size:0.78rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
       padding:0.5rem 1.1rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
       border-bottom:2px solid transparent; margin-bottom:-2px; }
@@ -179,12 +179,11 @@
             </label>
           </div>
           <div style="font-size:0.75rem;color:#8A8A8A;padding:0.25rem 0 0.4rem;">Hint: Go through and give everything you like 1 vote, then use the "My votes" sort option above, and go through again distributing your remaining votes.</div>
-        </div>
-
-        <div class="sub-tabs" id="sub-tabs">
-          <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
-          <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
-          <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
+          <div class="sub-tabs" id="sub-tabs">
+            <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
+            <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
+            <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
+          </div>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
