@@ -634,7 +634,7 @@
     if (!el) return;
     const n = new Date();
     if (n < VOTE_START) {
-      el.textContent = 'Voting opens in ' + fmtCountdown(VOTE_START - n);
+      el.textContent = 'General voting opens in ' + fmtCountdown(VOTE_START - n);
     } else if (n < VOTE_DEADLINE) {
       el.textContent = 'Voting closes in ' + fmtCountdown(VOTE_DEADLINE - n);
     } else {
