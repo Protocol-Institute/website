@@ -418,7 +418,8 @@
       <div class="proposal-title" id="title-${p.id}">${titleContent}</div>
       ${isWorkshop ? '<span class="type-badge type-badge--workshop">Workshop</span>' : ''}
       <div class="proposal-speaker">${speaker}</div>
-      <div class="proposal-track">${esc(p.track || '')}${p.type === 'interactive' ? ' · <em>Interactive</em>' : ''}</div>
+      ${p.type === 'interactive' ? '<div class="proposal-track"><em>Interactive</em></div>' : ''}
+      ${sessionLink}
       <div class="proposal-abstract" id="abs-wrap-${p.id}">
         <div class="abstract-clamp" id="abs-${p.id}">${esc(p.abstract || '')}</div>
         <button class="abstract-toggle" onclick="toggleAbstract(${p.id})">Show more ▾</button>
