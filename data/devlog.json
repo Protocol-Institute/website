@@ -1175,6 +1175,48 @@
       ]
     },
     {
+      "id": 32,
+      "sort_key": 32.0,
+      "label": "Session 32",
+      "title": "Voting launch and UX polish",
+      "date": "2026-06-17",
+      "time_pt": "",
+      "tracks": ["member-directory", "operations", "static-site"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Open voting to all members",
+          "html": "Moved <code>VOTE_START</code> from <code>2026-06-17T14:00:00Z</code> (7 AM PDT, early-voter-only window) to <code>2026-06-17T00:00:00Z</code> in all three files: the backend CF Function (<code>functions/api/symposium/votes.js</code>), the program page JS, and the symposium page JS. The early-voter gate was effectively bypassed once VOTE_START passed; this change ensures the backend also allows all members rather than returning 403. <code>VOTE_DEADLINE</code> simultaneously updated from <code>2026-06-20T14:00:00Z</code> to <code>2026-06-21T00:00:00Z</code> (Saturday June 20, midnight UTC) across all files."
+        },
+        {
+          "title": "Homepage voting CTA and countdown",
+          "html": "Added a prominent <strong>Symposium Voting Open</strong> button (teal, links to <code>/events/protocol-symposium-2026/program/</code>) with a <em>(members only)</em> sub-label and a live countdown ticker (<em>Voting closes in X days, Y hours</em>) above the banner carousel on <code>index.html</code>. The banner link itself was also updated to go directly to <code>/program/</code> rather than the intermediate symposium page."
+        },
+        {
+          "title": "Closing-date message styling — bold red across all pages",
+          "html": "All voting deadline/countdown displays now share a consistent style: <code>color:#B91C1C; font-weight:700</code>, larger font-size than before. Applied to: homepage countdown ticker (<code>.symposium-vote-countdown</code>), symposium page countdown time and sub-text (<code>.vote-countdown-time</code>, <code>.vote-countdown-sub</code>), program page mini clock (<code>.vote-clock-mini</code>), and the deadline-line span in the sticky bar (<code>#deadline-line</code>)."
+        },
+        {
+          "title": "Voting page UX polish — sticky bar, tabs, hints",
+          "html": "The All/Talks/Workshops tab row was moved inside the sticky budget bar so it stays visible while scrolling. A voting strategy hint was added below the sort radio buttons. For team and community-lead members a tier-multiplier note is shown (<em>Your votes count 3×/2× a regular member's in the final tally</em>); weight displays show plain √n to all members — the tier multiplier is applied server-side in aggregate scoring only. Discovered and fixed a bug where <code>updateBudget()</code> was computing effective weight as Σ√n (missing tier multiplier) — then reverted per-display to plain √n per product decision."
+        },
+        {
+          "title": "Proposal card badges and label clean-up",
+          "html": "Workshop proposals now display a filled teal <strong>Workshop</strong> badge (class <code>.type-badge--workshop</code>) below the title, visible in both the All and Workshops tabs. The SIG track/alignment label (the <code>proposal-track</code> field) was suppressed from all cards to reduce confusion with special sessions — only the <em>Interactive</em> tag is preserved for interactive proposals. Special-session proposals show an outlined teal <strong>Special Session</strong> chip alongside the session link, with 'special session' removed from the anchor text (now reads e.g. <em>Psychohistory →</em>)."
+        },
+        {
+          "title": "SIG detail pages — Associated Projects sections",
+          "html": "Added a new <code>.sig-projects</code> block between the blurb and Meeting Archive on four SIG index pages: SIGPfB → <a href='/protocolized-dev'>protocolized.dev</a>; DRG → <a href='https://yakrobot.com/'>YakRobot Protocols</a> (external); SIGPSY → <a href='/worldmachines'>World Machines</a>; ProtFiSIG → <a href='/jamverse'>Jamverse</a>. New CSS in <code>style.css</code>. These links were planned but never added to the HTML in prior sessions."
+        },
+        {
+          "title": "Member updates — SIG Hosts and new Team member",
+          "html": "Kei Kreutler and Spencer Nitkey promoted to <code>community_lead</code> tier with <code>community_lead_title = 'SIG Host'</code> (the title drives the red badge on member cards). Josh Davis joined as <code>protocolinstitute@j0xh.com</code>, set to <code>team</code> tier with <code>is_team=1</code>, <code>team_title='Protocol Coordinator Emeritus'</code>, and <code>photo_r2_key='logo-static.png'</code> (the same PI logo placeholder used for C3PO and Humboldt). Jamverse 'Coming soon' banner removed."
+        }
+      ]
+    },
+    {
       "id": 31,
       "sort_key": 31.0,
       "label": "Session 31",

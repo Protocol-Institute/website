@@ -577,3 +577,25 @@ A build log for protocol-institute.org — how the static site was built, what i
 - New admin page at /admin/symposium-analytics (CF Access gated via the /admin/* policy). Four stat cards at top: Voters, Members, Participation %, Total Votes Cast. Registrant table ordered newest-first: Name, Email, Registered (full timestamp), Saves, Votes Placed, Proposals Touched, Distribution badge (Indifferent / Engaged / No vote). Page auto-refreshes every 30 seconds with a visible countdown. Entirely server-driven — no cron, no laptop required; every load queries live D1 via the analytics endpoint.
 
 ---
+
+## Session 32: Voting launch and UX polish
+
+*2026-06-17*
+
+**Tracks:** member-directory, operations, static-site
+
+- Moved `VOTE_START` from `2026-06-17T14:00:00Z` (7 AM PDT, early-voter-only window) to `2026-06-17T00:00:00Z` in all three files: the backend CF Function (`functions/api/symposium/votes.js`), the program page JS, and the symposium page JS. The early-voter gate was effectively bypassed once VOTE_START passed; this change ensures the backend also allows all members rather than returning 403. `VOTE_DEADLINE` simultaneously updated from `2026-06-20T14:00:00Z` to `2026-06-21T00:00:00Z` (Saturday June 20, midnight UTC) across all files.
+
+- Added a prominent **Symposium Voting Open** button (teal, links to `/events/protocol-symposium-2026/program/`) with a *(members only)* sub-label and a live countdown ticker (*Voting closes in X days, Y hours*) above the banner carousel on `index.html`. The banner link itself was also updated to go directly to `/program/` rather than the intermediate symposium page.
+
+- All voting deadline/countdown displays now share a consistent style: `color:#B91C1C; font-weight:700`, larger font-size than before. Applied to: homepage countdown ticker (`.symposium-vote-countdown`), symposium page countdown time and sub-text (`.vote-countdown-time`, `.vote-countdown-sub`), program page mini clock (`.vote-clock-mini`), and the deadline-line span in the sticky bar (`#deadline-line`).
+
+- The All/Talks/Workshops tab row was moved inside the sticky budget bar so it stays visible while scrolling. A voting strategy hint was added below the sort radio buttons. For team and community-lead members a tier-multiplier note is shown (*Your votes count 3×/2× a regular member's in the final tally*); weight displays show plain √n to all members — the tier multiplier is applied server-side in aggregate scoring only. Discovered and fixed a bug where `updateBudget()` was computing effective weight as Σ√n (missing tier multiplier) — then reverted per-display to plain √n per product decision.
+
+- Workshop proposals now display a filled teal **Workshop** badge (class `.type-badge--workshop`) below the title, visible in both the All and Workshops tabs. The SIG track/alignment label (the `proposal-track` field) was suppressed from all cards to reduce confusion with special sessions — only the *Interactive* tag is preserved for interactive proposals. Special-session proposals show an outlined teal **Special Session** chip alongside the session link, with 'special session' removed from the anchor text (now reads e.g. *Psychohistory →*).
+
+- Added a new `.sig-projects` block between the blurb and Meeting Archive on four SIG index pages: SIGPfB → protocolized.dev; DRG → YakRobot Protocols (external); SIGPSY → World Machines; ProtFiSIG → Jamverse. New CSS in `style.css`. These links were planned but never added to the HTML in prior sessions.
+
+- Kei Kreutler and Spencer Nitkey promoted to `community_lead` tier with `community_lead_title = 'SIG Host'` (the title drives the red badge on member cards). Josh Davis joined as `protocolinstitute@j0xh.com`, set to `team` tier with `is_team=1`, `team_title='Protocol Coordinator Emeritus'`, and `photo_r2_key='logo-static.png'` (the same PI logo placeholder used for C3PO and Humboldt). Jamverse 'Coming soon' banner removed.
+
+---
