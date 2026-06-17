@@ -539,3 +539,27 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Three issues found via Playwright at 390px: (1) Sticky bar 362px tall (43% of viewport) — compact button padding at ≤600px brings it to 265px. (2) Progress bar orphaned on its own flex row — hidden on mobile since the text label already conveys the count. (3) Deadline line not bold — DM Sans only loads weights 300/400/500, so `&lt;strong&gt;` (700) had no matching face; fixed with explicit `font-weight:600` CSS rule.
 
 ---
+
+## Session 30: Nav overhaul, page simplifications, early voter backfill, member dates
+
+*2026-06-16*
+
+**Tracks:** static-site, member-directory, operations
+
+- The /calendar page (Google Calendar iframe) and /events page (event history list from events.json) were merged into a single /events page with a tabbed submenu — Calendar first and default, Events History on click. Nav updated from “Calendar” to “Events”; /calendar and /calendar/ redirect to /events. Active-link detection in main.js now highlights “Events” for all /events/* subpages.
+
+- A “More ▾” dropdown added as the last nav item, containing: About, Network, Symposium, Contact, Members, Support Us — previously footer-only links. Desktop: positioned dropdown, opens on click, closes on outside click, teal highlight when current page is one of the items. Mobile: toggle hidden, items always shown inline as stacked nav entries. CSS scoped to .nav-more-* classes.
+
+- About page rewritten by editor with bracket notation for links. All 8 anchors resolved: Protocolized, Substack, Programs, Events, Team, Community Leads, Discord, Support Us. A 180×180px logo block (logo-static.png with light border) inserted between paragraphs 1 and 2 as a visual break. Stale hardcoded footer replaced with injected footer.
+
+- Join page intro rewritten to one concise paragraph. Eligibility detail (SoP cohorts, Protocol School, SIGs, Protocol Kit, Protocolized) moved to a footnote linked by a * superscript, using a hairline top border, 0.8rem muted text, and a back-link. The old dense bold approval-timing paragraph was removed. Stale hardcoded footer replaced.
+
+- Old support page (pitch deck iframe) saved as support/index.html.bak. New page has a concise intro, 8-item list of support mechanisms (books, Substack, ticketed events, consultant hire, partner orgs, research projects, grassroots drives, grant funding), and a contact close. All bracket links resolved. List item labels styled teal+500 weight via scoped style block — DM Sans only loads weights 300/400/500 so browser bold maps to 500 with little contrast.
+
+- Projects sections added to four SIG pages: YakRobot Protocols (yakrobot.com) under DRG; World Machines (/worldmachines) under SIGPSY; Jamverse (/jamverse) under ProtFiSIG; protocolized.dev (/protocolized-dev) under SIGPfB. YakRobot Protocols also added to Programs page under Research → Projects. Jamverse “coming soon” badge removed.
+
+- Shortlisted symposium proposals carry speaker_email, organizer_email, and co_organizer_email. Cross-referencing all three fields yielded 51 unique proposer emails, all in the CRM pre-approval list. All 20 registered proposers now have is_early_voter=1 (16 updated via D1; 4 including Venkat/Timber/Tim already set). The remaining 31 will get is_early_voter=1 automatically on registration: request.js now queries symposium_proposals for a matching email in any of the three fields with is_shortlisted=1.
+
+- Two new TEXT fields added to members: member_since (signup date, YYYY-MM-DD) and membership_expires (signup + 1 year). Set at member creation in both the CRM auto-approve path (request.js) and admin manual approval (admin/members.js). 36 existing members backfilled from created_at. Fields are informational only; expiration enforcement, renewal logic, and notification emails are documented as a backlog item in ROADMAP.md. A provisional status line added to both the join page (Step 3) and edit profile page: “Membership status is currently free, and based on ongoing qualifying contributions to PI activities.”
+
+---
