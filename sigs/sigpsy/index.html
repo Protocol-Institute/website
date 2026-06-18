@@ -47,8 +47,10 @@
       </div>
 
       <div class="about-body">
-        <p>Studying long-range historical modeling and prediction — drawing on quantitative history, complexity science, and protocol theory to develop frameworks for understanding civilizational-scale dynamics. The group maintains worldmachines.org, a collaborative platform for psychohistorical modeling.</p>
-        
+        <p id="sigpsy-about-snippet">Studying long-range historical modeling and prediction — drawing on quantitative history, complexity science, and protocol theory to develop frameworks for understanding civilizational-scale dynamics. The group maintains worldmachines.org, a collaborative platform for psychohistorical modeling.</p>
+        <p id="sigpsy-about-link" style="display:none;margin-top:0.1rem;font-size:0.9rem;">
+          <a href="/sigs/sigpsy/about/" style="color:#2A6B6B;">More about SIGPSY &#8594;</a>
+        </p>
         <p class="sig-meta">Led by Venkatesh Rao and Aneesh Sathe &mdash; Biweekly Thursdays, 4pm UTC</p>
         <p style="margin-top:1rem"><a href="/sigs" class="back-link">&#8592; All Special Interest Groups</a></p>
       </div>
@@ -99,6 +101,8 @@
 </li>
 </ul>
 
+      
+
       <div class="sig-cta">
         <p>Interested in joining? <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">Join the Discord community &#8594;</a></p>
       </div>
@@ -111,5 +115,30 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  fetch('/api/pages/sigs/sigpsy/about')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data || !data.content_md) return;
+      var paras = data.content_md.split(/\n\n+/);
+      var snippet = '';
+      for (var i = 0; i < paras.length; i++) {
+        var p = paras[i].trim();
+        if (!p || /^#{1,6}\s/.test(p) || p.startsWith('---') || p.startsWith('*Content to be')) continue;
+        snippet = p.replace(/\*\*(.+?)\*\*/g, '$1')
+                   .replace(/\*(.+?)\*/g, '$1')
+                   .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+                   .replace(/`(.+?)`/g, '$1')
+                   .replace(/\n/g, ' ').trim();
+        break;
+      }
+      if (!snippet) return;
+      document.getElementById('sigpsy-about-snippet').textContent = snippet;
+      document.getElementById('sigpsy-about-link').style.display = '';
+    })
+    .catch(function () {});
+}());
+</script>
 </body>
 </html>

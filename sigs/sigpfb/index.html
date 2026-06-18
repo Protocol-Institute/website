@@ -47,8 +47,10 @@
       </div>
 
       <div class="about-body">
-        <p>Business applications of protocols, including AI adoption and organizational coordination, with case studies and essays published in Protocolized.</p>
-        
+        <p id="sigpfb-about-snippet">Business applications of protocols, including AI adoption and organizational coordination, with case studies and essays published in Protocolized.</p>
+        <p id="sigpfb-about-link" style="display:none;margin-top:0.1rem;font-size:0.9rem;">
+          <a href="/sigs/sigpfb/about/" style="color:#2A6B6B;">More about SIGPfB &#8594;</a>
+        </p>
         <p class="sig-meta">Led by Rafael Fernandez &mdash; Biweekly Mondays, 8am Pacific</p>
         <p style="margin-top:1rem"><a href="/sigs" class="back-link">&#8592; All Special Interest Groups</a></p>
       </div>
@@ -722,6 +724,8 @@
 </li>
 </ul>
 
+      
+
       <div class="sig-cta">
         <p>Interested in joining? <a href="https://discord.gg/Aj5FbGsNYV" target="_blank" rel="noopener noreferrer">Join the Discord community &#8594;</a></p>
       </div>
@@ -734,5 +738,30 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  fetch('/api/pages/sigs/sigpfb/about')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data || !data.content_md) return;
+      var paras = data.content_md.split(/\n\n+/);
+      var snippet = '';
+      for (var i = 0; i < paras.length; i++) {
+        var p = paras[i].trim();
+        if (!p || /^#{1,6}\s/.test(p) || p.startsWith('---') || p.startsWith('*Content to be')) continue;
+        snippet = p.replace(/\*\*(.+?)\*\*/g, '$1')
+                   .replace(/\*(.+?)\*/g, '$1')
+                   .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+                   .replace(/`(.+?)`/g, '$1')
+                   .replace(/\n/g, ' ').trim();
+        break;
+      }
+      if (!snippet) return;
+      document.getElementById('sigpfb-about-snippet').textContent = snippet;
+      document.getElementById('sigpfb-about-link').style.display = '';
+    })
+    .catch(function () {});
+}());
+</script>
 </body>
 </html>
