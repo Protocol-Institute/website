@@ -100,39 +100,62 @@
       .catch(function () { return plainFallback(md).then(reveal); });
   }
 
+  function mountTextarea(mount, md) {
+    var ta = document.createElement('textarea');
+    ta.value = md || '';
+    ta.style.cssText = 'width:100%;height:420px;font-family:monospace;font-size:0.88rem;' +
+      'padding:0.75rem;border:1px solid #D8D5CF;border-radius:4px;box-sizing:border-box;resize:vertical;';
+    mount.appendChild(ta);
+    editor = { getMarkdown: function () { return ta.value; }, _isTextarea: true };
+  }
+
   function showEditor(md) {
+    var TOAST_VER = '3.2.2';
+    var TOAST_BASE = 'https://uicdn.toast.com/editor/' + TOAST_VER + '/';
     var ready = (window.toastui && window.toastui.Editor)
       ? Promise.resolve()
       : Promise.all([
-          loadStylesheet('https://uicdn.toast.com/editor/latest/toastui-editor.min.css'),
-          loadScript('https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js'),
+          loadStylesheet(TOAST_BASE + 'toastui-editor.min.css'),
+          loadScript(TOAST_BASE + 'toastui-editor-all.min.js'),
         ]);
 
-    ready.then(function () {
+    function openEditor() {
       el('page-content').style.display = 'none';
       el('page-editor').style.display = '';
       var mount = el('editor-mount');
       mount.innerHTML = '';
 
-      editor = new toastui.Editor({
-        el: mount,
-        height: '600px',
-        initialEditType: 'wysiwyg',
-        previewStyle: 'vertical',
-        initialValue: md,
-        hooks: {
-          addImageBlobHook: function (blob, callback) {
-            var fd = new FormData();
-            fd.append('image', blob, blob.name || 'upload.jpg');
-            fd.append('page_key', PAGE_KEY);
-            fetch('/api/pages/upload-image', { method: 'POST', body: fd })
-              .then(function (r) { return r.json(); })
-              .then(function (d) { callback(d.url || '', ''); })
-              .catch(function () { callback('', 'Upload failed'); });
+      if (!window.toastui || !window.toastui.Editor) {
+        mountTextarea(mount, md);
+        return;
+      }
+      try {
+        editor = new toastui.Editor({
+          el: mount,
+          height: '600px',
+          initialEditType: 'wysiwyg',
+          previewStyle: 'vertical',
+          initialValue: md,
+          hooks: {
+            addImageBlobHook: function (blob, callback) {
+              var fd = new FormData();
+              fd.append('image', blob, blob.name || 'upload.jpg');
+              fd.append('page_key', PAGE_KEY);
+              fetch('/api/pages/upload-image', { method: 'POST', body: fd })
+                .then(function (r) { return r.json(); })
+                .then(function (d) { callback(d.url || '', ''); })
+                .catch(function () { callback('', 'Upload failed'); });
+            },
           },
-        },
-      });
-    });
+        });
+      } catch (e) {
+        console.error('Toast UI Editor failed:', e);
+        mount.innerHTML = '';
+        mountTextarea(mount, md);
+      }
+    }
+
+    ready.then(openEditor).catch(function () { openEditor(); });
   }
 
   function save() {
