@@ -1181,7 +1181,11 @@
       "title": "Voting launch and UX polish",
       "date": "2026-06-17",
       "time_pt": "",
-      "tracks": ["member-directory", "operations", "static-site"],
+      "tracks": [
+        "member-directory",
+        "operations",
+        "static-site"
+      ],
       "costs_usd": {},
       "vector_counts": {},
       "deployed": true,
@@ -1195,23 +1199,23 @@
           "html": "Added a prominent <strong>Symposium Voting Open</strong> button (teal, links to <code>/events/protocol-symposium-2026/program/</code>) with a <em>(members only)</em> sub-label and a live countdown ticker (<em>Voting closes in X days, Y hours</em>) above the banner carousel on <code>index.html</code>. The banner link itself was also updated to go directly to <code>/program/</code> rather than the intermediate symposium page."
         },
         {
-          "title": "Closing-date message styling — bold red across all pages",
+          "title": "Closing-date message styling \u2014 bold red across all pages",
           "html": "All voting deadline/countdown displays now share a consistent style: <code>color:#B91C1C; font-weight:700</code>, larger font-size than before. Applied to: homepage countdown ticker (<code>.symposium-vote-countdown</code>), symposium page countdown time and sub-text (<code>.vote-countdown-time</code>, <code>.vote-countdown-sub</code>), program page mini clock (<code>.vote-clock-mini</code>), and the deadline-line span in the sticky bar (<code>#deadline-line</code>)."
         },
         {
-          "title": "Voting page UX polish — sticky bar, tabs, hints",
-          "html": "The All/Talks/Workshops tab row was moved inside the sticky budget bar so it stays visible while scrolling. A voting strategy hint was added below the sort radio buttons. For team and community-lead members a tier-multiplier note is shown (<em>Your votes count 3×/2× a regular member's in the final tally</em>); weight displays show plain √n to all members — the tier multiplier is applied server-side in aggregate scoring only. Discovered and fixed a bug where <code>updateBudget()</code> was computing effective weight as Σ√n (missing tier multiplier) — then reverted per-display to plain √n per product decision."
+          "title": "Voting page UX polish \u2014 sticky bar, tabs, hints",
+          "html": "The All/Talks/Workshops tab row was moved inside the sticky budget bar so it stays visible while scrolling. A voting strategy hint was added below the sort radio buttons. For team and community-lead members a tier-multiplier note is shown (<em>Your votes count 3\u00d7/2\u00d7 a regular member's in the final tally</em>); weight displays show plain \u221an to all members \u2014 the tier multiplier is applied server-side in aggregate scoring only. Discovered and fixed a bug where <code>updateBudget()</code> was computing effective weight as \u03a3\u221an (missing tier multiplier) \u2014 then reverted per-display to plain \u221an per product decision."
         },
         {
           "title": "Proposal card badges and label clean-up",
-          "html": "Workshop proposals now display a filled teal <strong>Workshop</strong> badge (class <code>.type-badge--workshop</code>) below the title, visible in both the All and Workshops tabs. The SIG track/alignment label (the <code>proposal-track</code> field) was suppressed from all cards to reduce confusion with special sessions — only the <em>Interactive</em> tag is preserved for interactive proposals. Special-session proposals show an outlined teal <strong>Special Session</strong> chip alongside the session link, with 'special session' removed from the anchor text (now reads e.g. <em>Psychohistory →</em>)."
+          "html": "Workshop proposals now display a filled teal <strong>Workshop</strong> badge (class <code>.type-badge--workshop</code>) below the title, visible in both the All and Workshops tabs. The SIG track/alignment label (the <code>proposal-track</code> field) was suppressed from all cards to reduce confusion with special sessions \u2014 only the <em>Interactive</em> tag is preserved for interactive proposals. Special-session proposals show an outlined teal <strong>Special Session</strong> chip alongside the session link, with 'special session' removed from the anchor text (now reads e.g. <em>Psychohistory \u2192</em>)."
         },
         {
-          "title": "SIG detail pages — Associated Projects sections",
-          "html": "Added a new <code>.sig-projects</code> block between the blurb and Meeting Archive on four SIG index pages: SIGPfB → <a href='/protocolized-dev'>protocolized.dev</a>; DRG → <a href='https://yakrobot.com/'>YakRobot Protocols</a> (external); SIGPSY → <a href='/worldmachines'>World Machines</a>; ProtFiSIG → <a href='/jamverse'>Jamverse</a>. New CSS in <code>style.css</code>. These links were planned but never added to the HTML in prior sessions."
+          "title": "SIG detail pages \u2014 Associated Projects sections",
+          "html": "Added a new <code>.sig-projects</code> block between the blurb and Meeting Archive on four SIG index pages: SIGPfB \u2192 <a href='/protocolized-dev'>protocolized.dev</a>; DRG \u2192 <a href='https://yakrobot.com/'>YakRobot Protocols</a> (external); SIGPSY \u2192 <a href='/worldmachines'>World Machines</a>; ProtFiSIG \u2192 <a href='/jamverse'>Jamverse</a>. New CSS in <code>style.css</code>. These links were planned but never added to the HTML in prior sessions."
         },
         {
-          "title": "Member updates — SIG Hosts and new Team member",
+          "title": "Member updates \u2014 SIG Hosts and new Team member",
           "html": "Kei Kreutler and Spencer Nitkey promoted to <code>community_lead</code> tier with <code>community_lead_title = 'SIG Host'</code> (the title drives the red badge on member cards). Josh Davis joined as <code>protocolinstitute@j0xh.com</code>, set to <code>team</code> tier with <code>is_team=1</code>, <code>team_title='Protocol Coordinator Emeritus'</code>, and <code>photo_r2_key='logo-static.png'</code> (the same PI logo placeholder used for C3PO and Humboldt). Jamverse 'Coming soon' banner removed."
         }
       ]
@@ -1242,6 +1246,48 @@
         {
           "title": "/admin/symposium-analytics \u2014 live voting dashboard",
           "html": "New admin page at /admin/symposium-analytics (CF Access gated via the /admin/* policy). Four stat cards at top: Voters, Members, Participation %, Total Votes Cast. Registrant table ordered newest-first: Name, Email, Registered (full timestamp), Saves, Votes Placed, Proposals Touched, Distribution badge (Indifferent / Engaged / No vote). Page auto-refreshes every 30 seconds with a visible countdown. Entirely server-driven \u2014 no cron, no laptop required; every load queries live D1 via the analytics endpoint."
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "sort_key": 33.0,
+      "label": "Session 33",
+      "title": "SIG about pages and managed-page system",
+      "date": "2026-06-18",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "cloudflare-migration"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "SIG about pages \u2014 all 6 SIGs",
+          "html": "Each SIG now has a <code>/sigs/{sig}/about/</code> page: <code>sigs/{sig}/about/index.html</code> is a static shell that loads content from D1 via <code>managed-page.js</code>. The MRG page already existed (created in a prior session); this session added <code>sigfpt</code>, <code>sigpfb</code>, <code>protfisig</code>, <code>drg</code>, and <code>sigpsy</code>. All 5 new pages were seeded with placeholder markdown (title + existing description text) to D1 via <code>python3 scripts/import_page.py --all-sigs</code>. Each SIG index page fetches <code>/api/pages/sigs/{sig}/about</code> at load time and displays the first non-heading paragraph as a snippet with a 'More about X \u2192' link."
+        },
+        {
+          "title": "managed-page.js \u2014 shared viewer and editor module",
+          "html": "New shared JS module at <code>js/managed-page.js</code>. Requires a <code>PAGE_KEY</code> global before loading. On init, fetches content from <code>/api/pages/{PAGE_KEY}</code> and renders it via marked.js (CDN lazy-loaded; falls back to inline plain renderer if CDN fails). Admins and SIG hosts see an Edit Bar with an Edit button. Clicking Edit loads EasyMDE (CDN lazy-loaded) and mounts the rich editor. Save POSTs JSON to <code>/api/pages/{PAGE_KEY}</code>. Shell HTML must contain: <code>page-loading</code>, <code>page-content</code>, <code>page-body</code>, <code>edit-bar</code>, <code>edit-btn</code>, <code>page-editor</code>, <code>editor-mount</code>, <code>save-btn</code>, <code>cancel-btn</code>."
+        },
+        {
+          "title": "functions/api/pages/[[path]].js \u2014 managed pages API",
+          "html": "New CF Pages Function. GET is public: returns <code>managed_pages</code> row if <code>is_published = 1</code>, otherwise 404. POST (auth-gated): upserts content; authorization checks <code>is_admin</code> or (<code>is_sig_host</code> + <code>sig_host_slugs</code> contains the first path segment). Important: CF WAF blocks HTTP PUT on Cloudflare Pages sites, returning an HTML error page \u2014 the endpoint must export <code>onRequestPost</code>. Both <code>onRequestPost</code> and <code>onRequestPut</code> are exported (PUT kept for robustness but the client always uses POST). The handler wraps all logic in try/catch to return a JSON error body rather than letting CF generate an opaque HTML 500."
+        },
+        {
+          "title": "D1 migration 026 \u2014 is_sig_host and sig_host_slugs",
+          "html": "Added <code>is_sig_host INTEGER NOT NULL DEFAULT 0</code> and <code>sig_host_slugs TEXT</code> to the <code>members</code> table. <code>sig_host_slugs</code> stores a JSON array of SIG slug strings (e.g. <code>[\"mrg\",\"sigfpt\"]</code>). These fields are queried by both <code>checkEditPermission()</code> on the client side (via <code>/api/members/me</code>) and <code>canEdit()</code> in the pages API. Missing this migration caused the first save attempt to return a D1_ERROR 500. Kei Kreutler and Spencer Nitkey were each set to <code>is_sig_host=1</code> with appropriate <code>sig_host_slugs</code>."
+        },
+        {
+          "title": "CSP extension for cdn.jsdelivr.net",
+          "html": "The <code>_headers</code> Content-Security-Policy was extended in multiple passes to allow all jsDelivr resources used by <code>managed-page.js</code>: <code>script-src</code> (EasyMDE + marked.js), <code>style-src</code> (EasyMDE CSS), <code>font-src</code> (Font Awesome glyphs bundled as <code>data:</code> URIs in EasyMDE's CSS), <code>connect-src</code> (source map requests). Also added <code>blob:</code> to <code>img-src</code> for drag-and-drop image upload support in EasyMDE."
+        },
+        {
+          "title": "EasyMDE integration \u2014 partially working",
+          "html": "Switched the rich editor from Toast UI (which silently failed to render) to EasyMDE v2 (jsDelivr CDN). EasyMDE loads successfully: the CodeMirror editing area renders formatted markdown, the status bar shows line/word counts, and toolbar buttons are functionally correct (formatting applies on click). However, the <strong>Font Awesome icon glyphs in the toolbar are invisible</strong> \u2014 the button outlines and hover states are visible but the icons are not. The <code>injectEditorStyles()</code> function currently has the wrong selector (<code>.editor-toolbar a</code> instead of <code>.editor-toolbar button</code>); even the correct selector with <code>color: #1A1A1A !important</code> did not make the icons visible. Investigation continues next session. Textarea fallback is available if EasyMDE fails to construct."
         }
       ]
     }

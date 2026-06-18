@@ -2,6 +2,7 @@
 
 ## Active
 - **pitchdeck/** v0.1.0 live. 11-slide "New Nature" deck on support.html. Review PDF export and then test version bump workflow. Images are SVG placeholders — replace with real assets later.
+- **EasyMDE toolbar icons invisible** — editor loads and CodeMirror area works; toolbar buttons are functional (respond to hover, tooltips, formatting behavior) but Font Awesome icon glyphs are not visible. Root: `injectEditorStyles()` currently uses `.editor-toolbar a` selector (wrong — elements are `<button>`); even with correct `button` selector, `color: #1A1A1A !important` on button did not make `::before` glyphs visible. Next step: fix selector back to `button`, also target `i` and `i::before` directly; if still blocked, investigate whether FA font is loading (CDN + `font-src data:` in CSP are both present). User preference: fix EasyMDE rather than build custom toolbar.
 
 ## Upcoming
 <!-- planned changes or features -->
@@ -53,6 +54,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-18** — Session 33: SIG about pages (all 6 SIGs) — `managed-page.js` shared module (viewer + EasyMDE editor); D1 migration 026 (`is_sig_host`, `sig_host_slugs`); pages API (POST, not PUT — CF WAF blocks PUT); CSP extended for cdn.jsdelivr.net; EasyMDE loads and editing works but toolbar icons invisible (ongoing, see Active).
 - **2026-06-17** — About page rewritten in compact form; detailed SoP Program History section dropped (not planned).
 - **2026-06-17** — Session 32: Voting launch — opened to all members; homepage CTA + countdown; voting page UX polish (sticky tabs, workshop badge, special session badge, hint, tier note, track label hidden); SIG project sections added; member updates (Kei, Spencer → SIG Host; Josh Davis → Team).
 - **2026-06-17** — Session 31: Symposium voting analytics admin dashboard. Migration 024 (symposium_vote_saves table). votes.js updated to UPSERT save_count on each Save. New GET /api/symposium/analytics endpoint (is_admin gated). New /admin/symposium-analytics page: 4 stat cards (voters/members/ratio/votes), registrant table (name, email, registered, saves, votes placed, proposals touched, distribution badge). Auto-refreshes every 30s. Runs on CF edge — no laptop required.

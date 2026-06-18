@@ -599,3 +599,23 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Kei Kreutler and Spencer Nitkey promoted to `community_lead` tier with `community_lead_title = 'SIG Host'` (the title drives the red badge on member cards). Josh Davis joined as `protocolinstitute@j0xh.com`, set to `team` tier with `is_team=1`, `team_title='Protocol Coordinator Emeritus'`, and `photo_r2_key='logo-static.png'` (the same PI logo placeholder used for C3PO and Humboldt). Jamverse 'Coming soon' banner removed.
 
 ---
+
+## Session 33: SIG about pages and managed-page system
+
+*2026-06-18*
+
+**Tracks:** static-site, member-directory, cloudflare-migration
+
+- Each SIG now has a `/sigs/{sig}/about/` page: `sigs/{sig}/about/index.html` is a static shell that loads content from D1 via `managed-page.js`. The MRG page already existed (created in a prior session); this session added `sigfpt`, `sigpfb`, `protfisig`, `drg`, and `sigpsy`. All 5 new pages were seeded with placeholder markdown (title + existing description text) to D1 via `python3 scripts/import_page.py --all-sigs`. Each SIG index page fetches `/api/pages/sigs/{sig}/about` at load time and displays the first non-heading paragraph as a snippet with a 'More about X →' link.
+
+- New shared JS module at `js/managed-page.js`. Requires a `PAGE_KEY` global before loading. On init, fetches content from `/api/pages/{PAGE_KEY}` and renders it via marked.js (CDN lazy-loaded; falls back to inline plain renderer if CDN fails). Admins and SIG hosts see an Edit Bar with an Edit button. Clicking Edit loads EasyMDE (CDN lazy-loaded) and mounts the rich editor. Save POSTs JSON to `/api/pages/{PAGE_KEY}`. Shell HTML must contain: `page-loading`, `page-content`, `page-body`, `edit-bar`, `edit-btn`, `page-editor`, `editor-mount`, `save-btn`, `cancel-btn`.
+
+- New CF Pages Function. GET is public: returns `managed_pages` row if `is_published = 1`, otherwise 404. POST (auth-gated): upserts content; authorization checks `is_admin` or (`is_sig_host` + `sig_host_slugs` contains the first path segment). Important: CF WAF blocks HTTP PUT on Cloudflare Pages sites, returning an HTML error page — the endpoint must export `onRequestPost`. Both `onRequestPost` and `onRequestPut` are exported (PUT kept for robustness but the client always uses POST). The handler wraps all logic in try/catch to return a JSON error body rather than letting CF generate an opaque HTML 500.
+
+- Added `is_sig_host INTEGER NOT NULL DEFAULT 0` and `sig_host_slugs TEXT` to the `members` table. `sig_host_slugs` stores a JSON array of SIG slug strings (e.g. `["mrg","sigfpt"]`). These fields are queried by both `checkEditPermission()` on the client side (via `/api/members/me`) and `canEdit()` in the pages API. Missing this migration caused the first save attempt to return a D1_ERROR 500. Kei Kreutler and Spencer Nitkey were each set to `is_sig_host=1` with appropriate `sig_host_slugs`.
+
+- The `_headers` Content-Security-Policy was extended in multiple passes to allow all jsDelivr resources used by `managed-page.js`: `script-src` (EasyMDE + marked.js), `style-src` (EasyMDE CSS), `font-src` (Font Awesome glyphs bundled as `data:` URIs in EasyMDE's CSS), `connect-src` (source map requests). Also added `blob:` to `img-src` for drag-and-drop image upload support in EasyMDE.
+
+- Switched the rich editor from Toast UI (which silently failed to render) to EasyMDE v2 (jsDelivr CDN). EasyMDE loads successfully: the CodeMirror editing area renders formatted markdown, the status bar shows line/word counts, and toolbar buttons are functionally correct (formatting applies on click). However, the **Font Awesome icon glyphs in the toolbar are invisible** — the button outlines and hover states are visible but the icons are not. The `injectEditorStyles()` function currently has the wrong selector (`.editor-toolbar a` instead of `.editor-toolbar button`); even the correct selector with `color: #1A1A1A !important` did not make the icons visible. Investigation continues next session. Textarea fallback is available if EasyMDE fails to construct.
+
+---

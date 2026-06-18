@@ -31,6 +31,7 @@ contact/            /contact
 programs/           /programs
 sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
   sigfpt/           /sigs/sigfpt — each SIG has a sub-index + one dir per session
+    about/          /sigs/{sig}/about — D1-backed editable about page (all 6 SIGs)
   mrg/
   sigpfb/
   protfisig/
@@ -55,6 +56,7 @@ functions/          Cloudflare Pages Functions (API endpoints)
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
   _shared/session.js  Shared pi_session cookie validator
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
+  api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
 events/protocol-symposium-2026/program/  /program — Draft Program (shortlisted proposals + quadratic voting); slug stays /program after voting ends, title becomes "Program"
   workshops/        Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
@@ -70,6 +72,7 @@ css/
 js/
   main.js             Nav injection, mobile toggle, CF Analytics beacon
   tags.js             Canonical tag labels/lists for client-side pages
+  managed-page.js     Shared module for D1-backed editable pages (viewer + EasyMDE editor); requires PAGE_KEY global
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
