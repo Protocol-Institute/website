@@ -36,34 +36,38 @@ export async function onRequestGet({ params, env }) {
 }
 
 async function handleSave({ request, params, env }) {
-  const email = await getSession(request, env);
-  if (!email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const email = await getSession(request, env);
+    if (!email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const pageKey = Array.isArray(params.path) ? params.path.join('/') : params.path;
-  if (!await canEdit(email, pageKey, env)) {
-    return Response.json({ error: 'Forbidden' }, { status: 403 });
+    const pageKey = Array.isArray(params.path) ? params.path.join('/') : params.path;
+    if (!await canEdit(email, pageKey, env)) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    let body;
+    try { body = await request.json(); }
+    catch (e) { return Response.json({ error: 'Invalid JSON: ' + e.message }, { status: 400 }); }
+
+    const { content_md, title } = body;
+    if (content_md === undefined) {
+      return Response.json({ error: 'content_md required' }, { status: 400 });
+    }
+
+    await env.DB.prepare(`
+      INSERT INTO managed_pages (page_key, title, content_md, updated_at, updated_by, is_published)
+      VALUES (?, ?, ?, ?, ?, 1)
+      ON CONFLICT(page_key) DO UPDATE SET
+        title      = excluded.title,
+        content_md = excluded.content_md,
+        updated_at = excluded.updated_at,
+        updated_by = excluded.updated_by
+    `).bind(pageKey, title || '', content_md, new Date().toISOString(), email).run();
+
+    return Response.json({ ok: true });
+  } catch (e) {
+    return Response.json({ error: 'Server error: ' + (e.message || String(e)) }, { status: 500 });
   }
-
-  let body;
-  try { body = await request.json(); }
-  catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
-
-  const { content_md, title } = body;
-  if (content_md === undefined) {
-    return Response.json({ error: 'content_md required' }, { status: 400 });
-  }
-
-  await env.DB.prepare(`
-    INSERT INTO managed_pages (page_key, title, content_md, updated_at, updated_by, is_published)
-    VALUES (?, ?, ?, ?, ?, 1)
-    ON CONFLICT(page_key) DO UPDATE SET
-      title      = excluded.title,
-      content_md = excluded.content_md,
-      updated_at = excluded.updated_at,
-      updated_by = excluded.updated_by
-  `).bind(pageKey, title || '', content_md, new Date().toISOString(), email).run();
-
-  return Response.json({ ok: true });
 }
 
 export const onRequestPut = handleSave;
