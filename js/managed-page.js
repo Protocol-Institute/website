@@ -112,12 +112,12 @@
   }
 
   function showEditor(md) {
-    var TOAST_PKG = 'https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/';
-    var ready = (window.toastui && window.toastui.Editor)
+    var EMDE_BASE = 'https://cdn.jsdelivr.net/npm/easymde@2/dist/';
+    var ready = window.EasyMDE
       ? Promise.resolve()
       : Promise.all([
-          loadStylesheet(TOAST_PKG + 'toastui-editor.min.css'),
-          loadScript(TOAST_PKG + 'toastui-editor-all.min.js'),
+          loadStylesheet(EMDE_BASE + 'easymde.min.css'),
+          loadScript(EMDE_BASE + 'easymde.min.js'),
         ]);
 
     function openEditor() {
@@ -126,31 +126,32 @@
       var mount = el('editor-mount');
       mount.innerHTML = '';
 
-      if (!window.toastui || !window.toastui.Editor) {
+      if (!window.EasyMDE) {
         mountTextarea(mount, md);
         return;
       }
       try {
-        editor = new toastui.Editor({
-          el: mount,
-          height: '600px',
-          initialEditType: 'wysiwyg',
-          previewStyle: 'vertical',
-          initialValue: md,
-          hooks: {
-            addImageBlobHook: function (blob, callback) {
-              var fd = new FormData();
-              fd.append('image', blob, blob.name || 'upload.jpg');
-              fd.append('page_key', PAGE_KEY);
-              fetch('/api/pages/upload-image', { method: 'POST', body: fd })
-                .then(function (r) { return r.json(); })
-                .then(function (d) { callback(d.url || '', ''); })
-                .catch(function () { callback('', 'Upload failed'); });
-            },
+        var ta = document.createElement('textarea');
+        mount.appendChild(ta);
+        var mde = new EasyMDE({
+          element: ta,
+          initialValue: md || '',
+          spellChecker: false,
+          autosave: { enabled: false },
+          uploadImage: true,
+          imageUploadFunction: function (file, onSuccess, onError) {
+            var fd = new FormData();
+            fd.append('image', file, file.name || 'upload.jpg');
+            fd.append('page_key', PAGE_KEY);
+            fetch('/api/pages/upload-image', { method: 'POST', body: fd })
+              .then(function (r) { return r.json(); })
+              .then(function (d) { onSuccess(d.url || ''); })
+              .catch(function () { onError('Upload failed'); });
           },
         });
+        editor = { getMarkdown: function () { return mde.value(); } };
       } catch (e) {
-        console.error('Toast UI Editor failed:', e);
+        console.error('EasyMDE failed:', e);
         mount.innerHTML = '';
         mountTextarea(mount, md);
       }
