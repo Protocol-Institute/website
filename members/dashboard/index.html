@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Dashboard — The Protocol Institute</title>
+  <meta name="description" content="Member dashboard for Protocol Institute members.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .dashboard-section {
+      margin-bottom: 2.5rem;
+    }
+    .dashboard-section h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8A8A8A;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #E0DDD8;
+    }
+    .dashboard-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .dashboard-link-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid #E0DDD8;
+      border-radius: 4px;
+      background: #fff;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s;
+    }
+    .dashboard-link-item:hover {
+      border-color: #2A6B6B;
+      text-decoration: none;
+    }
+    .dashboard-link-title {
+      font-weight: 500;
+      color: #1A1A1A;
+      margin-bottom: 0.2rem;
+    }
+    .dashboard-link-desc {
+      font-size: 0.85rem;
+      color: #6A6A6A;
+    }
+  </style>
+</head>
+<body>
+<div class="interior-wrapper">
+  <header id="site-header"></header>
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="loading" style="color:#8A8A8A;padding:2rem 0;">Loading…</div>
+
+      <div id="dashboard" style="display:none;">
+        <div class="page-header">
+          <h1>Member Dashboard</h1>
+          <p id="welcome-line" style="color:#5A5A5A;margin-top:0.25rem;"></p>
+        </div>
+
+        <div class="dashboard-section">
+          <h2>Your contributions</h2>
+          <div class="dashboard-links">
+            <a class="dashboard-link-item" href="/projects/submit/">
+              <div>
+                <div class="dashboard-link-title">Submit a Project</div>
+                <div class="dashboard-link-desc">Add a project to the PI project directory — research, tools, publications, or other outputs connected to protocol work.</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div id="section-sig-host" style="display:none;" class="dashboard-section">
+          <h2>SIG host tools</h2>
+          <div class="dashboard-links" id="sig-host-links"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+  <footer class="site-footer"></footer>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  fetch('/api/members/me')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      document.getElementById('loading').style.display = 'none';
+
+      if (!data || (!data.member && !data.pending)) {
+        window.location.href = '/members/join/?return=/members/dashboard/';
+        return;
+      }
+      if (data.pending) {
+        window.location.href = '/members/join/?return=/members/dashboard/';
+        return;
+      }
+
+      var m = data.member;
+      document.getElementById('dashboard').style.display = '';
+      var firstName = (m.name || '').split(' ')[0];
+      document.getElementById('welcome-line').textContent =
+        'Welcome' + (firstName ? ', ' + firstName : '') + '.';
+
+      if (m.is_sig_host && m.sig_host_slugs) {
+        var slugs;
+        try { slugs = JSON.parse(m.sig_host_slugs); } catch { slugs = []; }
+        if (slugs.length) {
+          document.getElementById('section-sig-host').style.display = '';
+          var container = document.getElementById('sig-host-links');
+          var SIG_NAMES = {
+            sigfpt: 'SIGFPT', mrg: 'MRG', sigpfb: 'SIGPfB',
+            protfisig: 'ProtFiSIG', drg: 'DRG', sigpsy: 'SIGPSY'
+          };
+          slugs.forEach(function (slug) {
+            var name = SIG_NAMES[slug] || slug.toUpperCase();
+            var el = document.createElement('div');
+            el.className = 'dashboard-link-item';
+            el.style.flexDirection = 'column';
+            el.style.gap = '0.5rem';
+            el.innerHTML =
+              '<div class="dashboard-link-title">' + name + '</div>' +
+              '<div class="dashboard-links" style="flex-direction:row;flex-wrap:wrap;gap:0.5rem;">' +
+                '<a href="/sigs/' + slug + '/" style="font-size:0.85rem;color:#2A6B6B;">View SIG page</a>' +
+              '</div>';
+            container.appendChild(el);
+          });
+        }
+      }
+    })
+    .catch(function () {
+      window.location.href = '/members/join/?return=/members/dashboard/';
+    });
+}());
+</script>
+</body>
+</html>

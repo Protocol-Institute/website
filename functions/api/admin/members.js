@@ -3,10 +3,11 @@
 // GET ?view=all     — list all members (for admin editor)
 // POST              — approve, reject, or resend_welcome
 // PATCH             — update fields on an existing member record
-// All protected by Authorization: Bearer <ADMIN_KEY>
+// Protected by session cookie + is_admin flag
 
 import { EVENT_TAGS as TAG_COLUMNS } from '../../_shared/tags.js';
 import { sendWelcomeEmail } from '../../_shared/welcome.js';
+import { getSession } from '../../_shared/session.js';
 
 const EDITABLE_FIELDS = new Set([
   'email', 'name', 'bio', 'website', 'photo_r2_key', 'city', 'discord_handle',
@@ -15,9 +16,11 @@ const EDITABLE_FIELDS = new Set([
   ...TAG_COLUMNS,
 ]);
 
-function checkAuth(request, env) {
-  const auth = request.headers.get('Authorization') || '';
-  return auth === `Bearer ${env.ADMIN_KEY}`;
+async function checkAdmin(request, env) {
+  const email = await getSession(request, env);
+  if (!email) return false;
+  const member = await env.DB.prepare('SELECT is_admin FROM members WHERE email = ?').bind(email).first();
+  return member?.is_admin === 1;
 }
 
 async function sendRejectionEmail(env, email, firstName) {
@@ -39,7 +42,7 @@ async function sendRejectionEmail(env, email, firstName) {
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!checkAuth(request, env)) {
+  if (!await checkAdmin(request, env)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -64,7 +67,7 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPatch({ request, env }) {
-  if (!checkAuth(request, env)) {
+  if (!await checkAdmin(request, env)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -92,7 +95,7 @@ export async function onRequestPatch({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!checkAuth(request, env)) {
+  if (!await checkAdmin(request, env)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

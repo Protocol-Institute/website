@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — The Protocol Institute</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .admin-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin-bottom:2rem; flex-wrap:wrap; }
+    .admin-tab {
+      font-size:0.82rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+      padding:0.6rem 1.25rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
+      border-bottom:2px solid transparent; margin-bottom:-2px;
+    }
+    .admin-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
+    .admin-panel { display:none; } .admin-panel.active { display:block; }
+
+    /* Member rows */
+    .member-row { display:flex; align-items:center; gap:1rem; padding:0.6rem 0;
+      border-bottom:1px solid #F0EDE8; cursor:pointer; }
+    .member-row:hover { background:#FAFAF7; }
+    .member-row-name { font-weight:500; flex:1; }
+    .member-row-email { font-size:0.82rem; color:#8A8A8A; flex:1; }
+    .member-row-tier { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:#5A5A5A; }
+
+    /* Member edit form */
+    .member-edit-form { border:1px solid #D8D5CF; border-radius:4px; padding:1.5rem;
+      margin-top:0.5rem; background:#FAFAF7; }
+    .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem 1.5rem; }
+    .edit-grid .full { grid-column:1/-1; }
+    .edit-section-label { font-size:0.72rem; font-weight:600; letter-spacing:0.1em;
+      text-transform:uppercase; color:#8A8A8A; margin:1rem 0 0.5rem; grid-column:1/-1; }
+    .edit-checkbox-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.35rem; grid-column:1/-1; }
+    .edit-checkbox { font-size:0.82rem; display:flex; align-items:center; gap:0.4rem; }
+    .edit-actions { display:flex; gap:0.75rem; margin-top:1rem; grid-column:1/-1; align-items:center; }
+    .tier-select { font-family:inherit; font-size:0.9rem; padding:0.4rem 0.6rem;
+      border:1px solid #C8C5C0; background:#fff; }
+
+    /* Voting analytics */
+    .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+    @media (max-width:600px) { .stat-grid { grid-template-columns:repeat(2,1fr); } }
+    .stat-card { border:1px solid #E0DDD8; border-radius:4px; padding:1rem 1.25rem; background:#fff; }
+    .stat-label { font-size:0.7rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
+      color:#8A8A8A; margin-bottom:0.35rem; }
+    .stat-value { font-size:1.9rem; font-weight:500; color:#1A1A1A; line-height:1;
+      font-family:'Cormorant Garamond',serif; }
+    .stat-sub { font-size:0.75rem; color:#8A8A8A; margin-top:0.25rem; }
+    .analytics-table { width:100%; border-collapse:collapse; font-size:0.875rem; }
+    .analytics-table th { text-align:left; font-size:0.7rem; font-weight:600; letter-spacing:0.08em;
+      text-transform:uppercase; color:#8A8A8A; padding:0.5rem 0.75rem; border-bottom:2px solid #E0DDD8;
+      white-space:nowrap; }
+    .analytics-table td { padding:0.55rem 0.75rem; border-bottom:1px solid #F0EDE8; vertical-align:middle; }
+    .analytics-table tr:last-child td { border-bottom:none; }
+    .analytics-table tr:hover td { background:#FAFAF7; }
+    .voted-yes { color:#2A6B6B; font-weight:500; }
+    .voted-no  { color:#C0BDB8; }
+    .badge { display:inline-block; font-size:0.65rem; font-weight:600; letter-spacing:0.06em;
+      text-transform:uppercase; padding:0.15rem 0.45rem; border-radius:2px; }
+    .badge-indifferent { background:#FFF3CD; color:#7A6020; }
+    .badge-engaged     { background:#E6F0EF; color:#1F5050; }
+    .badge-novote      { background:#F5F3F0; color:#A0A0A0; }
+    .refresh-bar { display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:1.25rem; font-size:0.8rem; color:#8A8A8A; }
+    .refresh-btn { font-size:0.78rem; padding:0.3rem 0.8rem; border:1px solid #C8C5C0;
+      background:#fff; border-radius:3px; cursor:pointer; color:#1A1A1A; }
+    .refresh-btn:hover { background:#F5F3F0; }
+    .countdown { font-variant-numeric:tabular-nums; }
+
+    .auth-gate { color:#C44; padding:2rem 0; }
+    .section-loading { color:#8A8A8A; font-style:italic; padding:1rem 0; }
+  </style>
+</head>
+<body>
+<div class="interior-wrapper">
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header"><h1>Admin Dashboard</h1></div>
+
+      <div id="auth-gate" class="auth-gate" style="display:none;">
+        You must be logged in as an admin member to view this page.
+        <a href="/members/join/?return=/admin/">Log in</a>
+      </div>
+
+      <div id="dashboard" style="display:none;">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="pending-members">Pending Members</button>
+          <button class="admin-tab" data-tab="member-directory">Member Directory</button>
+          <button class="admin-tab" data-tab="pending-projects">Pending Projects</button>
+          <button class="admin-tab" data-tab="voting-analytics">Voting Analytics</button>
+        </div>
+
+        <!-- Tab: Pending Members -->
+        <div class="admin-panel active" id="panel-pending-members">
+          <div id="requests-list"><p class="section-loading">Loading…</p></div>
+        </div>
+
+        <!-- Tab: Member Directory -->
+        <div class="admin-panel" id="panel-member-directory">
+          <div id="members-list"><p class="section-loading">Loading…</p></div>
+        </div>
+
+        <!-- Tab: Pending Projects -->
+        <div class="admin-panel" id="panel-pending-projects">
+          <div id="projects-list"><p class="section-loading">Loading…</p></div>
+        </div>
+
+        <!-- Tab: Voting Analytics -->
+        <div class="admin-panel" id="panel-voting-analytics">
+          <div id="analytics-inner">
+            <div class="stat-grid">
+              <div class="stat-card"><div class="stat-label">Voters</div><div class="stat-value" id="s-voters">—</div></div>
+              <div class="stat-card"><div class="stat-label">Members</div><div class="stat-value" id="s-members">—</div></div>
+              <div class="stat-card"><div class="stat-label">Participation</div><div class="stat-value" id="s-ratio">—</div><div class="stat-sub">voters / members</div></div>
+              <div class="stat-card"><div class="stat-label">Votes Cast</div><div class="stat-value" id="s-votes">—</div></div>
+            </div>
+            <div class="refresh-bar">
+              <span>Updated: <span id="analytics-updated">—</span> &nbsp;·&nbsp; Next refresh in <span class="countdown" id="analytics-countdown">—</span>s</span>
+              <button class="refresh-btn" id="analytics-refresh-btn">Refresh now</button>
+            </div>
+            <table class="analytics-table">
+              <thead>
+                <tr>
+                  <th>Name</th><th>Email</th><th>Registered</th>
+                  <th>Saves</th><th>Votes Placed</th><th>Proposals Touched</th><th>Distribution</th>
+                </tr>
+              </thead>
+              <tbody id="analytics-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="/js/tags.js"></script>
+<script>
+(function () {
+  const TAG_LABELS  = PI_TAGS.LABELS;
+  const EVENT_TAGS  = PI_TAGS.EVENT_TAGS;
+  const REFRESH_SEC = 30;
+
+  function esc(s) {
+    return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
+  }
+  function fmt(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', timeZoneName:'short' });
+  }
+  function fmtTime(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', timeZoneName:'short' });
+  }
+
+  // ── Init: verify admin session ─────────────────────────────────
+  async function init() {
+    const res = await fetch('/api/members/me');
+    if (!res.ok) { showAuthGate(); return; }
+    const data = await res.json();
+    if (!data.member || !data.member.is_admin) { showAuthGate(); return; }
+
+    document.getElementById('dashboard').style.display = '';
+    loadPendingMembers();
+    loadMemberDirectory();
+    loadPendingProjects();
+  }
+
+  function showAuthGate() {
+    document.getElementById('auth-gate').style.display = '';
+  }
+
+  // ── Tabs ───────────────────────────────────────────────────────
+  let analyticsTimer = null;
+  let analyticsLoaded = false;
+
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+
+      if (this.dataset.tab === 'voting-analytics') {
+        if (!analyticsLoaded) { analyticsLoaded = true; fetchAnalytics(); }
+        else startAnalyticsTimer();
+      } else {
+        stopAnalyticsTimer();
+      }
+    });
+  });
+
+  // ── Tab 1: Pending Members ─────────────────────────────────────
+  async function loadPendingMembers() {
+    const res = await fetch('/api/admin/members');
+    if (!res.ok) { document.getElementById('requests-list').innerHTML = '<p style="color:#C44">Error loading.</p>'; return; }
+    const data = await res.json();
+    renderPendingMembers(data.requests || []);
+  }
+
+  function renderPendingMembers(requests) {
+    const list = document.getElementById('requests-list');
+    if (!requests.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:1rem 0;">No pending requests.</p>';
+      return;
+    }
+    list.innerHTML = requests.map(r => {
+      const events = JSON.parse(r.qualifying_events || '[]');
+      const eventLabels = events.map(k => TAG_LABELS[k] || k).join(', ');
+      return `<div class="request-item" id="req-${esc(r.email)}">
+        <div class="request-name">${esc(r.name)}</div>
+        <div class="request-email">${esc(r.email)}</div>
+        ${r.bio ? `<div class="request-field"><strong>Bio:</strong> ${esc(r.bio)}</div>` : ''}
+        ${r.website ? `<div class="request-field"><strong>Website:</strong> <a href="${esc(r.website)}" target="_blank">${esc(r.website)}</a></div>` : ''}
+        <div class="request-field"><strong>Events:</strong> ${esc(eventLabels)}</div>
+        ${r.city ? `<div class="request-field"><strong>City:</strong> ${esc(r.city)}</div>` : ''}
+        ${r.discord_handle ? `<div class="request-field"><strong>Discord:</strong> ${esc(r.discord_handle)}</div>` : ''}
+        ${r.request_consultant ? `<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>
+          <div class="request-field" style="padding-left:1rem;">
+            <label style="font-size:0.85rem;cursor:pointer;">
+              <input type="checkbox" class="consultant-approve-checkbox" data-email="${esc(r.email)}" checked>
+              Approve consultant status
+            </label>
+            <span style="font-size:0.78rem;color:#8A8A8A;margin-left:0.5rem;">(uncheck to approve membership only)</span>
+          </div>` : ''}
+        ${r.consulting_expertise ? `<div class="request-field" style="padding-left:1rem;"><strong>Expertise:</strong> ${esc(r.consulting_expertise)}</div>` : ''}
+        ${r.consulting_contact ? `<div class="request-field" style="padding-left:1rem;"><strong>Contact:</strong> ${esc(r.consulting_contact)}</div>` : ''}
+        ${r.photo_url ? `<div class="request-field"><strong>Photo URL:</strong> <a href="${esc(r.photo_url)}" target="_blank">${esc(r.photo_url)}</a></div>` : ''}
+        ${r.applicant_notes ? `<div class="request-field"><strong>Notes:</strong> ${esc(r.applicant_notes)}</div>` : ''}
+        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${esc(r.created_at)}</div>
+        <div style="margin-top:0.75rem;">
+          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Slug override (optional)</label>
+          <input type="text" class="form-input slug-input" style="max-width:240px;margin-bottom:0.75rem;" placeholder="e.g. firstname-lastname" data-email="${esc(r.email)}">
+        </div>
+        <div>
+          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Admin notes (optional)</label>
+          <textarea class="form-textarea notes-input" style="min-height:60px;" data-email="${esc(r.email)}"></textarea>
+        </div>
+        <div class="request-actions">
+          <button class="form-btn approve-btn" data-email="${esc(r.email)}">Approve</button>
+          <button class="form-btn form-btn--secondary reject-btn" data-email="${esc(r.email)}">Reject</button>
+        </div>
+        <div class="form-msg" id="msg-${CSS.escape(r.email)}" style="display:none;"></div>
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('.approve-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleMemberAction(btn.dataset.email, 'approve')));
+    list.querySelectorAll('.reject-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleMemberAction(btn.dataset.email, 'reject')));
+  }
+
+  async function handleMemberAction(email, action) {
+    const slugInput = document.querySelector(`.slug-input[data-email="${CSS.escape(email)}"]`);
+    const notesInput = document.querySelector(`.notes-input[data-email="${CSS.escape(email)}"]`);
+    const msg = document.getElementById('msg-' + CSS.escape(email));
+    const body = { email, action };
+    if (slugInput?.value.trim()) body.slug = slugInput.value.trim();
+    if (notesInput?.value.trim()) body.admin_notes = notesInput.value.trim();
+    const cb = document.querySelector(`.consultant-approve-checkbox[data-email="${CSS.escape(email)}"]`);
+    if (cb) body.consultant_approved = cb.checked;
+
+    const res = await fetch('/api/admin/members', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    msg.style.display = '';
+    if (res.ok) {
+      msg.className = 'form-msg form-msg--success';
+      msg.textContent = action === 'approve' ? 'Approved.' : 'Rejected.';
+      document.getElementById('req-' + CSS.escape(email)).style.opacity = '0.4';
+    } else {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Error.';
+    }
+  }
+
+  // ── Tab 2: Member Directory ────────────────────────────────────
+  let allMembers = [];
+  let expandedSlug = null;
+
+  async function loadMemberDirectory() {
+    const res = await fetch('/api/admin/members?view=all');
+    if (!res.ok) return;
+    const data = await res.json();
+    allMembers = data.members || [];
+    renderDirectory();
+  }
+
+  function renderDirectory() {
+    const list = document.getElementById('members-list');
+    if (!allMembers.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;">No members found.</p>';
+      return;
+    }
+    list.innerHTML = allMembers.map(m => {
+      const isExpanded = expandedSlug === m.slug;
+      return `<div class="member-row" data-slug="${esc(m.slug)}" onclick="toggleEdit('${esc(m.slug)}')">
+        <span class="member-row-name">${esc(m.name || '(no name)')}</span>
+        <span class="member-row-email">${esc(m.email)}</span>
+        <span class="member-row-tier">${esc(m.tier || 'member')}</span>
+        <span style="font-size:0.8rem;color:#2A6B6B;">${isExpanded ? '▲ close' : '▼ edit'}</span>
+      </div>
+      ${isExpanded ? renderEditForm(m) : ''}`;
+    }).join('');
+  }
+
+  function renderEditForm(m) {
+    const tagChecks = EVENT_TAGS.map(k =>
+      `<label class="edit-checkbox"><input type="checkbox" data-field="${k}" ${m[k] ? 'checked' : ''}> ${TAG_LABELS[k] || k}</label>`
+    ).join('');
+    return `<div class="member-edit-form" id="edit-${CSS.escape(m.slug)}">
+      <div class="edit-grid">
+        <div><label class="form-label">Name</label><input class="form-input" data-field="name" value="${esc(m.name || '')}"></div>
+        <div><label class="form-label">Email</label><input class="form-input" data-field="email" value="${esc(m.email || '')}"></div>
+        <div>
+          <label class="form-label">Tier</label>
+          <select class="tier-select" data-field="tier">
+            <option value="member" ${m.tier==='member'?'selected':''}>member</option>
+            <option value="community_lead" ${m.tier==='community_lead'?'selected':''}>community_lead</option>
+            <option value="team" ${m.tier==='team'?'selected':''}>team</option>
+          </select>
+        </div>
+        <div><label class="form-label">Team title</label><input class="form-input" data-field="team_title" value="${esc(m.team_title || '')}"></div>
+        <div><label class="form-label">Community lead title</label><input class="form-input" data-field="community_lead_title" value="${esc(m.community_lead_title || '')}"></div>
+        <div class="full"><label class="form-label">Bio</label><textarea class="form-textarea" data-field="bio" rows="3">${esc(m.bio || '')}</textarea></div>
+        <div><label class="form-label">Website</label><input class="form-input" data-field="website" value="${esc(m.website || '')}"></div>
+        <div><label class="form-label">City</label><input class="form-input" data-field="city" value="${esc(m.city || '')}"></div>
+        <div><label class="form-label">Discord handle</label><input class="form-input" data-field="discord_handle" value="${esc(m.discord_handle || '')}"></div>
+        <div><label class="form-label">Photo R2 key</label><input class="form-input" data-field="photo_r2_key" value="${esc(m.photo_r2_key || '')}"></div>
+        <div class="edit-section-label">Flags</div>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_consultant" ${m.is_consultant?'checked':''}> Consultant</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_public" ${m.is_public?'checked':''}> Public</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_admin" ${m.is_admin?'checked':''}> Admin</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="is_sig_host" ${m.is_sig_host?'checked':''}> SIG Host</label>
+        <label class="edit-checkbox"><input type="checkbox" data-field="welcome_sent" ${m.welcome_sent?'checked':''}> Welcome sent</label>
+        <div class="edit-section-label">Event tags</div>
+        <div class="edit-checkbox-grid">${tagChecks}</div>
+        <div class="edit-actions">
+          <button class="form-btn save-btn" data-slug="${esc(m.slug)}">Save changes</button>
+          <button class="form-btn form-btn--secondary" onclick="cancelEdit()">Cancel</button>
+          <span class="form-msg" id="edit-msg-${CSS.escape(m.slug)}" style="display:none;"></span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  window.toggleEdit = function(slug) {
+    expandedSlug = expandedSlug === slug ? null : slug;
+    renderDirectory();
+    if (expandedSlug) {
+      const btn = document.querySelector(`.save-btn[data-slug="${CSS.escape(slug)}"]`);
+      if (btn) btn.addEventListener('click', () => saveEdit(slug));
+    }
+  };
+  window.cancelEdit = function() { expandedSlug = null; renderDirectory(); };
+
+  async function saveEdit(slug) {
+    const form = document.getElementById('edit-' + CSS.escape(slug));
+    const updates = {};
+    form.querySelectorAll('[data-field]').forEach(el => {
+      updates[el.dataset.field] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : (el.value.trim() || null);
+    });
+    const res = await fetch('/api/admin/members', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug, updates }),
+    });
+    const data = await res.json();
+    const msg = document.getElementById('edit-msg-' + CSS.escape(slug));
+    msg.style.display = '';
+    if (res.ok) {
+      msg.className = 'form-msg form-msg--success';
+      msg.textContent = 'Saved.';
+      const member = allMembers.find(m => m.slug === slug);
+      if (member) Object.assign(member, updates);
+    } else {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Save failed.';
+    }
+  }
+
+  // ── Tab 3: Pending Projects ────────────────────────────────────
+  const PROGRAM_LABELS = {
+    'protocolized':'Protocolized','ai-infrastructure':'AI Infrastructure',
+    'challenges':'Challenges','sigs':'Special Interest Groups',
+    'protocol-symposium':'Protocol Symposium','long-now':'Protocols for the Long Now',
+    'solo-projects':'Solo Projects',
+  };
+  const STATE_LABELS    = { stub:'Stub', beta:'Beta', production:'Production' };
+  const TYPE_LABELS     = { 'one-off':'One-off', versioned:'Versioned', accretive:'Accretive' };
+  const ARTIFACT_LABELS = { text:'Text', code:'Code', website:'Website', rich_media:'Rich media', other:'Other' };
+
+  async function loadPendingProjects() {
+    const res = await fetch('/api/admin/projects');
+    if (!res.ok) { document.getElementById('projects-list').innerHTML = '<p style="color:#C44">Error loading.</p>'; return; }
+    const data = await res.json();
+    renderProjects(data.projects || []);
+  }
+
+  function renderProjects(projects) {
+    const list = document.getElementById('projects-list');
+    if (!projects.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:1rem 0;">No pending submissions.</p>';
+      return;
+    }
+    list.innerHTML = projects.map(p => {
+      const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
+        ? esc(p.artifact_type_other) : (ARTIFACT_LABELS[p.artifact_type] || esc(p.artifact_type));
+      return `<div class="request-item" id="proj-${esc(p.slug)}">
+        <div class="request-name">${esc(p.title)}</div>
+        <div class="request-email">slug: ${esc(p.slug)}</div>
+        <div class="request-field"><strong>Lead:</strong> <a href="/members/${esc(p.lead_slug)}" target="_blank">${esc(p.lead_name || p.lead_slug)}</a></div>
+        <div class="request-field"><strong>Description:</strong> ${esc(p.description)}</div>
+        <div class="request-field"><strong>URL:</strong> <a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.url)}</a></div>
+        <div class="request-field"><strong>State:</strong> ${esc(STATE_LABELS[p.state] || p.state)}</div>
+        <div class="request-field"><strong>Type:</strong> ${esc(TYPE_LABELS[p.type] || p.type)}</div>
+        <div class="request-field"><strong>Artifact:</strong> ${artifactLabel}</div>
+        ${p.program ? `<div class="request-field"><strong>Program:</strong> ${esc(PROGRAM_LABELS[p.program] || p.program)}</div>` : ''}
+        <div class="request-field"><strong>Submitted by:</strong> ${esc(p.submitted_by)}</div>
+        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${esc(p.created_at)}</div>
+        <div style="margin-top:0.75rem;">
+          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Admin notes (optional)</label>
+          <textarea class="form-textarea notes-input" style="min-height:60px;" data-slug="${esc(p.slug)}"></textarea>
+        </div>
+        <div class="request-actions">
+          <button class="form-btn approve-btn" data-slug="${esc(p.slug)}">Approve</button>
+          <button class="form-btn form-btn--secondary reject-btn" data-slug="${esc(p.slug)}">Reject</button>
+        </div>
+        <div class="form-msg" id="pmsg-${CSS.escape(p.slug)}" style="display:none;"></div>
+      </div>`;
+    }).join('');
+
+    list.querySelectorAll('.approve-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleProjectAction(btn.dataset.slug, 'approve')));
+    list.querySelectorAll('.reject-btn').forEach(btn =>
+      btn.addEventListener('click', () => handleProjectAction(btn.dataset.slug, 'reject')));
+  }
+
+  async function handleProjectAction(slug, action) {
+    const notesInput = document.querySelector(`.notes-input[data-slug="${CSS.escape(slug)}"]`);
+    const msg = document.getElementById('pmsg-' + CSS.escape(slug));
+    const body = { slug, action };
+    if (notesInput?.value.trim()) body.admin_notes = notesInput.value.trim();
+
+    const res = await fetch('/api/admin/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    msg.style.display = '';
+    if (res.ok) {
+      msg.className = 'form-msg form-msg--success';
+      msg.textContent = action === 'approve' ? 'Approved.' : 'Rejected.';
+      document.getElementById('proj-' + CSS.escape(slug)).style.opacity = '0.4';
+    } else {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Error.';
+    }
+  }
+
+  // ── Tab 4: Voting Analytics ────────────────────────────────────
+  let analyticsCountdown = REFRESH_SEC;
+
+  function stopAnalyticsTimer() {
+    clearInterval(analyticsTimer);
+    analyticsTimer = null;
+  }
+
+  function startAnalyticsTimer() {
+    stopAnalyticsTimer();
+    analyticsCountdown = REFRESH_SEC;
+    document.getElementById('analytics-countdown').textContent = analyticsCountdown;
+    analyticsTimer = setInterval(() => {
+      analyticsCountdown--;
+      const el = document.getElementById('analytics-countdown');
+      if (el) el.textContent = analyticsCountdown;
+      if (analyticsCountdown <= 0) fetchAnalytics();
+    }, 1000);
+  }
+
+  async function fetchAnalytics() {
+    stopAnalyticsTimer();
+    try {
+      const res = await fetch('/api/symposium/analytics');
+      if (!res.ok) throw new Error('API error ' + res.status);
+      const data = await res.json();
+
+      document.getElementById('s-voters').textContent  = data.stats.total_voters;
+      document.getElementById('s-members').textContent = data.stats.total_members;
+      document.getElementById('s-ratio').textContent   = Math.round(data.stats.ratio * 100) + '%';
+      document.getElementById('s-votes').textContent   = data.stats.total_votes_cast;
+      document.getElementById('analytics-updated').textContent = fmtTime(data.generated_at);
+
+      const tbody = document.getElementById('analytics-tbody');
+      tbody.innerHTML = '';
+      for (const r of data.registrants) {
+        const hasVoted = r.votes_placed > 0;
+        let distBadge = !hasVoted
+          ? '<span class="badge badge-novote">No vote</span>'
+          : r.is_indifferent
+            ? '<span class="badge badge-indifferent">Indifferent</span>'
+            : '<span class="badge badge-engaged">Engaged</span>';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:500">${r.name || '—'}</td>
+          <td style="color:#6A6A6A;font-size:0.8rem">${r.email}</td>
+          <td style="font-size:0.8rem;white-space:nowrap">${fmt(r.registered_at)}</td>
+          <td style="text-align:center">${r.save_count > 0 ? r.save_count : '<span class="voted-no">—</span>'}</td>
+          <td class="${hasVoted ? 'voted-yes' : 'voted-no'}" style="text-align:center">${hasVoted ? r.votes_placed : '—'}</td>
+          <td style="text-align:center;color:#6A6A6A">${hasVoted ? r.proposals_touched : '—'}</td>
+          <td>${distBadge}</td>`;
+        tbody.appendChild(tr);
+      }
+    } catch (e) {
+      console.error('Analytics fetch failed:', e);
+    }
+    startAnalyticsTimer();
+  }
+
+  document.getElementById('analytics-refresh-btn').addEventListener('click', fetchAnalytics);
+
+  init();
+}());
+</script>
+</body>
+</html>

@@ -42,14 +42,10 @@
     <div class="container">
 
       <div class="page-header"><h1>Admin — Members</h1></div>
-      <p class="admin-note">Admin interface — not linked publicly. Authenticate with your ADMIN_KEY.</p>
 
-      <div class="admin-key-form" id="auth-form">
-        <div class="form-group" style="flex:1;margin-bottom:0;">
-          <label class="form-label" for="admin-key-input">Admin key</label>
-          <input class="form-input" type="password" id="admin-key-input" placeholder="Enter ADMIN_KEY">
-        </div>
-        <button class="form-btn" id="auth-btn" style="align-self:flex-end;">Load</button>
+      <div id="auth-gate" style="display:none;">
+        <p class="error-msg" style="color:#C44;">You must be logged in as an admin member to view this page.
+          <a href="/members/join/">Log in</a></p>
       </div>
 
       <div id="admin-ui" style="display:none;">
@@ -76,7 +72,6 @@
 <script src="/js/tags.js"></script>
 <script>
 (function () {
-  let adminKey = '';
   const TAG_LABELS = PI_TAGS.LABELS;
   const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
@@ -84,17 +79,15 @@
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  // ── Auth ──────────────────────────────────────────────────────
-  document.getElementById('auth-btn').addEventListener('click', async function () {
-    adminKey = document.getElementById('admin-key-input').value.trim();
-    if (!adminKey) return;
-    await Promise.all([loadRequests(), loadDirectory()]);
-    document.getElementById('auth-form').style.display = 'none';
-    document.getElementById('admin-ui').style.display = '';
-  });
-  document.getElementById('admin-key-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('auth-btn').click();
-  });
+  async function init() {
+    const [reqRes] = await Promise.all([loadRequests(), loadDirectory()]);
+    if (reqRes === 'unauthorized') {
+      document.getElementById('auth-gate').style.display = '';
+    } else {
+      document.getElementById('admin-ui').style.display = '';
+    }
+  }
+  init();
 
   // ── Tabs ──────────────────────────────────────────────────────
   document.querySelectorAll('.admin-tab').forEach(tab => {
@@ -108,8 +101,9 @@
 
   // ── Tab 1: Pending requests ───────────────────────────────────
   async function loadRequests() {
-    const res = await fetch('/api/admin/members', { headers: { 'Authorization': `Bearer ${adminKey}` } });
-    if (!res.ok) { alert('Auth failed.'); return; }
+    const res = await fetch('/api/admin/members');
+    if (res.status === 401 || res.status === 403) return 'unauthorized';
+    if (!res.ok) return;
     const data = await res.json();
     renderRequests(data.requests || []);
   }
@@ -178,7 +172,7 @@
 
     const res = await fetch('/api/admin/members', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
     const data = await res.json();
@@ -198,9 +192,7 @@
   let expandedSlug = null;
 
   async function loadDirectory() {
-    const res = await fetch('/api/admin/members?view=all', {
-      headers: { 'Authorization': `Bearer ${adminKey}` },
-    });
+    const res = await fetch('/api/admin/members?view=all');
     if (!res.ok) return;
     const data = await res.json();
     allMembers = data.members || [];
@@ -324,7 +316,7 @@
 
     const res = await fetch('/api/admin/members', {
       method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${adminKey}`, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slug, updates }),
     });
     const data = await res.json();

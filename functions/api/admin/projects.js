@@ -1,14 +1,18 @@
 // GET  /api/admin/projects — list pending project submissions
 // POST /api/admin/projects — approve or reject (body: { slug, action, admin_notes? })
-// Protected by Authorization: Bearer <ADMIN_KEY>
+// Protected by session cookie + is_admin flag
 
-function checkAuth(request, env) {
-  const auth = request.headers.get('Authorization') || '';
-  return auth === `Bearer ${env.ADMIN_KEY}`;
+import { getSession } from '../../_shared/session.js';
+
+async function checkAdmin(request, env) {
+  const email = await getSession(request, env);
+  if (!email) return false;
+  const member = await env.DB.prepare('SELECT is_admin FROM members WHERE email = ?').bind(email).first();
+  return member?.is_admin === 1;
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!checkAuth(request, env)) {
+  if (!await checkAdmin(request, env)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -28,7 +32,7 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!checkAuth(request, env)) {
+  if (!await checkAdmin(request, env)) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

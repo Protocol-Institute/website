@@ -12,7 +12,6 @@
 - Afeez Oladimeji (dimejibusiness) needs photo before appearing in consultant view
 - Fill in detail pages for external projects: worldmachines, jamverse, protocolized-dev, longnow, humboldt — currently minimal stubs
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
-- **SoP migration — Program History:** Expand `about/index.html` with a "Program History" / "Origins" section covering SoP23–25: research tracks, participant counts, $2.5M EF funding, 70+ alumni, 100+ outputs, 358-page proto-textbook, 1,800+ subscribers, conference history (Seattle, Singapore, Healdsburg, Chiang Mai, Devconnect Buenos Aires). Source: summerofprotocols.com/about. Blocked on writing/editing time.
 - **SoP migration — Alumni Directory:** Build a `/alumni` page listing SoP23–25 fellows from `data/alumni.json` (70 entries). Design TBD.
 - **Events history pages:** Add `resources_url` links once protocolized.io/resources URL scheme is confirmed. Add images once R2 is set up.
 
@@ -54,6 +53,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-17** — About page rewritten in compact form; detailed SoP Program History section dropped (not planned).
 - **2026-06-17** — Session 32: Voting launch — opened to all members; homepage CTA + countdown; voting page UX polish (sticky tabs, workshop badge, special session badge, hint, tier note, track label hidden); SIG project sections added; member updates (Kei, Spencer → SIG Host; Josh Davis → Team).
 - **2026-06-17** — Session 31: Symposium voting analytics admin dashboard. Migration 024 (symposium_vote_saves table). votes.js updated to UPSERT save_count on each Save. New GET /api/symposium/analytics endpoint (is_admin gated). New /admin/symposium-analytics page: 4 stat cards (voters/members/ratio/votes), registrant table (name, email, registered, saves, votes placed, proposals touched, distribution badge). Auto-refreshes every 30s. Runs on CF edge — no laptop required.
 - **2026-06-16** — Session 30: Nav overhaul (Calendar→Events with Calendar/History tabs; More dropdown); About page rewrite processed (links, logo block); Join page simplified (eligibility footnote); Support page rebuilt as list with links; YakRobot Protocols added to DRG + Programs; SIG project links (World Machines→SIGPSY, Jamverse→ProtFiSIG, protocolized.dev→SIGPfB); all 51 shortlisted proposer emails set as early voters (backfill + request.js auto-set on registration); countdown renamed "General voting"; Jamverse coming soon removed; migration 023 (member_since + membership_expires, backfilled 36 members).

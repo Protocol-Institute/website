@@ -83,8 +83,14 @@ var FOOTER_HTML =
           label = data.member.name.replace(/[&<>"]/g, function (c) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
           });
-          editItem = '<li><a href="/members/edit">Edit profile</a></li>';
-          mobileHTML = '<a href="/members/edit">Edit profile</a>' +
+          var adminItem = data.member.is_admin
+            ? '<li><a href="/admin/">Admin</a></li>' : '';
+          editItem = '<li><a href="/members/dashboard/">My Dashboard</a></li>' +
+            '<li><a href="/members/edit">Edit profile</a></li>' +
+            adminItem;
+          mobileHTML = '<a href="/members/dashboard/">My Dashboard</a>' +
+            '<a href="/members/edit">Edit profile</a>' +
+            (data.member.is_admin ? '<a href="/admin/">Admin</a>' : '') +
             '<button class="nav-mobile-logout" id="nav-mobile-logout-btn">Log out</button>';
         } else if (data.pending) {
           label = 'Pending Approval';
