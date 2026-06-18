@@ -39,7 +39,29 @@
     var p = window.marked
       ? Promise.resolve()
       : loadScript('https://cdn.jsdelivr.net/npm/marked@9/marked.min.js');
-    return p.then(function () { return window.marked.parse(md); });
+    return p.then(function () {
+      // marked v9 exports parse as a named export; handle both calling styles
+      var parse = (window.marked && window.marked.parse) || window.marked;
+      if (typeof parse !== 'function') throw new Error('marked not loaded');
+      var result = parse(md || '');
+      // marked v9+ may return a Promise in async mode
+      return (result && typeof result.then === 'function') ? result : Promise.resolve(result);
+    });
+  }
+
+  function plainFallback(md) {
+    // Minimal inline fallback: paragraphs + headings + links, no CDN needed
+    var html = (md || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/^#{1,6}\s+(.+)$/gm, '<strong>$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+      .split(/\n\n+/)
+      .filter(Boolean)
+      .map(function (b) { return '<p>' + b.replace(/\n/g, '<br>') + '</p>'; })
+      .join('\n');
+    return Promise.resolve(html);
   }
 
   function checkEditPermission() {
@@ -67,12 +89,15 @@
   }
 
   function showContent(md) {
-    renderMarkdown(md).then(function (html) {
+    function reveal(html) {
       el('page-body').innerHTML = html;
       el('page-loading').style.display = 'none';
       el('page-content').style.display = '';
       if (canEdit) el('edit-bar').style.display = '';
-    });
+    }
+    renderMarkdown(md)
+      .then(reveal)
+      .catch(function () { return plainFallback(md).then(reveal); });
   }
 
   function showEditor(md) {
