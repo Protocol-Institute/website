@@ -1,0 +1,180 @@
+// managed-page.js — shared module for managed content pages.
+//
+// Requires PAGE_KEY to be defined as a global before this script loads.
+// Shell HTML must contain these elements by id:
+//   page-loading, page-content, page-body, edit-bar, edit-btn,
+//   page-editor, editor-mount, save-btn, cancel-btn
+
+(function () {
+  if (typeof PAGE_KEY === 'undefined') {
+    console.error('managed-page.js: PAGE_KEY not defined');
+    return;
+  }
+
+  var currentMd = '';
+  var editor = null;
+  var canEdit = false;
+
+  function el(id) { return document.getElementById(id); }
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadStylesheet(href) {
+    return new Promise(function (resolve) {
+      if (document.querySelector('link[href="' + href + '"]')) { resolve(); return; }
+      var l = document.createElement('link');
+      l.rel = 'stylesheet'; l.href = href; l.onload = resolve;
+      document.head.appendChild(l);
+    });
+  }
+
+  function renderMarkdown(md) {
+    var p = window.marked
+      ? Promise.resolve()
+      : loadScript('https://cdn.jsdelivr.net/npm/marked@9/marked.min.js');
+    return p.then(function () { return window.marked.parse(md); });
+  }
+
+  function checkEditPermission() {
+    return fetch('/api/members/me')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.member) return false;
+        if (data.member.is_admin) return true;
+        if (data.member.is_sig_host && data.member.sig_host_slugs) {
+          try {
+            var slugs = JSON.parse(data.member.sig_host_slugs);
+            var parts = PAGE_KEY.split('/');
+            if (parts[0] === 'sigs' && slugs.indexOf(parts[1]) !== -1) return true;
+          } catch (e) {}
+        }
+        return false;
+      })
+      .catch(function () { return false; });
+  }
+
+  function fetchContent() {
+    return fetch('/api/pages/' + PAGE_KEY)
+      .then(function (r) { return (r.status === 404) ? null : r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  function showContent(md) {
+    renderMarkdown(md).then(function (html) {
+      el('page-body').innerHTML = html;
+      el('page-loading').style.display = 'none';
+      el('page-content').style.display = '';
+      if (canEdit) el('edit-bar').style.display = '';
+    });
+  }
+
+  function showEditor(md) {
+    var ready = (window.toastui && window.toastui.Editor)
+      ? Promise.resolve()
+      : Promise.all([
+          loadStylesheet('https://uicdn.toast.com/editor/latest/toastui-editor.min.css'),
+          loadScript('https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js'),
+        ]);
+
+    ready.then(function () {
+      el('page-content').style.display = 'none';
+      el('page-editor').style.display = '';
+      var mount = el('editor-mount');
+      mount.innerHTML = '';
+
+      editor = new toastui.Editor({
+        el: mount,
+        height: '600px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: md,
+        hooks: {
+          addImageBlobHook: function (blob, callback) {
+            var fd = new FormData();
+            fd.append('image', blob, blob.name || 'upload.jpg');
+            fd.append('page_key', PAGE_KEY);
+            fetch('/api/pages/upload-image', { method: 'POST', body: fd })
+              .then(function (r) { return r.json(); })
+              .then(function (d) { callback(d.url || '', ''); })
+              .catch(function () { callback('', 'Upload failed'); });
+          },
+        },
+      });
+    });
+  }
+
+  function save() {
+    if (!editor) return;
+    var md = editor.getMarkdown();
+    var saveBtn = el('save-btn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+
+    fetch('/api/pages/' + PAGE_KEY, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content_md: md }),
+    })
+      .then(function (r) {
+        return r.ok
+          ? r.json()
+          : r.json().then(function (d) { throw new Error(d.error || ('HTTP ' + r.status)); });
+      })
+      .then(function () {
+        currentMd = md;
+        editor = null;
+        el('page-editor').style.display = 'none';
+        showContent(md);
+      })
+      .catch(function (e) { alert('Save failed: ' + e.message); })
+      .finally(function () {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+      });
+  }
+
+  function cancelEdit() {
+    editor = null;
+    el('page-editor').style.display = 'none';
+    el('page-content').style.display = '';
+    if (canEdit) el('edit-bar').style.display = '';
+  }
+
+  // Wire buttons
+  var editBtn = el('edit-btn');
+  var saveBtn = el('save-btn');
+  var cancelBtn = el('cancel-btn');
+  if (editBtn) editBtn.addEventListener('click', function () { showEditor(currentMd); });
+  if (saveBtn) saveBtn.addEventListener('click', save);
+  if (cancelBtn) cancelBtn.addEventListener('click', cancelEdit);
+
+  // Init
+  Promise.all([fetchContent(), checkEditPermission()])
+    .then(function (results) {
+      var content = results[0];
+      canEdit = results[1];
+
+      if (!content) {
+        if (canEdit) {
+          el('page-loading').style.display = 'none';
+          showEditor('');
+        } else {
+          el('page-loading').textContent = 'No content yet.';
+        }
+        return;
+      }
+
+      currentMd = content.content_md || '';
+      showContent(currentMd);
+    })
+    .catch(function () {
+      el('page-loading').textContent = 'Error loading page content.';
+    });
+}());

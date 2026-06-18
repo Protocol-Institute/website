@@ -47,8 +47,10 @@
       </div>
 
       <div class="about-body">
-        <p>Exploring analogies and metaphors for understanding memory and its relationship to protocols, at the intersection of cognitive science, infrastructure, and institutional design.</p>
-        
+        <p id="mrg-about-snippet">Exploring analogies and metaphors for understanding memory and its relationship to protocols, at the intersection of cognitive science, infrastructure, and institutional design.</p>
+        <p id="mrg-about-link" style="display:none;margin-top:0.1rem;font-size:0.9rem;">
+          <a href="/sigs/mrg/about/" style="color:#2A6B6B;">More about MRG &#8594;</a>
+        </p>
         <p class="sig-meta">Led by Kei Kreutler &mdash; Biweekly Thursdays, 7:30am Pacific</p>
         <p style="margin-top:1rem"><a href="/sigs" class="back-link">&#8592; All Special Interest Groups</a></p>
       </div>
@@ -406,5 +408,32 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script>
+(function () {
+  fetch('/api/pages/sigs/mrg/about')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data || !data.content_md) return;
+      // Extract first non-empty, non-heading paragraph as plain text snippet
+      var paras = data.content_md.split(/\n\n+/);
+      var snippet = '';
+      for (var i = 0; i < paras.length; i++) {
+        var p = paras[i].trim();
+        if (!p || /^#{1,6}\s/.test(p) || p.startsWith('---') || p.startsWith('*Content to be')) continue;
+        // Strip basic markdown formatting for plain-text display
+        snippet = p.replace(/\*\*(.+?)\*\*/g, '$1')
+                   .replace(/\*(.+?)\*/g, '$1')
+                   .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+                   .replace(/`(.+?)`/g, '$1')
+                   .replace(/\n/g, ' ').trim();
+        break;
+      }
+      if (!snippet) return;
+      document.getElementById('mrg-about-snippet').textContent = snippet;
+      document.getElementById('mrg-about-link').style.display = '';
+    })
+    .catch(function () {});
+}());
+</script>
 </body>
 </html>
