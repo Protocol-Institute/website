@@ -117,8 +117,9 @@
     s.id = 'managed-editor-styles';
     s.textContent = [
       '.editor-toolbar { background: #FAFAF7; border-color: #D8D5CF; opacity: 1 !important; }',
-      '.editor-toolbar button { color: #1A1A1A !important; background: transparent; }',
-      '.editor-toolbar button:hover, .editor-toolbar button.active { color: #2A6B6B !important; background: #EDEAE4 !important; }',
+      '.editor-toolbar a, .editor-toolbar a i { color: #1A1A1A !important; }',
+      '.editor-toolbar a:hover, .editor-toolbar a.active { background: #EDEAE4 !important; }',
+      '.editor-toolbar a:hover i, .editor-toolbar a.active i { color: #2A6B6B !important; }',
       '.editor-toolbar i.separator { border-color: #D8D5CF !important; }',
       '.CodeMirror { background: #fff; color: #1A1A1A; border-color: #D8D5CF; }',
     ].join('\n');
