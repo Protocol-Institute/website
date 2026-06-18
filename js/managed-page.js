@@ -111,6 +111,20 @@
     editor = { getMarkdown: function () { return ta.value; }, _isTextarea: true };
   }
 
+  function injectEditorStyles() {
+    if (document.getElementById('managed-editor-styles')) return;
+    var s = document.createElement('style');
+    s.id = 'managed-editor-styles';
+    s.textContent = [
+      '.editor-toolbar { background: #FAFAF7; border-color: #D8D5CF; opacity: 1 !important; }',
+      '.editor-toolbar button { color: #1A1A1A !important; background: transparent; }',
+      '.editor-toolbar button:hover, .editor-toolbar button.active { color: #2A6B6B !important; background: #EDEAE4 !important; }',
+      '.editor-toolbar i.separator { border-color: #D8D5CF !important; }',
+      '.CodeMirror { background: #fff; color: #1A1A1A; border-color: #D8D5CF; }',
+    ].join('\n');
+    document.head.appendChild(s);
+  }
+
   function showEditor(md) {
     var EMDE_BASE = 'https://cdn.jsdelivr.net/npm/easymde@2/dist/';
     var ready = window.EasyMDE
@@ -121,6 +135,7 @@
         ]);
 
     function openEditor() {
+      injectEditorStyles();
       el('page-content').style.display = 'none';
       el('page-editor').style.display = '';
       var mount = el('editor-mount');
