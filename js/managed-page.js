@@ -30,7 +30,9 @@
     return new Promise(function (resolve) {
       if (document.querySelector('link[href="' + href + '"]')) { resolve(); return; }
       var l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = href; l.onload = resolve;
+      l.rel = 'stylesheet'; l.href = href;
+      l.onload = resolve;
+      l.onerror = resolve; // CSS failure is non-fatal; editor will be unstyled but functional
       document.head.appendChild(l);
     });
   }
@@ -110,13 +112,12 @@
   }
 
   function showEditor(md) {
-    var TOAST_VER = '3.2.2';
-    var TOAST_BASE = 'https://uicdn.toast.com/editor/' + TOAST_VER + '/';
+    var TOAST_PKG = 'https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/';
     var ready = (window.toastui && window.toastui.Editor)
       ? Promise.resolve()
       : Promise.all([
-          loadStylesheet(TOAST_BASE + 'toastui-editor.min.css'),
-          loadScript(TOAST_BASE + 'toastui-editor-all.min.js'),
+          loadStylesheet(TOAST_PKG + 'toastui-editor.min.css'),
+          loadScript(TOAST_PKG + 'toastui-editor-all.min.js'),
         ]);
 
     function openEditor() {
