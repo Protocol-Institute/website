@@ -35,7 +35,7 @@ export async function onRequestGet({ params, env }) {
   return Response.json(row);
 }
 
-export async function onRequestPut({ request, params, env }) {
+async function handleSave({ request, params, env }) {
   const email = await getSession(request, env);
   if (!email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -65,3 +65,6 @@ export async function onRequestPut({ request, params, env }) {
 
   return Response.json({ ok: true });
 }
+
+export const onRequestPut = handleSave;
+export const onRequestPost = handleSave;

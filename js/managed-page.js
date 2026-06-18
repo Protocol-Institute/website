@@ -166,14 +166,17 @@
     saveBtn.textContent = 'Saving…';
 
     fetch('/api/pages/' + PAGE_KEY, {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content_md: md }),
     })
       .then(function (r) {
-        return r.ok
-          ? r.json()
-          : r.json().then(function (d) { throw new Error(d.error || ('HTTP ' + r.status)); });
+        if (r.ok) return r.json();
+        return r.text().then(function (text) {
+          var msg = 'HTTP ' + r.status;
+          try { msg = JSON.parse(text).error || msg; } catch (e) {}
+          throw new Error(msg);
+        });
       })
       .then(function () {
         currentMd = md;
