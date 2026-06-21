@@ -104,6 +104,30 @@
 
     .error-msg { color: #C44; font-size: 0.9rem; padding: 1rem 0; }
     .loading   { color: #8A8A8A; font-size: 0.9rem; padding: 1rem 0; }
+
+    .page-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin-bottom:1.5rem; }
+    .page-tab  { font-size:0.78rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+      padding:0.5rem 1.25rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
+      border-bottom:2px solid transparent; margin-bottom:-2px; }
+    .page-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
+    .page-panel { display:none; } .page-panel.active { display:block; }
+
+    .proposals-toolbar {
+      display:flex; align-items:center; justify-content:flex-end;
+      margin-bottom:0.75rem;
+    }
+    .csv-btn {
+      font-size:0.78rem; padding:0.3rem 0.9rem; border:1px solid #C8C5C0;
+      background:#fff; cursor:pointer; color:#1A1A1A;
+    }
+    .csv-btn:hover { background:#F5F3F0; }
+    .rank-col { color:#8A8A8A; font-size:0.8rem; text-align:right; width:2rem; }
+    .score-col { font-weight:600; color:#1A1A1A; text-align:right; }
+    .num-col   { text-align:right; color:#5A5A5A; }
+    .type-tag  { font-size:0.65rem; font-weight:600; letter-spacing:0.07em; text-transform:uppercase;
+      padding:0.1em 0.4em; background:#E6F0EF; color:#1F5050; white-space:nowrap; }
+    .type-tag--workshop { background:#2A6B6B; color:#fff; }
+    .session-tag { font-size:0.72rem; color:#8A8A8A; }
   </style>
 </head>
 <body>
@@ -150,20 +174,47 @@
           <button class="refresh-btn" onclick="fetchData()">Refresh now</button>
         </div>
 
-        <table class="analytics-table" id="reg-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Registered</th>
-              <th>Saves</th>
-              <th>Votes Placed</th>
-              <th>Proposals Touched</th>
-              <th>Distribution</th>
-            </tr>
-          </thead>
-          <tbody id="reg-tbody"></tbody>
-        </table>
+        <div class="page-tabs">
+          <button class="page-tab active" data-tab="voters">Voters</button>
+          <button class="page-tab" data-tab="proposals">Proposals</button>
+        </div>
+
+        <div class="page-panel active" id="panel-voters">
+          <table class="analytics-table" id="reg-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Registered</th>
+                <th>Saves</th>
+                <th>Votes Placed</th>
+                <th>Proposals Touched</th>
+                <th>Distribution</th>
+              </tr>
+            </thead>
+            <tbody id="reg-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="page-panel" id="panel-proposals">
+          <div class="proposals-toolbar">
+            <button class="csv-btn" onclick="downloadCSV()">Download CSV</button>
+          </div>
+          <table class="analytics-table" id="proposals-table">
+            <thead>
+              <tr>
+                <th style="text-align:right">#</th>
+                <th>Title</th>
+                <th>Speaker / Organizer</th>
+                <th>Type</th>
+                <th style="text-align:right">Weighted Score</th>
+                <th style="text-align:right">Total Votes</th>
+                <th style="text-align:right">Voters</th>
+              </tr>
+            </thead>
+            <tbody id="proposals-tbody"></tbody>
+          </table>
+        </div>
       </div>
 
       <div id="loading" class="loading">Loading…</div>
@@ -174,9 +225,10 @@
 
 <script src="/js/main.js"></script>
 <script>
-  const REFRESH_INTERVAL = 30; // seconds
+  const REFRESH_INTERVAL = 30;
   let countdown = REFRESH_INTERVAL;
   let timer;
+  let proposalsData = [];
 
   function fmt(iso) {
     if (!iso) return '—';
@@ -194,20 +246,88 @@
     return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
   }
 
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Tab switching
+  document.querySelector('.page-tabs').addEventListener('click', function (e) {
+    const btn = e.target.closest('.page-tab');
+    if (!btn) return;
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+
+  function renderProposals(proposals) {
+    proposalsData = [...proposals].sort((a, b) => (b.score || 0) - (a.score || 0));
+    const tbody = document.getElementById('proposals-tbody');
+    tbody.innerHTML = '';
+    proposalsData.forEach((p, i) => {
+      const name = p.organizer_name || p.speaker_name || '—';
+      const isWorkshop = p.type === 'workshop';
+      const typeTag = isWorkshop
+        ? '<span class="type-tag type-tag--workshop">Workshop</span>'
+        : '<span class="type-tag">Talk</span>';
+      const sessionNote = p.session && p.session !== 'General'
+        ? `<div class="session-tag">${esc(p.session)}</div>` : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="rank-col">${i + 1}</td>
+        <td><span style="font-weight:500">${esc(p.title)}</span>${sessionNote}</td>
+        <td style="font-size:0.82rem;color:#5A5A5A">${esc(name)}</td>
+        <td>${typeTag}</td>
+        <td class="score-col">${parseFloat(p.score || 0).toFixed(3)}</td>
+        <td class="num-col">${p.total_votes || 0}</td>
+        <td class="num-col">${p.voter_count || 0}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function downloadCSV() {
+    if (!proposalsData.length) return;
+    const headers = ['Rank','Title','Speaker/Organizer','Type','Session','Weighted Score','Total Votes','Voters'];
+    const rows = proposalsData.map((p, i) => [
+      i + 1,
+      '"' + (p.title || '').replace(/"/g, '""') + '"',
+      '"' + (p.organizer_name || p.speaker_name || '').replace(/"/g, '""') + '"',
+      p.type,
+      '"' + (p.session || 'General').replace(/"/g, '""') + '"',
+      parseFloat(p.score || 0).toFixed(3),
+      p.total_votes || 0,
+      p.voter_count || 0,
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'symposium-2026-results.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function fetchData() {
     clearInterval(timer);
     countdown = REFRESH_INTERVAL;
 
     try {
-      const res = await fetch('/api/symposium/analytics', { credentials: 'include' });
-      if (res.status === 401 || res.status === 403) {
+      const [analyticsRes, proposalsRes] = await Promise.all([
+        fetch('/api/symposium/analytics', { credentials: 'include' }),
+        fetch('/api/symposium/proposals',  { credentials: 'include' }),
+      ]);
+
+      if (analyticsRes.status === 401 || analyticsRes.status === 403) {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('auth-gate').style.display = 'block';
         return;
       }
-      if (!res.ok) throw new Error('API error ' + res.status);
+      if (!analyticsRes.ok) throw new Error('API error ' + analyticsRes.status);
 
-      const data = await res.json();
+      const data = await analyticsRes.json();
+      const proposalsPayload = proposalsRes.ok ? await proposalsRes.json() : { proposals: [] };
 
       document.getElementById('loading').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
@@ -219,7 +339,7 @@
       document.getElementById('s-votes').textContent   = data.stats.total_votes_cast;
       document.getElementById('generated-at').textContent = fmtTime(data.generated_at);
 
-      // Table
+      // Voters table
       const tbody = document.getElementById('reg-tbody');
       tbody.innerHTML = '';
       for (const r of data.registrants) {
@@ -232,7 +352,6 @@
         } else {
           distBadge = '<span class="badge badge-engaged">Engaged</span>';
         }
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="font-weight:500">${r.name || '—'}</td>
@@ -248,11 +367,13 @@
         tbody.appendChild(tr);
       }
 
+      // Proposals table
+      renderProposals(proposalsPayload.proposals || []);
+
     } catch (e) {
       document.getElementById('loading').textContent = 'Error loading data: ' + e.message;
     }
 
-    // Restart countdown
     timer = setInterval(() => {
       countdown--;
       const el = document.getElementById('countdown');
