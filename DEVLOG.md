@@ -619,3 +619,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Switched the rich editor from Toast UI (which silently failed to render) to EasyMDE v2 (jsDelivr CDN). EasyMDE loads successfully: the CodeMirror editing area renders formatted markdown, the status bar shows line/word counts, and toolbar buttons are functionally correct (formatting applies on click). However, the **Font Awesome icon glyphs in the toolbar are invisible** — the button outlines and hover states are visible but the icons are not. The `injectEditorStyles()` function currently has the wrong selector (`.editor-toolbar a` instead of `.editor-toolbar button`); even the correct selector with `color: #1A1A1A !important` did not make the icons visible. Investigation continues next session. Textarea fallback is available if EasyMDE fails to construct.
 
 ---
+
+## Session 34: Voting Close and Results Compilation
+
+*2026-06-20*
+
+**Tracks:** member-directory, operations
+
+- The symposium voting window (Jun 17–20) closed automatically at `2026-06-21T00:00:00Z` via the `VOTE_DEADLINE` constant in `functions/api/symposium/votes.js` and the program page JS. Final participation: **48 unique voters**, **2,291 total votes cast** across 55 shortlisted proposals. Top result: Kei Kreutler “Interior Computing” (score 64.6, 29 voters). Full ranked results saved to `data/symposium-2026-results.csv`.
+
+- The `/admin/symposium-analytics` page gained a two-tab layout: **Voters** (existing registrant table) and **Proposals** (new). The Proposals tab fetches `/api/symposium/proposals` alongside the existing analytics call — this endpoint already returns tier-weighted quadratic scores, raw vote totals, and voter counts for all shortlisted proposals. Results are ranked descending by weighted score. A **Download CSV** button generates a fresh CSV client-side from the loaded data.
+
+- Final results snapshot exported from D1 via `wrangler d1 execute --json` piped through a Python CSV writer. 55 rows (one per proposal), columns: Rank, Title, Speaker/Organizer, Type, Session, Weighted Score, Total Votes, Voters. Committed to `data/` as a permanent record of the final voting outcome.
+
+---

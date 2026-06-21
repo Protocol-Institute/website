@@ -54,6 +54,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-20** — Session 34: Voting closed (deadline 2026-06-21T00:00Z, 48 voters, 2291 votes, 55 proposals). Analytics admin page: added Proposals tab (ranked by weighted score) and Download CSV button. Local results snapshot: `data/symposium-2026-results.csv`.
 - **2026-06-18** — Session 33: SIG about pages (all 6 SIGs) — `managed-page.js` shared module (viewer + EasyMDE editor); D1 migration 026 (`is_sig_host`, `sig_host_slugs`); pages API (POST, not PUT — CF WAF blocks PUT); CSP extended for cdn.jsdelivr.net; EasyMDE loads and editing works but toolbar icons invisible (ongoing, see Active).
 - **2026-06-17** — About page rewritten in compact form; detailed SoP Program History section dropped (not planned).
 - **2026-06-17** — Session 32: Voting launch — opened to all members; homepage CTA + countdown; voting page UX polish (sticky tabs, workshop badge, special session badge, hint, tier note, track label hidden); SIG project sections added; member updates (Kei, Spencer → SIG Host; Josh Davis → Team).
