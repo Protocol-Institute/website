@@ -34,9 +34,6 @@
     .type-badge { display:inline-block; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.15em 0.65em; margin-bottom:0.4rem; }
     .type-badge--workshop { background:#2A6B6B; color:#fff; }
 
-    .proposal-footer { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; margin-top:0.25rem; }
-    .score-display { font-size:0.82rem; color:#5A5A5A; }
-    .score-value { font-weight:600; color:#1A1A1A; }
     .proposal-title a { color:inherit; text-decoration:none; }
     .proposal-title a:hover { text-decoration:underline; }
     .proposal-session-link { font-size:0.78rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem; }
@@ -250,11 +247,6 @@
           <button class="edit-cancel" onclick="cancelEdit(${p.id})">Cancel</button>
           <span class="edit-msg" id="edit-msg-${p.id}"></span>
         </div>
-      </div>` : ''}
-      ${isAdmin ? `
-      <div class="proposal-footer">
-        <span class="score-display">Total interest weight: <span class="score-value">${parseFloat(p.score || 0).toFixed(2)}</span></span>
-        <span class="score-display">Total votes: <span class="score-value">${p.total_votes || 0}</span></span>
       </div>` : ''}
       <div class="comment-section">
         <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${commentCount}) ▾</button>
