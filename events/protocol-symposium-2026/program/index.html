@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Draft Program — Protocol Symposium 2026</title>
-  <meta name="description" content="Draft program for the 2026 Protocol Institute Symposium — shortlisted talks and workshops open for member voting.">
+  <title>Program (Preliminary) — Protocol Symposium 2026</title>
+  <meta name="description" content="Preliminary program for the Protocol Symposium 2026 — September 21–25.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -14,41 +14,6 @@
       border-bottom:2px solid transparent; margin-bottom:-2px; }
     .sub-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
     .sub-panel { display:none; } .sub-panel.active { display:block; }
-
-    .vote-budget {
-      position:sticky; top:0; z-index:10; background:#FAFAF7;
-      border-bottom:1px solid #E0DDD8; padding:0.75rem 0 0;
-      margin-bottom:0;
-    }
-    .vote-budget-row {
-      display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
-      padding-bottom:0.5rem;
-    }
-    .budget-label { font-size:0.82rem; color:#5A5A5A; }
-    .budget-remaining { font-weight:600; color:#2A6B6B; }
-    .budget-remaining.over { color:#8A1F2E; }
-    .budget-bar-track { width:180px; height:6px; background:#E0DDD8; border-radius:3px; }
-    .budget-bar-fill { height:6px; background:#2A6B6B; border-radius:3px; transition:width 0.2s; }
-    .budget-bar-fill.over { background:#8A1F2E; }
-    .vote-btn-col { display:flex; flex-direction:column; align-items:flex-end; gap:0.35rem; margin-left:auto; }
-    .vote-meta-row {
-      font-size:0.78rem; color:#5A5A5A; padding:0.2rem 0 0.5rem;
-      display:flex; flex-direction:column; align-items:flex-start; gap:0.15rem;
-    }
-    .effective-weight-val { font-weight:600; color:#1A1A1A; }
-    .vote-sort-row { display:flex; align-items:center; gap:0.75rem; padding:0.45rem 0 0.5rem;
-      border-top:1px solid #E0DDD8; }
-
-    .save-msg { font-size:0.82rem; }
-    .save-msg.ok { color:#2A6B6B; }
-    .save-msg.err { color:#8A1F2E; }
-
-    #deadline-line { font-weight:700; color:#B91C1C; font-size:0.9rem; }
-
-    @media (max-width: 600px) {
-      .budget-bar-track { display:none; }
-      .vote-btn-col .form-btn { padding:0.3rem 0.75rem; font-size:0.8rem; }
-    }
 
     .proposal-card {
       border:1px solid #D8D5CF; border-radius:4px; padding:1.25rem 1.5rem;
@@ -69,14 +34,9 @@
     .type-badge { display:inline-block; font-size:0.68rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.15em 0.65em; margin-bottom:0.4rem; }
     .type-badge--workshop { background:#2A6B6B; color:#fff; }
 
-    .proposal-footer { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; }
+    .proposal-footer { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; margin-top:0.25rem; }
     .score-display { font-size:0.82rem; color:#5A5A5A; }
     .score-value { font-weight:600; color:#1A1A1A; }
-    .vote-input-group { display:flex; align-items:center; gap:0.5rem; margin-left:auto; }
-    .vote-input { width:64px; font-family:inherit; font-size:0.9rem; padding:0.3rem 0.5rem;
-      border:1px solid #C8C5C0; text-align:center; }
-    .vote-label { font-size:0.78rem; color:#8A8A8A; }
-    .workshop-link { font-size:0.82rem; color:#2A6B6B; }
     .proposal-title a { color:inherit; text-decoration:none; }
     .proposal-title a:hover { text-decoration:underline; }
     .proposal-session-link { font-size:0.78rem; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem; }
@@ -115,15 +75,6 @@
     .comment-submit-btn:disabled { opacity:0.5; cursor:default; }
     .comment-msg { font-size:0.78rem; margin-left:0.5rem; }
 
-    .gate-msg { text-align:center; padding:4rem 0; color:#8A8A8A; }
-    .gate-msg a { color:#2A6B6B; }
-
-    .vote-clock-mini {
-      border:1px solid #B91C1C; border-radius:3px; padding:0.6rem 1rem;
-      margin-bottom:1.25rem; font-size:0.95rem; font-weight:700; color:#B91C1C;
-      background:#FFF5F5; display:inline-block;
-    }
-
     .session-filter-bar { display:flex; align-items:center; gap:0.6rem;
       padding:0.6rem 0 0.75rem; margin-top:0.25rem; }
     .session-filter-bar label { font-size:0.78rem; font-weight:500;
@@ -139,70 +90,28 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Draft Program</h1>
+        <h1>Program (Preliminary)</h1>
       </div>
 
-      <div class="vote-clock-mini" id="vote-clock-mini"></div>
-      <p style="font-size:0.85rem;margin-bottom:1rem;"><strong>We recommend voting via a desktop browser.</strong></p>
+      <p style="color:#5A5A5A;margin-bottom:1.5rem;">This is the preliminary program for the Protocol Symposium, to be held Sept 21–25. Registration will open August 21. In the meantime, you can post comments and suggestions for the scheduled speakers/workshop organizers.</p>
 
-      <p style="color:#5A5A5A;margin-bottom:0.75rem;">Instead of peer review, we're experimenting with quadratically weighted approval voting. All shortlisted proposals that attract interest above a threshold will be accepted (possibly all of them). You have 55 votes to distribute as you like among the 55 proposals. Voting is open to all PI members for 3 days: Wednesday June 17 to Saturday June 20. You can freely edit your votes until then. Scroll down the "All" tab applying votes to proposals. You can also filter by special sessions on the "Talks" tab and find the workshops on the Workshops tab.</p>
-      <p style="color:#5A5A5A;margin-bottom:0.75rem;">You can also add a comment to any proposal for the benefit of the proposer.</p>
-      <p style="color:#5A5A5A;margin-bottom:0.75rem;">Indicated interest level is not meant as a measure of either quality or importance, and will primarily be used to guide scheduling and gauge broad patterns of interest.</p>
-      <p style="font-size:0.85rem;color:#8A8A8A;margin-bottom:1.5rem;">Each member receives a vote budget of 55 votes. Votes per proposal are quadratically weighted: <em>n</em> votes → √<em>n</em> weight. Team members vote at 3×, community leads at 2×, regular members at 1×.</p>
-
-      <div id="gate-view" class="gate-msg" style="display:none;">
-        <p id="gate-msg-text"><a href="/members/join/">Log in as a PI member</a> to view proposals and participate in voting.</p>
+      <div class="sub-tabs" id="sub-tabs" style="margin-bottom:0.75rem;">
+        <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
+        <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
+        <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
       </div>
 
-      <div id="main-view" style="display:none;">
-
-        <!-- Budget bar -->
-        <div class="vote-budget" id="budget-bar">
-          <div class="vote-budget-row">
-            <span class="budget-label">Votes remaining: <span class="budget-remaining" id="remaining-display">—</span> / <span id="budget-display">—</span></span>
-            <div class="budget-bar-track"><div class="budget-bar-fill" id="budget-fill" style="width:100%"></div></div>
-            <div class="vote-btn-col">
-              <button class="form-btn" id="submit-votes-btn">Save votes</button>
-              <button class="form-btn" id="distribute-btn" style="background:#fff;color:#5A5A5A;border:1px solid #C8C5C0;">Distribute evenly</button>
-              <button class="form-btn" id="clear-votes-btn" style="background:#fff;color:#5A5A5A;border:1px solid #C8C5C0;">Clear votes</button>
-              <span class="save-msg" id="save-msg" style="display:none;"></span>
-            </div>
-          </div>
-          <div class="vote-meta-row">
-            <span>Your total interest weight: <span class="effective-weight-val" id="effective-weight">0</span> (<span id="effective-ratio">0.00</span> per vote cast)</span>
-            <span id="deadline-line">You can edit your votes until Jun 20.</span>
-          </div>
-          <div id="tier-note" style="display:none;font-size:0.75rem;color:#5A5A5A;padding:0.2rem 0 0.4rem;"></div>
-          <div class="vote-sort-row" id="sort-bar">
-            <span style="font-size:0.78rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:#5A5A5A;">Sort by:</span>
-            <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-              <input type="radio" name="sort-mode" value="alpha" checked> Alphabetical
-            </label>
-            <label style="font-size:0.85rem;color:#1A1A1A;display:flex;align-items:center;gap:0.3rem;cursor:pointer;">
-              <input type="radio" name="sort-mode" value="votes"> My votes
-            </label>
-          </div>
-          <div style="font-size:0.75rem;color:#8A8A8A;padding:0.25rem 0 0.4rem;">Hint: Go through and give everything you like 1 vote, then use the "My votes" sort option above, and go through again distributing your remaining votes.</div>
-          <div class="sub-tabs" id="sub-tabs">
-            <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
-            <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
-            <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
-          </div>
-        </div>
-
-        <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
-          <label for="session-select">Session:</label>
-          <select id="session-select">
-            <option value="all">All</option>
-            <option value="General">General</option>
-          </select>
-        </div>
-
-        <div class="sub-panel active" id="panel-all"></div>
-        <div class="sub-panel" id="panel-talks"></div>
-        <div class="sub-panel" id="panel-workshops"></div>
-
+      <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
+        <label for="session-select">Session:</label>
+        <select id="session-select">
+          <option value="all">All</option>
+          <option value="General">General</option>
+        </select>
       </div>
+
+      <div class="sub-panel active" id="panel-all"></div>
+      <div class="sub-panel" id="panel-talks"></div>
+      <div class="sub-panel" id="panel-workshops"></div>
 
     </div>
   </main>
@@ -211,73 +120,32 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  const VOTE_START    = new Date('2026-06-17T00:00:00Z'); // voting open to all members
-  const VOTE_DEADLINE = new Date('2026-06-21T00:00:00Z'); // Saturday June 20, midnight UTC
-  const now = new Date();
-  const votingOpen    = now >= VOTE_START && now < VOTE_DEADLINE;
-  const votingPending = now < VOTE_START;
-
-  let proposals = [], myVotes = {}, budget = 30, tier = 'member';
-  let pendingVotes = {};
-  let currentSession = 'all', sortMode = 'alpha';
-  let memberEmail = '', isAdmin = false, isEarlyVoter = false, canVote = false;
+  let proposals = [], memberEmail = '', isAdmin = false;
+  let currentSession = 'all';
+  const SESSION_SLUGS = {};
   const store = {};
 
-  // ── Auth check ────────────────────────────────────────────────
-  fetch('/api/members/me')
-    .then(r => r.ok ? r.json() : Promise.reject())
-    .then(data => {
-      if (!data.member) throw new Error('not a member');
-      memberEmail = (data.member.email || '').toLowerCase();
-      isAdmin = !!data.member.is_admin;
-      document.getElementById('main-view').style.display = '';
-      return Promise.all([
-        fetch('/api/symposium/proposals').then(r => r.json()),
-        fetch('/api/symposium/sessions').then(r => r.json()),
-      ]);
-    })
-    .then(([proposalsData, sessionsData]) => {
-      const select = document.getElementById('session-select');
-      (sessionsData.sessions || []).forEach(s => {
-        SESSION_SLUGS[s.name] = s.slug;
-        const opt = document.createElement('option');
-        opt.value = s.name;
-        opt.textContent = s.name;
-        select.appendChild(opt);
-      });
-      proposals     = proposalsData.proposals || [];
-      myVotes       = proposalsData.my_votes || {};
-      budget        = proposalsData.budget || 50;
-      tier          = proposalsData.tier || 'member';
-      isAdmin       = proposalsData.is_admin || isAdmin;
-      isEarlyVoter  = proposalsData.is_early_voter || false;
+  // Load proposals (public) + optional auth for edit identity
+  Promise.all([
+    fetch('/api/symposium/proposals').then(r => r.json()),
+    fetch('/api/symposium/sessions').then(r => r.json()),
+    fetch('/api/members/me').then(r => r.ok ? r.json() : { member: null }).catch(() => ({ member: null })),
+  ]).then(function ([proposalsData, sessionsData, meData]) {
+    proposals = proposalsData.proposals || [];
+    isAdmin = !!(proposalsData.is_admin || (meData.member && meData.member.is_admin));
+    const me = meData.member || null;
+    memberEmail = me ? (me.email || '').toLowerCase() : '';
 
-      // Determine effective voting state: early voters can vote before VOTE_START
-      canVote = (votingOpen || isEarlyVoter) && now < VOTE_DEADLINE;
-      if (!canVote) {
-        document.getElementById('submit-votes-btn').disabled = true;
-        document.getElementById('submit-votes-btn').textContent = votingPending && !isEarlyVoter ? 'Voting not yet open' : 'Voting closed';
-        document.getElementById('clear-votes-btn').disabled = true;
-        document.getElementById('distribute-btn').disabled = true;
-        document.getElementById('deadline-line').textContent = (votingPending && !isEarlyVoter)
-          ? 'Voting opens Wednesday, June 17 at 7 AM Pacific.'
-          : 'Voting closed June 20, 2026 at 7 AM Pacific.';
-      }
-
-      pendingVotes = { ...myVotes };
-      const tierNote = document.getElementById('tier-note');
-      if (tier === 'team') {
-        tierNote.textContent = 'Your votes count 3× a regular member\'s in the final tally.';
-        tierNote.style.display = '';
-      } else if (tier === 'community_lead') {
-        tierNote.textContent = 'Your votes count 2× a regular member\'s in the final tally.';
-        tierNote.style.display = '';
-      }
-      renderAll();
-    })
-    .catch(() => {
-      document.getElementById('gate-view').style.display = '';
+    const select = document.getElementById('session-select');
+    (sessionsData.sessions || []).forEach(function (s) {
+      SESSION_SLUGS[s.name] = s.slug;
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      opt.textContent = s.name;
+      select.appendChild(opt);
     });
+    renderAll();
+  });
 
   // ── Tabs ──────────────────────────────────────────────────────
   document.getElementById('sub-tabs').addEventListener('click', function (e) {
@@ -297,98 +165,35 @@
     renderAll();
   });
 
-  // ── Sort mode ─────────────────────────────────────────────────
-  document.getElementById('sort-bar').addEventListener('change', function (e) {
-    if (e.target.name === 'sort-mode') { sortMode = e.target.value; renderAll(); }
-  });
-
-  // ── Distribute evenly ─────────────────────────────────────────
-  document.getElementById('distribute-btn').addEventListener('click', function () {
-    if (!canVote || !proposals.length) return;
-    const n = proposals.length;
-    const each = Math.floor(budget / n);
-    const extra = budget - each * n;
-    proposals.forEach((p, i) => {
-      pendingVotes[p.id] = each + (i < extra ? 1 : 0);
-    });
-    document.querySelectorAll('.vote-input').forEach(el => {
-      const id = parseInt(el.dataset.id);
-      el.value = pendingVotes[id] || 0;
-    });
-    document.querySelectorAll('[id^="my-weight-"]').forEach(el => {
-      const id = el.id.replace('my-weight-', '');
-      el.textContent = myWeightFor(pendingVotes[id] || 0);
-    });
-    updateBudget();
-  });
-
-  // ── Clear votes ───────────────────────────────────────────────
-  document.getElementById('clear-votes-btn').addEventListener('click', function () {
-    if (!canVote) return;
-    Object.keys(pendingVotes).forEach(k => { pendingVotes[k] = 0; });
-    document.querySelectorAll('.vote-input').forEach(el => { el.value = 0; });
-    document.querySelectorAll('[id^="my-weight-"]').forEach(el => { el.textContent = 0; });
-    updateBudget();
-  });
-
   // ── Helpers ───────────────────────────────────────────────────
   function esc(s) {
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  function tierWeight() {
-    if (tier === 'team') return 3;
-    if (tier === 'community_lead') return 2;
-    return 1;
-  }
-
-  function myWeightFor(n) {
-    return n > 0 ? Math.round(Math.sqrt(n) * 100) / 100 : 0;
-  }
-
-  const SESSION_SLUGS = {};
-
-  // ── Render ────────────────────────────────────────────────────
   function firstName(p) {
     const name = p.speaker_name || p.organizer_name || '';
     return name.split(/\s+/)[0].toLowerCase();
   }
 
-  function sortArr(arr) {
-    if (sortMode === 'votes') {
-      const hasVotes = arr.some(p => (pendingVotes[p.id] || 0) > 0);
-      if (hasVotes) {
-        return [...arr].sort((a, b) => (pendingVotes[b.id] || 0) - (pendingVotes[a.id] || 0));
-      }
-    }
-    return [...arr].sort((a, b) => firstName(a).localeCompare(firstName(b)));
-  }
+  function alphSort(a, b) { return firstName(a).localeCompare(firstName(b)); }
 
+  // ── Render ────────────────────────────────────────────────────
   function renderAll() {
     const allTalks       = proposals.filter(p => p.type === 'talk');
     const workshops      = proposals.filter(p => p.type === 'workshop');
     const allInteractive = proposals.filter(p => p.type === 'interactive');
 
-    // Apply session filter to talks (which now includes interactive)
     const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
-    const talksAndInteractive = sortArr([...allTalks, ...allInteractive].filter(sessionFilter));
+    const talksAndInteractive = [...allTalks, ...allInteractive].filter(sessionFilter).sort(alphSort);
+    const everything          = [...proposals].sort(alphSort);
+    const sortedWorkshops     = [...workshops].sort(alphSort);
 
-    // All tab: full list with current sort
-    const everything = sortArr(proposals);
-
-    const sortedWorkshops = sortArr(workshops);
-
-    document.getElementById('all-count').textContent         = everything.length;
-    document.getElementById('talks-count').textContent       = talksAndInteractive.length;
-    document.getElementById('workshops-count').textContent   = sortedWorkshops.length;
+    document.getElementById('all-count').textContent       = everything.length;
+    document.getElementById('talks-count').textContent     = talksAndInteractive.length;
+    document.getElementById('workshops-count').textContent = sortedWorkshops.length;
     document.getElementById('panel-all').innerHTML         = everything.map(renderCard).join('');
     document.getElementById('panel-talks').innerHTML       = talksAndInteractive.map(renderCard).join('');
     document.getElementById('panel-workshops').innerHTML   = sortedWorkshops.map(renderCard).join('');
-    if (!canVote) {
-      document.querySelectorAll('.vote-input').forEach(el => { el.disabled = true; });
-    }
-    bindInputs();
-    updateBudget();
   }
 
   function renderCard(p) {
@@ -396,13 +201,8 @@
     const speaker = isWorkshop
       ? esc(p.organizer_name) + (p.co_organizer_name ? ` &amp; ${esc(p.co_organizer_name)}` : '')
       : esc(p.speaker_name)  + (p.co_speakers ? ` · ${esc(p.co_speakers)}` : '');
-    const score       = parseFloat(p.score || 0).toFixed(2);
-    const totalVotes  = p.total_votes || 0;
-    const myN         = pendingVotes[p.id] || 0;
-    const myWeight    = myWeightFor(myN);
-    const commentCount = p.comment_count || 0;
-    const workshopLink = '';
-    const titleContent = isWorkshop && p.slug
+    const commentCount  = p.comment_count || 0;
+    const titleContent  = isWorkshop && p.slug
       ? `<a href="/events/protocol-symposium-2026/program/workshops/${esc(p.slug)}/">${esc(p.title)}</a>`
       : esc(p.title);
     const sessionSlug = SESSION_SLUGS[p.session];
@@ -411,9 +211,19 @@
       : '';
 
     const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-    const isOwner = !isAdmin && memberEmail && memberEmail === ownerEmail;
+    const isOwner    = !isAdmin && memberEmail && memberEmail === ownerEmail;
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
     const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : '';
+
+    const composeHtml = memberEmail
+      ? `<div class="comment-compose">
+          <textarea class="comment-input" id="cmt-input-${p.id}"
+            placeholder="Suggestions for the speaker/organizer…" rows="3"></textarea>
+          <br>
+          <button class="comment-submit-btn" onclick="submitComment(${p.id})">Post</button>
+          <span class="comment-msg" id="cmt-msg-${p.id}"></span>
+        </div>`
+      : `<p style="font-size:0.82rem;color:#8A8A8A;margin-top:0.5rem;"><a href="/members/join/">Log in as a PI member</a> to post a comment.</p>`;
 
     return `<div class="proposal-card ${colorClass}" data-id="${p.id}">
       <div class="proposal-title" id="title-${p.id}">${titleContent}</div>
@@ -427,7 +237,7 @@
       </div>
       ${isAdmin ? `
       <div class="edit-bar">
-        <a class="edit-own-btn" href="/events/protocol-symposium-2026/program/edit-proposal.html?id=${p.id}">You own this item — edit details</a>
+        <a class="edit-own-btn" href="/events/protocol-symposium-2026/program/edit-proposal.html?id=${p.id}">Edit details (admin)</a>
       </div>` : isOwner ? `
       <div class="edit-bar" id="edit-bar-${p.id}">
         <button class="edit-own-btn" onclick="startEdit(${p.id})">You own this item — edit details</button>
@@ -441,110 +251,24 @@
           <span class="edit-msg" id="edit-msg-${p.id}"></span>
         </div>
       </div>` : ''}
+      ${isAdmin ? `
       <div class="proposal-footer">
-        <span class="score-display">Your interest weight: <span class="score-value" id="my-weight-${p.id}">${myWeight}</span></span>
-        ${isAdmin ? `<span class="score-display">Total interest weight: <span class="score-value" id="score-${p.id}">${score}</span></span>` : ''}
-        ${isAdmin ? `<span class="score-display">Total votes: <span class="score-value" id="total-votes-${p.id}">${totalVotes}</span></span>` : ''}
-        ${workshopLink}
-        <div class="vote-input-group">
-          <label class="vote-label" for="vote-${p.id}">Your votes:</label>
-          <input class="vote-input" type="number" id="vote-${p.id}" data-id="${p.id}"
-            min="0" max="${budget}" value="${myN}" placeholder="0"${!canVote ? ' disabled' : ''}>
-        </div>
-      </div>
+        <span class="score-display">Total interest weight: <span class="score-value">${parseFloat(p.score || 0).toFixed(2)}</span></span>
+        <span class="score-display">Total votes: <span class="score-value">${p.total_votes || 0}</span></span>
+      </div>` : ''}
       <div class="comment-section">
         <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${commentCount}) ▾</button>
         <div class="comments-body" id="cmts-${p.id}" style="display:none;">
           <div class="comments-list" id="cmt-list-${p.id}"></div>
-          <div class="comment-compose">
-            <textarea class="comment-input" id="cmt-input-${p.id}"
-              placeholder="Suggestions for the speaker/organizer…" rows="3"></textarea>
-            <br>
-            <button class="comment-submit-btn" onclick="submitComment(${p.id})">Post</button>
-            <span class="comment-msg" id="cmt-msg-${p.id}"></span>
-          </div>
+          ${composeHtml}
         </div>
       </div>
     </div>`;
   }
 
-  function bindInputs() {
-    document.querySelectorAll('.vote-input').forEach(inp => {
-      inp.addEventListener('input', function () {
-        pendingVotes[parseInt(this.dataset.id)] = parseInt(this.value) || 0;
-        updateBudget();
-      });
-    });
-  }
-
-  function updateBudget() {
-    const used = Object.values(pendingVotes).reduce((s, n) => s + (n||0), 0);
-    const remaining = budget - used;
-
-    const remEl = document.getElementById('remaining-display');
-    remEl.textContent = remaining;
-    remEl.classList.toggle('over', remaining < 0);
-
-    document.getElementById('budget-display').textContent = budget;
-
-    const fill = document.getElementById('budget-fill');
-    fill.style.width = Math.max(0, Math.min(100, (remaining / budget) * 100)) + '%';
-    fill.classList.toggle('over', remaining < 0);
-
-    // Effective weight = Σ sqrt(n) — tier multiplier applied server-side in aggregation
-    let effWeight = 0;
-    Object.values(pendingVotes).forEach(n => { if (n > 0) effWeight += Math.sqrt(n); });
-    effWeight = Math.round(effWeight * 100) / 100;
-    const ratio = used > 0 ? (effWeight / used).toFixed(2) : '0.00';
-    document.getElementById('effective-weight').textContent = effWeight;
-    document.getElementById('effective-ratio').textContent = ratio;
-  }
-
-  // ── Submit votes ──────────────────────────────────────────────
-  document.getElementById('submit-votes-btn').addEventListener('click', async function () {
-    const used = Object.values(pendingVotes).reduce((s, n) => s + (n||0), 0);
-    if (used > budget) {
-      showSaveMsg(`Over budget by ${used - budget} votes.`, true); return;
-    }
-    this.disabled = true; this.textContent = 'Saving…';
-    try {
-      const res = await fetch('/api/symposium/votes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ votes: pendingVotes }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed');
-      showSaveMsg('Votes saved.', false);
-      // Refresh personal weight display immediately from pendingVotes
-      Object.entries(pendingVotes).forEach(([id, n]) => {
-        const el = document.getElementById('my-weight-' + id);
-        if (el) el.textContent = myWeightFor(n);
-      });
-      // Refresh aggregate fields from API (admins see total weight + total votes)
-      fetch('/api/symposium/proposals').then(r => r.json()).then(d => {
-        (d.proposals||[]).forEach(p => {
-          const scoreEl = document.getElementById('score-' + p.id);
-          if (scoreEl) scoreEl.textContent = parseFloat(p.score||0).toFixed(2);
-          const tvEl = document.getElementById('total-votes-' + p.id);
-          if (tvEl) tvEl.textContent = p.total_votes || 0;
-        });
-      });
-    } catch (e) { showSaveMsg(e.message, true); }
-    this.disabled = false; this.textContent = 'Save votes';
-  });
-
-  function showSaveMsg(text, isErr) {
-    const el = document.getElementById('save-msg');
-    el.textContent = text;
-    el.className = 'save-msg ' + (isErr ? 'err' : 'ok');
-    el.style.display = '';
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-  }
-
   // ── Abstract toggle ───────────────────────────────────────────
   window.toggleAbstract = function (id) {
-    const el = document.getElementById('abs-' + id);
+    const el  = document.getElementById('abs-' + id);
     const btn = el.nextElementSibling;
     const clamped = el.classList.toggle('abstract-clamp');
     btn.textContent = clamped ? 'Show more ▾' : 'Show less ▴';
@@ -571,7 +295,7 @@
     const list = document.getElementById('cmt-list-' + proposalId);
     list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;">Loading…</p>';
     try {
-      const res = await fetch(`/api/symposium/comments?proposal_id=${proposalId}`);
+      const res  = await fetch(`/api/symposium/comments?proposal_id=${proposalId}`);
       const data = await res.json();
       const comments = data.comments || [];
       loadedComments[proposalId] = true;
@@ -579,7 +303,7 @@
         list.innerHTML = '<p style="color:#8A8A8A;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">No comments yet.</p>';
       } else {
         list.innerHTML = comments.map(c => `<div class="comment-item">
-          <div class="comment-author">${esc(c.member_name)} · ${c.created_at.slice(0,10)}</div>
+          <div class="comment-author">${esc(c.member_name)} · ${c.created_at.slice(0, 10)}</div>
           <div class="comment-text">${esc(c.body)}</div>
         </div>`).join('');
       }
@@ -588,86 +312,16 @@
     }
   }
 
-  // ── Inline edit ───────────────────────────────────────────────
-  window.startEdit = function (id) {
-    const d = store[id];
-    document.getElementById('edit-title-' + id).value = d.title;
-    document.getElementById('edit-abstract-' + id).value = d.abstract;
-    document.getElementById('title-' + id).style.display = 'none';
-    document.getElementById('abs-wrap-' + id).style.display = 'none';
-    document.getElementById('edit-bar-' + id).style.display = 'none';
-    document.getElementById('edit-form-' + id).style.display = '';
-  };
-
-  window.cancelEdit = function (id) {
-    document.getElementById('title-' + id).style.display = '';
-    document.getElementById('abs-wrap-' + id).style.display = '';
-    document.getElementById('edit-bar-' + id).style.display = '';
-    document.getElementById('edit-form-' + id).style.display = 'none';
-  };
-
-  window.saveEdit = async function (id) {
-    const title    = document.getElementById('edit-title-' + id).value.trim();
-    const abstract = document.getElementById('edit-abstract-' + id).value.trim();
-    const msg      = document.getElementById('edit-msg-' + id);
-    if (!title) { msg.textContent = 'Title required.'; return; }
-    try {
-      const res = await fetch('/api/symposium/proposals/' + id, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, abstract }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed');
-      store[id] = { title, abstract };
-      const idx = proposals.findIndex(p => p.id === id);
-      if (idx >= 0) { proposals[idx].title = title; proposals[idx].abstract = abstract; }
-      const titleEl = document.getElementById('title-' + id);
-      const titleLink = titleEl.querySelector('a');
-      if (titleLink) titleLink.textContent = title; else titleEl.textContent = title;
-      document.getElementById('abs-' + id).textContent = abstract;
-      cancelEdit(id);
-    } catch (e) {
-      msg.textContent = e.message;
-    }
-  };
-
-  // ── Mini countdown clock ──────────────────────────────────────
-  function fmtCountdown(ms) {
-    if (ms <= 0) return null;
-    const s = Math.floor(ms / 1000);
-    const d = Math.floor(s / 86400);
-    const h = Math.floor((s % 86400) / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    if (d > 0) return `${d}d ${h}h`;
-    if (h > 0) return `${h}h ${m}m`;
-    return `${m}m ${s % 60}s`;
-  }
-  function tickMini() {
-    const el = document.getElementById('vote-clock-mini');
-    if (!el) return;
-    const n = new Date();
-    if (n < VOTE_START) {
-      el.textContent = 'General voting opens in ' + fmtCountdown(VOTE_START - n);
-    } else if (n < VOTE_DEADLINE) {
-      el.textContent = 'Voting closes in ' + fmtCountdown(VOTE_DEADLINE - n);
-    } else {
-      el.textContent = 'Voting closed June 20, 2026.';
-    }
-  }
-  tickMini();
-  setInterval(tickMini, 30000);
-
   window.submitComment = async function (proposalId) {
     const input = document.getElementById('cmt-input-' + proposalId);
     const msg   = document.getElementById('cmt-msg-' + proposalId);
-    const btn   = input.nextElementSibling.nextElementSibling; // the Post button sibling
+    const btn   = input.nextElementSibling.nextElementSibling;
     const text  = input.value.trim();
     if (!text) return;
 
     btn.disabled = true;
     try {
-      const res = await fetch('/api/symposium/comments', {
+      const res  = await fetch('/api/symposium/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ proposal_id: proposalId, body: text }),
@@ -680,7 +334,6 @@
       setTimeout(() => { msg.textContent = ''; }, 3000);
       loadedComments[proposalId] = false;
       loadComments(proposalId);
-      // Update comment count on toggle button
       const tgl = document.getElementById('cmttgl-' + proposalId);
       const match = tgl.textContent.match(/\d+/);
       const newCount = match ? parseInt(match[0]) + 1 : 1;
@@ -690,6 +343,50 @@
       msg.style.color = '#8A1F2E';
     }
     btn.disabled = false;
+  };
+
+  // ── Inline edit ───────────────────────────────────────────────
+  window.startEdit = function (id) {
+    const d = store[id];
+    document.getElementById('edit-title-' + id).value    = d.title;
+    document.getElementById('edit-abstract-' + id).value = d.abstract;
+    document.getElementById('title-' + id).style.display    = 'none';
+    document.getElementById('abs-wrap-' + id).style.display = 'none';
+    document.getElementById('edit-bar-' + id).style.display  = 'none';
+    document.getElementById('edit-form-' + id).style.display = '';
+  };
+
+  window.cancelEdit = function (id) {
+    document.getElementById('title-' + id).style.display    = '';
+    document.getElementById('abs-wrap-' + id).style.display = '';
+    document.getElementById('edit-bar-' + id).style.display  = '';
+    document.getElementById('edit-form-' + id).style.display = 'none';
+  };
+
+  window.saveEdit = async function (id) {
+    const title    = document.getElementById('edit-title-' + id).value.trim();
+    const abstract = document.getElementById('edit-abstract-' + id).value.trim();
+    const msg      = document.getElementById('edit-msg-' + id);
+    if (!title) { msg.textContent = 'Title required.'; return; }
+    try {
+      const res  = await fetch('/api/symposium/proposals/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, abstract }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      store[id] = { title, abstract };
+      const idx = proposals.findIndex(p => p.id === id);
+      if (idx >= 0) { proposals[idx].title = title; proposals[idx].abstract = abstract; }
+      const titleEl   = document.getElementById('title-' + id);
+      const titleLink = titleEl.querySelector('a');
+      if (titleLink) titleLink.textContent = title; else titleEl.textContent = title;
+      document.getElementById('abs-' + id).textContent = abstract;
+      cancelEdit(id);
+    } catch (e) {
+      msg.textContent = e.message;
+    }
   };
 }());
 </script>

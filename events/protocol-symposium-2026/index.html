@@ -14,46 +14,6 @@
       margin-right: auto;
     }
     .banner-small img { width: 100%; height: auto; display: block; }
-
-    .vote-countdown {
-      border: 2px solid #2A6B6B;
-      border-radius: 4px;
-      padding: 1.25rem 1.5rem;
-      margin: 1.5rem 0;
-      background: #FFF8E7;
-    }
-    .vote-countdown-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #5A5A5A;
-      margin-bottom: 0.35rem;
-    }
-    .vote-countdown-time {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: #B91C1C;
-      line-height: 1.1;
-    }
-    .vote-countdown-sub {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #B91C1C;
-      margin-top: 0.35rem;
-    }
-    .vote-countdown-cta {
-      display: inline-block;
-      margin-top: 0.9rem;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: #2A6B6B;
-      text-decoration: none;
-      border-bottom: 1px solid #2A6B6B;
-      padding-bottom: 1px;
-    }
-    .vote-countdown-cta:hover { color: #1A4A4A; border-bottom-color: #1A4A4A; }
   </style>
 </head>
 <body>
@@ -72,18 +32,13 @@
 
       <div class="event-body">
 
-        <div class="vote-countdown" id="vote-countdown">
-          <div class="vote-countdown-label" id="countdown-label"></div>
-          <div class="vote-countdown-time" id="countdown-time"></div>
-          <div class="vote-countdown-sub" id="countdown-sub"></div>
-          <a class="vote-countdown-cta" href="/events/protocol-symposium-2026/program/" id="countdown-cta">View draft program &rarr;</a>
-        </div>
-
-        <div class="banner-small" style="margin: 1.75rem auto;">
+        <div class="banner-small" style="margin: 0 auto 1.75rem;">
           <img src="/assets/nn_dates_banner.webp" alt="Protocol Symposium 2026 — September 21–25">
         </div>
 
-        <p>Submissions have closed for the main track. If you've submitted a proposal you'll hear from us soon. We will have a shortlist stage and an experimental PI member voting process to help shape the agenda. If you've arranged with us to curate a special session, we will be in touch for additional details shortly.</p>
+        <p>The preliminary program has been announced. Registration will open August 21.</p>
+
+        <p style="margin-top:1rem;"><a href="/events/protocol-symposium-2026/program/">View Preliminary Program &rarr;</a></p>
 
       </div>
 
@@ -112,50 +67,5 @@
 </div>
 
 <script src="/js/main.js"></script>
-<script>
-(function () {
-  const VOTE_START    = new Date('2026-06-17T00:00:00Z'); // voting open to all members
-  const VOTE_DEADLINE = new Date('2026-06-21T00:00:00Z'); // Saturday June 20, midnight UTC
-
-  function fmtCountdown(ms) {
-    if (ms <= 0) return null;
-    const s = Math.floor(ms / 1000);
-    const d = Math.floor(s / 86400);
-    const h = Math.floor((s % 86400) / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    if (d > 0) return `${d}d ${h}h`;
-    if (h > 0) return `${h}h ${m}m`;
-    return `${m}m ${s % 60}s`;
-  }
-
-  function tick() {
-    const label = document.getElementById('countdown-label');
-    const time  = document.getElementById('countdown-time');
-    const sub   = document.getElementById('countdown-sub');
-    const cta   = document.getElementById('countdown-cta');
-    if (!label) return;
-    const n = new Date();
-    if (n < VOTE_START) {
-      label.textContent = 'Member voting opens in';
-      time.textContent  = fmtCountdown(VOTE_START - n);
-      sub.textContent   = 'Wed Jun 17 – Sat Jun 20, 7 AM Pacific';
-      cta.textContent   = 'View draft agenda →';
-    } else if (n < VOTE_DEADLINE) {
-      label.textContent = 'Voting now open';
-      time.textContent  = fmtCountdown(VOTE_DEADLINE - n);
-      sub.textContent   = 'Closes Jun 20 at 7 AM Pacific';
-      cta.textContent   = 'Voting now open →';
-    } else {
-      label.textContent = '';
-      time.textContent  = 'Voting closed';
-      sub.textContent   = '';
-      cta.textContent   = 'View draft agenda →';
-    }
-  }
-
-  tick();
-  setInterval(tick, 30000);
-}());
-</script>
 </body>
 </html>

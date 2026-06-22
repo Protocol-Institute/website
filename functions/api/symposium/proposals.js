@@ -1,18 +1,11 @@
 // GET /api/symposium/proposals
-// Returns all shortlisted proposals with aggregate quadratic-weighted scores
-// + the current member's vote allocations and budget
-// Requires valid member session
+// Returns all shortlisted proposals with aggregate quadratic-weighted scores.
+// Public: no auth required. If authenticated, also returns my_votes, budget, tier, is_admin.
 
 import { getSession } from '../../_shared/session.js';
 
 export async function onRequestGet({ request, env }) {
   const email = await getSession(request, env);
-  if (!email) return Response.json({ error: 'Not authenticated' }, { status: 401 });
-
-  const member = await env.DB.prepare(
-    'SELECT tier, is_admin, is_early_voter FROM members WHERE email = ? AND is_public = 1'
-  ).bind(email).first();
-  if (!member) return Response.json({ error: 'Not a member' }, { status: 403 });
 
   // Proposals with aggregate score:
   //   score = Σ (tier_weight × √votes) for all voters on this proposal
@@ -36,7 +29,17 @@ export async function onRequestGet({ request, env }) {
     ORDER BY p.type ASC, p.id ASC
   `).all();
 
-  // This member's current allocations
+  // Public response when not authenticated
+  if (!email) return Response.json({ proposals: proposals || [] });
+
+  const member = await env.DB.prepare(
+    'SELECT tier, is_admin, is_early_voter FROM members WHERE email = ? AND is_public = 1'
+  ).bind(email).first();
+
+  // Unknown/non-member session: still return proposals publicly
+  if (!member) return Response.json({ proposals: proposals || [] });
+
+  // Authenticated member: include their vote allocations and budget
   const { results: myVotes } = await env.DB.prepare(
     'SELECT proposal_id, votes FROM symposium_votes WHERE member_email = ?'
   ).bind(email).all();
@@ -48,13 +51,11 @@ export async function onRequestGet({ request, env }) {
     myTotal += v.votes;
   });
 
-  const budget = 55;
-
   return Response.json({
     proposals: proposals || [],
     my_votes: myVoteMap,
     my_total: myTotal,
-    budget,
+    budget: 55,
     tier: member.tier,
     is_admin: !!member.is_admin,
     is_early_voter: !!member.is_early_voter,
