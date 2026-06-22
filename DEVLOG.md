@@ -633,3 +633,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Final results snapshot exported from D1 via `wrangler d1 execute --json` piped through a Python CSV writer. 55 rows (one per proposal), columns: Rank, Title, Speaker/Organizer, Type, Session, Weighted Score, Total Votes, Voters. Committed to `data/` as a permanent record of the final voting outcome.
 
 ---
+
+## Session 35: Post-Voting Cleanup: Preliminary Program Goes Public
+
+*2026-06-22*
+
+**Tracks:** static-site, operations
+
+- Voting has closed; all voting affordances removed from three surfaces: the **landing page** ("Symposium Voting Open" CTA → simple "Preliminary Program" link), the **symposium main page** (`/events/protocol-symposium-2026/`, voting countdown widget + script removed), and the **program page** (`/events/protocol-symposium-2026/program/`, budget bar, vote inputs, sort-by-votes, distribute/clear/save buttons, countdown clock, and blurb all removed). The program page was gated to PI members during voting; it is now publicly visible to all visitors.
+
+- The `GET /api/symposium/proposals` endpoint previously required a valid member session (returned 401 otherwise). It now fetches all shortlisted proposals unconditionally and returns them to unauthenticated callers. Authenticated members additionally receive `my_votes`, `budget`, `tier`, and `is_admin` for backward compatibility with the admin analytics dashboard, which passes credentials and relies on these fields. The admin analytics page at `/admin/symposium-analytics` is unaffected.
+
+- The program page retitled "Program (Preliminary)". New blurb: registration opens August 21; comments open for suggestions to speakers/workshop organizers. Members see a comment compose textarea; non-members see a login prompt. Proposal owners and admins retain inline editing. Admin-only aggregate score/vote display removed from proposal cards (now admin-dashboard-only). A "← Symposium main page" back link and a New Nature theme preview talk link (protocolized.io/features/new-nature) added above the proposal list.
+
+- A "Key Dates" section added to `/events/protocol-symposium-2026/` as a two-column definition list: Jul 15 special session details due, Aug 21 registration opens, Sept 15 materials due, Sept 21–22 workshops, Sept 23–25 main program, Oct 18 final papers/essays due for proceedings volume.
+
+- New PIN member: Princeton Human-Computer Interaction Lab (Andrés Monroy-Hernández, Associate Professor). Submitted via Google Form 2026-06-22. Lab logo pulled from GitHub avatar URL, uploaded to R2 at `network/princeton-hci.png`, and wired into the network card. Work description: "Decentralization through Protocolization."
+
+---

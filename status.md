@@ -8,7 +8,6 @@
 <!-- planned changes or features -->
 - Promote Network page to main nav once member content is added
 - Link SIG organizer names to member profiles as remaining organizers (Kei Kreutler, Spencer Nitkey) get onboarded — Patrick Nast, Anuraj R., Aneesh Sathe now linked
-- Invite symposium proposers to create member profiles (pre-approval and voting system now ready)
 - SIG mailing lists (blocked on creating sigs@protocol-institute.org in Resend first)
 - Afeez Oladimeji (dimejibusiness) needs photo before appearing in consultant view
 - Fill in detail pages for external projects: worldmachines, jamverse, protocolized-dev, longnow, humboldt — currently minimal stubs
@@ -54,6 +53,7 @@ Opt-in email lists for each SIG, managed through member profiles. Substack cover
 
 ## Done
 <!-- completed items, reverse chronological -->
+- **2026-06-22** — Session 35: Voting closed — suppressed all voting UI from program page, symposium page, and landing page; program page retitled "Program (Preliminary)" and made publicly viewable (proposals API now public); new blurb (registration Aug 21, comments open); back link + New Nature theme link added to program page; key dates section added to symposium main page; Princeton HCI Lab added to network page.
 - **2026-06-20** — Session 34: Voting closed (deadline 2026-06-21T00:00Z, 48 voters, 2291 votes, 55 proposals). Analytics admin page: added Proposals tab (ranked by weighted score) and Download CSV button. Local results snapshot: `data/symposium-2026-results.csv`.
 - **2026-06-18** — Session 33: SIG about pages (all 6 SIGs) — `managed-page.js` shared module (viewer + EasyMDE editor); D1 migration 026 (`is_sig_host`, `sig_host_slugs`); pages API (POST, not PUT — CF WAF blocks PUT); CSP extended for cdn.jsdelivr.net; EasyMDE loads and editing works but toolbar icons invisible (ongoing, see Active).
 - **2026-06-17** — About page rewritten in compact form; detailed SoP Program History section dropped (not planned).

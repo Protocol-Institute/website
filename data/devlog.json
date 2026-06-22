@@ -1319,6 +1319,40 @@
           "html": "Final results snapshot exported from D1 via <code>wrangler d1 execute --json</code> piped through a Python CSV writer. 55 rows (one per proposal), columns: Rank, Title, Speaker/Organizer, Type, Session, Weighted Score, Total Votes, Voters. Committed to <code>data/</code> as a permanent record of the final voting outcome."
         }
       ]
+    },
+    {
+      "id": 35,
+      "sort_key": 35.0,
+      "label": "Session 35",
+      "title": "Post-Voting Cleanup: Preliminary Program Goes Public",
+      "date": "2026-06-22",
+      "time_pt": "",
+      "tracks": ["static-site", "operations"],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Voting UI fully suppressed — program page made public",
+          "html": "Voting has closed; all voting affordances removed from three surfaces: the <strong>landing page</strong> (\"Symposium Voting Open\" CTA → simple \"Preliminary Program\" link), the <strong>symposium main page</strong> (<code>/events/protocol-symposium-2026/</code>, voting countdown widget + script removed), and the <strong>program page</strong> (<code>/events/protocol-symposium-2026/program/</code>, budget bar, vote inputs, sort-by-votes, distribute/clear/save buttons, countdown clock, and blurb all removed). The program page was gated to PI members during voting; it is now publicly visible to all visitors."
+        },
+        {
+          "title": "proposals.js made public",
+          "html": "The <code>GET /api/symposium/proposals</code> endpoint previously required a valid member session (returned 401 otherwise). It now fetches all shortlisted proposals unconditionally and returns them to unauthenticated callers. Authenticated members additionally receive <code>my_votes</code>, <code>budget</code>, <code>tier</code>, and <code>is_admin</code> for backward compatibility with the admin analytics dashboard, which passes credentials and relies on these fields. The admin analytics page at <code>/admin/symposium-analytics</code> is unaffected."
+        },
+        {
+          "title": "Program page redesign — comments open, edit preserved",
+          "html": "The program page retitled \"Program (Preliminary)\". New blurb: registration opens August 21; comments open for suggestions to speakers/workshop organizers. Members see a comment compose textarea; non-members see a login prompt. Proposal owners and admins retain inline editing. Admin-only aggregate score/vote display removed from proposal cards (now admin-dashboard-only). A \"← Symposium main page\" back link and a New Nature theme preview talk link (protocolized.io/features/new-nature) added above the proposal list."
+        },
+        {
+          "title": "Key dates added to symposium main page",
+          "html": "A \"Key Dates\" section added to <code>/events/protocol-symposium-2026/</code> as a two-column definition list: Jul 15 special session details due, Aug 21 registration opens, Sept 15 materials due, Sept 21–22 workshops, Sept 23–25 main program, Oct 18 final papers/essays due for proceedings volume."
+        },
+        {
+          "title": "Princeton HCI Lab added to network page",
+          "html": "New PIN member: Princeton Human-Computer Interaction Lab (Andrés Monroy-Hernández, Associate Professor). Submitted via Google Form 2026-06-22. Lab logo pulled from GitHub avatar URL, uploaded to R2 at <code>network/princeton-hci.png</code>, and wired into the network card. Work description: \"Decentralization through Protocolization.\""
+        }
+      ]
     }
   ]
 }
