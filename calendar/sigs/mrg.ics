@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Protocol Institute//SIG Meetings//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:mrg-recurring@protocol-institute.org
+DTSTAMP:20260703T000000Z
+DTSTART:20260703T143000Z
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
+SUMMARY:Memory Research Group (MRG)
+DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+URL:https://protocol-institute.org/sigs/mrg/
+END:VEVENT
+END:VCALENDAR

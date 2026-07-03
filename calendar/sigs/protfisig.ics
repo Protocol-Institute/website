@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Protocol Institute//SIG Meetings//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:protfisig-recurring@protocol-institute.org
+DTSTAMP:20260703T000000Z
+DTSTART:20260709T150000Z
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
+SUMMARY:ProtFiSIG — Protocol Fiction
+DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+URL:https://protocol-institute.org/sigs/protfisig/
+END:VEVENT
+END:VCALENDAR

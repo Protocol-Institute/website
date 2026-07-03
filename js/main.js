@@ -208,7 +208,9 @@ var FOOTER_HTML =
                 'July','August','September','October','November','December'];
   var DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  function fmt(sig) {
+  var GCAL_COMMUNITY = 'https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn';
+
+  function fmt(sig, slug) {
     if (!sig.occurrences || !sig.occurrences.length) return '';
     var now = new Date();
     var next = null;
@@ -236,9 +238,16 @@ var FOOTER_HTML =
 
     var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
 
+    var links = '<span class="sig-cal-links">' +
+      '<a href="/calendar/sigs/' + slug + '.ics">Add series (.ics)</a>' +
+      ' &middot; ' +
+      '<a href="' + GCAL_COMMUNITY + '" target="_blank" rel="noopener">Subscribe to full PI Community Calendar (all SIG events)</a>' +
+      '</span>';
+
     return 'Meets ' + freq + ' on ' + days + ' at ' + utcTime +
            ' UTC (' + localTime + dayNote + ' your local time) on Discord voice channel.' +
-           ' <strong>Next meeting on ' + nextStr + '.</strong>';
+           ' <strong>Next meeting on ' + nextStr + '.</strong>' +
+           links;
   }
 
   fetch('/data/sig-meetings.json')
@@ -247,7 +256,7 @@ var FOOTER_HTML =
       els.forEach(function (el) {
         var slug = el.getAttribute('data-sig');
         var sig = data.sigs && data.sigs[slug];
-        if (sig) el.innerHTML = fmt(sig);
+        if (sig) el.innerHTML = fmt(sig, slug);
       });
     })
     .catch(function () {});

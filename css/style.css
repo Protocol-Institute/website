@@ -679,6 +679,13 @@ a:hover {
   border-radius: 3px;
 }
 
+.sig-cal-links {
+  display: block;
+  margin-top: 0.35em;
+  font-size: 0.78rem;
+  color: #5A5A5A;
+}
+
 .sig-projects {
   margin: 1.5rem 0 0;
   padding: 1rem 0;

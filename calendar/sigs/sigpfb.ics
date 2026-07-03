@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Protocol Institute//SIG Meetings//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:sigpfb-recurring@protocol-institute.org
+DTSTAMP:20260703T000000Z
+DTSTART:20260713T153000Z
+DURATION:PT1H
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO
+SUMMARY:SIGPfB — Protocols for Business
+DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+URL:https://protocol-institute.org/sigs/sigpfb/
+END:VEVENT
+END:VCALENDAR

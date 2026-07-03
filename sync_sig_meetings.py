@@ -44,6 +44,20 @@ BYDAY_MAP = {
 
 ALL_SLUGS = ["sigfpt", "mrg", "sigpfb", "protfisig", "drg", "sigpsy"]
 
+SIG_DISPLAY = {
+    "sigfpt":    ("SIGFPT — Formal Protocol Theory",        "https://protocol-institute.org/sigs/sigfpt/"),
+    "mrg":       ("Memory Research Group (MRG)",            "https://protocol-institute.org/sigs/mrg/"),
+    "sigpfb":    ("SIGPfB — Protocols for Business",        "https://protocol-institute.org/sigs/sigpfb/"),
+    "protfisig": ("ProtFiSIG — Protocol Fiction",           "https://protocol-institute.org/sigs/protfisig/"),
+    "drg":       ("DRG — Distributed Robotics Group",       "https://protocol-institute.org/sigs/drg/"),
+    "sigpsy":    ("SIGPSY — Psychohistory",                 "https://protocol-institute.org/sigs/sigpsy/"),
+}
+
+DAY_TO_BYDAY = {
+    "Monday": "MO", "Tuesday": "TU", "Wednesday": "WE", "Thursday": "TH",
+    "Friday": "FR", "Saturday": "SA", "Sunday": "SU",
+}
+
 # Manual entries for SIGs not yet on the calendar.
 # DTSTART_RAW: YYYYMMDDTHHMMSS in the given TZID (or UTC if TZID is None).
 MANUAL_SIGS = {
@@ -215,6 +229,47 @@ def main():
     if missing:
         print(f"\nWARNING: no entry found for: {', '.join(missing)}")
         print("Add these to MANUAL_SIGS in sync_sig_meetings.py.")
+
+    write_ics_files(sigs, output["synced"])
+
+
+def write_ics_files(sigs, synced_date):
+    """Write one .ics file per SIG with a RRULE so calendar apps import the full series."""
+    out_dir = Path("calendar/sigs")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    dtstamp = synced_date.replace("-", "") + "T000000Z"
+
+    for slug, sig in sigs.items():
+        if not sig.get("occurrences"):
+            continue
+        name, url = SIG_DISPLAY.get(slug, (slug.upper(), f"https://protocol-institute.org/sigs/{slug}/"))
+        dtstart = sig["occurrences"][0].replace("-", "").replace(":", "")  # → 20260626T170000Z
+        byday = DAY_TO_BYDAY.get(sig["day"], "MO")
+        interval = sig["interval_weeks"]
+
+        lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Protocol Institute//SIG Meetings//EN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH",
+            "BEGIN:VEVENT",
+            f"UID:{slug}-recurring@protocol-institute.org",
+            f"DTSTAMP:{dtstamp}",
+            f"DTSTART:{dtstart}",
+            "DURATION:PT1H",
+            f"RRULE:FREQ=WEEKLY;INTERVAL={interval};BYDAY={byday}",
+            f"SUMMARY:{name}",
+            "DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.",
+            f"URL:{url}",
+            "END:VEVENT",
+            "END:VCALENDAR",
+            "",
+        ]
+        out_path = out_dir / f"{slug}.ics"
+        out_path.write_text("\r\n".join(lines))
+        print(f"  Wrote {out_path}")
 
 
 if __name__ == "__main__":
