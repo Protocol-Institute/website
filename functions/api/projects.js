@@ -4,6 +4,7 @@
 const VALID_STATES        = new Set(['stub', 'beta', 'production']);
 const VALID_TYPES         = new Set(['one-off', 'versioned', 'accretive']);
 const VALID_ARTIFACT_TYPES = new Set(['text', 'code', 'website', 'rich_media', 'other']);
+const VALID_THEMES        = new Set(['sigfpt', 'mrg', 'sigpfb', 'protfisig', 'drg', 'sigpsy', 'solo']);
 
 async function sha256hex(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -58,7 +59,11 @@ export async function onRequestGet({ request, env }) {
     }
 
     const { results } = await env.DB.prepare(query).bind(...binds).all();
-    return Response.json({ projects: results || [] });
+    const projects = (results || []).map(p => ({
+      ...p,
+      themes: p.themes ? JSON.parse(p.themes) : [],
+    }));
+    return Response.json({ projects });
   } catch (err) {
     console.error('projects GET error:', err);
     return Response.json({ error: 'Database error' }, { status: 500 });
@@ -89,6 +94,9 @@ export async function onRequestPost({ request, env }) {
   const url             = (body.url || '').trim();
   const sub_program     = (body.sub_program || null) || null;
   const current_version = type === 'versioned' ? ((body.current_version || '').trim() || null) : null;
+  const themes = Array.isArray(body.themes)
+    ? JSON.stringify(body.themes.filter(t => VALID_THEMES.has(t)))
+    : null;
 
   if (!title)       return Response.json({ error: 'Title required' }, { status: 400 });
   if (!description) return Response.json({ error: 'Description required' }, { status: 400 });
@@ -117,9 +125,9 @@ export async function onRequestPost({ request, env }) {
   try {
     await env.DB.prepare(`
       INSERT INTO projects
-        (slug, title, description, lead_slug, program, sub_program, state, type, artifact_type, artifact_type_other, url, current_version, submitted_by)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(slug, title, description, lead_slug, program, sub_program, state, type, artifact_type, artifact_type_other, url, current_version, email).run();
+        (slug, title, description, lead_slug, program, sub_program, state, type, artifact_type, artifact_type_other, url, current_version, themes, submitted_by)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(slug, title, description, lead_slug, program, sub_program, state, type, artifact_type, artifact_type_other, url, current_version, themes, email).run();
 
     return Response.json({ ok: true, slug }, { status: 201 });
   } catch (err) {

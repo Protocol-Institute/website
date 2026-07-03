@@ -94,17 +94,17 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="f-program">Program (optional)</label>
-            <select class="form-select" id="f-program">
-              <option value="">None (unclassified)</option>
-              <option value="protocolized">Protocolized</option>
-              <option value="ai-infrastructure">AI Infrastructure</option>
-              <option value="challenges">Challenges</option>
-              <option value="sigs">Special Interest Groups</option>
-              <option value="protocol-symposium">Protocol Symposium</option>
-              <option value="long-now">Protocols for the Long Now</option>
-              <option value="solo-projects">Solo Projects</option>
-            </select>
+            <label class="form-label">Relevant Themes <span class="optional">(optional)</span></label>
+            <p class="form-hint">Select any SIGs or contexts this project connects to.</p>
+            <div class="form-checkbox-group" id="f-themes" style="margin-top:0.5rem;">
+              <label class="form-checkbox"><input type="checkbox" value="sigfpt"> Formal Protocol Theory (SIGFPT)</label>
+              <label class="form-checkbox"><input type="checkbox" value="mrg"> Memory Research Group (MRG)</label>
+              <label class="form-checkbox"><input type="checkbox" value="sigpfb"> Protocols for Business (SIGPfB)</label>
+              <label class="form-checkbox"><input type="checkbox" value="protfisig"> Protocol Fiction (ProtFiSIG)</label>
+              <label class="form-checkbox"><input type="checkbox" value="drg"> Distributed Robotics Group (DRG)</label>
+              <label class="form-checkbox"><input type="checkbox" value="sigpsy"> Psychohistory (SIGPSY)</label>
+              <label class="form-checkbox"><input type="checkbox" value="solo"> Solo Project</label>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -169,7 +169,7 @@
       type:                document.getElementById('f-type').value,
       artifact_type:       artifactType,
       artifact_type_other: artifactType === 'other' ? document.getElementById('f-artifact-other').value.trim() : undefined,
-      program:             document.getElementById('f-program').value || undefined,
+      themes:              Array.from(document.querySelectorAll('#f-themes input:checked')).map(cb => cb.value),
     };
 
     try {

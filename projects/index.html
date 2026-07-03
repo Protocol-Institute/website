@@ -68,6 +68,15 @@
     protfisig: 'Protocol Fiction SIG',
     drg: 'Distributed Robotics Group',
   };
+  const THEME_LABELS = {
+    sigfpt:    'Formal Protocol Theory',
+    mrg:       'Memory Research Group',
+    sigpfb:    'Protocols for Business',
+    protfisig: 'Protocol Fiction',
+    drg:       'Distributed Robotics Group',
+    sigpsy:    'Psychohistory',
+    solo:      'Solo Project',
+  };
 
   function escHtml(str) {
     return String(str || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
@@ -112,6 +121,8 @@
           const programTag = p.program ? `<span class="project-category">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</span>` : '';
           const subProgramTag = p.sub_program ? `<span class="project-category project-sub-program">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</span>` : '';
           const versionTag = p.current_version ? `<span class="project-version">v${escHtml(p.current_version)}</span>` : '';
+          const themes = Array.isArray(p.themes) ? p.themes : [];
+          const themeTags = themes.map(t => `<span class="project-theme-tag">${escHtml(THEME_LABELS[t] || t)}</span>`).join('');
 
           return `<li class="project-item">
             <div class="project-meta">
@@ -122,8 +133,8 @@
               <span class="project-type-badge">${escHtml(TYPE_LABELS[p.type] || p.type)}</span>
               <span class="project-artifact-badge">${artifactLabel}</span>
               ${versionTag}
-              ${programTag}
-              ${subProgramTag}
+              ${themeTags || programTag}
+              ${!themeTags ? subProgramTag : ''}
             </div>
             <p class="project-description">${escHtml(p.description)}</p>
             <div class="project-meta-row">
