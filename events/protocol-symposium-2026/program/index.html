@@ -78,6 +78,16 @@
       letter-spacing:0.07em; text-transform:uppercase; color:#5A5A5A; white-space:nowrap; }
     .session-filter-bar select { font-family:inherit; font-size:0.85rem;
       padding:0.25rem 0.5rem; border:1px solid #C8C5C0; background:#fff; color:#1A1A1A; }
+
+    .anchor-link { display:inline-block; margin-left:0.45em; color:#C4CEC9;
+      vertical-align:middle; position:relative; top:-1px; text-decoration:none;
+      transition:color 0.15s; flex-shrink:0; }
+    .anchor-link:hover { color:#2A6B6B; }
+    .anchor-link svg { display:block; }
+    .anchor-copied { display:inline-block; font-size:0.72rem; font-weight:500;
+      color:#2A6B6B; margin-left:0.4em; vertical-align:middle;
+      animation:fade-out 1.5s forwards; }
+    @keyframes fade-out { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
   </style>
 </head>
 <body>
@@ -146,6 +156,7 @@
       select.appendChild(opt);
     });
     renderAll();
+    scrollToHash();
   });
 
   // ── Tabs ──────────────────────────────────────────────────────
@@ -216,6 +227,13 @@
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
     const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : '';
 
+    const anchorIcon =
+      `<a class="anchor-link" href="#p-${p.id}" onclick="copyLink(${p.id},event)" title="Copy link to this item" aria-label="Copy link">` +
+      `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">` +
+      `<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>` +
+      `<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>` +
+      `</svg></a>`;
+
     const composeHtml = memberEmail
       ? `<div class="comment-compose">
           <textarea class="comment-input" id="cmt-input-${p.id}"
@@ -226,8 +244,8 @@
         </div>`
       : `<p style="font-size:0.82rem;color:#8A8A8A;margin-top:0.5rem;"><a href="/members/join/">Log in as a PI member</a> to post a comment.</p>`;
 
-    return `<div class="proposal-card ${colorClass}" data-id="${p.id}">
-      <div class="proposal-title" id="title-${p.id}">${titleContent}</div>
+    return `<div class="proposal-card ${colorClass}" id="p-${p.id}" data-id="${p.id}">
+      <div class="proposal-title" id="title-${p.id}">${titleContent}${anchorIcon}</div>
       ${isWorkshop ? '<span class="type-badge type-badge--workshop">Workshop</span>' : ''}
       <div class="proposal-speaker">${speaker}</div>
       ${p.type === 'interactive' ? '<div class="proposal-track"><em>Interactive</em></div>' : ''}
@@ -260,6 +278,32 @@
         </div>
       </div>
     </div>`;
+  }
+
+  // ── Anchor links ──────────────────────────────────────────────
+  window.copyLink = function (id, e) {
+    e.preventDefault();
+    const hash = '#p-' + id;
+    history.pushState(null, '', hash);
+    const url = window.location.origin + window.location.pathname + hash;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
+      .catch(() => {})
+      .finally(() => {
+        const icon = document.querySelector(hash + ' .anchor-link');
+        if (!icon) return;
+        const tip = document.createElement('span');
+        tip.className = 'anchor-copied';
+        tip.textContent = 'Copied!';
+        icon.after(tip);
+        setTimeout(() => tip.remove(), 1600);
+      });
+  };
+
+  function scrollToHash() {
+    const hash = window.location.hash;
+    if (!hash) return;
+    const el = document.getElementById(hash.slice(1));
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
   }
 
   // ── Abstract toggle ───────────────────────────────────────────
