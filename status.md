@@ -6,6 +6,9 @@
 
 ## Upcoming
 <!-- planned changes or features -->
+- Challenges index/form redesign — replace Program dropdown with Relevant Themes checkboxes (separate from projects submit form, same pattern); build challenges index page analogous to projects index
+
+
 - Promote Network page to main nav once member content is added
 - Link SIG organizer names to member profiles as remaining organizers (Kei Kreutler, Spencer Nitkey) get onboarded — Patrick Nast, Anuraj R., Aneesh Sathe now linked
 - SIG mailing lists (blocked on creating sigs@protocol-institute.org in Resend first)
