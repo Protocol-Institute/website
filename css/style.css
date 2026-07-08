@@ -2004,11 +2004,6 @@ a:hover {
   margin-bottom: 0.55rem;
 }
 
-.event-type-badge-sig {
-  color: #8A5A00;
-  border-color: #C17F24;
-}
-
 .event-upcoming-badge {
   display: inline-block;
   font-size: 0.72rem;
@@ -2085,6 +2080,112 @@ a:hover {
 
 .event-card-link:hover {
   text-decoration: underline;
+}
+
+/* Compact calendar row list (/events Calendar tab) */
+
+.cal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cal-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #E0DDD8;
+}
+
+.cal-row:first-child {
+  border-top: 1px solid #E0DDD8;
+}
+
+.cal-when {
+  line-height: 1.35;
+}
+
+.cal-date {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1A1A1A;
+}
+
+.cal-time {
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: #6A6A6A;
+}
+
+.cal-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cal-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1A1A1A;
+  text-decoration: none;
+}
+
+.cal-title:hover {
+  text-decoration: underline;
+}
+
+.cal-badge {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2A6B6B;
+  border: 1px solid #2A6B6B;
+  padding: 0.05em 0.4em;
+}
+
+.cal-badge-sig {
+  color: #8A5A00;
+  border-color: #C17F24;
+}
+
+.cal-desc {
+  font-size: 0.82rem;
+  color: #5A5A5A;
+  margin: 0.15rem 0 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cal-links {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.76rem;
+}
+
+.cal-links a {
+  color: #2A6B6B;
+  text-decoration: none;
+}
+
+.cal-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .cal-row {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+  .cal-when {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
 }
 
 /* Event detail page */
