@@ -157,6 +157,7 @@ Why: on 2026-07-08 a c3po daemon cycle pushed straight to `main` mid-session and
 - No meeting dated less than 7 days before today has a completed (past-tense) summary — that's a premature-ingestion bug recurring.
 - Manual anchor-text fixes survive (currently: YouTube session-recording links must read "Session livestream (YouTube)", never the bare domain — see `sigs/CONVENTIONS.md`).
 - `<h2 class="section-label">` session counts match the number of `<li class="meeting-item">` entries added/removed in the diff.
+- **The PR doesn't clobber website-side work c3po has no visibility into.** c3po only knows about the SIG-page content it generates — it cannot know about presentation/structural changes made on this side in the same window (new CSS classes, layout changes, manual edits to files it also touches). Before merging, diff the PR's target files against recent commits here (`git log --oneline -10 -- <file>`) and check whether anything committed since the PR's base commit touches the same files or the same content patterns (e.g. anchor-text conventions, calendar links, structural markup) in a way the PR would silently undo. **This check is this project's responsibility, not c3po's** — c3po can't pre-empt a conflict it doesn't know exists, so the reviewer here must catch it before merge, not after.
 
 If a c3po PR fails any of these, it's a regression in the automation, not something to hand-fix in the PR — flag it back to c3po.
 
