@@ -8,49 +8,14 @@
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .calendar-embed-wrap {
-      width: 100%;
-      margin-bottom: 1.5rem;
-    }
-    .calendar-embed-wrap iframe {
-      display: block;
-      width: 100%;
-      height: 580px;
-      border: 1px solid #E0DDD8;
-    }
-    .cal-key {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 0.8rem;
-    }
-    .cal-key li {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-      color: #2C2C2C;
-      margin-bottom: 0.35rem;
-    }
-    .cal-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      position: relative;
-      top: 1px;
-    }
-    .cal-key a {
-      color: #2A6B6B;
-      font-size: 0.85rem;
-    }
-    .cal-key a:hover { text-decoration: underline; }
     .cal-note {
       font-size: 0.82rem;
       color: #8A8A8A;
-      margin-bottom: 1.2rem;
+      margin-top: 1.5rem;
       font-style: italic;
     }
+    .cal-note a { color: #2A6B6B; }
+    .cal-note a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -73,30 +38,12 @@
 
       <div id="view-calendar" role="tabpanel" aria-labelledby="tab-calendar">
 
-        <ul class="cal-key">
-          <li>
-            <span class="cal-dot" style="background:#C17F24;"></span>
-            PI Community Calendar — SIG meetings and member-organized events.
-            <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe &rarr;</a>
-          </li>
-          <li>
-            <span class="cal-dot" style="background:#2A6B6B;"></span>
-            PI Institute Calendar — town halls, symposium, and curated Institute events.
-            <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe &rarr;</a>
-          </li>
-        </ul>
+        <p class="events-intro">SIG meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p>
 
-        <p class="cal-note">Click on individual events below to add to your calendar. To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
+        <p class="events-loading" id="upcoming-loading">Loading&hellip;</p>
+        <ul class="event-list" id="upcoming-list"></ul>
 
-        <div class="calendar-embed-wrap">
-          <iframe
-            src="https://calendar.google.com/calendar/embed?src=sigs%40protocol-institute.org&color=%23C17F24&src=c_39064bd346954b73835545c21dd13f812700b44c0fbb0723f390211473dded5c%40group.calendar.google.com&color=%232A6B6B&showTitle=0&showNav=1&showPrint=0&showTabs=0&showCalendars=1&showTz=1&mode=AGENDA&wkst=1&hl=en"
-            frameborder="0"
-            scrolling="no"
-            title="Protocol Institute Calendar"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
-        </div>
+        <p class="cal-note">Subscribe for everything, ongoing: <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">PI Community Calendar</a> (SIG meetings and member-organized events) &middot; <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">PI Institute Calendar</a> (town halls and curated events). To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
 
       </div><!-- #view-calendar -->
 
@@ -116,6 +63,7 @@
 
 </div>
 
+<script src="/js/sig-meta.js"></script>
 <script src="/js/main.js"></script>
 <script>
 (function () {
@@ -124,6 +72,7 @@
   var panelCal = document.getElementById('view-calendar');
   var panelHist = document.getElementById('view-history');
   var histLoaded = false;
+  var upcomingLoaded = false;
 
   var TYPE_LABELS = {
     symposium:  'Symposium',
@@ -132,6 +81,102 @@
     residency:  'Residency',
     retreat:    'Researcher Retreat'
   };
+
+  function loadUpcoming() {
+    if (upcomingLoaded) return;
+    upcomingLoaded = true;
+    Promise.all([
+      fetch('/data/events.json').then(function (r) { return r.json(); }),
+      fetch('/data/sig-meetings.json').then(function (r) { return r.json(); })
+    ]).then(function (results) {
+      var events = results[0];
+      var sigData = results[1];
+      var now = new Date();
+      var items = [];
+
+      events.forEach(function (ev) {
+        var end = new Date(ev.date_end + 'T23:59:59Z');
+        if (end < now) return;
+        items.push({
+          sortDate: new Date(ev.date_start + 'T00:00:00Z'),
+          dateDisplay: ev.date_display,
+          location: ev.location,
+          title: ev.title,
+          href: '/events/' + ev.id + '/',
+          typeLabel: TYPE_LABELS[ev.type] || ev.type,
+          typeClass: '',
+          description: ev.short_description,
+          image: ev.image,
+          calLink: window.PI_eventGcalLink(ev),
+          extraLinks: []
+        });
+      });
+
+      Object.keys(sigData.sigs || {}).forEach(function (slug) {
+        var sig = sigData.sigs[slug];
+        var meta = window.PI_SIGS && window.PI_SIGS[slug];
+        if (!meta || !sig.occurrences) return;
+        var next = null;
+        for (var i = 0; i < sig.occurrences.length; i++) {
+          var d = new Date(sig.occurrences[i]);
+          if (d >= now) { next = d; break; }
+        }
+        if (!next) return;
+        var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
+        var dateStr = next.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+        var timeStr = next.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+        items.push({
+          sortDate: next,
+          dateDisplay: dateStr + ' · ' + timeStr,
+          location: 'Discord',
+          title: meta.full + ' Meeting',
+          href: '/sigs/' + slug + '/',
+          typeLabel: 'SIG Meeting',
+          typeClass: ' event-type-badge-sig',
+          description: 'Meets ' + freq + ' on Discord — #' + meta.channelName + '.',
+          image: null,
+          calLink: window.PI_sigGcalLink(slug, next),
+          extraLinks: [{ href: '/calendar/sigs/' + slug + '.ics', label: 'Add series (.ics)' }]
+        });
+      });
+
+      items.sort(function (a, b) { return a.sortDate - b.sortDate; });
+
+      var list = document.getElementById('upcoming-list');
+      var loading = document.getElementById('upcoming-loading');
+
+      if (!items.length) {
+        loading.textContent = 'No upcoming events scheduled.';
+        return;
+      }
+
+      items.forEach(function (item) {
+        var li = document.createElement('li');
+        li.className = 'event-item';
+        var thumb = item.image
+          ? '<img src="' + item.image + '" alt="" class="event-thumbnail">'
+          : '<div class="event-thumbnail-placeholder"></div>';
+        var links = '<a href="' + item.calLink + '" class="event-card-link" target="_blank" rel="noopener">Add to calendar &rarr;</a>' +
+          '<a href="' + item.href + '" class="event-card-link">Details &rarr;</a>';
+        item.extraLinks.forEach(function (l) {
+          links += '<a href="' + l.href + '" class="event-card-link">' + l.label + '</a>';
+        });
+        li.innerHTML =
+          '<div class="event-thumbnail-wrap">' + thumb + '</div>' +
+          '<div class="event-card-body">' +
+            '<div class="event-type-badge' + item.typeClass + '">' + item.typeLabel + '</div>' +
+            '<div class="event-card-title"><a href="' + item.href + '">' + item.title + '</a></div>' +
+            '<div class="event-card-meta">' + item.dateDisplay + (item.location ? ' &middot; ' + item.location : '') + '</div>' +
+            '<p class="event-card-description">' + item.description + '</p>' +
+            '<div class="event-card-links">' + links + '</div>' +
+          '</div>';
+        list.appendChild(li);
+      });
+      loading.style.display = 'none';
+    }).catch(function () {
+      document.getElementById('upcoming-loading').textContent = 'Upcoming events could not be loaded.';
+    });
+  }
 
   function loadHistory() {
     if (histLoaded) return;
@@ -184,7 +229,7 @@
     tabHist.setAttribute('aria-selected', String(isHistory));
     panelCal.hidden = isHistory;
     panelHist.hidden = !isHistory;
-    if (isHistory) loadHistory();
+    if (isHistory) { loadHistory(); } else { loadUpcoming(); }
     var url = new URL(window.location.href);
     if (isHistory) { url.searchParams.set('view', 'history'); }
     else { url.searchParams.delete('view'); }
@@ -198,6 +243,7 @@
     showTab('history');
   } else {
     tabCal.classList.add('active');
+    loadUpcoming();
   }
 }());
 </script>
