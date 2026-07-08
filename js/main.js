@@ -209,6 +209,40 @@ var FOOTER_HTML =
   var DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
   var GCAL_COMMUNITY = 'https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn';
+  var GUILD_ID = '1082444651946049567';
+
+  // Discord voice-channel id + display name for each SIG's recurring meeting, and full SIG name for calendar entries.
+  var SIG_CHANNELS = {
+    sigfpt:    { id: '1327337414175490160', name: 'formal-protocol-theory', full: 'Formal Protocol Theory' },
+    mrg:       { id: '1379992696114122832', name: 'memory-research-group',  full: 'Memory Research Group' },
+    sigpfb:    { id: '1333851496416153702', name: 'protocols-for-business', full: 'Protocols for Business' },
+    protfisig: { id: '1106572787042238504', name: 'protocol-fiction',       full: 'Protocol Fiction' },
+    drg:       { id: '1508175637020676259', name: 'distributed-robotics',  full: 'Distributed Robotics Group' },
+    sigpsy:    { id: '1508205168661893180', name: 'psychohistory',         full: 'Special Interest Group in Psychohistory' }
+  };
+
+  function gcalStamp(d) {
+    return d.getUTCFullYear() +
+      String(d.getUTCMonth() + 1).padStart(2, '0') +
+      String(d.getUTCDate()).padStart(2, '0') + 'T' +
+      String(d.getUTCHours()).padStart(2, '0') +
+      String(d.getUTCMinutes()).padStart(2, '0') +
+      String(d.getUTCSeconds()).padStart(2, '0') + 'Z';
+  }
+
+  function gcalEventLink(chan, next) {
+    var end = new Date(next.getTime() + 60 * 60 * 1000); // 1hr, matches DURATION:PT1H in the .ics series
+    var dates = gcalStamp(next) + '/' + gcalStamp(end);
+    var discordUrl = 'https://discord.com/channels/' + GUILD_ID + '/' + chan.id;
+    var params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: chan.full + ' meeting',
+      dates: dates,
+      details: 'Protocol Institute SIG meeting. Join on Discord: ' + discordUrl,
+      location: 'Discord — #' + chan.name
+    });
+    return 'https://calendar.google.com/calendar/render?' + params.toString();
+  }
 
   function fmt(sig, slug) {
     if (!sig.occurrences || !sig.occurrences.length) return '';
@@ -219,6 +253,8 @@ var FOOTER_HTML =
       if (d >= now) { next = d; break; }
     }
     if (!next) return '';
+
+    var chan = SIG_CHANNELS[slug];
 
     var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
     var days = sig.day + 's';
@@ -238,14 +274,20 @@ var FOOTER_HTML =
 
     var nextStr = MONTHS[next.getUTCMonth()] + ' ' + next.getUTCDate();
 
-    var links = '<span class="sig-cal-links">' +
-      '<a href="/calendar/sigs/' + slug + '.ics">Add series (.ics)</a>' +
-      ' &middot; ' +
-      '<a href="' + GCAL_COMMUNITY + '" target="_blank" rel="noopener">Subscribe to full PI Community Calendar (all SIG events)</a>' +
-      '</span>';
+    var discordLink = chan ?
+      '<a href="https://discord.com/channels/' + GUILD_ID + '/' + chan.id + '" target="_blank" rel="noopener">#' + chan.name + '</a> (Discord voice channel)' :
+      'Discord voice channel';
+
+    var linkParts = [];
+    if (chan) {
+      linkParts.push('<a href="' + gcalEventLink(chan, next) + '" target="_blank" rel="noopener">Add this meeting to your calendar</a>');
+    }
+    linkParts.push('<a href="/calendar/sigs/' + slug + '.ics">Add series (.ics)</a>');
+    linkParts.push('<a href="' + GCAL_COMMUNITY + '" target="_blank" rel="noopener">Subscribe to full PI Community Calendar (all SIG events)</a>');
+    var links = '<span class="sig-cal-links">' + linkParts.join(' &middot; ') + '</span>';
 
     return 'Meets ' + freq + ' on ' + days + ' at ' + utcTime +
-           ' UTC (' + localTime + dayNote + ' your local time) on Discord voice channel.' +
+           ' UTC (' + localTime + dayNote + ' your local time) on ' + discordLink + '.' +
            ' <strong>Next meeting on ' + nextStr + '.</strong>' +
            links;
   }

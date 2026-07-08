@@ -88,6 +88,8 @@ Each entry in the meeting list shows: date, linked title, topic tags, one-senten
 
 The page header contains date and title. The `<div class="meeting-detail">` holds all session content. Future artifacts (essays, code, diagrams, recordings) should be added as additional sections **after** `.meeting-detail`, each with an appropriate heading.
 
+**Link anchor text:** every link needs descriptive anchor text — never the bare URL or domain. In `.meeting-links-list`, general reference links (arxiv, github, external articles) may use the domain as anchor text (e.g. `arxiv.org`), but a link to a YouTube recording of the session itself must read `Session livestream (YouTube)`, not `www.youtube.com` or `youtube.com/watch?v=...`.
+
 ```html
 <div class="page-header">
   <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">May 27, 2026</p>
