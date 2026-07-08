@@ -16,6 +16,15 @@
     }
     .cal-note a { color: #2A6B6B; }
     .cal-note a:hover { text-decoration: underline; }
+    .cal-subscribe-links {
+      font-size: 0.85rem;
+      margin: 0 0 1.5rem;
+    }
+    .cal-subscribe-links a {
+      color: #2A6B6B;
+      text-decoration: none;
+    }
+    .cal-subscribe-links a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -40,10 +49,12 @@
 
         <p class="events-intro">SIG meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p>
 
+        <p class="cal-subscribe-links"><a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe to Community Calendar</a> &middot; <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe to Institute Calendar</a></p>
+
         <p class="events-loading" id="upcoming-loading">Loading&hellip;</p>
         <ul class="cal-list" id="upcoming-list"></ul>
 
-        <p class="cal-note">Subscribe for everything, ongoing: <a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">PI Community Calendar</a> (SIG meetings and member-organized events) &middot; <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">PI Institute Calendar</a> (town halls and curated events). To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
+        <p class="cal-note">To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
 
       </div><!-- #view-calendar -->
 
@@ -157,7 +168,7 @@
           badgeClass: ' cal-badge-sig',
           description: 'Meets ' + freq + ' — #' + meta.channelName + ' on Discord.',
           calLink: window.PI_sigGcalLink(slug, next),
-          extraLinks: [{ href: '/calendar/sigs/' + slug + '.ics', label: 'Add series (.ics)' }]
+          extraLinks: [{ href: '/calendar/sigs/' + slug + '.ics', label: 'Download event series (.ics)' }]
         });
       });
 
@@ -174,17 +185,20 @@
       items.forEach(function (item) {
         var li = document.createElement('li');
         li.className = 'cal-row';
-        var links = '<a href="' + item.calLink + '" target="_blank" rel="noopener">Add to calendar &rarr;</a>' +
-          '<a href="' + item.href + '">Details &rarr;</a>';
+        var links = '<a href="' + item.calLink + '" target="_blank" rel="noopener">Add single event to calendar &rarr;</a>';
         item.extraLinks.forEach(function (l) {
           links += '<a href="' + l.href + '">' + l.label + '</a>';
         });
         li.innerHTML =
-          '<div class="cal-when"><div class="cal-date">' + item.dateLine + '</div><div class="cal-time">' + item.timeLine + '</div></div>' +
+          '<div class="cal-when">' +
+            '<div class="cal-date">' + item.dateLine + '</div>' +
+            '<div class="cal-time">' + item.timeLine + '</div>' +
+            '<span class="cal-badge' + item.badgeClass + '">' + item.typeLabel + '</span>' +
+          '</div>' +
           '<div class="cal-body">' +
             '<div class="cal-title-row">' +
               '<a href="' + item.href + '" class="cal-title">' + item.title + '</a>' +
-              '<span class="cal-badge' + item.badgeClass + '">' + item.typeLabel + '</span>' +
+              '<a href="' + item.href + '" class="cal-details">Details &rarr;</a>' +
             '</div>' +
             '<p class="cal-desc">' + item.description + (item.location ? ' &middot; ' + item.location : '') + '</p>' +
             '<div class="cal-links">' + links + '</div>' +
