@@ -1435,6 +1435,34 @@
           "html": "Mid-session, a c3po daemon cycle pushed a full regeneration of all 6 <code>sigs/*/index.html</code> files directly to this repo's working tree (not yet committed at the time it was caught). The regeneration silently stripped the <code>&lt;a href&gt;</code> wrapper from essentially every meeting-title across all 6 SIGs (~100 entries, including ones whose detail pages already existed) because <code>generate_sig_pages.py</code> runs after <code>update_sig_pages.py</code> injects those links and had no awareness they were there — every regen reset them to plain text. It also reverted this session's own manual “Session livestream (YouTube)” anchor-text fix in 3 files, and had published two fabricated past-tense summaries for meetings that hadn't happened yet (SIGFPT “Formal Modeling of Stigmergy” dated 2026-07-10, DRG “EIP-8126 Discussion” dated 2026-07-09 — both future-dated at the time), because Discord threads are created ahead of a session to post the agenda and c3po's ingestion had no gate against summarizing an agenda-only thread as if the meeting had concluded. Caught before commit: the working-tree changes were identified as external (all 6 files touched at an identical timestamp, unrelated to any tool call in this session), left uncommitted, and <code>main</code> was never polluted. c3po has since been patched: it now opens a PR (branch prefix <code>c3po/...</code>) against this repo instead of pushing straight to <code>main</code>, waits 7 days after a meeting's date before treating it as complete, and special-cases YouTube links in its generator so manual anchor-text fixes survive regeneration. The resulting fix PR (<a href=\"https://github.com/Protocol-Institute/website/pull/5\">#5</a>) was reviewed — every restored link target verified to resolve to an existing detail-page directory, YouTube anchor text confirmed untouched, session counts cross-checked against added/removed <code>&lt;li&gt;</code> entries — and merged. <code>CLAUDE.md</code> now documents this as a standing protocol: check <code>gh pr list</code> for open c3po PRs at the start of every session, with a checklist of what a correct c3po PR must satisfy, so a future regression is caught the same way rather than silently landing."
         }
       ]
+    },
+    {
+      "id": 38,
+      "sort_key": 38.0,
+      "label": "Session 38",
+      "title": "SIGs/Events Calendar-Link Deduplication",
+      "date": "2026-07-08",
+      "time_pt": "",
+      "tracks": [
+        "static-site"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "/sigs schedule blocks reduced to a single pointer at /events",
+          "html": "Session 37 added three calendar-action links (single-event add, series <code>.ics</code> download, community-calendar subscribe) directly into each SIG's <code>/sigs</code> schedule block — but the same session also rebuilt <code>/events</code>'s Calendar tab to show exactly the same three actions for the same next occurrence, via the same underlying <code>data/sig-meetings.json</code>. The two blocks had drifted into duplicating each other rather than one linking to the other. <code>js/main.js</code>'s <code>fmt()</code> (populates <code>[data-sig]</code> blocks on <code>/sigs</code>) now drops the three inline links entirely and ends with a single sentence: “Next meeting on DATE, view calendar entry” — the phrase links to <code>/events#sig-&lt;slug&gt;</code>. All calendar-action links (add single event, add series, subscribe) now live in exactly one place, the <code>/events</code> Calendar tab; <code>/sigs</code> is now purely a pointer to that entry, not a second copy of the actions."
+        },
+        {
+          "title": "Stable per-row anchors on the /events Calendar tab",
+          "html": "For the <code>/sigs</code> → <code>/events</code> link to land on the right row, each row rendered by <code>loadUpcoming()</code> in <code>events/index.html</code> now carries a stable <code>id</code>: <code>sig-&lt;slug&gt;</code> for SIG rows (stable across weeks — always means “this SIG's next occurrence”, not tied to a specific date), <code>event-&lt;id&gt;</code> for Institute events (the event's slug from <code>data/events.json</code>). Because the list is populated asynchronously after a <code>fetch</code>, the browser's native fragment-jump (which fires once at initial parse, before the fetch resolves) can't be relied on — added an explicit check after the list renders: if <code>window.location.hash</code> matches a rendered row's id, <code>scrollIntoView({block:'center'})</code> is called manually. This pattern (async-rendered list + manual post-render hash scroll) is the one to reuse for any future JS-rendered list that needs deep-linkable rows."
+        },
+        {
+          "title": "Removed unused .sig-cal-links CSS rule",
+          "html": "Deleted alongside the <code>fmt()</code> simplification — the class was only ever referenced by the inline-links <code>&lt;span&gt;</code> that <code>fmt()</code> no longer emits."
+        }
+      ]
     }
   ]
 }

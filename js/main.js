@@ -242,18 +242,9 @@ var FOOTER_HTML =
       '<a href="https://discord.com/channels/' + window.PI_DISCORD_GUILD_ID + '/' + chan.channelId + '" target="_blank" rel="noopener">#' + chan.channelName + '</a> (Discord voice channel)' :
       'Discord voice channel';
 
-    var linkParts = [];
-    if (chan) {
-      linkParts.push('<a href="' + window.PI_sigGcalLink(slug, next) + '" target="_blank" rel="noopener">Add this meeting to your calendar</a>');
-    }
-    linkParts.push('<a href="/calendar/sigs/' + slug + '.ics">Add series (.ics)</a>');
-    linkParts.push('<a href="' + window.PI_GCAL_COMMUNITY + '" target="_blank" rel="noopener">Subscribe to full PI Community Calendar (all SIG events)</a>');
-    var links = '<span class="sig-cal-links">' + linkParts.join(' &middot; ') + '</span>';
-
     return 'Meets ' + freq + ' on ' + days + ' at ' + utcTime +
            ' UTC (' + localTime + dayNote + ' your local time) on ' + discordLink + '.' +
-           ' <strong>Next meeting on ' + nextStr + '.</strong>' +
-           links;
+           ' Next meeting on ' + nextStr + ', <a href="/events#sig-' + slug + '">view calendar entry</a>.';
   }
 
   fetch('/data/sig-meetings.json')

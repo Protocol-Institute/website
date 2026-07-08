@@ -132,6 +132,7 @@
         var end = new Date(ev.date_end + 'T23:59:59Z');
         if (end < now) return;
         items.push({
+          id: 'event-' + ev.id,
           sortDate: new Date(ev.date_start + 'T00:00:00Z'),
           dateLine: shortDateRange(ev.date_start, ev.date_end),
           timeLine: 'All day',
@@ -158,6 +159,7 @@
         if (!next) return;
         var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
         items.push({
+          id: 'sig-' + slug,
           sortDate: next,
           dateLine: shortDate(next),
           timeLine: next.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }),
@@ -185,6 +187,7 @@
       items.forEach(function (item) {
         var li = document.createElement('li');
         li.className = 'cal-row';
+        li.id = item.id;
         var links = '<a href="' + item.calLink + '" target="_blank" rel="noopener">Add single event to calendar &rarr;</a>';
         item.extraLinks.forEach(function (l) {
           links += '<a href="' + l.href + '">' + l.label + '</a>';
@@ -206,6 +209,11 @@
         list.appendChild(li);
       });
       loading.style.display = 'none';
+
+      if (window.location.hash) {
+        var target = document.getElementById(window.location.hash.slice(1));
+        if (target) target.scrollIntoView({ block: 'center' });
+      }
     }).catch(function () {
       document.getElementById('upcoming-loading').textContent = 'Upcoming events could not be loaded.';
     });
