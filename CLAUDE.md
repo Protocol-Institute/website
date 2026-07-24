@@ -148,9 +148,11 @@ The primary maintainer has org admin on Protocol-Institute and direct push acces
 
 ### c3po integration — PR-only, not direct push
 
-c3po's SIG-page automation (`generate_sig_pages.py` / `update_sig_pages.py`, in the sibling `protocol-institute/c3po/` repo) edits `sigs/*/index.html` and the per-SIG detail pages directly in this repo. **As of 2026-07-08 it opens a PR (branch prefix `c3po/...`) instead of pushing straight to `main`.**
+c3po's SIG-page automation (`generate_sig_pages.py` / `update_sig_pages.py`, in the sibling `protocol-institute/c3po/` repo) edits `sigs/*/index.html` and the per-SIG detail pages directly in this repo. **As of 2026-07-08 it's supposed to open a PR (branch prefix `c3po/...`) instead of pushing straight to `main`** — but see the reliability note below, this has not actually been working.
 
 Why: on 2026-07-08 a c3po daemon cycle pushed straight to `main` mid-session and silently clobbered ~100 meeting-title links across all 6 SIG index pages (its regenerator ran after the link-injection step with no awareness the links existed), reverted a manual anchor-text fix, and published two fabricated summaries for meetings that hadn't happened yet (agenda-only threads treated as complete). c3po has since been patched (7-day grace period before treating a meeting as "complete"; YouTube links special-cased; PR workflow instead of direct push) — see PR [#5](https://github.com/Protocol-Institute/website/pull/5) for the fix and full writeup.
+
+**Reliability note (found Session 39, 2026-07-24):** c3po's daemon regenerates `sigs/*/index.html` directly on disk in this working tree every 30 minutes regardless of PR status — that part always ran. The weekly PR step (`push_website_if_changed()` in `daemon.py`, gated to at most once per 7 days) had been silently failing on *every* attempt since 2026-07-09 (confirmed 07-09, 07-16, 07-24 in `daemon.log`) due to a stale `sigs.html` pathspec left over from before the site restructured to `sigs/index.html`. Net effect: no automated c3po PR actually landed between #5 (2026-07-08) and the fix — new meeting content just sat as uncommitted changes in this working tree, and also left 3 orphaned `git stash` entries here. Fix opened as [c3po#1](https://github.com/Protocol-Institute/c3po/pull/1) (in the c3po repo, not this one); confirm it merged and a subsequent weekly cycle actually opened a website PR before trusting this flow again. Until then, **check `git status` on this repo periodically** — dirty `sigs/*/index.html` files with no corresponding open PR means c3po generated content locally that needs manual review/commit.
 
 **At session start, check for open c3po PRs** (`gh pr list --repo Protocol-Institute/website`) and review before merging:
 - Every restored/added `<div class="meeting-title"><a href="...">` target resolves to an existing `sigs/<slug>/<date-slug>/` directory.
@@ -170,7 +172,8 @@ The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes
 1. Read `status.md` — review active and upcoming items from the last session.
 2. Confirm you are on `main` (`git branch --show-current`).
 3. Check for open c3po PRs (`gh pr list --repo Protocol-Institute/website`) — review per the checklist in [Governance & workflow](#governance--workflow) and merge if clean.
-4. Briefly summarize: any active items from `status.md` that are ready to work on.
+4. Run `git status` — if `sigs/*/index.html` show as modified/untracked with no corresponding open c3po PR, that's the known automated-push reliability issue (see [c3po integration](#c3po-integration--pr-only-not-direct-push)); review and commit the content by hand rather than waiting for a PR.
+5. Briefly summarize: any active items from `status.md` that are ready to work on.
 
 ---
 
