@@ -74,7 +74,7 @@
     <div class="container">
 
       <div id="gate-view" class="gate-msg" style="display:none;">
-        <p>Member access required. <a href="/members/join/">Log in →</a></p>
+        <p>Unable to load session details. Please try again later.</p>
       </div>
 
       <div id="main-view" style="display:none;">
@@ -138,12 +138,11 @@
   let memberEmail = '', isAdmin = false;
   const storeByKey = {};
 
-  fetch('/api/members/me')
-    .then(r => r.ok ? r.json() : Promise.reject())
+  fetch('/api/members/me').then(r => r.ok ? r.json() : { member: null }).catch(() => ({ member: null }))
     .then(d => {
-      if (!d.member) throw new Error();
-      memberEmail = (d.member.email || '').toLowerCase();
-      isAdmin = !!d.member.is_admin;
+      const member = d && d.member;
+      memberEmail = member ? (member.email || '').toLowerCase() : '';
+      isAdmin = !!(member && member.is_admin);
       document.getElementById('main-view').style.display = '';
       return Promise.all([
         fetch('/api/symposium/sessions/' + SESSION_SLUG).then(r => r.json()),
@@ -223,11 +222,11 @@
             <button class="comment-toggle" id="cmttgl-${p.id}" onclick="toggleComments(${p.id})">Comments (${p.comment_count || 0}) ▾</button>
             <div class="comments-body" id="cmts-${p.id}" style="display:none;">
               <div class="comments-list" id="cmt-list-${p.id}"></div>
-              <div class="comment-compose">
+              ${memberEmail ? `<div class="comment-compose">
                 <textarea class="comment-input" id="cmt-input-${p.id}" placeholder="Suggestions for the speaker/organizer…" rows="3"></textarea><br>
                 <button class="comment-submit-btn" id="cmt-btn-${p.id}" onclick="submitComment(${p.id})">Post</button>
                 <span class="comment-msg" id="cmt-msg-${p.id}"></span>
-              </div>
+              </div>` : `<p style="font-size:0.82rem;color:#8A8A8A;margin-top:0.5rem;"><a href="/members/join/">Log in as a PI member</a> to post a comment.</p>`}
             </div>
           </div>
         </div>`;
