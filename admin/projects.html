@@ -41,14 +41,13 @@
 (function () {
   let adminKey = '';
 
-  const PROGRAM_LABELS = {
-    'protocolized':       'Protocolized',
-    'ai-infrastructure':  'AI Infrastructure',
-    'challenges':         'Challenges',
-    'sigs':               'Special Interest Groups',
-    'protocol-symposium': 'Protocol Symposium',
-    'long-now':           'Protocols for the Long Now',
-    'solo-projects':      'Solo Projects',
+  const SIG_LABELS = {
+    sigfpt:    'Formal Protocol Theory (SIGFPT)',
+    mrg:       'Memory Research Group (MRG)',
+    sigpfb:    'Protocols for Business (SIGPfB)',
+    protfisig: 'Protocol Fiction (ProtFiSIG)',
+    drg:       'Distributed Robotics Group (DRG)',
+    sigpsy:    'Psychohistory (SIGPSY)',
   };
 
   const STATE_LABELS    = { stub: 'Stub', beta: 'Beta', production: 'Production' };
@@ -89,7 +88,7 @@
         <div class="request-field"><strong>State:</strong> ${escHtml(STATE_LABELS[p.state] || p.state)}</div>
         <div class="request-field"><strong>Type:</strong> ${escHtml(TYPE_LABELS[p.type] || p.type)}</div>
         <div class="request-field"><strong>Artifact:</strong> ${artifactLabel}</div>
-        ${p.program ? `<div class="request-field"><strong>Program:</strong> ${escHtml(PROGRAM_LABELS[p.program] || p.program)}</div>` : ''}
+        <div class="request-field"><strong>SIG:</strong> ${p.sig_slug ? escHtml(SIG_LABELS[p.sig_slug] || p.sig_slug) : 'Independent'}</div>
         <div class="request-field"><strong>Submitted by:</strong> ${escHtml(p.submitted_by)}</div>
         <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${escHtml(p.created_at)}</div>
         <div style="margin-top:0.75rem;">

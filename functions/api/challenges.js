@@ -80,10 +80,27 @@ export async function onRequestGet({ request, env }) {
       ) DESC, c.created_at DESC
     `).all();
 
-    const challenges = (results || []).map(c => ({
+    let challenges = (results || []).map(c => ({
       ...c,
       voted_by_me: myVotes.has(c.id),
     }));
+
+    const ids = challenges.map(c => c.id);
+    if (ids.length) {
+      const placeholders = ids.map(() => '?').join(',');
+      const { results: projRows } = await env.DB.prepare(`
+        SELECT pc.challenge_id, pc.project_id, p.slug, p.title
+        FROM project_challenges pc
+        JOIN projects p ON p.id = pc.project_id
+        WHERE pc.challenge_id IN (${placeholders})
+      `).bind(...ids).all();
+
+      const projectsByChallenge = {};
+      for (const row of projRows || []) {
+        (projectsByChallenge[row.challenge_id] ||= []).push({ slug: row.slug, title: row.title });
+      }
+      challenges = challenges.map(c => ({ ...c, projects: projectsByChallenge[c.id] || [] }));
+    }
 
     return Response.json({ challenges, is_admin: isAdmin });
   } catch (err) {
