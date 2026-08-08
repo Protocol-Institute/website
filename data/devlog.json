@@ -1496,6 +1496,48 @@
           "html": "PR <a href=\"https://github.com/Protocol-Institute/website/pull/1\">#1</a> (\"Fix nav position jump between landing and interior pages\", opened 2026-04-27 from the <code>vgururao</code> fork) targeted a <code>.landing-nav</code> CSS class that no longer exists — the landing and interior nav were consolidated into a single shared <code>.site-nav</code> (injected from <code>js/main.js</code>) back in Session 9. Closed with an explanatory comment rather than merged."
         }
       ]
+    },
+    {
+      "id": 40,
+      "sort_key": 40.0,
+      "label": "Session 40",
+      "title": "Research (Challenges + Projects) Unification; Symposium Session Pages Fixed to Public",
+      "date": "2026-08-08",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium special session pages fixed: publicly viewable, editing still gated",
+          "html": "The four special-session pages under <code>/events/protocol-symposium-2026/sessions/</code> (memory, psychohistory, southeast-asia, protocol-fiction) required a logged-in member session before rendering <em>any</em> content — <code>/api/members/me</code> returns 401 for anonymous visitors, and the page's fetch chain rejected on any non-<code>ok</code> response, triggering a full-page \"Member access required\" gate. The underlying <code>/api/symposium/sessions/:slug</code> and <code>/api/symposium/proposals</code> endpoints were already public; only the client-side gating logic was wrong. Fixed to treat an anonymous response as \"no member\" rather than an error, matching the pattern already used on the Draft Program page. Edit affordances (session-details edit bar, per-proposal edit button) were already correctly conditioned on owner/admin and needed no change; comment-posting is now gated on login with a visible prompt, comment-viewing behavior unchanged."
+        },
+        {
+          "title": "Root-cause diagnosis: why submitted projects were invisible",
+          "html": "Investigating the request to link Projects and Challenges surfaced that the existing D1-backed project-submission feature (<code>projects/submit/</code> → <code>POST /api/projects</code> → admin approval → <code>GET /api/projects</code>) was fully functional end-to-end but completely unreachable: <code>_redirects</code> still 301'd <code>/projects</code> and <code>/projects/</code> to <code>/programs?view=flattened</code>, a rule added when the <em>old</em> flat Initiatives page lived at that path, before the site restructured to <code>/programs</code> months ago. When the project-submission feature was later built and given the same URL, nobody removed the stale redirect — so the listing page rendered correctly whenever tested directly, but no real visitor could ever reach it. Separately, the Programs page had accumulated its own hand-authored, parallel notion of \"projects\" (Jamverse, Cognitive Ergonomics, protocolized.dev, World Machines, YakRobot Protocols, plus institutional infrastructure like C3PO/Humboldt all mixed into one \"Projects\" sub-category per program) with zero connection to the D1 table — 7 of the 8 existing D1 project rows were themselves just Venkat manually re-entering that same static list into the database by hand, not real submissions."
+        },
+        {
+          "title": "Unified /research page: two tab views, one shared value/watching mechanism",
+          "html": "Merged Challenges and Projects into a single page at <code>/research</code> (nav label \"Research\", replacing \"Challenges\") with two tab views — Challenges (default) and Projects — sharing <code>js/research.js</code> for the value formula (<code>seed + 1×anon² + 3×member²</code>, unchanged from the original challenges formula) and the watching (👀) button mechanics, so both entity types are scored and voted on identically rather than risking two formulas drifting apart. Each challenge card now lists its responding projects; each project card lists the challenges it responds to — both directions read from a new <code>project_challenges</code> many-to-many join table (migration 028), which is deliberately editable at any time from the project's own detail page rather than submission-time-only, since either a project or a relevant challenge can postdate the other. <code>/challenges</code> and <code>/projects</code> (the old list pages) were deleted outright as fully superseded; <code>_redirects</code> now sends both into <code>/research</code>, which also finally fixes the stale-redirect bug described above."
+        },
+        {
+          "title": "Schema: sig_slug replaces program/sub_program/themes; team membership; watching parity",
+          "html": "Migration 028 replaced the projects table's overloaded <code>program</code> (admin-only, never exposed in the submit form) / <code>sub_program</code> / <code>themes</code> (a multi-select that conflated \"which SIG\" with a <code>solo</code> pseudo-tag) with a single <code>sig_slug</code> column — one of the 6 SIG slugs, or <code>NULL</code> for independent. Old columns were left in place unused rather than dropped, since dropping columns cleanly across existing rows isn't worth the risk on a live D1 table for a purely cosmetic cleanup. Added <code>anon_interesting</code>/<code>member_interesting</code>/<code>seed_interesting</code> to <code>projects</code> plus a <code>project_votes</code> table, mirroring <code>challenges</code>/<code>challenge_votes</code> exactly (same member-dedup-by-email, same anon-dedup-by-cookie pattern, new cookie name <code>pi_proj_voted</code>). New <code>project_team</code> table implements self-declared team membership: any logged-in member who isn't already the lead can request to join (status <code>pending</code>); only the project's <code>lead_slug</code> or an admin can approve, at which point the member's name becomes a public credit next to \"Lead:\". New endpoints: <code>POST /api/projects/:slug/watching</code>, <code>POST /api/projects/:slug/team</code>, <code>POST</code>/<code>DELETE /api/projects/:slug/team/:member_slug/approve</code>, <code>POST</code>/<code>DELETE /api/projects/:slug/challenges</code>."
+        },
+        {
+          "title": "Data cleanup: institutional infra removed from the project index; Programs page made mutually exclusive",
+          "html": "Deleted 3 of the 8 existing <code>projects</code> rows (c3po, humboldt, and a nonsensical \"Challenges Index\" self-reference) — these are institutional infrastructure that now lives solely on <code>/programs</code>, never duplicated into the member-project system. Backfilled <code>sig_slug</code> on the 5 real projects kept (jamverse→protfisig, protocolized-dev→sigpfb, worldmachines→sigpsy, cognitive-ergonomics→mrg, the one organic member submission→sigfpt), using existing <code>sub_program</code>/<code>themes</code> values and a Session-30 status.md note as evidence. <code>programs/index.html</code> had its Research→Projects and Protocolized→Projects sub-categories deleted entirely (5 items, all now member/team-led and living solely in <code>/research</code>), keeping the Programs page's remaining content — SIGs, institutional infrastructure (C3PO, Humboldt, the new \"Research index\" link), Events, and the Long Now track — mutually exclusive with the member-project index by construction, not just by convention. Added YakRobot Protocols as a proper project (lead: Anuraj R., confirmed by Venkat after the initial pass flagged it as unresolvable without a lead decision) and corrected two lead misattributions Venkat caught post-session: Jamverse's real lead is Sachin Benny and World Machines' is Aneesh Sathe, not Venkat — both had been created as admin/Venkat-owned stub entries in the original 2026-06-09 backfill, before those SIG members were onboarded as PI members."
+        },
+        {
+          "title": "c3po pipeline: recurring dirty-tree cleanup, blank-line bloat worse this cycle",
+          "html": "Session-start housekeeping found the same known pattern as Session 39: c3po's daemon regenerates <code>sigs/*/index.html</code> locally every 30 minutes but its weekly website-PR step is still not confirmed working (c3po#1 fix not yet merged), so 5 new SIG session entries (DRG#04 A2A protocol integration, ProtFiSIG sci-fi/Mrs. Brown, SIGFPT formal methods pt.2, SIGPfB drone warfare journalism, SIGPSY Oracle v2.0) were sitting as uncommitted local changes rather than arriving via PR. Reviewed against the c3po PR checklist (link targets exist, no <7-day premature summaries, session counts match, YouTube anchor text intact) and committed by hand. The recurring whitespace-bloat regen artifact (Session 39 also hit this) was worse this cycle — roughly 300 lines/file across all 6 SIGs, including <code>mrg</code>, which had received no new content at all — stripped back down to baseline levels before committing."
+        }
+      ]
     }
   ]
 }

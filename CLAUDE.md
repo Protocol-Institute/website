@@ -41,6 +41,10 @@ sigs/               /sigs — SIG index; see sigs/CONVENTIONS.md
   sigpsy/           Special Interest Group in Psychohistory — coming soon
 network/            /network — PIN member directory (data from Google Form)
 consulting/         /consulting — consultant directory (data from Google Form)
+research/           /research — Challenges + Projects, unified (2 tab views, shared watching mechanism + value formula in js/research.js); see research/PLAN.md
+projects/
+  submit/           /projects/submit — member project submission form (SIG-or-independent, no listing page — see /research)
+  project/          /projects/project?slug= — individual project detail (watching, team join/approve, challenge-response linking)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
 programs/
