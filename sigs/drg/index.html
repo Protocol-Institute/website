@@ -62,9 +62,35 @@
         </ul>
       </div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 3 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 4 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">July 23, 2026</div>
+  <div class="meeting-title"><a href="/sigs/drg/2026-07-23-drg-04-a2a-protocol-integration-for-robotics">DRG#04 - A2A Protocol Integration for Robotics</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">A2A (Agent-to-Agent) Protocol applicability for robotics</span><span class="meeting-topic">Integration of A2A protocol with yakrobot-gateway (currently MCP-based)</span><span class="meeting-topic">Comparison of deterministic vs. probabilistic coordination protocols</span><span class="meeting-topic">Core objects and structure of A2A for robot task management</span><span class="meeting-topic">Agent-to-robot coordination at swarm scale</span><span class="meeting-topic">Symposium capstone incentivization strategies</span></div>
+  <p class="meeting-participants">Participants: anurajenp, rafa_0x, maier.fenster, sn37</p>
+  <p class="meeting-summary">The DRG group met to evaluate the A2A (Agent-to-Agent) Protocol for integration with their yakrobot-gateway system. The discussion centered on whether A2A's probabilistic negotiation model is appropriate for their robotics use cases. Participants noted that while A2A is powerful for enterprise multi-agent coordination, their current work focuses on more direct robot-to-tool (human work-orderer) interactions using MCP patterns. A2A's core objects—particularly Task and AgentCard—were identified as potentially valuable for marketplace-style robot task offerings and negotiation, though some felt they were too low-level. The group contrasted A2A with faster deterministic protocols (zenoh, ROS-DDS) and acknowledged that true agent-to-robot swarm-scale coordination doesn't yet exist in industry.</p>
+  <p class="meeting-summary">Key concerns included whether A2A's complexity is necessary for their use cases and how to translate different frameworks into different physical robot abilities. However, there was agreement that adopting a shared protocol like A2A could prevent inconsistencies in agent theory models and allow robots to operate as simply as possible with tunable parameters. The meeting briefly pivoted to discuss symposium capstone incentivization, with a suggestion to award NFT badges (POAPs) for successful participation. The group concluded that further investigation into OpenRMF and deeper evaluation of A2A's practical applicability was warranted.</p>
+  <ul class="meeting-insights">
+    <li>A2A protocol may be overly complex for current robotics use cases; the group's work focuses on robot-to-tool coordination rather than large-scale multi-robot data coordination.</li>
+    <li>A2A's probabilistic negotiation approach differs from faster deterministic protocols like zenoh and ROS-DDS, making it better suited for marketplace-style interactions than real-time swarm coordination.</li>
+    <li>A2A's core objects (particularly Task and AgentCard/skills) could provide a shared protocol foundation that prevents inconsistent agent theory models and simplifies code.</li>
+    <li>OpenRMF and agent-to-robot coordination frameworks at swarm scale remain underdeveloped in the industry, representing both a gap and potential opportunity.</li>
+    <li>Using A2A as a protocol layer could enable robots and agents to operate as simply as possible while maintaining customizable parameters for user optimization.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://a2a-protocol.org/latest/" target="_blank" rel="noopener noreferrer">a2a-protocol.org</a></li>
+      <li><a href="https://www.deeplearning.ai/courses/a2a-the-agent2agent-protocol" target="_blank" rel="noopener noreferrer">www.deeplearning.ai</a></li>
+      <li><a href="https://a2a-protocol.org/latest/specification/#41-core-objects" target="_blank" rel="noopener noreferrer">a2a-protocol.org</a></li>
+      <li><a href="https://poap.xyz/" target="_blank" rel="noopener noreferrer">poap.xyz</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1529346789663182879" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">July 9, 2026</div>
   <div class="meeting-title"><a href="/sigs/drg/2026-07-09-drg-03-eip-8126-robot-verification-discussion">DRG#03 - EIP-8126 Robot Verification Discussion</a></div>

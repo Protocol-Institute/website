@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formal Methods in Stigmergy Part 2: Construction Models and Discrete Configurations — Formal Protocol Theory</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/sigs/sigfpt" class="back-link">&#8592; Formal Protocol Theory</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">July 24, 2026</p>
+        <h1>Formal Methods in Stigmergy Part 2: Construction Models and Discrete Configurations</h1>
+      </div>
+
+      <div class="meeting-detail">
+        <div class="meeting-topics"><span class="meeting-topic">Construction stigmergy in biological systems (termites, bees, ants, wasps)</span><span class="meeting-topic">Lattice swarms as models for qualitative stigmergy with discrete configurations</span><span class="meeting-topic">Discrete primitives for producing complex collective behavior</span><span class="meeting-topic">Stigmergy applied to multi-agent coordination in software (agentic coding via GitHub PRs)</span><span class="meeting-topic">3D printing slicing as a dual/inverse problem to stigmergic task execution</span><span class="meeting-topic">Ant maze simulation and dynamic environmental modification during execution</span></div>
+        <p class="meeting-participants">Participants: ediblebadger, _ergod, _vgr, heterotic, .unipuff, danfschmidt</p>
+        <p class="meeting-summary">The SIGFPT group continued their discussion of formal methods in stigmergy, focusing on construction stigmergy and lattice swarm models as canonical examples of qualitative stigmergy. Rather than responding to continuous parameters like pheromone concentration, agents in these systems respond to discrete, conceptually differentiated configurations. The group explored how selecting the right set of discrete primitives is crucial for producing desired emergent behavior—a problem with direct applications to multi-agent coordination in software systems, such as coordinating agents through GitHub pull requests. A significant insight emerged around conceptualizing 3D printing slicing as the inverse of stigmergic execution: just as a stigmergic printer would decompose an abstract task into executable configurations, traditional slicing converts CAD models into printable primitives. The discussion also touched on the flexibility of stigmergic systems, noting that environmental modifications during execution (such as adding or removing walls in ant mazes) cause agents to adapt their behavior and discover new pathways. The group emphasized that additive and subtractive approaches in stigmergic systems have unique constraints and design implications, much like their manufacturing analogues.</p>
+        <ul class="meeting-insights">
+<li>Qualitative stigmergy uses discrete, differentiated configurations rather than continuous parameters, offering a framework applicable to both biological systems and robot swarms.</li>
+<li>The problem of selecting appropriate discrete primitives to achieve desired complex emergent behavior has direct parallels to challenges in multi-agent agentic coding systems.</li>
+<li>3D printing slicing can be conceptualized as the inverse of stigmergic execution—decomposing abstract tasks into executable primitives comparable to how stigmergic agents respond to environmental configurations.</li>
+<li>Stigmergic systems can be dynamically modified during execution; agents demonstrate flexibility in adjusting to environmental changes like wall additions or removals that alter communication pathways.</li>
+<li>Additive and subtractive manufacturing approaches in stigmergy have distinct constraints and possibilities, suggesting complementary design strategies for collective construction.</li>
+        </ul>
+        <div class="meeting-links">
+<div class="meeting-links-label">Links discussed</div>
+<ul class="meeting-links-list">
+<li><a href="https://share.google/aimode/uw3QKyTPcYNEIPc06" rel="noopener noreferrer" target="_blank">share.google</a></li>
+<li><a href="https://antmaze.replit.app/" rel="noopener noreferrer" target="_blank">antmaze.replit.app</a></li>
+</ul>
+</div>
+        <a class="meeting-discord" href="https://discord.com/channels/1082444651946049567/1529722325467922472" rel="noopener noreferrer" target="_blank">View discussion in Discord →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
