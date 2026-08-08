@@ -2446,3 +2446,34 @@ a:hover {
   cursor: pointer;
 }
 .edit-own-btn:hover { background: #A93226; }
+
+/* ── Watching mechanism (shared: /research, project detail pages) ── */
+.watch-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: none; border: 1px solid #C8C4BE; padding: 0.25em 0.8em;
+  font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: #3A3A3A; cursor: pointer;
+}
+.watch-btn:hover:not([disabled]):not(.voted) { border-color: #2A6B6B; color: #2A6B6B; }
+.watch-btn.voted { border-color: #2A6B6B; color: #2A6B6B; cursor: default; }
+.watch-btn[disabled]:not(.voted) { opacity: 0.55; cursor: default; }
+.entity-value { font-size: 0.8rem; color: #8A8A8A; }
+.entity-value strong { color: #3A3A3A; font-size: 0.95em; }
+.entity-actions { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+
+/* ── Team membership (project detail pages) ── */
+.team-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #E0DDD8; }
+.team-section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 0 0 0.75rem; }
+.team-pending-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.9rem; }
+.team-pending-actions { display: flex; gap: 0.5rem; }
+.team-approve-btn, .team-decline-btn { font-size: 0.78rem; font-family: inherit; padding: 0.25em 0.7em; border: 1px solid #C8C4BE; background: none; cursor: pointer; }
+.team-approve-btn:hover { border-color: #2A6B6B; color: #2A6B6B; }
+.team-decline-btn:hover { border-color: #C0392B; color: #C0392B; }
+.team-join-msg { font-size: 0.85rem; color: #8A8A8A; margin-top: 0.5rem; }
+
+/* ── Challenge-response linking (project detail pages) ── */
+.challenge-link-editor { margin-top: 0.75rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.challenge-link-editor select { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; border: 1px solid #C8C4BE; background: #FAFAF7; padding: 0.3em 0.5em; }
+.challenge-link-editor button { font-size: 0.78rem; font-family: inherit; padding: 0.3em 0.8em; border: 1px solid #2A6B6B; background: none; color: #2A6B6B; cursor: pointer; }
+.challenge-link-editor button:hover { background: #2A6B6B; color: #fff; }
+.linked-challenge-item { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; padding: 0.3rem 0; }
+.linked-challenge-remove { font-size: 0.75rem; color: #C0392B; background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }

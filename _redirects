@@ -8,8 +8,10 @@
 /team/       /members?filter=team        301
 /consulting  /members?filter=consultant  301
 /consulting/ /members?filter=consultant  301
-/projects    /programs?view=flattened    301
-/projects/   /programs?view=flattened    301
+/projects    /research?view=projects    301
+/projects/   /research?view=projects    301
+/challenges  /research                  301
+/challenges/ /research                  301
 
 /events/protocol-symposium-2026/submissions    /events/protocol-symposium-2026/program   301
 /events/protocol-symposium-2026/submissions/   /events/protocol-symposium-2026/program/  301

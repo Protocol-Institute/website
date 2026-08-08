@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research — The Protocol Institute</title>
+  <meta name="description" content="Open research challenges and the community projects that respond to them.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .research-intro { color: #3A3A3A; line-height: 1.7; margin-bottom: 1.75rem; }
+    .research-intro a { color: #2A6B6B; }
+    .research-intro a:hover { text-decoration: underline; }
+
+    /* Watch button + value score styles live in css/style.css (shared with project detail pages) */
+
+    /* ── Challenges view (ported from the former /challenges page) ── */
+    .challenge-add { background: #F3F3EF; border: 1px solid #E0DDD8; padding: 1.5rem; margin-bottom: 2.5rem; }
+    .challenge-field { margin-bottom: 1rem; }
+    .challenge-field label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #5A5A5A; margin-bottom: 0.3rem; }
+    .challenge-field input[type="text"], .challenge-field input[type="number"], .challenge-field textarea, .challenge-field select {
+      width: 100%; box-sizing: border-box; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #1A1A1A;
+      background: #FAFAF7; border: 1px solid #C8C4BE; padding: 0.5rem 0.65rem;
+    }
+    .challenge-field input[readonly], .challenge-field textarea[readonly] { background: #EEEDE8; color: #5A5A5A; cursor: default; }
+    .challenge-field textarea { resize: vertical; min-height: 90px; }
+    .challenge-field select { cursor: pointer; }
+    .challenge-field .field-hint { font-size: 0.78rem; color: #8A8A8A; margin-top: 0.25rem; }
+    .challenge-field .field-hint code { font-family: monospace; background: #E8E7E2; padding: 0.1em 0.3em; font-size: 0.85em; }
+    .challenge-checkbox-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; font-size: 0.85rem; color: #5A5A5A; }
+    .challenge-submit { background: #2A6B6B; color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.04em; padding: 0.55rem 1.4rem; cursor: pointer; margin-top: 0.5rem; }
+    .challenge-submit:hover { background: #1f5252; }
+    .challenge-form-msg { font-size: 0.85rem; margin-top: 0.6rem; }
+    .challenge-form-msg.error { color: #c0392b; }
+    .challenge-form-msg.success { color: #2A6B6B; }
+    .challenge-add-confirmation a { color: #2A6B6B; }
+    .challenge-add-bar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-top: 1px solid #E0DDD8; padding-top: 1.5rem; }
+    .challenge-add-toggle { background: none; border: none; padding: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #C8C4BE; cursor: default; }
+    .challenge-add-toggle:not([disabled]) { color: #2A6B6B; cursor: pointer; }
+    .challenge-add-toggle:not([disabled]):hover { color: #1f5252; }
+    .challenge-add-notice { font-size: 0.78rem; color: #BCBBB6; font-style: italic; }
+
+    .entity-list { list-style: none; padding: 0; margin: 0; }
+    .entity-card { padding: 2rem 0; border-bottom: 1px solid #E0DDD8; }
+    .entity-card:first-child { border-top: 1px solid #E0DDD8; }
+    .entity-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+    .entity-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; font-weight: 600; color: #1A1A1A; line-height: 1.3; margin: 0; }
+    .entity-title a { color: inherit; }
+    .entity-title a:hover { text-decoration: underline; }
+    .challenge-difficulty { flex-shrink: 0; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.2em 0.65em; white-space: nowrap; margin-top: 0.15rem; text-align: right; line-height: 1.5; }
+    .challenge-difficulty strong { display: block; font-size: 1.1em; }
+    .entity-description { color: #3A3A3A; line-height: 1.7; margin: 0.7rem 0 1rem; font-size: 0.95rem; }
+    .entity-description a { color: #2A6B6B; }
+    .entity-permalink { font-size: 0.8rem; color: #C8C4BE; margin-left: 0.5rem; text-decoration: none; vertical-align: middle; }
+    .entity-permalink:hover { color: #2A6B6B; }
+    .entity-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .entity-meta { font-size: 0.8rem; color: #8A8A8A; line-height: 1.6; }
+    .entity-meta strong { color: #5A5A5A; }
+    .entity-meta a { color: #2A6B6B; }
+    .entity-related { font-size: 0.8rem; color: #8A8A8A; margin-top: 0.5rem; }
+    .entity-related a { color: #2A6B6B; }
+    .entity-related a:hover { text-decoration: underline; }
+    .entity-seed-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.78rem; color: #8A8A8A; }
+    .entity-seed-row input[type="number"] { width: 3.5rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; border: 1px solid #C8C4BE; background: #FAFAF7; padding: 0.15em 0.4em; color: #1A1A1A; }
+    .entity-seed-save { font-size: 0.75rem; color: #2A6B6B; background: none; border: none; cursor: pointer; padding: 0; text-decoration: underline; }
+    .entity-empty { color: #8A8A8A; font-style: italic; padding: 2rem 0; list-style: none; }
+
+    /* ── Projects view ── */
+    .project-badges { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.15rem; }
+    .submit-cta { margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Research <span class="beta-badge">Beta</span></h1>
+      </div>
+
+      <div class="research-intro">
+        <p>Open research challenges in the spirit of Erdős problems and Grand Challenges — problems worth making progress on, not problems to be closed — alongside the community projects that respond to them, extend a SIG's work, or stand independently.</p>
+      </div>
+
+      <div class="view-tabs" role="tablist">
+        <button class="view-tab active" id="tab-challenges" role="tab" aria-selected="true" aria-controls="view-challenges">Challenges</button>
+        <button class="view-tab" id="tab-projects" role="tab" aria-selected="false" aria-controls="view-projects">Projects</button>
+      </div>
+
+      <div id="view-challenges" role="tabpanel" aria-labelledby="tab-challenges">
+        <p class="projects-intro">Logged in PI members can add problems. If you're not a member, you can <a href="mailto:team@protocol-institute.org">email a member</a> to suggest a problem.</p>
+
+        <div id="challenge-form-region"></div>
+
+        <ul class="entity-list" id="challenge-list">
+          <li class="entity-empty">Loading challenges…</li>
+        </ul>
+      </div>
+
+      <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
+        <p class="projects-intro">Projects that produce specific artifacts — documents, tools, websites, or other outputs — led by an individual or a team, aligned with a SIG or independent.</p>
+
+        <div id="submit-cta" class="submit-cta" style="display:none;">
+          <a href="/projects/submit" class="form-btn form-btn--inline">Submit a project</a>
+        </div>
+
+        <ul class="entity-list" id="project-list">
+          <li class="entity-empty">Loading…</li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/team">Team</a>
+      <a href="/network">Network</a>
+      <a href="/consulting">Consulting</a>
+      <a href="/events/protocol-symposium-2026">Symposium</a>
+      <a href="/contact">Contact</a>
+      <a href="/members">Members</a>
+      <a href="/support">Support Us</a>
+    </nav>
+    <p>&copy; 2025 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/research.js"></script>
+<script>
+(function () {
+  const R = window.PI_RESEARCH;
+
+  const DIFFICULTY_LABELS = {
+    1: 'Trivial', 2: 'Easy', 3: 'Needs some thought', 5: 'Needs insight',
+    8: 'Mini project', 13: 'Project', 21: 'Epic project',
+    34: 'Frontier challenge', 55: 'Grand challenge', 89: 'Whitehead advance',
+  };
+  const FIBONACCI = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+  const STATE_LABELS    = { stub: 'Stub', beta: 'Beta', production: 'Production' };
+  const TYPE_LABELS     = { 'one-off': 'One-off', versioned: 'Versioned', accretive: 'Accretive' };
+  const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', other: 'Other' };
+
+  let currentMember = null;
+  let currentIsAdmin = false;
+
+  // ── Tabs ──────────────────────────────────────────────────────
+  const tabChallenges = document.getElementById('tab-challenges');
+  const tabProjects = document.getElementById('tab-projects');
+  const panelChallenges = document.getElementById('view-challenges');
+  const panelProjects = document.getElementById('view-projects');
+  let projectsLoaded = false;
+
+  function showTab(which) {
+    const onProjects = which === 'projects';
+    tabChallenges.classList.toggle('active', !onProjects);
+    tabProjects.classList.toggle('active', onProjects);
+    tabChallenges.setAttribute('aria-selected', String(!onProjects));
+    tabProjects.setAttribute('aria-selected', String(onProjects));
+    panelChallenges.hidden = onProjects;
+    panelProjects.hidden = !onProjects;
+
+    if (onProjects && !projectsLoaded) { projectsLoaded = true; loadProjects(); }
+
+    const url = new URL(window.location.href);
+    if (onProjects) url.searchParams.set('view', 'projects');
+    else url.searchParams.delete('view');
+    history.replaceState(null, '', url.toString());
+  }
+  tabChallenges.addEventListener('click', () => showTab('challenges'));
+  tabProjects.addEventListener('click', () => showTab('projects'));
+
+  // ── Challenges view ───────────────────────────────────────────
+  function renderChallengeMeta(c) {
+    const comm = R.escHtml(c.communicated_by_name || c.communicated_by_slug || '');
+    const posed = R.escHtml(c.posed_by || '');
+    if (!posed || posed === comm) return `By <strong>${comm}</strong>`;
+    return `Posed by <strong>${posed}</strong> &middot; Communicated by <strong>${comm}</strong>`;
+  }
+
+  function renderChallengeCard(c, isAdmin) {
+    const votedByMe = c.voted_by_me || R.anonVotedSet('pi_chal_voted').has(c.id);
+    const value = R.value(c.seed_interesting ?? 1, c.anon_interesting || 0, c.member_interesting || 0);
+    const label = DIFFICULTY_LABELS[c.difficulty] || '';
+    const date = new Date(c.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const seedRow = isAdmin ? `
+      <div class="entity-seed-row">
+        Starting interest:
+        <input type="number" class="seed-input" value="${c.seed_interesting ?? 1}" min="0" data-id="${c.id}">
+        <button class="entity-seed-save" data-id="${c.id}">Save</button>
+        <span class="entity-seed-msg" data-id="${c.id}"></span>
+      </div>` : `
+      <div class="entity-seed-row">Starting interest: ${c.seed_interesting ?? 1}</div>`;
+
+    const projects = c.projects || [];
+    const respondingRow = projects.length
+      ? `<div class="entity-related">Responding projects: ${projects.map(p =>
+          `<a href="/research?view=projects#project-${R.escHtml(p.slug)}">${R.escHtml(p.title)}</a>`).join(', ')}</div>`
+      : '';
+
+    return `
+      <li class="entity-card" id="challenge-${c.id}" data-entity-card data-id="${c.id}">
+        <div class="entity-header">
+          <h2 class="entity-title">${R.escHtml(c.title)}<a href="#challenge-${c.id}" class="entity-permalink" title="Permalink">#</a></h2>
+          <span class="challenge-difficulty"><strong>${c.difficulty}</strong>${label}</span>
+        </div>
+        <div class="entity-description">${c.description}</div>
+        ${respondingRow}
+        <div class="entity-footer">
+          <div>
+            <div class="entity-meta">${renderChallengeMeta(c)} &middot; ${date}</div>
+            ${seedRow}
+          </div>
+          <div class="entity-actions">
+            ${R.watchButtonHtml('challenge', c.id, votedByMe, c.anon_interesting, c.member_interesting)}
+            <span class="entity-value" title="Score = seed + 1×(anon votes)² + 3×(member votes)²">
+              Value: <strong>${value.toLocaleString()}</strong>
+            </span>
+          </div>
+        </div>
+      </li>`;
+  }
+
+  function renderChallengeList(challenges, isAdmin) {
+    currentIsAdmin = isAdmin;
+    const list = document.getElementById('challenge-list');
+    if (!challenges.length) {
+      list.innerHTML = '<li class="entity-empty">No challenges yet. Be the first to pose one.</li>';
+      return;
+    }
+    list.innerHTML = challenges.map(c => renderChallengeCard(c, isAdmin)).join('');
+    R.attachWatchHandlers(list);
+    attachSeedHandlers();
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#challenge-')) {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function attachSeedHandlers() {
+    document.querySelectorAll('.entity-seed-save').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        const id = parseInt(this.dataset.id, 10);
+        const input = document.querySelector(`.seed-input[data-id="${id}"]`);
+        const msg = document.querySelector(`.entity-seed-msg[data-id="${id}"]`);
+        const seed = parseInt(input.value, 10);
+        if (isNaN(seed) || seed < 0) { msg.textContent = 'Invalid'; return; }
+        try {
+          const res = await fetch(`/api/challenges/${id}/seed`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ seed }),
+          });
+          if (res.ok) {
+            msg.textContent = 'Saved';
+            msg.style.color = '#2A6B6B';
+            setTimeout(() => { msg.textContent = ''; }, 2000);
+          } else {
+            msg.textContent = 'Error';
+            msg.style.color = '#c0392b';
+          }
+        } catch {
+          msg.textContent = 'Error';
+        }
+      });
+    });
+  }
+
+  function renderChallengeFormToggle() {
+    document.getElementById('challenge-form-region').innerHTML =
+      '<div class="challenge-add-bar">' +
+        '<button class="challenge-add-toggle" id="challenge-add-toggle" disabled aria-expanded="false">' +
+          '&#9656; Add a challenge' +
+        '</button>' +
+        '<span class="challenge-add-notice" id="challenge-add-notice">Log in to add a challenge</span>' +
+      '</div>' +
+      '<div id="challenge-add-container" hidden></div>';
+  }
+
+  function activateChallengeFormToggle(member, isAdmin) {
+    const toggle = document.getElementById('challenge-add-toggle');
+    const notice = document.getElementById('challenge-add-notice');
+    const container = document.getElementById('challenge-add-container');
+    if (!toggle) return;
+    toggle.removeAttribute('disabled');
+    notice.hidden = true;
+    let formRendered = false;
+
+    toggle.addEventListener('click', function () {
+      const isOpen = !container.hidden;
+      if (isOpen) {
+        container.hidden = true;
+        toggle.innerHTML = '&#9656; Add a challenge';
+        toggle.setAttribute('aria-expanded', 'false');
+      } else {
+        container.hidden = false;
+        toggle.innerHTML = '&#9662; Add a challenge';
+        toggle.setAttribute('aria-expanded', 'true');
+        if (!formRendered) { renderChallengeForm(member, isAdmin); formRendered = true; }
+      }
+    });
+  }
+
+  function renderChallengeForm(member, isAdmin) {
+    const container = document.getElementById('challenge-add-container');
+    const diffOptions = FIBONACCI.map(n => `<option value="${n}">${n} — ${DIFFICULTY_LABELS[n]}</option>`).join('');
+    const seedField = isAdmin
+      ? `<div class="challenge-field"><label for="cf-seed">Starting interest level</label><input type="number" id="cf-seed" name="seed_interesting" value="1" min="0"></div>`
+      : `<div class="challenge-field"><label>Starting interest level</label><input type="text" readonly value="1"></div>`;
+
+    container.innerHTML = `
+      <div class="challenge-add">
+        <form id="challenge-form">
+          <div class="challenge-field"><label for="cf-title">Title</label><input type="text" id="cf-title" maxlength="200" required></div>
+          <div class="challenge-field">
+            <label for="cf-description">Description</label>
+            <textarea id="cf-description" maxlength="3000" required></textarea>
+            <div class="field-hint">Inline links are supported: <code>&lt;a href="https://..."&gt;text&lt;/a&gt;</code></div>
+          </div>
+          <div class="challenge-field">
+            <label for="cf-difficulty">Difficulty</label>
+            <select id="cf-difficulty" required><option value="">Select…</option>${diffOptions}</select>
+          </div>
+          <div class="challenge-field"><label>Communicated By</label><input type="text" readonly value="${R.escHtml(member.name)}"></div>
+          <div class="challenge-field">
+            <label for="cf-posed-by">Posed By</label>
+            <input type="text" id="cf-posed-by" maxlength="200" placeholder="Name of person who posed this problem">
+            <label class="challenge-checkbox-row"><input type="checkbox" id="cf-same-as-comm"> Same as communicating member</label>
+          </div>
+          ${seedField}
+          <button type="submit" class="challenge-submit">Add Challenge</button>
+          <div class="challenge-form-msg" id="cf-msg"></div>
+        </form>
+      </div>`;
+
+    document.getElementById('cf-same-as-comm').addEventListener('change', function () {
+      const field = document.getElementById('cf-posed-by');
+      if (this.checked) { field.value = member.name; field.readOnly = true; }
+      else { field.value = ''; field.readOnly = false; }
+    });
+
+    document.getElementById('challenge-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = this.querySelector('button[type="submit"]');
+      const msg = document.getElementById('cf-msg');
+      btn.disabled = true;
+      msg.textContent = '';
+      msg.className = 'challenge-form-msg';
+
+      const body = {
+        title: document.getElementById('cf-title').value.trim(),
+        description: document.getElementById('cf-description').value.trim(),
+        difficulty: parseInt(document.getElementById('cf-difficulty').value, 10),
+        posed_by: document.getElementById('cf-posed-by').value.trim() || null,
+      };
+      if (isAdmin) {
+        const seedEl = document.getElementById('cf-seed');
+        if (seedEl) body.seed_interesting = parseInt(seedEl.value, 10) || 1;
+      }
+
+      try {
+        const res = await fetch('/api/challenges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) {
+          loadChallenges();
+          const container = document.getElementById('challenge-add-container');
+          container.innerHTML = `<div class="challenge-add challenge-add-confirmation">
+            <p>Challenge added. <a href="#" id="cf-add-another">Add another &rarr;</a></p>
+          </div>`;
+          document.getElementById('cf-add-another').addEventListener('click', function (e) {
+            e.preventDefault();
+            renderChallengeForm(member, isAdmin);
+          });
+        } else {
+          const data = await res.json();
+          msg.textContent = data.error || 'Submission failed.';
+          msg.className = 'challenge-form-msg error';
+          btn.disabled = false;
+        }
+      } catch {
+        msg.textContent = 'Network error. Please try again.';
+        msg.className = 'challenge-form-msg error';
+        btn.disabled = false;
+      }
+    });
+  }
+
+  async function loadChallenges() {
+    try {
+      const res = await fetch('/api/challenges');
+      const { challenges, is_admin } = await res.json();
+      renderChallengeList(challenges || [], !!is_admin);
+    } catch {
+      document.getElementById('challenge-list').innerHTML =
+        '<li class="entity-empty">Unable to load challenges. Please try again later.</li>';
+    }
+  }
+
+  // ── Projects view ─────────────────────────────────────────────
+  function renderProjectCard(p) {
+    const votedByMe = p.voted_by_me || R.anonVotedSet('pi_proj_voted').has(p.id);
+    const value = R.value(p.seed_interesting ?? 1, p.anon_interesting || 0, p.member_interesting || 0);
+    const sigTag = p.sig_slug
+      ? `<span class="project-theme-tag">${R.escHtml(R.SIG_LABELS[p.sig_slug] || p.sig_slug)}</span>`
+      : `<span class="project-category">Independent</span>`;
+    const versionTag = p.current_version ? `<span class="project-version">v${R.escHtml(p.current_version)}</span>` : '';
+    const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
+      ? R.escHtml(p.artifact_type_other) : (ARTIFACT_LABELS[p.artifact_type] || R.escHtml(p.artifact_type));
+
+    const team = p.team || [];
+    const teamHtml = team.length
+      ? ` &middot; Team: ${team.map(t => `<a href="/members/${R.escHtml(t.slug)}">${R.escHtml(t.name)}</a>`).join(', ')}`
+      : '';
+
+    const challenges = p.challenges || [];
+    const respondsRow = challenges.length
+      ? `<div class="entity-related">Responds to: ${challenges.map(c =>
+          `<a href="/research?view=challenges#challenge-${c.id}">${R.escHtml(c.title)}</a>`).join(', ')}</div>`
+      : '';
+
+    return `
+      <li class="entity-card" id="project-${p.slug}" data-entity-card data-id="${p.slug}">
+        <div class="entity-header">
+          <h2 class="entity-title">
+            <a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${R.escHtml(p.title)}</a>
+            <a href="#project-${R.escHtml(p.slug)}" class="entity-permalink" title="Permalink">#</a>
+          </h2>
+        </div>
+        <div class="project-badges">
+          <span class="project-state state-${R.escHtml(p.state)}">${STATE_LABELS[p.state] || p.state}</span>
+          <span class="project-type-badge">${TYPE_LABELS[p.type] || p.type}</span>
+          <span class="project-artifact-badge">${artifactLabel}</span>
+          ${versionTag}
+          ${sigTag}
+        </div>
+        <div class="entity-description">${R.escHtml(p.description)}</div>
+        ${respondsRow}
+        <div class="entity-footer">
+          <div>
+            <div class="entity-meta">Lead: <a href="/members/${R.escHtml(p.lead_slug)}">${R.escHtml(p.lead_name || p.lead_slug)}</a>${teamHtml}</div>
+          </div>
+          <div class="entity-actions">
+            <a href="${R.escHtml(p.url)}" class="project-link" target="_blank" rel="noopener noreferrer">View artifact →</a>
+            ${R.watchButtonHtml('project', p.slug, votedByMe, p.anon_interesting, p.member_interesting)}
+            <span class="entity-value" title="Score = seed + 1×(anon votes)² + 3×(member votes)²">
+              Value: <strong>${value.toLocaleString()}</strong>
+            </span>
+          </div>
+        </div>
+      </li>`;
+  }
+
+  function renderProjectList(projects) {
+    const list = document.getElementById('project-list');
+    if (!projects.length) {
+      list.innerHTML = '<li class="entity-empty">No projects yet.</li>';
+      return;
+    }
+    list.innerHTML = projects.map(renderProjectCard).join('');
+    R.attachWatchHandlers(list);
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#project-')) {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  async function loadProjects() {
+    try {
+      const res = await fetch('/api/projects');
+      const { projects } = await res.json();
+      renderProjectList(projects || []);
+    } catch {
+      document.getElementById('project-list').innerHTML =
+        '<li class="entity-empty">Unable to load projects. Please try again later.</li>';
+    }
+  }
+
+  // ── Init ──────────────────────────────────────────────────────
+  async function init() {
+    renderChallengeFormToggle();
+    loadChallenges();
+
+    try {
+      const res = await fetch('/api/members/me');
+      if (res.ok) {
+        const { member } = await res.json();
+        if (member) {
+          currentMember = member;
+          activateChallengeFormToggle(member, !!member.is_admin);
+          document.getElementById('submit-cta').style.display = '';
+        }
+      }
+    } catch {}
+
+    const initialView = new URLSearchParams(window.location.search).get('view');
+    if (initialView === 'projects' || window.location.hash.startsWith('#project-')) {
+      showTab('projects');
+    }
+  }
+
+  init();
+}());
+</script>
+</body>
+</html>

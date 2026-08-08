@@ -24,7 +24,7 @@
       <div id="project-content" style="display:none;">
 
         <div class="page-header project-detail-header">
-          <div class="project-detail-breadcrumb"><a href="/projects">← Projects</a></div>
+          <div class="project-detail-breadcrumb"><a href="/research?view=projects">← Projects</a></div>
           <h1 id="pd-title"></h1>
           <div class="project-meta project-detail-meta" id="pd-meta"></div>
         </div>
@@ -37,13 +37,9 @@
               <span class="project-detail-label">Lead</span>
               <span id="pd-lead"></span>
             </div>
-            <div class="project-detail-field" id="pd-program-row" style="display:none;">
-              <span class="project-detail-label">Program</span>
-              <span id="pd-program"></span>
-            </div>
-            <div class="project-detail-field" id="pd-sub-program-row" style="display:none;">
+            <div class="project-detail-field" id="pd-sig-row" style="display:none;">
               <span class="project-detail-label">SIG</span>
-              <span id="pd-sub-program"></span>
+              <span id="pd-sig"></span>
             </div>
             <div class="project-detail-field" id="pd-version-row" style="display:none;">
               <span class="project-detail-label">Version</span>
@@ -63,15 +59,31 @@
             </div>
           </div>
 
-          <div class="project-detail-cta">
+          <div class="entity-actions" style="margin-top:1.25rem;">
             <a id="pd-url" href="#" class="form-btn" target="_blank" rel="noopener noreferrer">View artifact →</a>
+            <span id="pd-watch"></span>
+            <span class="entity-value" id="pd-value" title="Score = seed + 1×(anon votes)² + 3×(member votes)²"></span>
           </div>
+
+          <div class="team-section">
+            <p class="team-section-label">Team</p>
+            <p id="pd-team-list"></p>
+            <div id="pd-team-join"></div>
+            <div id="pd-team-pending" style="display:none;"></div>
+          </div>
+
+          <div class="team-section">
+            <p class="team-section-label">Responds to</p>
+            <div id="pd-challenges-list"></div>
+            <div id="pd-challenge-editor" style="display:none;"></div>
+          </div>
+
         </div>
 
       </div>
 
       <div id="project-error" style="display:none;">
-        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Project not found. <a href="/projects">Back to projects</a></p>
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Project not found. <a href="/research?view=projects">Back to projects</a></p>
       </div>
 
     </div>
@@ -82,89 +94,53 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/research.js"></script>
 <script>
 (function () {
-  const PROGRAM_LABELS = {
-    'protocolized':        'Protocolized',
-    'ai-infrastructure':   'AI Infrastructure',
-    'challenges':          'Challenges',
-    'sigs':                'Special Interest Groups',
-    'protocol-symposium':  'Protocol Symposium',
-    'long-now':            'Protocols for the Long Now',
-    'solo-projects':       'Solo Projects',
-  };
+  const R = window.PI_RESEARCH;
 
   const STATE_LABELS    = { stub: 'Stub', beta: 'Beta', production: 'Production' };
   const TYPE_LABELS     = { 'one-off': 'One-off', versioned: 'Versioned', accretive: 'Accretive' };
   const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', other: 'Other' };
-  const SUB_PROGRAM_LABELS = {
-    sigpfb: 'Protocols for Business',
-    sigpsy: 'SIG Psychohistory',
-    sigfpt: 'SIG Formal Protocol Theory',
-    mrg: 'Memory Research Group',
-    protfisig: 'Protocol Fiction SIG',
-    drg: 'Distributed Robotics Group',
-  };
 
-  function escHtml(str) {
-    return String(str || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
-  }
-
-  // Slug comes from ?slug= query param: /projects/project?slug=<slug>
   const slug = new URLSearchParams(window.location.search).get('slug');
+  if (!slug) { window.location.replace('/research?view=projects'); return; }
 
-  if (!slug) {
-    window.location.replace('/projects');
-    return;
-  }
+  let viewerIsLeadOrAdmin = false;
 
   fetch('/api/projects/' + encodeURIComponent(slug))
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
     .then(data => {
       const p = data.project;
+      viewerIsLeadOrAdmin = !!data.viewer_is_lead_or_admin;
 
-      document.title = escHtml(p.title) + ' — The Protocol Institute';
-
+      document.title = R.escHtml(p.title) + ' — The Protocol Institute';
       document.getElementById('pd-title').textContent = p.title;
 
-      // Badges
       const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
-        ? escHtml(p.artifact_type_other)
-        : (ARTIFACT_LABELS[p.artifact_type] || escHtml(p.artifact_type));
-
-      const programTag = p.program
-        ? `<span class="project-category">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</span>`
-        : '';
-      const subProgramTag = p.sub_program
-        ? `<span class="project-category project-sub-program">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</span>`
-        : '';
-      const versionTag = p.current_version
-        ? `<span class="project-version">v${escHtml(p.current_version)}</span>`
-        : '';
+        ? R.escHtml(p.artifact_type_other)
+        : (ARTIFACT_LABELS[p.artifact_type] || R.escHtml(p.artifact_type));
+      const sigTag = p.sig_slug
+        ? `<span class="project-theme-tag">${R.escHtml(R.SIG_LABELS[p.sig_slug] || p.sig_slug)}</span>`
+        : `<span class="project-category">Independent</span>`;
+      const versionTag = p.current_version ? `<span class="project-version">v${R.escHtml(p.current_version)}</span>` : '';
 
       document.getElementById('pd-meta').innerHTML =
-        `<span class="project-state state-${escHtml(p.state)}">${escHtml(STATE_LABELS[p.state] || p.state)}</span>` +
-        `<span class="project-type-badge">${escHtml(TYPE_LABELS[p.type] || p.type)}</span>` +
+        `<span class="project-state state-${R.escHtml(p.state)}">${STATE_LABELS[p.state] || p.state}</span>` +
+        `<span class="project-type-badge">${TYPE_LABELS[p.type] || p.type}</span>` +
         `<span class="project-artifact-badge">${artifactLabel}</span>` +
-        versionTag + programTag + subProgramTag;
+        versionTag + sigTag;
 
       document.getElementById('pd-description').textContent = p.description;
 
       document.getElementById('pd-lead').innerHTML =
-        `<a href="/members/${escHtml(p.lead_slug)}" class="project-lead-link">${escHtml(p.lead_name || p.lead_slug)}</a>`;
+        `<a href="/members/${R.escHtml(p.lead_slug)}" class="project-lead-link">${R.escHtml(p.lead_name || p.lead_slug)}</a>`;
 
-      if (p.program) {
-        document.getElementById('pd-program-row').style.display = '';
-        document.getElementById('pd-program').innerHTML =
-          `<a href="/projects?program=${encodeURIComponent(p.program)}">${escHtml(PROGRAM_LABELS[p.program] || p.program)}</a>`;
+      if (p.sig_slug) {
+        document.getElementById('pd-sig-row').style.display = '';
+        document.getElementById('pd-sig').innerHTML =
+          `<a href="/sigs/${R.escHtml(p.sig_slug)}">${R.escHtml(R.SIG_LABELS[p.sig_slug] || p.sig_slug)}</a>`;
       }
-
-      if (p.sub_program) {
-        document.getElementById('pd-sub-program-row').style.display = '';
-        document.getElementById('pd-sub-program').innerHTML =
-          `<a href="/sigs/${escHtml(p.sub_program)}">${escHtml(SUB_PROGRAM_LABELS[p.sub_program] || p.sub_program)}</a>`;
-      }
-
       if (p.current_version) {
         document.getElementById('pd-version-row').style.display = '';
         document.getElementById('pd-version').textContent = p.current_version;
@@ -173,10 +149,83 @@
       document.getElementById('pd-artifact-type').textContent = artifactLabel;
       document.getElementById('pd-type').textContent = TYPE_LABELS[p.type] || p.type;
       document.getElementById('pd-state').innerHTML =
-        `<span class="project-state state-${escHtml(p.state)}">${escHtml(STATE_LABELS[p.state] || p.state)}</span>`;
+        `<span class="project-state state-${R.escHtml(p.state)}">${STATE_LABELS[p.state] || p.state}</span>`;
+      document.getElementById('pd-url').href = p.url;
 
-      const urlEl = document.getElementById('pd-url');
-      urlEl.href = p.url;
+      // Watching
+      const votedByMe = p.voted_by_me || R.anonVotedSet('pi_proj_voted').has(p.id);
+      document.getElementById('pd-watch').innerHTML =
+        R.watchButtonHtml('project', p.slug, votedByMe, p.anon_interesting, p.member_interesting);
+      document.getElementById('pd-value').innerHTML =
+        `Value: <strong>${R.value(p.seed_interesting ?? 1, p.anon_interesting || 0, p.member_interesting || 0).toLocaleString()}</strong>`;
+      R.attachWatchHandlers(document.getElementById('project-content'));
+      // attachWatchHandlers looks for [data-entity-card]; wrap the value/watch row so live updates find it
+      document.getElementById('pd-watch').closest('.project-detail-body').setAttribute('data-entity-card', '');
+
+      // Team
+      const team = data.team || [];
+      document.getElementById('pd-team-list').innerHTML = team.length
+        ? team.map(t => `<a href="/members/${R.escHtml(t.slug)}">${R.escHtml(t.name)}</a>`).join(', ')
+        : '<span style="color:#8A8A8A;font-style:italic;">No approved team members yet.</span>';
+
+      if (viewerIsLeadOrAdmin) {
+        const pending = data.pending_team || [];
+        const pendingEl = document.getElementById('pd-team-pending');
+        if (pending.length) {
+          pendingEl.style.display = '';
+          pendingEl.innerHTML = pending.map(t => `
+            <div class="team-pending-item">
+              <span>${R.escHtml(t.name)} requested to join</span>
+              <span class="team-pending-actions">
+                <button class="team-approve-btn" data-slug="${R.escHtml(t.slug)}">Approve</button>
+                <button class="team-decline-btn" data-slug="${R.escHtml(t.slug)}">Decline</button>
+              </span>
+            </div>`).join('');
+          pendingEl.querySelectorAll('.team-approve-btn').forEach(btn => {
+            btn.addEventListener('click', () => handleTeamAction(btn.dataset.slug, 'approve'));
+          });
+          pendingEl.querySelectorAll('.team-decline-btn').forEach(btn => {
+            btn.addEventListener('click', () => handleTeamAction(btn.dataset.slug, 'decline'));
+          });
+        }
+      } else if (data.my_team_status) {
+        document.getElementById('pd-team-join').innerHTML =
+          `<p class="team-join-msg">Your request to join this team is <strong>${R.escHtml(data.my_team_status)}</strong>.</p>`;
+      } else {
+        fetch('/api/members/me').then(r => r.ok ? r.json() : null).then(meData => {
+          if (meData && meData.member && meData.member.slug !== p.lead_slug) {
+            document.getElementById('pd-team-join').innerHTML =
+              `<button class="form-btn form-btn--inline" id="team-join-btn">I'm part of this team →</button>`;
+            document.getElementById('team-join-btn').addEventListener('click', async function () {
+              this.disabled = true;
+              try {
+                const res = await fetch(`/api/projects/${encodeURIComponent(slug)}/team`, { method: 'POST' });
+                if (res.ok) {
+                  document.getElementById('pd-team-join').innerHTML =
+                    '<p class="team-join-msg">Request sent — the project lead will review it.</p>';
+                } else {
+                  const d = await res.json();
+                  document.getElementById('pd-team-join').innerHTML =
+                    `<p class="team-join-msg">${R.escHtml(d.error || 'Could not send request.')}</p>`;
+                }
+              } catch {
+                this.disabled = false;
+              }
+            });
+          }
+        }).catch(() => {});
+      }
+
+      async function handleTeamAction(memberSlug, action) {
+        const method = action === 'approve' ? 'POST' : 'DELETE';
+        try {
+          const res = await fetch(`/api/projects/${encodeURIComponent(slug)}/team/${encodeURIComponent(memberSlug)}/approve`, { method });
+          if (res.ok) window.location.reload();
+        } catch {}
+      }
+
+      // Challenges
+      renderChallenges(data.challenges || []);
 
       document.getElementById('project-loading').style.display = 'none';
       document.getElementById('project-content').style.display = '';
@@ -185,6 +234,66 @@
       document.getElementById('project-loading').style.display = 'none';
       document.getElementById('project-error').style.display = '';
     });
+
+  function renderChallenges(challenges) {
+    const list = document.getElementById('pd-challenges-list');
+    list.innerHTML = challenges.length
+      ? challenges.map(c => `
+          <div class="linked-challenge-item" data-challenge-id="${c.id}">
+            <a href="/research?view=challenges#challenge-${c.id}">${R.escHtml(c.title)}</a>
+            ${viewerIsLeadOrAdmin ? `<button class="linked-challenge-remove" data-id="${c.id}">Remove</button>` : ''}
+          </div>`).join('')
+      : '<p style="color:#8A8A8A;font-style:italic;">Not currently linked to a challenge.</p>';
+
+    if (viewerIsLeadOrAdmin) {
+      list.querySelectorAll('.linked-challenge-remove').forEach(btn => {
+        btn.addEventListener('click', async function () {
+          try {
+            const res = await fetch(`/api/projects/${encodeURIComponent(slug)}/challenges`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ challenge_id: parseInt(btn.dataset.id, 10) }),
+            });
+            if (res.ok) window.location.reload();
+          } catch {}
+        });
+      });
+      renderChallengeEditor(challenges);
+    }
+  }
+
+  async function renderChallengeEditor(currentChallenges) {
+    const editor = document.getElementById('pd-challenge-editor');
+    try {
+      const res = await fetch('/api/challenges');
+      const { challenges } = await res.json();
+      const linkedIds = new Set(currentChallenges.map(c => c.id));
+      const options = (challenges || [])
+        .filter(c => !linkedIds.has(c.id))
+        .map(c => `<option value="${c.id}">${R.escHtml(c.title)}</option>`)
+        .join('');
+      if (!options) return;
+
+      editor.style.display = '';
+      editor.innerHTML = `
+        <div class="challenge-link-editor">
+          <select id="challenge-link-select"><option value="">Link a challenge…</option>${options}</select>
+          <button id="challenge-link-btn">Link</button>
+        </div>`;
+      document.getElementById('challenge-link-btn').addEventListener('click', async function () {
+        const id = parseInt(document.getElementById('challenge-link-select').value, 10);
+        if (!id) return;
+        try {
+          const res = await fetch(`/api/projects/${encodeURIComponent(slug)}/challenges`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ challenge_id: id }),
+          });
+          if (res.ok) window.location.reload();
+        } catch {}
+      });
+    } catch {}
+  }
 }());
 </script>
 </body>

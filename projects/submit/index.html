@@ -94,17 +94,20 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Relevant Themes <span class="optional">(optional)</span></label>
-            <p class="form-hint">Select any SIGs or contexts this project connects to.</p>
-            <div class="form-checkbox-group" id="f-themes" style="margin-top:0.5rem;">
-              <label class="form-checkbox"><input type="checkbox" value="sigfpt"> Formal Protocol Theory (SIGFPT)</label>
-              <label class="form-checkbox"><input type="checkbox" value="mrg"> Memory Research Group (MRG)</label>
-              <label class="form-checkbox"><input type="checkbox" value="sigpfb"> Protocols for Business (SIGPfB)</label>
-              <label class="form-checkbox"><input type="checkbox" value="protfisig"> Protocol Fiction (ProtFiSIG)</label>
-              <label class="form-checkbox"><input type="checkbox" value="drg"> Distributed Robotics Group (DRG)</label>
-              <label class="form-checkbox"><input type="checkbox" value="sigpsy"> Psychohistory (SIGPSY)</label>
-              <label class="form-checkbox"><input type="checkbox" value="solo"> Solo Project</label>
-            </div>
+            <label class="form-label" for="f-sig">SIG alignment <span class="optional">(optional)</span></label>
+            <select class="form-select" id="f-sig">
+              <option value="">Independent — not aligned with a SIG</option>
+              <option value="sigfpt">Formal Protocol Theory (SIGFPT)</option>
+              <option value="mrg">Memory Research Group (MRG)</option>
+              <option value="sigpfb">Protocols for Business (SIGPfB)</option>
+              <option value="protfisig">Protocol Fiction (ProtFiSIG)</option>
+              <option value="drg">Distributed Robotics Group (DRG)</option>
+              <option value="sigpsy">Psychohistory (SIGPSY)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <p class="form-hint">Team members and responses to open Challenges can be added from the project's own page once it's approved.</p>
           </div>
 
           <div class="form-actions">
@@ -169,7 +172,7 @@
       type:                document.getElementById('f-type').value,
       artifact_type:       artifactType,
       artifact_type_other: artifactType === 'other' ? document.getElementById('f-artifact-other').value.trim() : undefined,
-      themes:              Array.from(document.querySelectorAll('#f-themes input:checked')).map(cb => cb.value),
+      sig_slug:            document.getElementById('f-sig').value || null,
     };
 
     try {

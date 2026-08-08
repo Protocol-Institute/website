@@ -1,6 +1,6 @@
-# Challenges — Feature Plan
+# Research (Challenges + Projects) — Feature Plan
 
-This document captures planned features and design decisions for the `/challenges` page. Current state: D1-backed index with dual-track quadratic voting (anon + member), difficulty labels, seed interest baseline, and permalink anchors.
+This document captures planned features and design decisions for the `/research` page — originally written for the standalone `/challenges` page, and carried forward when Challenges and Projects were unified into `/research` (two tab views, one page) with a shared watching mechanism and value formula, plus project↔challenge linking and project team membership. Current state of the Challenges view: D1-backed index with dual-track quadratic voting (anon + member), difficulty labels, seed interest baseline, and permalink anchors.
 
 ---
 
@@ -8,7 +8,7 @@ This document captures planned features and design decisions for the `/challenge
 
 ### 1. Individual challenge pages
 
-Each challenge gets a dedicated page at `/challenges/[id]/` (or a human-readable slug once slugs are added to the schema).
+Each challenge gets a dedicated page at `/research/challenges/[id]/` (or a human-readable slug once slugs are added to the schema) — analogous to the individual project pages at `/projects/project?slug=`.
 
 **What it enables:**
 - Shareable, bookmarkable URLs for specific challenges
