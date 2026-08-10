@@ -83,21 +83,6 @@
 
 <li class="meeting-item">
   <div class="meeting-date">July 10, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-10-formal-modeling-of-stigmergy-sigfpt-summer-deep-dive">sigfpt 2026-07-10</a></div>
-  <p class="meeting-participants">Participants: Robby Rao, Kyle Mathews, Patrick Nast, Wip, Ergod, Fritz, Mike Travers, 🙊 Anuraj R, Venkatesh Rao, Senthil Gandhi</p>
-  <p class="meeting-summary">This was part of a summer-long track on stigmergic systems, aimed toward a workshop on security, robustness, and fault tolerance in stigmergy. Participants read papers modeling ant path selection via pheromone-based positive feedback, discussed the mathematical choice function and its parameters, and connected the dynamics to protocol theory concepts. The latter half turned to planning the workshop as a hackathon built on a simulation platform, with Venkat proposing a separate architecture call for code contributors.</p>
-  <ul class="meeting-insights">
-    <li>**Patrick's summary of the mechanism:** The double-bridge experiments use experimental controls (red light, sand) to isolate pheromone sensing. With equal paths, ants break symmetry via an **autocatalytic / positive-feedback loop** and randomly settle on one branch. With unequal paths, ants traverse the shorter path faster, laying more pheromone per unit time, which reinforces the shorter path — the beginnings of a path-optimization algorithm.</li>
-    <li>**Evaporation rate as memory (Patrick's &quot;hobby horse&quot;):** The pheromone evaporation rate is the crucial memory-like parameter. High evaporation gives flexibility (re-routing, defense against adversarial pheromone-laying) but risks decoherence; low evaporation entrenches paths. It effectively controls the &quot;hardness&quot; of changing the signaling path.</li>
-    <li>**Choice function parameters (Patrick):** Roughly `a / (a+b)` on pheromone concentrations, plus parameter **k** (attraction to an unmarked branch — the marking threshold needed for non-random choice) and **n** (a nonlinearity governing how strongly relative imbalance drives selection).</li>
-    <li>**Lock-in / inability to switch (Ergod):** Once a strong trail is established, ants keep reinforcing it and won't switch even if a shorter path is introduced later. Ergod tried but couldn't observe decay of a longer path in favor of a better one in the simulator. He connected this to network-effect lock-in / **protocol ossification**, and framed **k** as a cold-start/bootstrapping threshold and the nonlinearity as consensus &quot;sharpness.&quot;</li>
-    <li>**Protocol-theory framing (Ergod):** Ants can be understood in capability terms; they use **temporal asymmetry** to achieve coordination-as-computation. He raised the idea of an adversarial hackathon where teams write behaviors for competing colonies and try to break each other's protocols (comparing to games like Screeps).</li>
-    <li>**Anonymity/replaceability (Wip):** Ants coordinate effectively under complete anonymity — every ant is replaceable. He drew a loose blockchain analogy (competing paths, one &quot;wins&quot; via hard-coded rules) and a &quot;broom/funnel/frontier&quot; analogy applied to humans navigating mental (not just physical) territory.</li>
-  </ul>
-</li>
-
-<li class="meeting-item">
-  <div class="meeting-date">July 10, 2026</div>
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-10-formal-modeling-of-stigmergy-sigfpt-summer-deep-dive">Formal Modeling of Stigmergy: Double Bridge Experiments and Computational Simulation</a></div>
   <div class="meeting-topics"><span class="meeting-topic">Deneubourg's double bridge experiments as foundational stigmergy model</span><span class="meeting-topic">Computational reproduction and simulation of ant colony self-organization</span><span class="meeting-topic">Mathematical formalization of pheromone trail dynamics and nonlinearity</span><span class="meeting-topic">Path selection and switching behavior in stigmergic systems</span><span class="meeting-topic">Parameter tuning (evaporation rates and nonlinearity) for behavioral control</span></div>
   <p class="meeting-participants">Participants: _vgr, _ergod, ediblebadger, danfschmidt, mtraven, drwip, zoesh</p>
@@ -121,16 +106,18 @@
 </li>
 
 <li class="meeting-item">
-  <div class="meeting-date">June 26, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-06-26-yak-collective-robotics-demo">SIGFPT June 26: Yak Collective Robotics Demo</a></div>
-  <div class="meeting-topics"><span class="meeting-topic">Yak robotics presentation planning</span><span class="meeting-topic">SIGFPT group organization</span><span class="meeting-topic">Demo logistics and coordination</span></div>
-  <p class="meeting-participants">Participants: ediblebadger</p>
-  <p class="meeting-summary">The meeting thread was started by ediblebadger to organize a robotics presentation and demo featuring the Yak Collective for the SIGFPT (Formal Protocol Theory) group. The initiator pinged multiple group members to coordinate participation and planning for this event. No substantive discussion or conclusions are documented in the provided transcript excerpt.</p>
+  <div class="meeting-date">July 10, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-10-formal-modeling-of-stigmergy-sigfpt-summer-deep-dive">sigfpt 2026-07-10</a></div>
+  <p class="meeting-participants">Participants: Robby Rao, Kyle Mathews, Patrick Nast, Wip, Ergod, Fritz, Mike Travers, 🙊 Anuraj R, Venkatesh Rao, Senthil Gandhi</p>
+  <p class="meeting-summary">This was part of a summer-long track on stigmergic systems, aimed toward a workshop on security, robustness, and fault tolerance in stigmergy. Participants read papers modeling ant path selection via pheromone-based positive feedback, discussed the mathematical choice function and its parameters, and connected the dynamics to protocol theory concepts. The latter half turned to planning the workshop as a hackathon built on a simulation platform, with Venkat proposing a separate architecture call for code contributors.</p>
   <ul class="meeting-insights">
-    <li>The SIGFPT group is organizing a presentation or demonstration related to yak robotics from the Yak Collective.</li>
-    <li>Thread was initiated to coordinate attendees and logistics for this upcoming presentation.</li>
+    <li>**Patrick's summary of the mechanism:** The double-bridge experiments use experimental controls (red light, sand) to isolate pheromone sensing. With equal paths, ants break symmetry via an **autocatalytic / positive-feedback loop** and randomly settle on one branch. With unequal paths, ants traverse the shorter path faster, laying more pheromone per unit time, which reinforces the shorter path — the beginnings of a path-optimization algorithm.</li>
+    <li>**Evaporation rate as memory (Patrick's &quot;hobby horse&quot;):** The pheromone evaporation rate is the crucial memory-like parameter. High evaporation gives flexibility (re-routing, defense against adversarial pheromone-laying) but risks decoherence; low evaporation entrenches paths. It effectively controls the &quot;hardness&quot; of changing the signaling path.</li>
+    <li>**Choice function parameters (Patrick):** Roughly `a / (a+b)` on pheromone concentrations, plus parameter **k** (attraction to an unmarked branch — the marking threshold needed for non-random choice) and **n** (a nonlinearity governing how strongly relative imbalance drives selection).</li>
+    <li>**Lock-in / inability to switch (Ergod):** Once a strong trail is established, ants keep reinforcing it and won't switch even if a shorter path is introduced later. Ergod tried but couldn't observe decay of a longer path in favor of a better one in the simulator. He connected this to network-effect lock-in / **protocol ossification**, and framed **k** as a cold-start/bootstrapping threshold and the nonlinearity as consensus &quot;sharpness.&quot;</li>
+    <li>**Protocol-theory framing (Ergod):** Ants can be understood in capability terms; they use **temporal asymmetry** to achieve coordination-as-computation. He raised the idea of an adversarial hackathon where teams write behaviors for competing colonies and try to break each other's protocols (comparing to games like Screeps).</li>
+    <li>**Anonymity/replaceability (Wip):** Ants coordinate effectively under complete anonymity — every ant is replaceable. He drew a loose blockchain analogy (competing paths, one &quot;wins&quot; via hard-coded rules) and a &quot;broom/funnel/frontier&quot; analogy applied to humans navigating mental (not just physical) territory.</li>
   </ul>
-  <a href="https://discord.com/channels/1082444651946049567/1508974191443968060" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 
 <li class="meeting-item">
@@ -155,6 +142,19 @@
     </ul>
   </div>
   <a href="https://discord.com/channels/1082444651946049567/1518654456059789453" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">June 26, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-06-26-yak-collective-robotics-demo">SIGFPT June 26: Yak Collective Robotics Demo</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Yak robotics presentation planning</span><span class="meeting-topic">SIGFPT group organization</span><span class="meeting-topic">Demo logistics and coordination</span></div>
+  <p class="meeting-participants">Participants: ediblebadger</p>
+  <p class="meeting-summary">The meeting thread was started by ediblebadger to organize a robotics presentation and demo featuring the Yak Collective for the SIGFPT (Formal Protocol Theory) group. The initiator pinged multiple group members to coordinate participation and planning for this event. No substantive discussion or conclusions are documented in the provided transcript excerpt.</p>
+  <ul class="meeting-insights">
+    <li>The SIGFPT group is organizing a presentation or demonstration related to yak robotics from the Yak Collective.</li>
+    <li>Thread was initiated to coordinate attendees and logistics for this upcoming presentation.</li>
+  </ul>
+  <a href="https://discord.com/channels/1082444651946049567/1508974191443968060" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 
 <li class="meeting-item">
@@ -605,27 +605,6 @@
 
 <li class="meeting-item">
   <div class="meeting-date">September 12, 2025</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2025-09-12-protocol-foundations-workshop-session-1-orientation-han">PFW Session 2: Sensemaking - SIGFPT Lightning Talks</a></div>
-  <div class="meeting-topics"><span class="meeting-topic">Lightning talk format and structure (7-minute talks on single concepts)</span><span class="meeting-topic">Whitehead automaticity as a candidate concept for protocol theory</span><span class="meeting-topic">Liveness as a first-class property of protocols</span><span class="meeting-topic">Distinguishing protocols from norms, algorithms, rituals, and institutions</span><span class="meeting-topic">Technical presentation methods (Roam pages, diagrams, LaTeX notation)</span></div>
-  <p class="meeting-participants">Participants: _vgr, maparent, timber1997, amitashu, wevin_64764, .unipuff</p>
-  <p class="meeting-summary">The SIGFPT group held their second session focused on sensemaking through lightning talks. The organizer established a specific format: 7-minute talks on single useful concepts, diagrams, or operations, presented via Roam pages or visual/mathematical notation rather than traditional slides. One participant requested scheduling accommodation for a 2PM Pacific conflict. During the session, key discussions emerged around identifying foundational concepts in formal protocol theory, with 'whitehead automaticity' highlighted as a promising area of focus. A significant insight from the discussion was the recognition that 'liveness' should be elevated to a first-class property distinguishing protocols from related but distinct categories like norms, algorithms, rituals, and institutions. The group emphasized condensing protocol theory into its most essential, communicable components.</p>
-  <ul class="meeting-insights">
-    <li>The group is focusing on identifying and elevating key concepts in formal protocol theory through short, focused lightning talks emphasizing clarity over slides.</li>
-    <li>Liveness emerged as a critical property that should be formally recognized as a distinguishing characteristic of protocols, particularly macroprotocols, setting them apart from similar constructs.</li>
-    <li>The concept of 'whitehead automaticity' was identified as a promising candidate for protocol formalization, though specific details remain undeveloped in the transcript.</li>
-    <li>There is an intentional move toward distilling protocol theory into its most essential concepts and visual representations rather than relying on traditional presentation formats.</li>
-  </ul>
-  <div class="meeting-links">
-    <div class="meeting-links-label">Links discussed</div>
-    <ul class="meeting-links-list">
-      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/ZmE_lzqSr" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
-    </ul>
-  </div>
-  <a href="https://discord.com/channels/1082444651946049567/1416100323432595456" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
-</li>
-
-<li class="meeting-item">
-  <div class="meeting-date">September 12, 2025</div>
   <div class="meeting-title"><a href="/sigs/sigfpt/2025-09-12-protocol-foundations-workshop-session-1-orientation-han">Protocol Foundations Workshop Session 1: Orientation - Handshake Protocol Analysis</a></div>
   <div class="meeting-topics"><span class="meeting-topic">Formal decomposition of handshake protocol parameters</span><span class="meeting-topic">Cultural and contextual variables in physical greeting protocols</span><span class="meeting-topic">Signal medium and agent recognition in protocol execution</span><span class="meeting-topic">Disease transmission dynamics through repeated handshake interactions</span><span class="meeting-topic">Individual variation in protocol implementation across participants</span></div>
   <p class="meeting-participants">Participants: _vgr, heterotic, maparent, anurajenp, brianskinner3057, smith_36609_95392, boredgargoyle, mtraven, austinjacobs_33961, va3bhav., sirish_aditya, radni</p>
@@ -643,6 +622,27 @@
     </ul>
   </div>
   <a href="https://discord.com/channels/1082444651946049567/1415864861073735680" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">September 12, 2025</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2025-09-12-protocol-foundations-workshop-session-1-orientation-han">PFW Session 2: Sensemaking - SIGFPT Lightning Talks</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Lightning talk format and structure (7-minute talks on single concepts)</span><span class="meeting-topic">Whitehead automaticity as a candidate concept for protocol theory</span><span class="meeting-topic">Liveness as a first-class property of protocols</span><span class="meeting-topic">Distinguishing protocols from norms, algorithms, rituals, and institutions</span><span class="meeting-topic">Technical presentation methods (Roam pages, diagrams, LaTeX notation)</span></div>
+  <p class="meeting-participants">Participants: _vgr, maparent, timber1997, amitashu, wevin_64764, .unipuff</p>
+  <p class="meeting-summary">The SIGFPT group held their second session focused on sensemaking through lightning talks. The organizer established a specific format: 7-minute talks on single useful concepts, diagrams, or operations, presented via Roam pages or visual/mathematical notation rather than traditional slides. One participant requested scheduling accommodation for a 2PM Pacific conflict. During the session, key discussions emerged around identifying foundational concepts in formal protocol theory, with 'whitehead automaticity' highlighted as a promising area of focus. A significant insight from the discussion was the recognition that 'liveness' should be elevated to a first-class property distinguishing protocols from related but distinct categories like norms, algorithms, rituals, and institutions. The group emphasized condensing protocol theory into its most essential, communicable components.</p>
+  <ul class="meeting-insights">
+    <li>The group is focusing on identifying and elevating key concepts in formal protocol theory through short, focused lightning talks emphasizing clarity over slides.</li>
+    <li>Liveness emerged as a critical property that should be formally recognized as a distinguishing characteristic of protocols, particularly macroprotocols, setting them apart from similar constructs.</li>
+    <li>The concept of 'whitehead automaticity' was identified as a promising candidate for protocol formalization, though specific details remain undeveloped in the transcript.</li>
+    <li>There is an intentional move toward distilling protocol theory into its most essential concepts and visual representations rather than relying on traditional presentation formats.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://roamresearch.com/#/app/ProtocolTheory/page/ZmE_lzqSr" target="_blank" rel="noopener noreferrer">roamresearch.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1416100323432595456" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 
 <li class="meeting-item">
@@ -832,13 +832,6 @@
 </li>
 
 <li class="meeting-item">
-  <div class="meeting-title">Week 6 Discussion Thread - SIGFPT</div>
-  <p class="meeting-participants">Participants: timber1997, valentingolev</p>
-  <p class="meeting-summary">This meeting thread shows minimal substantive content. The thread was activated by timber1997 on January 21, 2025, with a calendar invite link provided for participants. Valentingolev's only contribution was a GIF from The Simpsons on January 23, 2025, which appears to be a humorous response rather than substantive discussion content. No formal protocol theory topics were discussed or documented in the visible transcript.</p>
-  <a href="https://discord.com/channels/1082444651946049567/1331093429177815072" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
-</li>
-
-<li class="meeting-item">
   <div class="meeting-title">Week 5 Discussion Thread - SIGFPT Formal Protocol Theory</div>
   <div class="meeting-topics"><span class="meeting-topic">Calendar coordination for group meetings</span><span class="meeting-topic">Thread protocol activation procedures</span></div>
   <p class="meeting-participants">Participants: timber1997, valentingolev</p>
@@ -867,6 +860,13 @@
     </ul>
   </div>
   <a href="https://discord.com/channels/1082444651946049567/1333821175947591721" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-title">Week 6 Discussion Thread - SIGFPT</div>
+  <p class="meeting-participants">Participants: timber1997, valentingolev</p>
+  <p class="meeting-summary">This meeting thread shows minimal substantive content. The thread was activated by timber1997 on January 21, 2025, with a calendar invite link provided for participants. Valentingolev's only contribution was a GIF from The Simpsons on January 23, 2025, which appears to be a humorous response rather than substantive discussion content. No formal protocol theory topics were discussed or documented in the visible transcript.</p>
+  <a href="https://discord.com/channels/1082444651946049567/1331093429177815072" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 </ul>
 
