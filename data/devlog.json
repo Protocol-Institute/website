@@ -1538,6 +1538,39 @@
           "html": "Session-start housekeeping found the same known pattern as Session 39: c3po's daemon regenerates <code>sigs/*/index.html</code> locally every 30 minutes but its weekly website-PR step is still not confirmed working (c3po#1 fix not yet merged), so 5 new SIG session entries (DRG#04 A2A protocol integration, ProtFiSIG sci-fi/Mrs. Brown, SIGFPT formal methods pt.2, SIGPfB drone warfare journalism, SIGPSY Oracle v2.0) were sitting as uncommitted local changes rather than arriving via PR. Reviewed against the c3po PR checklist (link targets exist, no <7-day premature summaries, session counts match, YouTube anchor text intact) and committed by hand. The recurring whitespace-bloat regen artifact (Session 39 also hit this) was worse this cycle — roughly 300 lines/file across all 6 SIGs, including <code>mrg</code>, which had received no new content at all — stripped back down to baseline levels before committing."
         }
       ]
+    },
+    {
+      "id": 41,
+      "sort_key": 41.0,
+      "label": "Session 41",
+      "title": "c3po Pipeline Audit + Fixes; SIG Calendar Gains First Non-SIG Entry",
+      "date": "2026-08-10",
+      "time_pt": "",
+      "tracks": [
+        "operations",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "c3po website-push flow: second bug found and fixed (monitoring.html vs .gitignore)",
+          "html": "c3po#1 (merged 2026-07-24) genuinely fixed the stale <code>sigs.html</code> pathspec bug, but the very next weekly push attempt (2026-08-07 daemon.log) hit a <em>different</em> fatal error: <code>git add</code> refusing to stage <code>monitoring.html</code> because this repo's <code>.gitignore</code> excludes it (deliberately, since 2026-06-03 &mdash; it's a local-convenience dashboard copy, never meant to be deployed). <code>git add</code> on an explicitly-named ignored path is fatal, not a silent skip, so the whole push flow aborted before a PR could open. Net effect: zero c3po website PRs landed between #5 (2026-07-08) and this session &mdash; the pathspec fix bought exactly one bug's worth of runway before the next one blocked the same flow. Opened <a href=\"https://github.com/Protocol-Institute/c3po/pull/2\">c3po#2</a> dropping <code>monitoring.html</code> from <code>WEBSITE_PATHS</code>; not yet merged."
+        },
+        {
+          "title": "c3po blank-line leak: root-caused to a zero-width-lookahead regex bug, fixed",
+          "html": "The recurring \"stray blank lines on every regen\" issue tracked since Session 39 turned out to have a precise, single-line cause: <code>_patch_meeting_archive()</code>'s replace pattern stopped matching at a zero-width lookahead (<code>(?=\\s*&lt;div class=\"sig-cta\"&gt;)</code>) rather than consuming that whitespace as part of the match. A lookahead never eats characters, so the regex engine's earliest satisfying position was immediately after <code>&lt;/ul&gt;</code>, leaving the existing blank-line whitespace before the <code>sig-cta</code> div completely untouched &mdash; then the replacement string appended its own fresh <code>\\n\\n</code> on top of it. Since this patch runs unconditionally for all 6 SIGs on every 30-minute daemon cycle regardless of whether meeting data changed, the leak was constant: roughly 2 lines/cycle/file, compounding to ~800 leaked lines/file by this session (up from \"4 lines\" when Session 39 first spotted it one cycle later). Fix moves <code>\\s*</code> out of the lookahead into the consumed match; verified idempotent (repeated runs produce byte-identical output) against synthetic input covering both the normal-archive and empty-archive cases, and against all 6 real current SIG pages. Opened <a href=\"https://github.com/Protocol-Institute/c3po/pull/3\">c3po#3</a>; not yet merged."
+        },
+        {
+          "title": "Manual recovery of a month's stranded SIG content from the c3po VM",
+          "html": "Because the push-flow bug above meant no PR had landed since 07-08, the VM's daemon (<code>c3po-vm.exe.xyz</code>, migrated there 2026-08-01) had been silently regenerating <code>sigs/*/index.html</code> locally every 30 minutes with nowhere for the results to go &mdash; content just accumulated as uncommitted changes in its working tree, mirroring the Session 39 incident exactly. Pulled the accumulated diff directly from the VM via scp, reviewed by hand against the standing c3po-PR checklist (link targets resolve, no premature past-tense summaries for meetings &lt;7 days old, anchor-text conventions, section counts match), and committed the reviewed result directly to <code>main</code> (<code>549b9d6</code>): 2 new sessions (SIGPfB, SIGPSY), 3 meeting-title entries promoted from plain text to linked detail pages, 1 session-recording summary appended to an existing page, ~800 lines/file of blank-line bloat stripped from 6 index pages (confirmed zero real content diff for 3 of them &mdash; the VM's clone was simply stale, missing manual commits already on <code>main</code>). One SIGFPT entry (3 days old, full past-tense summary despite the daemon's own log showing it deferred pending the 7-day cooling-off window) was deliberately dropped from the commit rather than landed early. Reset the VM's website clone to clean <code>origin/main</code> afterward so the next daemon cycle starts fresh."
+        },
+        {
+          "title": "SIG calendar: first non-SIG entry, plus two latent sync-script bugs it surfaced",
+          "html": "Added the \"Stigmergy Workshop coordination call\" (a 5-week, weekly, 30-minute contributor series for the stigsim simulator, running Aug 14&ndash;Sept 18 ahead of the Symposium's Stigmergy Workshop) as the Calendar tab's first entry that isn't one of the 6 standing SIGs &mdash; correcting an earlier same-session misread of \"leave unmapped\" as a soft no-op rather than full exclusion. Wiring it in surfaced two real, previously-invisible bugs in <code>sync_sig_meetings.py</code>, both now fixed generically (not just special-cased for this one event): <code>RRULE</code>'s <code>UNTIL</code> was never parsed, so any time-boxed series would generate 30 fabricated future occurrences stretching past its real end date &mdash; this was already silently wrong for <code>protfisig</code>'s genuine 2027-01-01 <code>UNTIL</code>, and separately let an already-ended stale <code>sigpfb</code> calendar duplicate risk winning the \"first match\" race against the real active series depending on iCal fetch ordering. And event <code>DURATION</code> was hardcoded to 1 hour everywhere (both <code>.ics</code> output and the \"add to calendar\" Google Calendar link) instead of derived from the source event's actual <code>DTSTART</code>/<code>DTEND</code>. <code>js/sig-meta.js</code>'s <code>PI_SIGS</code> gained two new optional override fields, <code>detailHref</code> and <code>typeLabel</code>, so <code>events/index.html</code> can point a non-SIG entry at real content and label it distinctly, instead of the hardcoded <code>/sigs/&lt;slug&gt;/</code> + \"SIG\" badge every entry got before. This is a stopgap, not a redesign &mdash; flagged in-code and in <code>status.md</code> as design debt: the whole pipeline (sync script, <code>PI_SIGS</code>, Calendar-tab rendering) still assumes \"calendar entry\" means \"one of 6 standing SIGs\" almost everywhere, worth a real fix (a <code>type</code> field, non-derived link targets, non-Discord-channel locations) if more one-off call types show up. Verified end-to-end in a local browser session: Calendar tab sorts/renders the new row correctly, Details/title links resolve to the real workshop page, <code>.ics</code> downloads, 30-minute duration flows through to the calendar link, and the 6 standing SIGs (both <code>/events</code> and <code>/sigs</code>) show no regression."
+        }
+      ]
     }
   ]
 }
