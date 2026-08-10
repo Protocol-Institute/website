@@ -16,6 +16,7 @@
 - Future: consolidated beings directory database (R2 assets keyed by slug, roles as DB relations)
 - **SoP migration — Alumni Directory:** Build a `/alumni` page listing SoP23–25 fellows from `data/alumni.json` (70 entries). Design TBD.
 - **Events history pages:** Add `resources_url` links once protocolized.io/resources URL scheme is confirmed. Add images once R2 is set up.
+- **Loosen the "calendar entry == SIG" assumption.** `sync_sig_meetings.py`, `js/sig-meta.js`'s `PI_SIGS`, and `events/index.html`'s Calendar-tab rendering all assume every recurring calendar entry is one of the 6 standing SIGs. Session 41 (2026-08-10) added the first non-SIG entry (a 5-week Stigmergy Workshop coordination call) by bolting on two optional override fields (`detailHref`, `typeLabel`) rather than changing the underlying model — noted in-code as a TODO at the top of each affected block. Worth a real redesign (a `type` field distinguishing "standing SIG" from "time-boxed call"/"workshop"/etc., non-derived link targets, non-Discord-text-channel locations) if more one-off call types show up before then.
 
 ### SIG Mailing Lists (planned, not started)
 
