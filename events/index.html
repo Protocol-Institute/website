@@ -158,18 +158,21 @@
         }
         if (!next) return;
         var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
+        // detailHref/typeLabel are overrides for calendar entries that aren't one of the
+        // 6 standing SIGs (e.g. a time-boxed workshop coordination call) and so don't have
+        // a real /sigs/<slug>/ page — see the note in js/sig-meta.js.
         items.push({
           id: 'sig-' + slug,
           sortDate: next,
           dateLine: shortDate(next),
           timeLine: next.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }),
           location: null,
-          title: meta.full + ' Meeting',
-          href: '/sigs/' + slug + '/',
-          typeLabel: 'SIG',
+          title: meta.full + (meta.detailHref ? '' : ' Meeting'),
+          href: meta.detailHref || ('/sigs/' + slug + '/'),
+          typeLabel: meta.typeLabel || 'SIG',
           badgeClass: ' cal-badge-sig',
           description: 'Meets ' + freq + ' — #' + meta.channelName + ' on Discord.',
-          calLink: window.PI_sigGcalLink(slug, next),
+          calLink: window.PI_sigGcalLink(slug, next, sig.duration_minutes),
           extraLinks: [{ href: '/calendar/sigs/' + slug + '.ics', label: 'Download event series (.ics)' }]
         });
       });

@@ -10,7 +10,7 @@ DTSTART:20260813T160000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
 SUMMARY:SIGPSY — Psychohistory
-DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/sigpsy/ for details.
 URL:https://protocol-institute.org/sigs/sigpsy/
 END:VEVENT
 END:VCALENDAR

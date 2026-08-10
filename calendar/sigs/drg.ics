@@ -10,7 +10,7 @@ DTSTART:20260820T163000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
 SUMMARY:DRG — Distributed Robotics Group
-DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/drg/ for details.
 URL:https://protocol-institute.org/sigs/drg/
 END:VEVENT
 END:VCALENDAR

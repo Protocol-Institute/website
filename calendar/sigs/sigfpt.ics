@@ -10,7 +10,7 @@ DTSTART:20260821T170000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=FR
 SUMMARY:SIGFPT — Formal Protocol Theory
-DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/sigfpt/ for details.
 URL:https://protocol-institute.org/sigs/sigfpt/
 END:VEVENT
 END:VCALENDAR

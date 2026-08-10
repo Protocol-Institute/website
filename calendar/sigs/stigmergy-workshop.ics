@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Protocol Institute//SIG Meetings//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:stigmergy-workshop-recurring@protocol-institute.org
+DTSTAMP:20260810T000000Z
+DTSTART:20260814T180000Z
+DURATION:PT30M
+RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=FR;UNTIL=20260919T065959Z
+SUMMARY:Stigmergy Workshop — Code Coordination Call
+DESCRIPTION:Protocol Institute — meets weekly. See https://protocol-institute.org/events/protocol-symposium-2026/program/workshops/workshop-protocol-hackathon-securing-stigmergic for details.
+URL:https://protocol-institute.org/events/protocol-symposium-2026/program/workshops/workshop-protocol-hackathon-securing-stigmergic
+END:VEVENT
+END:VCALENDAR

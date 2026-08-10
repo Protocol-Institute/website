@@ -25,6 +25,15 @@ ICAL_URL = (
 
 # Match substrings of SUMMARY (case-insensitive) to site slugs.
 # Earlier entries win — put more specific patterns first.
+#
+# NOT ALL SLUGS HERE ARE STANDING SIGS. "stigmergy-workshop" is a time-boxed
+# (UNTIL-bounded) workshop coordination call — see ALL_SLUGS/SIG_DISPLAY
+# comments below. This whole file (and the PI_SIGS-keyed rendering in
+# js/sig-meta.js / events/index.html) still assumes "calendar entry" ==
+# "SIG" almost everywhere; TODO (noted 2026-08-10, not yet done): loosen
+# that assumption so other call types (workshops, one-off coordination
+# series) don't have to be shoehorned through the SIG data model/slug map
+# each time one comes up.
 SLUG_MAP = [
     ("SIGFPT", "sigfpt"),
     ("Formal Protocol Theory", "sigfpt"),
@@ -35,6 +44,7 @@ SLUG_MAP = [
     ("Protocols for Business", "sigpfb"),
     ("Distributed Robotics", "drg"),
     ("Memory Research", "mrg"),
+    ("Stigmergy workshop", "stigmergy-workshop"),
 ]
 
 BYDAY_MAP = {
@@ -42,6 +52,10 @@ BYDAY_MAP = {
     "FR": "Friday", "SA": "Saturday", "SU": "Sunday",
 }
 
+# The 6 standing SIGs only — used solely for the "missing from calendar"
+# warning at the end of main(). stigmergy-workshop is deliberately excluded:
+# it's a 5-week series (ends 2026-09-18), not a standing SIG, so it SHOULD
+# disappear from the calendar/warning once its RRULE's UNTIL passes.
 ALL_SLUGS = ["sigfpt", "mrg", "sigpfb", "protfisig", "drg", "sigpsy"]
 
 SIG_DISPLAY = {
@@ -51,6 +65,10 @@ SIG_DISPLAY = {
     "protfisig": ("ProtFiSIG — Protocol Fiction",           "https://protocol-institute.org/sigs/protfisig/"),
     "drg":       ("DRG — Distributed Robotics Group",       "https://protocol-institute.org/sigs/drg/"),
     "sigpsy":    ("SIGPSY — Psychohistory",                 "https://protocol-institute.org/sigs/sigpsy/"),
+    "stigmergy-workshop": (
+        "Stigmergy Workshop — Code Coordination Call",
+        "https://protocol-institute.org/events/protocol-symposium-2026/program/workshops/workshop-protocol-hackathon-securing-stigmergic",
+    ),
 }
 
 DAY_TO_BYDAY = {
@@ -111,19 +129,33 @@ def parse_ical_blocks(text):
 
 
 def parse_rrule(rrule_str):
-    """Return (interval_weeks, day_name) or None."""
+    """Return (interval_weeks, day_name, until_utc_or_None) or None.
+
+    UNTIL support matters for time-boxed series (e.g. a 5-week workshop
+    coordination call) — without it every RRULE is treated as indefinite,
+    so a short series would keep generating fabricated future occurrences
+    long after it actually ended.
+    """
     parts = dict(p.split('=', 1) for p in rrule_str.split(';') if '=' in p)
     if parts.get('FREQ') != 'WEEKLY':
         return None
     interval = int(parts.get('INTERVAL', 1))
     byday = re.sub(r'^[+-]?\d+', '', parts.get('BYDAY', ''))
     day = BYDAY_MAP.get(byday)
-    return (interval, day) if day else None
+    if not day:
+        return None
+    until = None
+    until_raw = parts.get('UNTIL')
+    if until_raw:
+        # Google Calendar always emits UNTIL in UTC (trailing Z) for weekly RRULEs.
+        until = datetime.strptime(until_raw.rstrip('Z'), "%Y%m%dT%H%M%S").replace(tzinfo=timezone.utc)
+    return (interval, day, until)
 
 
-def expand_occurrences(dtstart_raw, tzid, interval_weeks, count=30):
+def expand_occurrences(dtstart_raw, tzid, interval_weeks, count=30, until=None):
     """
-    Expand the recurring event to the next `count` UTC ISO datetimes.
+    Expand the recurring event to the next `count` UTC ISO datetimes, or
+    fewer if `until` (a UTC datetime) cuts the series off first.
 
     Works with naive datetimes in the source timezone so DST transitions
     are handled correctly: each step stays at the same local time-of-day
@@ -154,7 +186,10 @@ def expand_occurrences(dtstart_raw, tzid, interval_weeks, count=30):
 
     results = []
     for _ in range(count):
-        results.append(to_utc(dt_naive).strftime("%Y-%m-%dT%H:%M:%SZ"))
+        occ_utc = to_utc(dt_naive)
+        if until and occ_utc > until:
+            break
+        results.append(occ_utc.strftime("%Y-%m-%dT%H:%M:%SZ"))
         dt_naive += step
 
     return results
@@ -174,6 +209,18 @@ def main():
         rrule = ev.get('RRULE', '')
         dtstart_raw = ev.get('DTSTART_RAW')
         dtstart_tzid = ev.get('DTSTART_TZID')
+        dtend_raw = ev.get('DTEND')
+
+        duration_minutes = 60
+        if dtend_raw:
+            try:
+                start_naive = datetime.strptime(dtstart_raw, "%Y%m%dT%H%M%S")
+                end_naive = datetime.strptime(dtend_raw, "%Y%m%dT%H%M%S")
+                delta = end_naive - start_naive
+                if delta.total_seconds() > 0:
+                    duration_minutes = int(delta.total_seconds() // 60)
+            except (ValueError, TypeError):
+                pass
 
         if not rrule or not dtstart_raw:
             continue
@@ -191,16 +238,23 @@ def main():
             print(f"  Duplicate {slug}: {summary!r} — skipping")
             continue
 
-        interval, day = rr
-        occurrences = expand_occurrences(dtstart_raw, dtstart_tzid, interval)
+        interval, day, until = rr
+        occurrences = expand_occurrences(dtstart_raw, dtstart_tzid, interval, until=until)
+
+        if not occurrences:
+            print(f"  {slug}: series has ended (UNTIL {until}) — no future occurrences, skipping")
+            continue
 
         sigs[slug] = {
             "day": day,
             "interval_weeks": interval,
             "occurrences": occurrences,
+            "until": until.strftime("%Y-%m-%dT%H:%M:%SZ") if until else None,
+            "duration_minutes": duration_minutes,
             "_calendar_summary": summary,
         }
-        print(f"  {slug}: {day} every {interval}w — {len(occurrences)} occurrences from {occurrences[0]}")
+        print(f"  {slug}: {day} every {interval}w — {len(occurrences)} occurrences from {occurrences[0]}"
+              + (f" (ends {until.date()})" if until else ""))
 
     # Fill in manual entries for SIGs not on the calendar
     for slug, manual in MANUAL_SIGS.items():
@@ -212,6 +266,8 @@ def main():
                 "day": manual["day"],
                 "interval_weeks": manual["interval_weeks"],
                 "occurrences": occurrences,
+                "until": None,
+                "duration_minutes": 60,
                 "_calendar_summary": manual["_calendar_summary"],
             }
             print(f"  {slug}: using manual entry — {len(occurrences)} occurrences from {occurrences[0]}")
@@ -247,6 +303,15 @@ def write_ics_files(sigs, synced_date):
         dtstart = sig["occurrences"][0].replace("-", "").replace(":", "")  # → 20260626T170000Z
         byday = DAY_TO_BYDAY.get(sig["day"], "MO")
         interval = sig["interval_weeks"]
+        freq_word = "weekly" if interval == 1 else f"every {interval} weeks"
+
+        rrule = f"FREQ=WEEKLY;INTERVAL={interval};BYDAY={byday}"
+        until = sig.get("until")
+        if until:
+            rrule += f";UNTIL={until.replace('-', '').replace(':', '')}"
+        duration_minutes = sig.get("duration_minutes", 60)
+        hours, mins = divmod(duration_minutes, 60)
+        duration = "PT" + (f"{hours}H" if hours else "") + (f"{mins}M" if mins else "")
 
         lines = [
             "BEGIN:VCALENDAR",
@@ -258,10 +323,10 @@ def write_ics_files(sigs, synced_date):
             f"UID:{slug}-recurring@protocol-institute.org",
             f"DTSTAMP:{dtstamp}",
             f"DTSTART:{dtstart}",
-            "DURATION:PT1H",
-            f"RRULE:FREQ=WEEKLY;INTERVAL={interval};BYDAY={byday}",
+            f"DURATION:{duration}",
+            f"RRULE:{rrule}",
             f"SUMMARY:{name}",
-            "DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.",
+            f"DESCRIPTION:Protocol Institute — meets {freq_word}. See {url} for details.",
             f"URL:{url}",
             "END:VEVENT",
             "END:VCALENDAR",

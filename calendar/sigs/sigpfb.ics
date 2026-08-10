@@ -10,7 +10,7 @@ DTSTART:20260810T153000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO
 SUMMARY:SIGPfB — Protocols for Business
-DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/sigpfb/ for details.
 URL:https://protocol-institute.org/sigs/sigpfb/
 END:VEVENT
 END:VCALENDAR

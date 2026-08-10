@@ -10,7 +10,7 @@ DTSTART:20260814T143000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
 SUMMARY:Memory Research Group (MRG)
-DESCRIPTION:Protocol Institute SIG biweekly meetings on Discord voice channel.
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/mrg/ for details.
 URL:https://protocol-institute.org/sigs/mrg/
 END:VEVENT
 END:VCALENDAR
