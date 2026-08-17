@@ -122,8 +122,6 @@ function renderProposal(p){
     html+=orgs.map((o,i)=>`<div class="team-member"${i?' style="margin-top:1.5rem;"':''}>
       <div class="team-bio"><h3 class="team-name">${esc(o.name)}</h3>${renderText(o.bio)}</div></div>`).join('');
   }
-  if(p.comments&&p.comments.trim()&&p.comments.trim().toLowerCase()!=='n/a')
-    html+=sec('Notes')+renderText(p.comments);
   return html;
 }
 let _proposal=null,_memberEmail='',_isAdmin=false;
