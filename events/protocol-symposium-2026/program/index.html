@@ -289,7 +289,10 @@
     let timeHtml = '';
     if (!isWorkshop) {
       if (p.scheduled_date && p.scheduled_time_utc) {
-        timeHtml = `<div class="proposal-time">${dayHeaderLabel(p.scheduled_date)} · ${esc(p.scheduled_time_utc)} UTC</div>`;
+        const range = p.scheduled_end_time_utc
+          ? `${esc(p.scheduled_time_utc)}–${esc(p.scheduled_end_time_utc)}`
+          : esc(p.scheduled_time_utc);
+        timeHtml = `<div class="proposal-time">${dayHeaderLabel(p.scheduled_date)} · ${range} UTC</div>`;
       } else {
         const block = SESSION_BLOCKS[p.session];
         if (block && block.date) {
