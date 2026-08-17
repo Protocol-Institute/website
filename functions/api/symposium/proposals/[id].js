@@ -1,4 +1,5 @@
-// GET   /api/symposium/proposals/:id — admin only, returns full proposal record
+// GET   /api/symposium/proposals/:id — public, returns full proposal record
+//       (including its workshop_sessions, if any)
 // PATCH /api/symposium/proposals/:id — owners: title+abstract only; admins: all fields
 
 import { getSession } from '../../../_shared/session.js';
@@ -23,14 +24,21 @@ async function resolve(request, env, id) {
   return { email, proposal, member, isAdmin: !!member.is_admin };
 }
 
-export async function onRequestGet({ request, env, params }) {
+export async function onRequestGet({ env, params }) {
   const id = parseInt(params.id);
   if (!id) return Response.json({ error: 'Invalid ID' }, { status: 400 });
 
-  const auth = await resolve(request, env, id);
-  if (auth.err) return Response.json({ error: auth.err }, { status: auth.status });
+  const proposal = await env.DB.prepare('SELECT * FROM symposium_proposals WHERE id = ?').bind(id).first();
+  if (!proposal) return Response.json({ error: 'Not found' }, { status: 404 });
 
-  return Response.json({ proposal: auth.proposal });
+  if (proposal.type === 'workshop') {
+    const { results } = await env.DB.prepare(
+      'SELECT seq, date, start_time, end_time, note FROM symposium_workshop_sessions WHERE proposal_id = ? ORDER BY seq ASC'
+    ).bind(id).all();
+    proposal.workshop_sessions = results || [];
+  }
+
+  return Response.json({ proposal });
 }
 
 export async function onRequestPatch({ request, env, params }) {

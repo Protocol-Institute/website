@@ -29,6 +29,17 @@ export async function onRequestGet({ request, env }) {
     ORDER BY p.type ASC, p.id ASC
   `).all();
 
+  const { results: workshopSessions } = await env.DB.prepare(
+    'SELECT proposal_id, seq, date, start_time, end_time, note FROM symposium_workshop_sessions ORDER BY proposal_id ASC, seq ASC'
+  ).all();
+  const sessionsByProposal = {};
+  (workshopSessions || []).forEach(s => {
+    (sessionsByProposal[s.proposal_id] = sessionsByProposal[s.proposal_id] || []).push(s);
+  });
+  (proposals || []).forEach(p => {
+    if (p.type === 'workshop') p.workshop_sessions = sessionsByProposal[p.id] || [];
+  });
+
   // Public response when not authenticated
   if (!email) return Response.json({ proposals: proposals || [] });
 

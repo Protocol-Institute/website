@@ -30,6 +30,13 @@
       padding:0.3rem 0.8rem; background:#2A6B6B; color:#fff; border:none; cursor:pointer; margin-top:0.4rem; }
     .comment-submit-btn:disabled { opacity:0.5; cursor:default; }
     .comment-msg { font-size:0.78rem; margin-left:0.5rem; }
+    .workshop-sessions { list-style:none; margin:0 0 0.75rem; padding:0; font-size:0.85rem; color:#3A3A3A; }
+    .workshop-sessions li { padding:0.15rem 0; }
+    .workshop-session-note { color:#8A8A8A; font-style:italic; }
+    .workshop-register-btn { display:inline-block; font-size:0.85rem; font-weight:600;
+      color:#fff; background:#2A6B6B; padding:0.5rem 1.1rem; margin-bottom:1rem;
+      text-decoration:none; letter-spacing:0.02em; }
+    .workshop-register-btn:hover { background:#20504F; }
   </style>
 </head>
 <body>
@@ -38,8 +45,7 @@
   <main class="interior-main">
     <div class="container">
       <div id="gate-view" class="gate-msg" style="display:none;">
-        <p>This page is available to Protocol Institute members.<br>
-        <a href="/members/join?return=/events/protocol-symposium-2026/program/workshops/workshop-robots-as-protocol-citizens-assembling/" style="color:#2A6B6B;">Log in →</a></p>
+        <p>Unable to load workshop details. Please try again later.</p>
       </div>
       <div id="main-view" style="display:none;">
         <p style="margin-bottom:1rem;font-size:0.85rem;">
@@ -77,6 +83,7 @@
 const PROPOSAL_ID = 30;
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderInline(s){return s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');}
+function fmtDate(d){var dt=new Date(d+'T00:00:00Z');return dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});}
 function renderText(text){
   if(!text||text.trim()===''||text.trim().toLowerCase()==='n/a') return '';
   return esc(text).split(/\n\n+/).map(block=>{
@@ -92,7 +99,17 @@ function renderProposal(p){
   const track=TRACK_LABELS[p.track]||p.track||'';
   const sec=t=>`<h2 class="section-label">${t}</h2>`;
   let html=`<div class="page-header"><h1>${esc(p.title)}</h1></div>
-    <p style="font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A8A;margin-bottom:1.5rem;">Workshop${track?' · '+esc(track):''}</p>`;
+    <p style="font-size:0.82rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:#8A8A8A;margin-bottom:1rem;">Workshop${track?' · '+esc(track):''}</p>`;
+  const sessions=p.workshop_sessions||[];
+  if(sessions.length){
+    html+='<ul class="workshop-sessions">'+sessions.map(function(s){
+      var note=s.note?' <span class="workshop-session-note">('+esc(s.note)+')</span>':'';
+      return '<li>Session '+s.seq+' \u2014 '+fmtDate(s.date)+' \u00b7 '+esc(s.start_time)+'\u2013'+esc(s.end_time)+' UTC'+note+'</li>';
+    }).join('')+'</ul>';
+  }
+  if(p.registration_url){
+    html+='<a class="workshop-register-btn" href="'+esc(p.registration_url)+'" target="_blank" rel="noopener noreferrer">Register for this workshop \u2192</a>';
+  }
   if(p.abstract)   html+=sec('Abstract')+renderText(p.abstract);
   if(p.audience)   html+=sec('Audience')+renderText(p.audience);
   if(p.takeaways)  html+=sec('What participants will take away')+renderText(p.takeaways);
@@ -110,17 +127,14 @@ function renderProposal(p){
   return html;
 }
 let _proposal=null,_memberEmail='',_isAdmin=false;
-fetch('/api/members/me')
-  .then(r=>r.ok?r.json():Promise.reject())
-  .then(d=>{
-    if(!d.member)throw new Error();
-    _memberEmail=(d.member.email||'').toLowerCase();
-    _isAdmin=!!d.member.is_admin;
-    return fetch(`/api/symposium/proposals/${PROPOSAL_ID}`);
-  })
-  .then(r=>{if(r.status===401||r.status===403){document.getElementById('gate-view').style.display='';return null;}if(!r.ok)throw new Error();return r.json();})
-  .then(data=>{
-    if(!data)return;
+Promise.all([
+  fetch('/api/members/me').then(r=>r.ok?r.json():{member:null}).catch(()=>({member:null})),
+  fetch(`/api/symposium/proposals/${PROPOSAL_ID}`).then(r=>{if(!r.ok)throw new Error();return r.json();}),
+])
+  .then(([meData,data])=>{
+    const member=meData.member||null;
+    _memberEmail=member?(member.email||'').toLowerCase():'';
+    _isAdmin=!!(member&&member.is_admin);
     _proposal=data.proposal;
     document.getElementById('proposal-body').innerHTML=renderProposal(_proposal);
     document.getElementById('main-view').style.display='';
