@@ -186,12 +186,16 @@
   function effectiveDate(p) {
     if (p.scheduled_date) return p.scheduled_date;
     const block = SESSION_BLOCKS[p.session];
-    return (block && block.date) || null;
+    if (block && block.date) return block.date;
+    if (p.workshop_sessions && p.workshop_sessions.length) return p.workshop_sessions[0].date;
+    return null;
   }
   function effectiveTime(p) {
     if (p.scheduled_time_utc) return p.scheduled_time_utc;
     const block = SESSION_BLOCKS[p.session];
-    return (block && block.start_time) || null;
+    if (block && block.start_time) return block.start_time;
+    if (p.workshop_sessions && p.workshop_sessions.length) return p.workshop_sessions[0].start_time;
+    return null;
   }
   function dayHeaderLabel(dateStr) {
     if (!dateStr) return 'Not yet scheduled';
