@@ -103,7 +103,8 @@
           <h1 id="session-title">Southeast Asia</h1>
         </div>
 
-        <div class="draft-banner" id="draft-banner">Session details in progress — date, times, and agenda to be confirmed</div>
+        <p id="session-datetime" class="stub" style="font-size:0.95rem;margin-bottom:1rem;">Date and time to be confirmed.</p>
+        <div class="draft-banner" id="draft-banner">Session details in progress — description and agenda to be confirmed</div>
 
         <h2>About This Session</h2>
         <p id="meta-description" class="stub">Session description to be added.</p>
@@ -157,6 +158,13 @@
         else { el.textContent = fallback; el.classList.add('stub'); }
       }
       if (sess.name) document.getElementById('session-title').textContent = sess.name;
+      if (sess.date) {
+        const d = new Date(sess.date + 'T00:00:00Z');
+        const label = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
+        const dt = document.getElementById('session-datetime');
+        dt.textContent = label + (sess.start_time && sess.end_time ? ' \u00b7 ' + sess.start_time + '\u2013' + sess.end_time + ' UTC' : '');
+        dt.classList.remove('stub');
+      }
       setMeta('meta-description', sess.description, 'Session description to be added.');
       setMeta('meta-agenda',      sess.agenda,      'Agenda to be confirmed.');
       const allFilled = sess.description && sess.agenda;
