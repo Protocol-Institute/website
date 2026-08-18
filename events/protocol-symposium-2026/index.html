@@ -214,6 +214,7 @@
 (function () {
   let proposals = [], memberEmail = '', isAdmin = false;
   let currentSession = 'all';
+  let currentTab = 'talks'; // which sub-panel is actually rendered — see ── Tabs
   const SESSION_SLUGS = {};
   const SESSION_BLOCKS = {}; // name -> { date, start_time, end_time }
   let TRACK2_BY_SESSION = {}; // special session name -> [proposals running in parallel]
@@ -417,10 +418,16 @@
     return 'talks';
   }
   function activateTab(tab, pushUrl) {
+    currentTab = tab;
     document.querySelectorAll('.sub-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     document.querySelectorAll('.sub-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
     document.getElementById('session-filter-bar').style.display = tab === 'talks' ? '' : 'none';
     if (pushUrl) history.pushState({ tab }, '', BASE_PATH + '/' + tab);
+    // Only the active panel is rendered — the 3 panels share DOM ids per
+    // proposal (abs-<id>, p-<id>, ...), so rendering more than one at a
+    // time leaves duplicate ids and getElementById-based toggles (show
+    // description, comments, edit) silently act on the wrong, hidden copy.
+    renderAll();
   }
   document.getElementById('sub-tabs').addEventListener('click', function (e) {
     const btn = e.target.closest('.sub-tab');
@@ -469,14 +476,21 @@
 
     const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
     const talksAndInteractive = [...allTalks, ...allInteractive].filter(sessionFilter).sort(scheduleSort);
-    const everything          = [...proposals].sort(scheduleSort);
     const sortedWorkshops     = [...workshops].sort(alphSort);
 
     document.getElementById('talks-count').textContent     = talksAndInteractive.length;
     document.getElementById('workshops-count').textContent = sortedWorkshops.length;
-    document.getElementById('panel-all').innerHTML         = renderSchedule(everything, true);
-    document.getElementById('panel-talks').innerHTML       = renderSchedule(talksAndInteractive, currentSession === 'all');
-    document.getElementById('panel-workshops').innerHTML   = sortedWorkshops.map(renderCard).join('');
+
+    // Only the active tab's panel gets its cards rendered — see the note
+    // in activateTab() on why rendering more than one at a time is unsafe.
+    if (currentTab === 'all') {
+      const everything = [...proposals].sort(scheduleSort);
+      document.getElementById('panel-all').innerHTML = renderSchedule(everything, true);
+    } else if (currentTab === 'workshops') {
+      document.getElementById('panel-workshops').innerHTML = sortedWorkshops.map(renderCard).join('');
+    } else {
+      document.getElementById('panel-talks').innerHTML = renderSchedule(talksAndInteractive, currentSession === 'all');
+    }
   }
 
   function renderCard(p) {
@@ -592,8 +606,18 @@
   function scrollToHash() {
     const hash = window.location.hash;
     if (!hash) return;
-    const el = document.getElementById(hash.slice(1));
-    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    const m = hash.match(/^#p-(\d+)$/);
+    if (m) {
+      const p = proposals.find(x => x.id === Number(m[1]));
+      if (p) {
+        const tab = p.type === 'workshop' ? 'workshops' : 'talks';
+        if (tab !== currentTab) activateTab(tab, false);
+      }
+    }
+    setTimeout(function () {
+      const el = document.getElementById(hash.slice(1));
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
   }
 
   // ── Abstract toggle ───────────────────────────────────────────
