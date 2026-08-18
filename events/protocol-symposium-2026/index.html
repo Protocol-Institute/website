@@ -28,11 +28,14 @@
       text-decoration: none;
     }
     .register-btn:hover { background: #1A4A4A; color: #fff; }
+    .register-btn--disabled, .register-btn--disabled:hover {
+      background: #C8C5C0; color: #5A5A5A; cursor: default;
+    }
 
     .sub-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin:0.5rem 0 0; }
     .sub-tab { font-size:0.78rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
       padding:0.5rem 1.1rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
-      border-bottom:2px solid transparent; margin-bottom:-2px; }
+      border-bottom:2px solid transparent; margin-bottom:-2px; text-decoration:none; display:inline-block; }
     .sub-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
     .sub-panel { display:none; } .sub-panel.active { display:block; }
 
@@ -154,7 +157,7 @@
         </div>
 
         <div class="register-cta">
-          <a href="#" class="register-btn">Register</a>
+          <span class="register-btn register-btn--disabled" aria-disabled="true">Register (coming soon)</span>
         </div>
 
         <p style="color:#5A5A5A;margin-bottom:0.75rem;">The event will be fully virtual, held September 21&ndash;25. The program below has been announced; registration opens August 21. In the meantime, you can post comments and suggestions for the scheduled speakers and workshop organizers.</p>
@@ -164,9 +167,8 @@
         <p style="color:#5A5A5A;margin-bottom:1.5rem;">Times below are shown in UTC, with your browser&rsquo;s local time alongside in parentheses. Items inside a special session&rsquo;s shared time block don&rsquo;t yet have individual start times &mdash; the session host sets the running order; see the special session&rsquo;s own page for details. Items with no date yet are still being scheduled.</p>
 
         <div class="sub-tabs" id="sub-tabs" style="margin-bottom:0.75rem;">
-          <button class="sub-tab active" data-tab="all">All (<span id="all-count">—</span>)</button>
-          <button class="sub-tab" data-tab="talks">Talks (<span id="talks-count">—</span>)</button>
-          <button class="sub-tab" data-tab="workshops">Workshops (<span id="workshops-count">—</span>)</button>
+          <a class="sub-tab active" data-tab="talks" href="/events/protocol-symposium-2026/talks">Talks (<span id="talks-count">—</span>)</a>
+          <a class="sub-tab" data-tab="workshops" href="/events/protocol-symposium-2026/workshops">Workshops (<span id="workshops-count">—</span>)</a>
         </div>
 
         <div class="session-filter-bar" id="session-filter-bar" style="display:none;">
@@ -177,8 +179,8 @@
           </select>
         </div>
 
-        <div class="sub-panel active" id="panel-all"></div>
-        <div class="sub-panel" id="panel-talks"></div>
+        <div class="sub-panel" id="panel-all"></div>
+        <div class="sub-panel active" id="panel-talks"></div>
         <div class="sub-panel" id="panel-workshops"></div>
 
       </div>
@@ -403,16 +405,33 @@
   }
 
   // ── Tabs ──────────────────────────────────────────────────────
+  // Talks/Workshops are real, linkable routes (/talks, /workshops — see
+  // _redirects for the 200 rewrite back to this file); All exists at /all
+  // for direct navigation but isn't linked from the tab bar. The path is
+  // read on load so a shared /talks or /workshops link opens on that tab.
+  const BASE_PATH = '/events/protocol-symposium-2026';
+  function tabFromPath(path) {
+    path = path.replace(/\/+$/, '');
+    if (path === BASE_PATH + '/workshops') return 'workshops';
+    if (path === BASE_PATH + '/all') return 'all';
+    return 'talks';
+  }
+  function activateTab(tab, pushUrl) {
+    document.querySelectorAll('.sub-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.sub-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+    document.getElementById('session-filter-bar').style.display = tab === 'talks' ? '' : 'none';
+    if (pushUrl) history.pushState({ tab }, '', BASE_PATH + '/' + tab);
+  }
   document.getElementById('sub-tabs').addEventListener('click', function (e) {
     const btn = e.target.closest('.sub-tab');
     if (!btn) return;
-    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-    document.getElementById('session-filter-bar').style.display =
-      btn.dataset.tab === 'talks' ? '' : 'none';
+    e.preventDefault();
+    activateTab(btn.dataset.tab, true);
   });
+  window.addEventListener('popstate', function () {
+    activateTab(tabFromPath(location.pathname), false);
+  });
+  activateTab(tabFromPath(location.pathname), false);
 
   // ── Session filter ────────────────────────────────────────────
   document.getElementById('session-select').addEventListener('change', function () {
@@ -453,7 +472,6 @@
     const everything          = [...proposals].sort(scheduleSort);
     const sortedWorkshops     = [...workshops].sort(alphSort);
 
-    document.getElementById('all-count').textContent       = everything.length;
     document.getElementById('talks-count').textContent     = talksAndInteractive.length;
     document.getElementById('workshops-count').textContent = sortedWorkshops.length;
     document.getElementById('panel-all').innerHTML         = renderSchedule(everything, true);
