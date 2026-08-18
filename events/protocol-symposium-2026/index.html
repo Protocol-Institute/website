@@ -122,6 +122,15 @@
       color:#2A6B6B; margin-left:0.4em; vertical-align:middle;
       animation:fade-out 1.5s forwards; }
     @keyframes fade-out { 0%{opacity:1} 70%{opacity:1} 100%{opacity:0} }
+
+    .parallel-block { margin-bottom:0.75rem; }
+    .parallel-block-time { font-size:0.78rem; font-weight:600; color:#5A5A5A; font-style:italic; margin-bottom:0.5rem; }
+    .parallel-tabs { display:flex; gap:0; border-bottom:2px solid #E0DDD8; margin-bottom:0.75rem; }
+    .parallel-tab { font-size:0.75rem; font-weight:500; letter-spacing:0.04em;
+      padding:0.4rem 0.9rem; cursor:pointer; border:none; background:none; color:#8A8A8A;
+      border-bottom:2px solid transparent; margin-bottom:-2px; }
+    .parallel-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
+    .parallel-panel { display:none; } .parallel-panel.active { display:block; }
   </style>
 </head>
 <body>
@@ -205,6 +214,7 @@
   let currentSession = 'all';
   const SESSION_SLUGS = {};
   const SESSION_BLOCKS = {}; // name -> { date, start_time, end_time }
+  let TRACK2_BY_SESSION = {}; // special session name -> [proposals running in parallel]
   const store = {};
 
   // Load proposals (public) + optional auth for edit identity
@@ -227,8 +237,85 @@
       opt.textContent = s.name;
       select.appendChild(opt);
     });
+    buildTrack2Map();
     renderAll();
     scrollToHash();
+  });
+
+  // ── Parallel-track pairing ───────────────────────────────────
+  // A handful of General talks (schedule_track === 'ii') run at the same
+  // time as a special session's block, on a second track. Group them by
+  // which special session they parallel, so the schedule can render a
+  // single tab widget in that slot instead of two separate entries.
+  function buildTrack2Map() {
+    TRACK2_BY_SESSION = {};
+    proposals.filter(p => p.schedule_track === 'ii' && p.scheduled_date && p.scheduled_time_utc)
+      .forEach(function (p) {
+        const name = Object.keys(SESSION_BLOCKS).find(function (sessionName) {
+          const b = SESSION_BLOCKS[sessionName];
+          return b.date === p.scheduled_date && b.start_time <= p.scheduled_time_utc && p.scheduled_time_utc < b.end_time;
+        });
+        if (!name) return;
+        (TRACK2_BY_SESSION[name] = TRACK2_BY_SESSION[name] || []).push(p);
+      });
+    Object.keys(TRACK2_BY_SESSION).forEach(name => TRACK2_BY_SESSION[name].sort(scheduleSort));
+  }
+
+  // Collapse a sorted list so that a special session with a Track II
+  // pairing (plus its Track II items) becomes one placeholder entry,
+  // rendered as a tab widget in place of the individual cards.
+  function withParallelBlocks(list) {
+    const track2Ids = new Set();
+    Object.values(TRACK2_BY_SESSION).forEach(arr => arr.forEach(p => track2Ids.add(p.id)));
+    const handled = new Set();
+    const result = [];
+    list.forEach(function (p) {
+      if (track2Ids.has(p.id)) return;
+      const track2 = p.session && TRACK2_BY_SESSION[p.session];
+      if (track2 && track2.length) {
+        if (handled.has(p.session)) return;
+        handled.add(p.session);
+        const block = SESSION_BLOCKS[p.session] || {};
+        result.push({
+          __parallel: true,
+          session: p.session,
+          mainItems: list.filter(x => x.session === p.session && !track2Ids.has(x.id)),
+          track2Items: track2,
+          scheduled_date: block.date,
+          scheduled_time_utc: block.start_time,
+        });
+        return;
+      }
+      result.push(p);
+    });
+    return result;
+  }
+
+  function renderParallelBlock(p) {
+    const sessionSlug = SESSION_SLUGS[p.session];
+    const block = SESSION_BLOCKS[p.session] || {};
+    const range = (block.start_time && block.end_time) ? `${esc(block.start_time)}–${esc(block.end_time)}` : '';
+    const local = block.date ? localLabel(block.date, block.start_time, block.end_time) : '';
+    const blockId = 'par-' + (sessionSlug || p.session.replace(/\W+/g, '-').toLowerCase());
+    return `<div class="parallel-block" id="${blockId}">
+      <div class="parallel-block-time">${dayHeaderLabel(block.date)} &middot; ${range} UTC <span class="local-time">(${esc(local)})</span> &mdash; two parallel tracks</div>
+      <div class="parallel-tabs">
+        <button class="parallel-tab active" data-target="${blockId}-a">${esc(p.session)}</button>
+        <button class="parallel-tab" data-target="${blockId}-b">Track II</button>
+      </div>
+      <div class="parallel-panel active" id="${blockId}-a">${p.mainItems.map(renderCard).join('')}</div>
+      <div class="parallel-panel" id="${blockId}-b">${p.track2Items.map(renderCard).join('')}</div>
+    </div>`;
+  }
+
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.parallel-tab');
+    if (!btn) return;
+    const block = btn.closest('.parallel-block');
+    block.querySelectorAll('.parallel-tab').forEach(t => t.classList.remove('active'));
+    block.querySelectorAll('.parallel-panel').forEach(pnl => pnl.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
   });
 
   // ── Schedule helpers ─────────────────────────────────────────
@@ -346,12 +433,13 @@
   function alphSort(a, b) { return firstName(a).localeCompare(firstName(b)); }
 
   // ── Render ────────────────────────────────────────────────────
-  function renderSchedule(list) {
-    return groupByDay(list).map(function (group) {
+  function renderSchedule(list, applyParallel) {
+    const finalList = applyParallel ? withParallelBlocks(list) : list;
+    return groupByDay(finalList).map(function (group) {
       const heading = group.date
         ? `<h2 class="schedule-day">${dayHeaderLabel(group.date)}</h2>`
         : `<h2 class="schedule-day schedule-day--unscheduled">Not yet scheduled</h2>`;
-      return heading + group.items.map(renderCard).join('');
+      return heading + group.items.map(p => p.__parallel ? renderParallelBlock(p) : renderCard(p)).join('');
     }).join('');
   }
 
@@ -368,8 +456,8 @@
     document.getElementById('all-count').textContent       = everything.length;
     document.getElementById('talks-count').textContent     = talksAndInteractive.length;
     document.getElementById('workshops-count').textContent = sortedWorkshops.length;
-    document.getElementById('panel-all').innerHTML         = renderSchedule(everything);
-    document.getElementById('panel-talks').innerHTML       = renderSchedule(talksAndInteractive);
+    document.getElementById('panel-all').innerHTML         = renderSchedule(everything, true);
+    document.getElementById('panel-talks').innerHTML       = renderSchedule(talksAndInteractive, currentSession === 'all');
     document.getElementById('panel-workshops').innerHTML   = sortedWorkshops.map(renderCard).join('');
   }
 
