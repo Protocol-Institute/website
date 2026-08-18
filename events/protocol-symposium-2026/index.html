@@ -307,8 +307,9 @@
         <button class="parallel-tab" data-target="${blockId}-b">Track II</button>
       </div>
       <div class="parallel-panel active" id="${blockId}-a">${p.mainItems.map(renderCard).join('')}</div>
-      <div class="parallel-panel" id="${blockId}-b">${p.track2Items.map(renderCard).join('')}</div>
-    </div>`;
+      <div class="parallel-panel" id="${blockId}-b">${p.track2Items.map(item => renderCard(item, true)).join('')}</div>
+    </div>
+    <div class="track-divider">Two-track portion ends</div>`;
   }
 
   document.addEventListener('click', function (e) {
@@ -493,7 +494,7 @@
     }
   }
 
-  function renderCard(p) {
+  function renderCard(p, isTrack2) {
     const isWorkshop = p.type === 'workshop';
     const speaker = isWorkshop
       ? esc(p.organizer_name) + (p.co_organizer_name ? ` &amp; ${esc(p.co_organizer_name)}` : '')
@@ -527,7 +528,7 @@
     const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
     const isOwner    = !isAdmin && memberEmail && memberEmail === ownerEmail;
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
-    const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : '';
+    const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : (isTrack2 ? 'proposal-card--track2' : '');
 
     const anchorIcon =
       `<a class="anchor-link" href="#p-${p.id}" onclick="copyLink(${p.id},event)" title="Copy link to this item" aria-label="Copy link">` +
