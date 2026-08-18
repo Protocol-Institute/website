@@ -63,8 +63,9 @@ functions/          Cloudflare Pages Functions (API endpoints)
   _shared/session.js  Shared pi_session cookie validator
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
   api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
-events/protocol-symposium-2026/program/  /program — Draft Program (shortlisted proposals + quadratic voting); slug stays /program after voting ends, title becomes "Program"
-  workshops/        Detail pages for each shortlisted workshop
+events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium landing page + full program merged into one page (Session 43); /program redirects here
+  program/          No index.html — listing merged into the parent page above. Still holds edit-proposal.html (admin) and workshops/ (detail pages)
+  program/workshops/  Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
 data/
   devlog.json       Build log source of truth

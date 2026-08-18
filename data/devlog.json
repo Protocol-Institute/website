@@ -1613,6 +1613,31 @@
           "html": "Removed \"Preliminary\" from the Program page's title, meta description, h1, and both intro blurbs (symposium landing page and <code>/program</code> itself) now that the schedule is substantially filled in, and added \"The event will be fully virtual\" to both blurbs, which hadn't been stated anywhere on the site before. Separately: one push this session (commit <code>8c28305</code>) built successfully on Cloudflare's automatic GitHub-integration path, briefly showed as \"Active\" in <code>wrangler pages deployment list</code>, then flipped to \"Failure\" a few minutes later with no visible cause (no build step exists for this repo). Recovered by running <code>npx wrangler pages deploy .</code> directly, which bypasses that path entirely and succeeded immediately. Logged in status.md as something to watch for recurrence, since the cause wasn't diagnosed."
         }
       ]
+    },
+    {
+      "id": 43,
+      "sort_key": 43.0,
+      "label": "Session 43",
+      "title": "Symposium Landing + Program Pages Merged; Sub-Session Clustering Designed",
+      "date": "2026-08-17",
+      "time_pt": "",
+      "tracks": [
+        "content",
+        "static-site"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium landing page and program listing merged into one URL",
+          "html": "The site previously split the symposium into two pages linked to each other: a short landing page at <code>/events/protocol-symposium-2026/</code> (blurb, key dates, a link to the program) and the actual program listing at <code>/events/protocol-symposium-2026/program/</code>. Merged them into the landing URL: kept the landing page's title and kicker, folded both pages' intro blurbs into three paragraphs (virtual/registration, theme, UTC-time legend), dropped the Key Dates panel, shrank the banner image (max-width 380px → 220px), added a placeholder “Register” button (<code>href=\"#\"</code> — no registration flow exists yet), and inlined the full tabbed program listing (All/Talks/Workshops, session filter, schedule cards, comments, admin/owner inline edit) below the fold, unchanged in behavior from the standalone page it replaced. The standalone <code>program/index.html</code> was deleted; <code>_redirects</code> gained an exact-path (non-wildcard) redirect from <code>/events/protocol-symposium-2026/program</code> to the merged page, so <code>program/edit-proposal.html</code> and the five <code>program/workshops/*</code> detail pages — which live in the same directory but weren't part of the merge — continue to resolve normally. The homepage's separate “Symposium — Preliminary Program” text button was removed outright; the only symposium link left on the homepage is the existing banner carousel (data-driven from <code>carousel/banners.md</code>), repointed from the old <code>/program/</code> path to the merged page directly rather than relying on the new redirect. Nine other stale “← Draft Program”/“← Draft Agenda” back-links across the four special-session pages, five workshop detail pages, and the admin edit-proposal form were updated to point at the merged page with current wording; each special-session page also lost a now-redundant duplicate link at its own foot. Verified in-browser locally: homepage and merged page both render correctly; full proposal-list rendering needs the live API so wasn't checked against a local static server."
+        },
+        {
+          "title": "Sub-session clustering designed, paused before implementation",
+          "html": "Long-standing TODO (flagged since Session 42): break the ~46 Wed–Fri General-session items into named 4–5-talk sub-sessions rather than one long chronological list, while leaving the 4 special sessions untouched. Pulling the live schedule from <code>/api/symposium/proposals</code> showed the existing time grid already falls into clean 2-hour boundaries (15:00/17:00/19:00 UTC, then a special-session slot, then 21:30 UTC) on all three days without needing day-specific adjustment. Landed on a <code>Track I</code> / <code>Track II</code> numbering scheme — <code>I-A</code>, <code>I-B</code>, … chronologically through the whole event (letter <code>I</code> skipped to avoid confusion with the numeral), plus a second parallel <code>II-A</code>/<code>II-B</code> track to carry the 8 still-unscheduled General talks as two 4-talk sessions run concurrently against two chosen Track I boundaries, since Track I's boundaries are already at their 4–5-talk target and can't absorb more without a genuine parallel track. Named every sub-session thematically by reading actual abstracts (e.g. “Trust & Governance,” “Capture & Divergence,” “Minds Under Pressure”), with the two bookend sessions left as plain “Opening”/“Closing.” Built a static local-only preview (<code>_draft-schedule.html</code> at the repo root, untracked) rendering the full day → session-block → card structure, including a two-column desktop layout for the double-tracked slots, to review before touching the schema. Paused there: Nathan Schneider's Friday 15:00 talk ends up alone in its own single-talk session block — fallout from the Southeast Asia special session eating the rest of that boundary's window — and needs a different grouping approach before this gets built into the real page. Nothing here touched D1 or the deployed site; the design (boundary grid, track scheme, session names) carries over to next session even though the exact grouping logic needs rework."
+        }
+      ]
     }
   ]
 }
