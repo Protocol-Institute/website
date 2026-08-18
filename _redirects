@@ -21,12 +21,12 @@
 # Program tab deep-links — same page (client reads the path to pick the
 # default tab); /all is a valid rewrite target too but isn't linked from
 # the tab bar itself.
-/events/protocol-symposium-2026/talks        /events/protocol-symposium-2026/index.html  200
-/events/protocol-symposium-2026/talks/       /events/protocol-symposium-2026/index.html  200
-/events/protocol-symposium-2026/workshops    /events/protocol-symposium-2026/index.html  200
-/events/protocol-symposium-2026/workshops/   /events/protocol-symposium-2026/index.html  200
-/events/protocol-symposium-2026/all          /events/protocol-symposium-2026/index.html  200
-/events/protocol-symposium-2026/all/         /events/protocol-symposium-2026/index.html  200
+/events/protocol-symposium-2026/talks        /events/protocol-symposium-2026/  200
+/events/protocol-symposium-2026/talks/       /events/protocol-symposium-2026/  200
+/events/protocol-symposium-2026/workshops    /events/protocol-symposium-2026/  200
+/events/protocol-symposium-2026/workshops/   /events/protocol-symposium-2026/  200
+/events/protocol-symposium-2026/all          /events/protocol-symposium-2026/  200
+/events/protocol-symposium-2026/all/         /events/protocol-symposium-2026/  200
 
 /events/protocol-foundations-workshop-2025   /events/protocol-symposium-2025   301
 /events/protocol-foundations-workshop-2025/  /events/protocol-symposium-2025/  301
