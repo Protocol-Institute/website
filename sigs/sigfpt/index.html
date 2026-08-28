@@ -55,9 +55,54 @@
         <p style="margin-top:1rem"><a href="/sigs" class="back-link">&#8592; All Special Interest Groups</a></p>
       </div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 38 sessions, 35 dated</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 41 sessions, 38 dated</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">August 21, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-21-sig-fpt-2026-08-21">SIG-FPT 2026-08-21</a></div>
+  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, Chris Laidlaw, Robby Rao, Vibhav, durgadas, Ergod, Dan Schmidt, Matthew Bright UTC-7</p>
+  <p class="meeting-summary">The first half of the session was a discussion of the ANTS paper, framed by Patrick as a &quot;bridge&quot; between weak-assumption automata models (pebbles/finite-state agents) and richer computational models like ACO. The group explored how evaporation-as-memory changes what stigmergic agents can compute, and floated framings from computer memory (DRAM), information theory, and security. The second half pivoted into planning for the group's late-September **hackathon/workshop**, reviewing a Miro board of proposed game modes for a stigmergy simulator and aligning on an MVP.</p>
+  <ul class="meeting-insights">
+    <li>**No reinforcement:** unlike ACO, agents don't distinguish paths by pheromone intensity, so there's no feedback loop toward shortest paths. Agents also **die after a lifetime parameter τ**.</li>
+    <li>**Algorithm 1:** essentially tile the grid by dispatching agents north/south to cover untouched tiles; guaranteed to find food within reach of a single agent's span.</li>
+    <li>**Algorithm 2:** handles pheromones that evaporate after one step by **specializing roles** — some ants *become* the signal/beacon along paths (constantly refreshing decaying markers), while others explore based on what they read.</li>
+    <li>**Chris (first session):** thought of error-correction bits (echoing the DRAM framing); proposed **two pheromones** (data + correction bits) as a low-resource approach. Felt this was a &quot;toy problem&quot; and asked how it connects to a bigger real-world aim.</li>
+    <li>**Robby:** read it as breadth-first search with memory in the environment; evaporation becomes a *feature* by reopening paths for re-exploration. Noted correctness argument: any treasure within the ant lifetime τ is guaranteed found. Saw Algorithm 2 as &quot;hacking the algorithm&quot; (turning ants into signal, so μ effectively becomes τ) rather than a new development; wished for reinforcement so signaling ants would emerge naturally.</li>
+    <li>**Vibhav:** mapped pheromones onto agents dropping **memories in folders** (in a codebase) with a **TTL** so stale memory can't be read — keeping memory &quot;fresh.&quot;</li>
+  </ul>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 14, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-14-sig-fpt-2026-08-14">SIG-FPT 2026-08-14</a></div>
+  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, Dan Schmidt, Ergod, Giovanni Merlino, Vibhav, Robby Rao</p>
+  <p class="meeting-summary">The group met to plan a two-day hackathon/workshop built around a browser-based ant colony (&quot;stigmergy&quot;) simulator that Dan has developed. Dan demoed the current single-player simulator and a newer multiplayer &quot;shared world&quot; version with a colony-survival leaderboard. Discussion centered on how to structure the workshop (synchronous vs. asynchronous formats, how many design variables to expose, a competitive vs. exploratory two-track model), how to frame it around a security/adversarial theme, and what technical work is still needed. The group closed with concrete next steps and logistics (dates, sessions, registration).</p>
+  <ul class="meeting-insights">
+    <li>**Dan:** The simulator runs entirely in the browser (no backend/database). Ants leave the nest, drop pheromones to find their way back, and lay a second pheromone trail to food once found. Users can adjust simulation speed, colony size (up to 100), number/size of food sources, pheromone evaporation rate, signal-following strength, and &quot;gland size&quot; (how long ants can lay pheromones).</li>
+    <li>**Dan:** A newer, not-yet-open-sourced version is a shared multiplayer world with real-time stats and a leaderboard for longest-surviving colony, plus a &quot;god mode&quot; to sabotage others (e.g. walling off a colony). He reported coworkers got quickly addicted/competitive.</li>
+    <li>**Venkatesh Rao:** Two feature layers — (1) &quot;platform&quot; features supporting research questions, and (2) an API / plug-in architecture letting people define ant strategies, run automated experiments, and log data. Outputs could be simulator &quot;movies&quot; plus plotted metrics (e.g. how fast ants die out).</li>
+    <li>**Venkatesh Rao:** Strong emphasis on **limiting variables** — too many produces &quot;a chaotic soup&quot; with no interesting results. Suggested picking 2–3 design variables with trade-off relationships (e.g. colony size vs. ant speed).</li>
+    <li>**Venkatesh Rao:** Proposed a **two-track structure**: a competitive contest for &quot;killer&quot; types, and a non-adversarial exploratory track (e.g. &quot;produce the most interesting phenomenon and save a video&quot;). Referenced the Bartle taxonomy of player types to appeal to more than one motivation.</li>
+    <li>**Venkatesh Rao:** Keep entry **low-code/zero-code** — ideally define your team's parameters via a web interface and enter a bracket/tournament.</li>
+  </ul>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 7, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-07-sig-fpt-2026-08-07">SIG-FPT 2026-08-07</a></div>
+  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, PAtwater, Ellen Kaye-Cheveldayoff (UTC -4), Ergod, Giovanni Merlino, Jordan Peacock, Matthew Bright UTC-7</p>
+  <p class="meeting-summary">This is part of the group's &quot;summer of stigmergy&quot; series within the formal protocol theory SIG. Having previously covered the Deneubourg pheromone-signaling model and termite-construction (sematectonic vs. marker, qualitative vs. quantitative) stigmergy, the group now moved from natural/foundational models to *engineered* systems that use stigmergy — specifically ACO. Discussion centered on how ACO recasts combinatorial optimization as ants laying pheromone on abstract graphs, why the classic approach underperformed and where it still shines (dynamic routing), and how the newer deep-learning approach learns the heuristic rather than hand-tuning it. Much of the conversation was participants still working to understand the papers, plus threads on locality, stability, and real-world applications.</p>
+  <ul class="meeting-insights">
+    <li>**From nature to engineered protocols (Patrick):** The natural progression is moving from foundational models (Deneubourg pheromones, termite construction) to engineered systems that borrow/extend them. ACO is the cleanest computer-science example — casting problems like TSP, network routing, or protein folding as graph-path problems where digital &quot;ants&quot; lay pheromone tracks.</li>
+    <li>**The core &quot;move&quot; (Patrick):** Replace the physical traversal environment with an *abstract computational (graph) space*. If a problem can be framed as finding a path on a graph, ants can lay pheromone along edges; choosing an update rule that reinforces better solutions more strongly yields iterative improvement — the same feedback-loop logic as the physical case.</li>
+    <li>**Historical arc (Patrick):** ACO was heavily published in the late 1990s–early 2000s, reached maturity, but never became state-of-the-art for the big combinatorial optimization problems. A key limitation is the **heuristic** — a hand-tuned, &quot;fiddly&quot; update rule specific to each problem.</li>
+    <li>**The Deep ACO contribution (Patrick):** The revival (&quot;neuro-combinatorial optimization&quot;) *learns* the heuristic parameter rather than hand-tuning it, making the technique more flexible and compelling in the deep-learning era.</li>
+    <li>**What the second paper actually does (Venkatesh):** Initially confused, he clarified it is *not* just exploring parameters of a single heuristic form (e.g., evaporation rates). It explores the **space of functional forms** for choosing between next nodes in the construction graph — e.g., the simple &quot;nearer cities are better&quot; form (1/distance) vs. alternatives like 1/distance². Open question for him: how much of the value is computational advantage vs. intuition/interpretability advantage over traditional optimization.</li>
+    <li>**Where stigmergy earns its keep (Patrick):** Little computational benefit on static/centralized combinatorial problems (classical algorithms do fine). The exception is **dynamic routing** — nonstationary environments, distributed, partial-information settings — which is also the environment ants evolved to thrive in, making the fit natural. Connects to multi-agent reinforcement learning problems.</li>
+  </ul>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">July 24, 2026</div>
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-24-formal-methods-in-stigmergy-part-2-construction-models">Formal Methods in Stigmergy Part 2: Construction Models and Discrete Configurations</a></div>
