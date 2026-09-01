@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIG-PSY 2026-08-13 — Special Interest Group in Psychohistory</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/sigs/sigpsy" class="back-link">&#8592; Special Interest Group in Psychohistory</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">August 13, 2026</p>
+        <h1>SIG-PSY 2026-08-13</h1>
+      </div>
+
+      <div class="meeting-detail">
+        <p class="meeting-participants">Participants: Aneesh Sathe, Sean Stevenson, Spencer Norwick U-0700, Andre Comeau, Ellen Kaye-Cheveldayoff (UTC -4), Kyle Mathews, Florian Lohse (UTC+0), rafa (UTC+1), Venkatesh Rao</p>
+        <p class="meeting-summary">Aneesh gave an extended walkthrough of the software he has been building for the group: a note-taking/wiki app (&quot;Scribe&quot;), the &quot;Oracle&quot; retrieval system built on the group&#x27;s corpus of books and essays, and the &quot;Prime Radiant&quot; — a temporal knowledge-graph system that models history as interacting &quot;machines&quot; and generates extrapolations/&quot;prophecies.&quot; The second half turned to planning the upcoming symposium/special session (involving Aneesh, Sean, and Florian), which Venkatesh framed as the project&#x27;s public launch. Discussion touched on how notes and essays could eventually feed automatically into the modeling system, and on how contributions and funding might scale afterward.</p>
+        <ul class="meeting-insights">
+<li>**Project context (Aneesh):** The group began as a book club on Venkatesh&#x27;s Substack, evolved into members writing and cross-referencing essays, and became the &quot;World Machines&quot; project. The core framing (attributed to Venkatesh) is that history can be read as different &quot;machines&quot; in play — e.g., a modernity machine, a &quot;versions&quot; machine, a &quot;liveness&quot; machine.</li>
+<li>**The Oracle:** An AI system that ingests the group&#x27;s material (books, members&#x27; essays, external essays) into a searchable database so members can ask questions or explore, ideally lowering the barrier to writing essays. It functions as retrieval-and-answer (&quot;it doesn&#x27;t do prophecy yet&quot;), and behind the scenes searches a **knowledge graph**, taking several back-and-forth steps across related links before answering.</li>
+<li>**Two-tier vs. MCP access (Aneesh):** The portal AI is described as &quot;fairly low powered&quot; and uses a two-tier agent setup (the Oracle queries a second agent with access to raw notes, which returns summaries). A dedicated **MCP** option lets members connect their own, more capable AI directly to the corpus (including the raw text) via a generated access token.</li>
+<li>**Scribe app (Aneesh):** `scribe.worldmachines.org` — a lightweight web app (installable as a PWA on iPhone via &quot;Add to Home Screen&quot;) for quickly adding notes to the corpus. Motivation: editing/uploading text files was too much friction and meant he wasn&#x27;t writing anything. Notes can be quick thoughts, book notes, or &quot;velocity notes&quot; / term definitions (Venkatesh had wanted to define some terms).</li>
+<li>**Notes as corpus / &quot;hive mind&quot; (Aneesh):** The purpose of adding a note is that it becomes a source the Oracle can cite. Aneesh described it as a hive mind where members&#x27; thoughts enter the shared sourcing and others (and their AIs) can build on them.</li>
+<li>**Provenance/tagging (Aneesh):** There&#x27;s no truth filter, but every note is attributed to a person or tagged as coming from a book — so a book source may be more trustworthy than a personal opinion.</li>
+        </ul>
+        <div class="meeting-audio-summary">
+          <p class="section-label">Session Recording Summary · 55m 34s · <a href="https://pub-fb4a559f683a4e3b876823eb2bfe12a3.r2.dev/recordings/SIG-PSY/2026-08-13/1082444651946049567_1442955803471646792_1786636745414/summary.md" rel="noopener noreferrer" target="_blank">Full notes ↗</a></p>
+          <p class="meeting-abstract"><strong>Reading:</strong> Not clearly identified in the discussion. This session was not a reading-discussion in the usual sense; it was a demo and working session for the group&#x27;s &quot;World Machines&quot; project tools (the Oracle, the Prime Radiant, the Scribe note-taking app, and related infrastructure). Aneesh also mentioned a piece he &quot;published last night&quot; outlining principles used in the Prime Radiant, which he shared in chat, but no specific shared reading was worked through.</p><p class="meeting-summary">Aneesh gave an extended walkthrough of the software he has been building for the group: a note-taking/wiki app (&quot;Scribe&quot;), the &quot;Oracle&quot; retrieval system built on the group&#x27;s corpus of books and essays, and the &quot;Prime Radiant&quot; — a temporal knowledge-graph system that models history as interacting &quot;machines&quot; and generates extrapolations/&quot;prophecies.&quot; The second half turned to planning the upcoming symposium/special session (involving Aneesh, Sean, and Florian), which Venkatesh framed as the project&#x27;s public launch. Discussion touched on how notes and essays could eventually feed automatically into the modeling system, and on how contributions and funding might scale afterward.</p><ul class="meeting-insights">
+<li>**Project context (Aneesh):** The group began as a book club on Venkatesh&#x27;s Substack, evolved into members writing and cross-referencing essays, and became the &quot;World Machines&quot; project. The core framing (attributed to Venkatesh) is that history can be read as different &quot;machines&quot; in play — e.g., a modernity machine, a &quot;versions&quot; machine, a &quot;liveness&quot; machine.</li>
+<li>**The Oracle:** An AI system that ingests the group&#x27;s material (books, members&#x27; essays, external essays) into a searchable database so members can ask questions or explore, ideally lowering the barrier to writing essays. It functions as retrieval-and-answer (&quot;it doesn&#x27;t do prophecy yet&quot;), and behind the scenes searches a **knowledge graph**, taking several back-and-forth steps across related links before answering.</li>
+<li>**Two-tier vs. MCP access (Aneesh):** The portal AI is described as &quot;fairly low powered&quot; and uses a two-tier agent setup (the Oracle queries a second agent with access to raw notes, which returns summaries). A dedicated **MCP** option lets members connect their own, more capable AI directly to the corpus (including the raw text) via a generated access token.</li>
+<li>**Scribe app (Aneesh):** `scribe.worldmachines.org` — a lightweight web app (installable as a PWA on iPhone via &quot;Add to Home Screen&quot;) for quickly adding notes to the corpus. Motivation: editing/uploading text files was too much friction and meant he wasn&#x27;t writing anything. Notes can be quick thoughts, book notes, or &quot;velocity notes&quot; / term definitions (Venkatesh had wanted to define some terms).</li>
+<li>**Notes as corpus / &quot;hive mind&quot; (Aneesh):** The purpose of adding a note is that it becomes a source the Oracle can cite. Aneesh described it as a hive mind where members&#x27; thoughts enter the shared sourcing and others (and their AIs) can build on them.</li>
+<li>**Provenance/tagging (Aneesh):** There&#x27;s no truth filter, but every note is attributed to a person or tagged as coming from a book — so a book source may be more trustworthy than a personal opinion.</li>
+</ul><p class="meeting-abstract"><strong>Questions &amp; Disagreements:</strong> - **Ellen** asked clarifying questions as a newcomer: what the purpose of adding a note is, whether it&#x27;s just to continue book-club discussion, and whether there&#x27;s a human-readable view or if the corpus is only AI-accessible — concluding &quot;it&#x27;s a wiki.&quot;
+- **Spencer** asked how the system handles **factual differences vs. perspective differences** in notes (e.g., if two people believe different thin</p><p class="meeting-participants">Participants: Aneesh Sathe, Sean Stevenson, Spencer Norwick U-0700, Andre Comeau, Ellen Kaye-Cheveldayoff (UTC -4), Kyle Mathews, Florian Lohse (UTC+0), rafa (UTC+1), Venkatesh Rao</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

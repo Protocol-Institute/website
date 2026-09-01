@@ -62,9 +62,39 @@
         </ul>
       </div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 35 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 37 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">August 13, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigpfb/2026-08-13-sig-p4b-2026-08-13">SIG-P4B 2026-08-13</a></div>
+  <p class="meeting-participants">Participants: rafa (UTC+1), Andre Comeau</p>
+  <p class="meeting-summary">This was a one-on-one working session between rafa and Andre Comeau to scope a potential &quot;Protocols for Business&quot; case study focused on the construction bidding/estimating pipeline. rafa presented findings from experiments run with his father-in-law (Virgil), a former heavy-civil construction CEO, showing that an LLM could reproduce a bid estimate within ~10% and even flag design errors from solicitation PDFs. The conversation examined why this analysis isn't already automated, identified the core bottleneck (canonical drawings live in non-machine-readable PDFs), and mapped the industry incentive structure that keeps the status quo in place. They ended by discussing how to structure the project, funding, and roles.</p>
+  <ul class="meeting-insights">
+    <li>**The experiment (rafa):** rafa fed a solicitation bid PDF to an LLM (referenced as &quot;Opus five or whatever&quot;) and, in ~30 min of runtime (~1 hour with probing/adversarial analysis and blind agent reviews), produced numbers within 10% of a full organizational bid produced by Virgil's team. He also had the model generate a &quot;takeoff analysis.&quot; Andre confirmed &quot;takeoff analysis&quot; is a real, standard industry term (not just Michigan-specific).</li>
+    <li>**Takeoff analysis defined:** A table comparing the design engineer's requested materials vs. the actual planned/likely materials, and both against the contractor's read of the visual plans and real-world conditions.</li>
+    <li>**Where value really sits (rafa relaying Virgil):** The final bid number is largely deterministic (driven by subcontractor and material/equipment prices where risk is passed to others). The estimator's real leverage is in the accuracy of quantities and pricing for maximum profit opportunity.</li>
+    <li>**Finding design errors = profit (rafa):** When given a different spec, the model found a design error. This is commercially valuable because contractors often make money via change orders when they catch design errors.</li>
+    <li>**The four core questions rafa raised:** (1) Why isn't someone in the office already running PDFs through ChatGPT? (2) Why doesn't existing bidding software do this analysis? (3) Why doesn't solicitation-bid software (e.g. BidNet) do it? (4) Why is this analysis done off PDFs instead of raw CAD data?</li>
+    <li>**The root-cause diagnosis (rafa):** The real fix is upstream — getting machine-readable (vector) data from design firms rather than parsing PDFs. LLM PDF-parsing is viable only as an MVP / quality-control suggestion tool. rafa argued you can process a PDF faster than a $200/hr estimator to get a starting point, but you can't *remove* the estimator until you have vector-format drawings, because confidence won't be high enough. He also tied this to autonomous robot deployment: you likely can't get there without fixing the drawing/information pipeline first.</li>
+  </ul>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 10, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigpfb/2026-08-10-sig-p4b-2026-08-10">SIG-P4B 2026-08-10</a></div>
+  <p class="meeting-participants">Participants: durgadas, rafa (UTC+1), NicolasCero, Timber, Sachin, Matthew Bright UTC-7, Javier Chavez / UTC -6, Andre Comeau</p>
+  <p class="meeting-summary">The session had two overlapping strands that were, unfortunately, largely spoken over each other in the recording: (1) a group discussion of the &quot;Standardization of Time&quot; article as part of an ongoing theme on how technologies get socially adopted and how that relates to protocol development and ossification (last week's session covered QWERTY), and (2) two show-and-tell presentations — durgadas on his &quot;proof of coordination&quot; standards work and NicolasCero on a web-app tool for co-creating AI-adoption protocols for cultural organizations. The transcript is heavily interleaved (multiple speakers overlapping), so some points are fragmentary; those are flagged below.</p>
+  <ul class="meeting-insights">
+    <li>**Rafa** framed the recurring theme: understanding social adoption processes of technologies (currently happening with AI) and how adoption relates to protocol development and ossification.</li>
+    <li>**Sachin:** Noted a coming change (~2030) in how a second is defined via atomic clocks — further subdivision — but argued there's no implication for *human* perception of time (humans don't sense below ~1 second; ~1/10 second visual limit). Suggested finer division is &quot;more advantageous for machines.&quot;</li>
+    <li>**Sachin:** Drew the article's parallel that time was socialized through institutions (telegraph, railway) and factories imposing working hours; workers then argued for better-defined hours (ten-hour day ~1848, later eight-hour day). Once adopted, standards become invisible &quot;reality.&quot;</li>
+    <li>**Sachin:** Contrasted this with newer tech like LLMs, where top-down institutional mandates on adoption have largely failed or met political opposition; people can't even agree on defining terms like AGI. Noted media increasingly use &quot;superintelligence&quot; as an unverifiable, pre-emptive socialization of an idea.</li>
+    <li>**Rafa:** Was disappointed the paper didn't speculate about where time-standardization is heading beyond time zones. Argued the paper underestimates the &quot;centrality of the *now*&quot; — a *present-local* (not geographically local) mode of coordinating actions relative to the present moment, exemplified by constant chat-based &quot;in five minutes?&quot; negotiation. Acknowledged this view may be biased by living online.</li>
+    <li>**Matthew:** Connected the reading to David Landes' *Revolution in Time*. Argued time reckoning is still not settled across cultures (e.g., Arizona not adopting daylight saving; possible political moves to revoke DST). Enjoyed the paper's opening on alternative ways to reckon time (cited a Kurt Vonnegut line about measuring a life in wives/cigarettes/quarts of booze; also sports measuring by periods/sets, or weight). For AI, the most obvious non-standard time reckoning is **token usage** — quantified by cost or imposed as rate limits — plus recurring qualitative &quot;capability jump&quot; moments (ChatGPT launch, the &quot;DeepSeek moment,&quot; and model releases he called &quot;Fable&quot; and &quot;Mythos&quot;). Raised the management question of when to update AI models/workflows.</li>
+  </ul>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">July 30, 2026</div>
   <div class="meeting-title"><a href="/sigs/sigpfb/2026-07-30-sig-p4b-2026-07-30">SIG-P4B 2026-07-30</a></div>

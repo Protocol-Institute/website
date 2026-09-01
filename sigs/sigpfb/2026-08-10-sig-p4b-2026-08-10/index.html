@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIG-P4B 2026-08-10 — Protocols for Business</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/sigs/sigpfb" class="back-link">&#8592; Protocols for Business</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">August 10, 2026</p>
+        <h1>SIG-P4B 2026-08-10</h1>
+      </div>
+
+      <div class="meeting-detail">
+        <p class="meeting-participants">Participants: durgadas, rafa (UTC+1), NicolasCero, Timber, Sachin, Matthew Bright UTC-7, Javier Chavez / UTC -6, Andre Comeau</p>
+        <p class="meeting-summary">The session had two overlapping strands that were, unfortunately, largely spoken over each other in the recording: (1) a group discussion of the &quot;Standardization of Time&quot; article as part of an ongoing theme on how technologies get socially adopted and how that relates to protocol development and ossification (last week&#x27;s session covered QWERTY), and (2) two show-and-tell presentations — durgadas on his &quot;proof of coordination&quot; standards work and NicolasCero on a web-app tool for co-creating AI-adoption protocols for cultural organizations. The transcript is heavily interleaved (multiple speakers overlapping), so some points are fragmentary; those are flagged below.</p>
+        <ul class="meeting-insights">
+<li>**Rafa** framed the recurring theme: understanding social adoption processes of technologies (currently happening with AI) and how adoption relates to protocol development and ossification.</li>
+<li>**Sachin:** Noted a coming change (~2030) in how a second is defined via atomic clocks — further subdivision — but argued there&#x27;s no implication for *human* perception of time (humans don&#x27;t sense below ~1 second; ~1/10 second visual limit). Suggested finer division is &quot;more advantageous for machines.&quot;</li>
+<li>**Sachin:** Drew the article&#x27;s parallel that time was socialized through institutions (telegraph, railway) and factories imposing working hours; workers then argued for better-defined hours (ten-hour day ~1848, later eight-hour day). Once adopted, standards become invisible &quot;reality.&quot;</li>
+<li>**Sachin:** Contrasted this with newer tech like LLMs, where top-down institutional mandates on adoption have largely failed or met political opposition; people can&#x27;t even agree on defining terms like AGI. Noted media increasingly use &quot;superintelligence&quot; as an unverifiable, pre-emptive socialization of an idea.</li>
+<li>**Rafa:** Was disappointed the paper didn&#x27;t speculate about where time-standardization is heading beyond time zones. Argued the paper underestimates the &quot;centrality of the *now*&quot; — a *present-local* (not geographically local) mode of coordinating actions relative to the present moment, exemplified by constant chat-based &quot;in five minutes?&quot; negotiation. Acknowledged this view may be biased by living online.</li>
+<li>**Matthew:** Connected the reading to David Landes&#x27; *Revolution in Time*. Argued time reckoning is still not settled across cultures (e.g., Arizona not adopting daylight saving; possible political moves to revoke DST). Enjoyed the paper&#x27;s opening on alternative ways to reckon time (cited a Kurt Vonnegut line about measuring a life in wives/cigarettes/quarts of booze; also sports measuring by periods/sets, or weight). For AI, the most obvious non-standard time reckoning is **token usage** — quantified by cost or imposed as rate limits — plus recurring qualitative &quot;capability jump&quot; moments (ChatGPT launch, the &quot;DeepSeek moment,&quot; and model releases he called &quot;Fable&quot; and &quot;Mythos&quot;). Raised the management question of when to update AI models/workflows.</li>
+        </ul>
+        <div class="meeting-audio-summary">
+          <p class="section-label">Session Recording Summary · 81m 48s · <a href="https://pub-fb4a559f683a4e3b876823eb2bfe12a3.r2.dev/recordings/SIG-P4B/2026-08-10/1082444651946049567_1382801113224581240_1786375832557/summary.md" rel="noopener noreferrer" target="_blank">Full notes ↗</a></p>
+          <p class="meeting-abstract"><strong>Reading:</strong> &quot;The Standardization of Time&quot; (linked in the session chat; author not stated in the transcript). From the discussion it appears to be a historical/sociological article — participants noted it was likely published in the 1980s and covers time zones, the telegraph and railways, and atomic clocks. Matthew connects it to David Landes&#x27; book *Revolution in Time* on the Swiss watch industry as roughly contemporary material.</p><p class="meeting-summary">The session had two overlapping strands that were, unfortunately, largely spoken over each other in the recording: (1) a group discussion of the &quot;Standardization of Time&quot; article as part of an ongoing theme on how technologies get socially adopted and how that relates to protocol development and ossification (last week&#x27;s session covered QWERTY), and (2) two show-and-tell presentations — durgadas on his &quot;proof of coordination&quot; standards work and NicolasCero on a web-app tool for co-creating AI-adoption protocols for cultural organizations. The transcript is heavily interleaved (multiple speakers overlapping), so some points are fragmentary; those are flagged below.</p><ul class="meeting-insights">
+<li>**Rafa** framed the recurring theme: understanding social adoption processes of technologies (currently happening with AI) and how adoption relates to protocol development and ossification.</li>
+<li>**Sachin:** Noted a coming change (~2030) in how a second is defined via atomic clocks — further subdivision — but argued there&#x27;s no implication for *human* perception of time (humans don&#x27;t sense below ~1 second; ~1/10 second visual limit). Suggested finer division is &quot;more advantageous for machines.&quot;</li>
+<li>**Sachin:** Drew the article&#x27;s parallel that time was socialized through institutions (telegraph, railway) and factories imposing working hours; workers then argued for better-defined hours (ten-hour day ~1848, later eight-hour day). Once adopted, standards become invisible &quot;reality.&quot;</li>
+<li>**Sachin:** Contrasted this with newer tech like LLMs, where top-down institutional mandates on adoption have largely failed or met political opposition; people can&#x27;t even agree on defining terms like AGI. Noted media increasingly use &quot;superintelligence&quot; as an unverifiable, pre-emptive socialization of an idea.</li>
+<li>**Rafa:** Was disappointed the paper didn&#x27;t speculate about where time-standardization is heading beyond time zones. Argued the paper underestimates the &quot;centrality of the *now*&quot; — a *present-local* (not geographically local) mode of coordinating actions relative to the present moment, exemplified by constant chat-based &quot;in five minutes?&quot; negotiation. Acknowledged this view may be biased by living online.</li>
+<li>**Matthew:** Connected the reading to David Landes&#x27; *Revolution in Time*. Argued time reckoning is still not settled across cultures (e.g., Arizona not adopting daylight saving; possible political moves to revoke DST). Enjoyed the paper&#x27;s opening on alternative ways to reckon time (cited a Kurt Vonnegut line about measuring a life in wives/cigarettes/quarts of booze; also sports measuring by periods/sets, or weight). For AI, the most obvious non-standard time reckoning is **token usage** — quantified by cost or imposed as rate limits — plus recurring qualitative &quot;capability jump&quot; moments (ChatGPT launch, the &quot;DeepSeek moment,&quot; and model releases he called &quot;Fable&quot; and &quot;Mythos&quot;). Raised the management question of when to update AI models/workflows.</li>
+</ul><p class="meeting-abstract"><strong>Questions &amp; Disagreements:</strong> - **Is time standardization &quot;already done&quot;?** Raised by (per Sachin) &quot;Bert.&quot; Responses diverged: Sachin pointed to atomic-clock re-definition but said human perception is unaffected; Matthew argued it&#x27;s *not* settled culturally (DST, cross-cultural reckoning); Javier said practical value is maxed out and only well-being would drive change.
+- **Machine vs. human time:** Sachin, Andre, and Matthew (</p><p class="meeting-participants">Participants: durgadas, rafa (UTC+1), NicolasCero, Timber, Sachin, Matthew Bright UTC-7, Javier Chavez / UTC -6, Andre Comeau</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
