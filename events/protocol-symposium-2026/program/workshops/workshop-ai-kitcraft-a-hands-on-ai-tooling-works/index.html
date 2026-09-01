@@ -117,6 +117,9 @@ function renderProposal(p){
   const orgs=[];
   if(p.organizer_name)    orgs.push({name:p.organizer_name,bio:p.organizer_bio});
   if(p.co_organizer_name) orgs.push({name:p.co_organizer_name,bio:p.co_organizer_bio});
+  if(p.host3_name) orgs.push({name:p.host3_name,bio:p.host3_bio});
+  if(p.host4_name) orgs.push({name:p.host4_name,bio:p.host4_bio});
+  if(p.host5_name) orgs.push({name:p.host5_name,bio:p.host5_bio});
   if(orgs.length){
     html+=sec('Organizers');
     html+=orgs.map((o,i)=>`<div class="team-member"${i?' style="margin-top:1.5rem;"':''}>

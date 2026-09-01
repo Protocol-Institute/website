@@ -9,6 +9,9 @@ const ALL_FIELDS = [
   'speaker_name', 'speaker_email', 'speaker_website', 'artifact_type', 'co_speakers',
   'organizer_name', 'organizer_email', 'organizer_bio',
   'co_organizer_name', 'co_organizer_email', 'co_organizer_bio',
+  'host3_name', 'host3_email', 'host3_bio',
+  'host4_name', 'host4_email', 'host4_bio',
+  'host5_name', 'host5_email', 'host5_bio',
   'audience', 'takeaways', 'activities', 'comments', 'max_participants',
 ];
 

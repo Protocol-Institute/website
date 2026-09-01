@@ -493,7 +493,8 @@
   function renderCard(p, isTrack2) {
     const isWorkshop = p.type === 'workshop';
     const speaker = isWorkshop
-      ? esc(p.organizer_name) + (p.co_organizer_name ? ` &amp; ${esc(p.co_organizer_name)}` : '')
+      ? [p.organizer_name, p.co_organizer_name, p.host3_name, p.host4_name, p.host5_name]
+          .filter(Boolean).map(esc).join(' &amp; ')
       : esc(p.speaker_name)  + (p.co_speakers ? ` · ${esc(p.co_speakers)}` : '');
     const commentCount  = p.comment_count || 0;
     const titleContent  = isWorkshop && p.slug

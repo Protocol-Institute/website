@@ -173,6 +173,54 @@
               <textarea id="f-org2-bio" name="co_organizer_bio" style="min-height:70px;"></textarea>
             </div>
 
+            <div class="section-label">3rd host (optional)</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-org3-name">Name</label>
+                <input type="text" id="f-org3-name" name="host3_name">
+              </div>
+              <div class="field-group">
+                <label for="f-org3-email">Email</label>
+                <input type="email" id="f-org3-email" name="host3_email">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-org3-bio">Bio</label>
+              <textarea id="f-org3-bio" name="host3_bio" style="min-height:70px;"></textarea>
+            </div>
+
+            <div class="section-label">4th host (optional)</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-org4-name">Name</label>
+                <input type="text" id="f-org4-name" name="host4_name">
+              </div>
+              <div class="field-group">
+                <label for="f-org4-email">Email</label>
+                <input type="email" id="f-org4-email" name="host4_email">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-org4-bio">Bio</label>
+              <textarea id="f-org4-bio" name="host4_bio" style="min-height:70px;"></textarea>
+            </div>
+
+            <div class="section-label">5th host (optional)</div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="f-org5-name">Name</label>
+                <input type="text" id="f-org5-name" name="host5_name">
+              </div>
+              <div class="field-group">
+                <label for="f-org5-email">Email</label>
+                <input type="email" id="f-org5-email" name="host5_email">
+              </div>
+            </div>
+            <div class="field-group">
+              <label for="f-org5-bio">Bio</label>
+              <textarea id="f-org5-bio" name="host5_bio" style="min-height:70px;"></textarea>
+            </div>
+
             <div class="section-label">Workshop details</div>
             <div class="field-group">
               <label for="f-audience">Target audience</label>
@@ -278,6 +326,15 @@
         document.getElementById('f-org2-name').value   = p.co_organizer_name || '';
         document.getElementById('f-org2-email').value  = p.co_organizer_email || '';
         document.getElementById('f-org2-bio').value    = p.co_organizer_bio || '';
+        document.getElementById('f-org3-name').value   = p.host3_name || '';
+        document.getElementById('f-org3-email').value  = p.host3_email || '';
+        document.getElementById('f-org3-bio').value    = p.host3_bio || '';
+        document.getElementById('f-org4-name').value   = p.host4_name || '';
+        document.getElementById('f-org4-email').value  = p.host4_email || '';
+        document.getElementById('f-org4-bio').value    = p.host4_bio || '';
+        document.getElementById('f-org5-name').value   = p.host5_name || '';
+        document.getElementById('f-org5-email').value  = p.host5_email || '';
+        document.getElementById('f-org5-bio').value    = p.host5_bio || '';
         document.getElementById('f-audience').value    = p.audience || '';
         document.getElementById('f-takeaways').value   = p.takeaways || '';
         document.getElementById('f-activities').value  = p.activities || '';
@@ -337,6 +394,15 @@
       payload.co_organizer_name   = document.getElementById('f-org2-name').value.trim() || null;
       payload.co_organizer_email  = document.getElementById('f-org2-email').value.trim() || null;
       payload.co_organizer_bio    = document.getElementById('f-org2-bio').value.trim() || null;
+      payload.host3_name          = document.getElementById('f-org3-name').value.trim() || null;
+      payload.host3_email         = document.getElementById('f-org3-email').value.trim() || null;
+      payload.host3_bio           = document.getElementById('f-org3-bio').value.trim() || null;
+      payload.host4_name          = document.getElementById('f-org4-name').value.trim() || null;
+      payload.host4_email         = document.getElementById('f-org4-email').value.trim() || null;
+      payload.host4_bio           = document.getElementById('f-org4-bio').value.trim() || null;
+      payload.host5_name          = document.getElementById('f-org5-name').value.trim() || null;
+      payload.host5_email         = document.getElementById('f-org5-email').value.trim() || null;
+      payload.host5_bio           = document.getElementById('f-org5-bio').value.trim() || null;
       payload.audience            = document.getElementById('f-audience').value.trim() || null;
       payload.takeaways           = document.getElementById('f-takeaways').value.trim() || null;
       payload.activities          = document.getElementById('f-activities').value.trim() || null;
