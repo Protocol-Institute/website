@@ -1713,6 +1713,26 @@
           "html": "<code>/admin/members</code> is gated behind Cloudflare Access, and no authenticated browser session was available this session — logging in on Venkat's behalf wasn't an option. Approved Eleonora Brizi's pending membership request (submitted 2026-08-24, qualifying tag <code>tag_symposium_26</code>) by replicating <code>functions/api/admin/members.js</code>'s approve branch exactly via direct SQL: same <code>INSERT OR IGNORE</code> shape, same slug derivation, same <code>member_since</code>/<code>membership_expires</code> defaults. One real gap versus the real endpoint: <code>sendWelcomeEmail()</code> needs the live <code>RESEND_API_KEY</code> Pages secret, which isn't available outside the deployed Worker, so her welcome email and PIN were never sent — <code>members.welcome_sent</code> is still 0 for her record. Flagged in Active/status.md: next admin-panel session needs to trigger “Resend welcome” for her specifically."
         }
       ]
+    },
+    {
+      "id": 46,
+      "sort_key": 46.0,
+      "label": "Session 46",
+      "title": "Symposium Registration Closed — Luma CTA Retired",
+      "date": "2026-09-03",
+      "time_pt": "",
+      "tracks": [
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Register CTA on the symposium page replaced with a closed-registration notice",
+          "html": "The <code>register-cta</code> block on <code>events/protocol-symposium-2026/index.html</code> no longer links to Luma (<code>https://luma.com/96c7epvr</code>) — the event has hit capacity. The anchor was replaced with a non-interactive <code>&lt;span&gt;</code> carrying the existing <code>.register-btn--disabled</code> modifier (gray <code>#C8C5C0</code> on <code>#5A5A5A</code>, <code>cursor: default</code>), reading “Registration closed”, with a smaller “Event at capacity” line beneath it. Using a <code>span</code> rather than a disabled-styled <code>&lt;a href&gt;</code> means there is no dead link and no way to click through to a registration form that would now over-subscribe the event. The <code>--disabled</code> modifier already existed from Session 44 (when the button read “Register (coming soon)” before registration opened in Session 45's window), so the CTA has now cycled through all three of its states without needing new CSS — worth keeping if registration reopens or a waitlist is added.<br><br>Scope note: this only affects the <em>symposium-wide</em> registration. The per-workshop registration buttons (<code>.workshop-register-btn</code>, driven by each proposal's <code>registration_url</code> in D1) are untouched and still live — workshops require separate registration, and the explanatory paragraph directly below the CTA still tells visitors to use the Workshops tab. If workshops also fill up, that has to be handled per-proposal in the database, not here."
+        }
+      ]
     }
   ]
 }

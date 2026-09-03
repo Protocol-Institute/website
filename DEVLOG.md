@@ -823,3 +823,13 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `/admin/members` is gated behind Cloudflare Access, and no authenticated browser session was available this session — logging in on Venkat's behalf wasn't an option. Approved Eleonora Brizi's pending membership request (submitted 2026-08-24, qualifying tag `tag_symposium_26`) by replicating `functions/api/admin/members.js`'s approve branch exactly via direct SQL: same `INSERT OR IGNORE` shape, same slug derivation, same `member_since`/`membership_expires` defaults. One real gap versus the real endpoint: `sendWelcomeEmail()` needs the live `RESEND_API_KEY` Pages secret, which isn't available outside the deployed Worker, so her welcome email and PIN were never sent — `members.welcome_sent` is still 0 for her record. Flagged in Active/status.md: next admin-panel session needs to trigger “Resend welcome” for her specifically.
 
 ---
+
+## Session 46: Symposium Registration Closed — Luma CTA Retired
+
+*2026-09-03*
+
+**Tracks:** content
+
+- The `register-cta` block on `events/protocol-symposium-2026/index.html` no longer links to Luma (`https://luma.com/96c7epvr`) — the event has hit capacity. The anchor was replaced with a non-interactive `&lt;span&gt;` carrying the existing `.register-btn--disabled` modifier (gray `#C8C5C0` on `#5A5A5A`, `cursor: default`), reading “Registration closed”, with a smaller “Event at capacity” line beneath it. Using a `span` rather than a disabled-styled `&lt;a href&gt;` means there is no dead link and no way to click through to a registration form that would now over-subscribe the event. The `--disabled` modifier already existed from Session 44 (when the button read “Register (coming soon)” before registration opened in Session 45's window), so the CTA has now cycled through all three of its states without needing new CSS — worth keeping if registration reopens or a waitlist is added.Scope note: this only affects the *symposium-wide* registration. The per-workshop registration buttons (`.workshop-register-btn`, driven by each proposal's `registration_url` in D1) are untouched and still live — workshops require separate registration, and the explanatory paragraph directly below the CTA still tells visitors to use the Workshops tab. If workshops also fill up, that has to be handled per-proposal in the database, not here.
+
+---
