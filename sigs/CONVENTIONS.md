@@ -12,6 +12,7 @@ This document specifies the URL scheme and HTML structure for SIG session pages 
 | Protocol Fiction | `protfisig` | `sigs/protfisig/` |
 | Distributed Robotics Group | `drg` | `sigs/drg/` |
 | Special Interest Group in Psychohistory | `sigpsy` | `sigs/sigpsy/` |
+| Personhood Research Group | `prg` | `sigs/prg/` |
 
 ## Session URL scheme
 
