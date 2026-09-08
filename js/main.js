@@ -258,3 +258,78 @@ var FOOTER_HTML =
     })
     .catch(function () {});
 }());
+
+// SIG page — website link, related links, and affiliated projects, all from D1.
+// Runs only on a SIG home page (/sigs/<slug>), never on /sigs itself or on a
+// session page. Two sources, deliberately kept separate: sig_links holds links
+// that are not projects (a SIG's own site, resources); projects.sig_slug holds
+// the affiliated projects and stays the single source of truth for those. Both
+// used to be hand-written HTML on each SIG page, which silently drifted.
+(function () {
+  var match = window.location.pathname.replace(/\/$/, '').match(/^\/sigs\/([a-z0-9-]+)$/);
+  if (!match) return;
+  var slug = match[1];
+
+  var websiteEl = document.getElementById('sig-website');
+  var resourcesEl = document.getElementById('sig-resources');
+  if (!websiteEl && !resourcesEl) return;
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function extLink(url, text) {
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(text) + '</a>';
+  }
+
+  function clamp(s, n) {
+    s = String(s || '').trim();
+    if (s.length <= n) return s;
+    return s.slice(0, s.lastIndexOf(' ', n) > 0 ? s.lastIndexOf(' ', n) : n).replace(/[.,;:]$/, '') + '…';
+  }
+
+  function block(label, items) {
+    if (!items.length) return '';
+    return '<div class="sig-projects">' +
+      '<p class="sig-projects-label">' + esc(label) + '</p>' +
+      '<ul class="sig-projects-list">' + items.join('') + '</ul>' +
+      '</div>';
+  }
+
+  Promise.all([
+    fetch('/api/sigs/links?sig=' + encodeURIComponent(slug))
+      .then(function (r) { return r.ok ? r.json() : { links: [] }; })
+      .catch(function () { return { links: [] }; }),
+    fetch('/api/projects?sig=' + encodeURIComponent(slug))
+      .then(function (r) { return r.ok ? r.json() : { projects: [] }; })
+      .catch(function () { return { projects: [] }; }),
+  ]).then(function (res) {
+    var links = res[0].links || [];
+    var projects = res[1].projects || [];
+
+    // The SIG's own site sits under the page blurb, labelled by its own row so
+    // the wording can be changed per SIG without touching this file.
+    var site = links.filter(function (l) { return l.kind === 'website'; })[0];
+    if (websiteEl && site) {
+      websiteEl.innerHTML = extLink(site.url, site.label || 'Project Website') + ' &#8594;';
+      websiteEl.style.display = '';
+    }
+
+    if (!resourcesEl) return;
+
+    var projectItems = projects.map(function (p) {
+      var desc = clamp(p.description, 150);
+      return '<li>' + extLink(p.url, p.title) + (desc ? ' &mdash; ' + esc(desc) : '') + '</li>';
+    });
+
+    var linkItems = links.filter(function (l) { return l.kind !== 'website'; }).map(function (l) {
+      return '<li>' + extLink(l.url, l.label) + (l.note ? ' &mdash; ' + esc(l.note) : '') + '</li>';
+    });
+
+    resourcesEl.innerHTML =
+      block(projectItems.length === 1 ? 'Associated Project' : 'Associated Projects', projectItems) +
+      block('Links', linkItems);
+  });
+}());

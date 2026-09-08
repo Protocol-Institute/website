@@ -4,11 +4,11 @@
 // Project value formula (same as challenges): seed + 1*anon^2 + 3*member^2
 
 import { getSession } from '../_shared/session.js';
+import { VALID_SIGS } from '../_shared/sigs.js';
 
 const VALID_STATES        = new Set(['stub', 'beta', 'production']);
 const VALID_TYPES          = new Set(['one-off', 'versioned', 'accretive']);
 const VALID_ARTIFACT_TYPES = new Set(['text', 'code', 'website', 'rich_media', 'other']);
-const VALID_SIGS           = new Set(['sigfpt', 'mrg', 'sigpfb', 'protfisig', 'drg', 'sigpsy']);
 
 function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 64);

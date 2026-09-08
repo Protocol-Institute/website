@@ -15,6 +15,7 @@ window.PI_RESEARCH = (function () {
     protfisig: 'Protocol Fiction',
     drg:       'Distributed Robotics Group',
     sigpsy:    'Psychohistory',
+    prg:       'Personhood Research Group',
   };
 
   function escHtml(s) {

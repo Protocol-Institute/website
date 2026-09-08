@@ -10,6 +10,7 @@
 
 ## Upcoming
 <!-- planned changes or features -->
+- **Admin UI for `sig_links`** — the table and `/api/sigs/links` endpoint landed Session 47, but there is no panel for them. Adding or editing a SIG's website/links today means a console POST to `/api/sigs/links` while logged in as admin, or a direct `wrangler d1 execute` write. Worth a small tab (probably alongside `/admin/projects`, which already has the SIG label map) once a second SIG has a site. Same gap as the missing "Resend welcome" button — both are admin-only D1 writes with no UI.
 - Promote Network page to main nav once member content is added
 - Link SIG organizer names to member profiles as remaining organizers (Kei Kreutler, Spencer Nitkey) get onboarded — Patrick Nast, Anuraj R., Aneesh Sathe now linked
 - SIG mailing lists (blocked on creating sigs@protocol-institute.org in Resend first)
