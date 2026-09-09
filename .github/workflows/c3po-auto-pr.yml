@@ -1,0 +1,52 @@
+# Opens the PR for c3po's automated SIG-page regeneration.
+#
+# c3po's ingest daemon (on c3po-vm.exe.xyz) force-pushes the branch below once a
+# week with freshly regenerated sigs/*/index.html and meeting detail pages. It
+# used to call `gh pr create` itself, which required a GitHub API token on that
+# VM; the token it had reached every repository on the account with admin rights
+# (Code/incidents/2026-09-09-c3po-vm-github-token-scope.md). Opening the PR here
+# instead means the VM's credential needs no API access at all — it pushes and
+# nothing more.
+#
+# Pushing to an already-open PR's branch updates that PR by itself, so this only
+# has to act on the first push after each merge.
+
+name: Open PR for c3po SIG page updates
+
+on:
+  push:
+    branches: [c3po/auto-sig-pages]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open a PR if one is not already open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          open_pr=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open \
+                      --json number --jq '.[0].number // empty')
+          if [ -n "$open_pr" ]; then
+            echo "PR #$open_pr is already open for $BRANCH — this push updated it."
+            exit 0
+          fi
+          gh pr create --repo "$REPO" --head "$BRANCH" --base main \
+            --title "Auto: SIG pages updated $(date -u +%Y-%m-%d)" \
+            --body "$(cat <<'BODY'
+          Automated SIG meeting-page update from c3po.
+
+          This branch is fully regenerated from current data on each publish, so
+          review and merge it (or leave it to keep updating) rather than editing
+          it directly — edits made on the branch will be overwritten.
+
+          Opened by `.github/workflows/c3po-auto-pr.yml`, not by a person.
+          BODY
+          )"
