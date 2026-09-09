@@ -59,6 +59,8 @@ admin/              /admin/members — admin review panel (CF Access gated)
 functions/          Cloudflare Pages Functions (API endpoints)
   assets/[[path]].js  R2 proxy — intercepts ALL /assets/* requests, serves from pi-assets R2 bucket
   _shared/tags.js   Canonical tag definitions — imported by all Workers
+  _shared/sigs.js   Canonical SIG slug list for Worker-side validation (client-side copies live in js/sig-meta.js and four per-page label maps)
+  api/sigs/links.js SIG links (GET public, POST admin) — kind='website' renders under the SIG page blurb, kind='link' in the resources block
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
   _shared/session.js  Shared pi_session cookie validator
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
@@ -81,6 +83,8 @@ js/
   sig-meta.js         Shared SIG metadata (Discord channel ids/names, calendar-link helpers) — window.PI_SIGS etc.; consumed by main.js and events/index.html
   tags.js             Canonical tag labels/lists for client-side pages
   managed-page.js     Shared module for D1-backed editable pages (viewer + EasyMDE editor); requires PAGE_KEY global
+                      main.js also renders each SIG page's website line + resources block from sig_links and /api/projects?sig= — the
+                      sigs/*/index.html pages carry #sig-website and #sig-resources placeholders; do not hand-write link HTML into them
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
