@@ -58,13 +58,29 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 41 sessions, 38 dated</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 42 sessions, 39 dated</h2>
 
       <ul class="meeting-list" role="list">
 <li class="meeting-item">
+  <div class="meeting-date">August 28, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-28-sig-fpt-2026-08-28">SIG-FPT 2026-08-28</a></div>
+  <p class="meeting-participants">Participants: Wip, Venkatesh Rao, Dan Schmidt, Patrick Nast, Ergod</p>
+  <p class="meeting-summary">Dan Schmidt demoed a newly-built &quot;all-out war mode&quot; ant-colony stigmergy simulation, in which two players tune colony parameters (evaporation rate, trail bias, gland size, cautionary pheromones) in real time while ants forage against a maze; the winner is the colony whose ants survive longest. The group discussed which mechanics would make the best workshop experience — multiple food sources, &quot;god mode&quot; disruption, adversarial pheromones, and whether to add termites — and how to keep the design coherent, ant-focused, and tied to the workshop's &quot;stigmergy as new nature / security &amp; robustness&quot; theme. They converged on prioritizing adversarial (defector) pheromones and multiple food sources next, keeping the scope on ants, and being careful about how parallel work streams get merged.</p>
+  <ul class="meeting-insights">
+    <li>**Venkatesh Rao:** Multiple food sources is the single most valuable next feature — (1) fair placement is easier with 3–4 sources than one, and (2) it immediately creates an explore/exploit dynamic: a new ant leaving the nest faces multiple trails of differing strength and must choose whether to swarm the strongest scent or diversify.</li>
+    <li>**Venkatesh Rao:** Warned against too many tunable parameters in live play (avoid 15–20); pick two or three interesting ones per tournament. Push the rich parameter space into *post-game analytics* instead — expose log data in an acquirable format so non-players can run analyses. Could run different tournaments keyed to different parameter pairs (e.g., explore vs. exploit; speed vs. evaporation).</li>
+    <li>**UI abstraction debate (Dan):** Should parameters be exposed as raw technical terms (gland size, trail bias, evaporation) or as abstract actions (explore, exploit, disrupt)? Dan is torn — abstraction is more approachable, but learning the technical concepts is valuable, and this is a research workshop, not just a game.</li>
+    <li>**Venkatesh Rao:** Bias toward ground-level parameters for the main sim; encourage participants to *discover and name* second-order emergent patterns themselves (analogy to Conway's Game of Life gliders/eaters, and the &quot;ant mill&quot;), rather than imposing preconceived labels like explore/exploit. Suggested a secondary meta-contest: watch games and identify or predictably induce patterns.</li>
+    <li>**Patrick Nast:** Compromise via *presets* — save low-level parameter bundles as taggable configs (e.g., &quot;exploit&quot;) that players can pick and then tweak, balancing approachability with depth.</li>
+    <li>**Dan:** Could even let players define their own abstraction layer atop the atomic controls; the winner might be the one with the better meta-control layer.</li>
+  </ul>
+</li>
+
+<li class="meeting-item">
   <div class="meeting-date">August 21, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-21-sig-fpt-2026-08-21">SIG-FPT 2026-08-21</a></div>
-  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, Chris Laidlaw, Robby Rao, Vibhav, durgadas, Ergod, Dan Schmidt, Matthew Bright UTC-7</p>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-21-sig-fpt-2026-08-21">Treasure Search with Volatile Pheromones: Stigmergy Theory and Engineering Applications</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Ants Nearby Treasure Search (ANTS) algorithm and theoretical foundations</span><span class="meeting-topic">Stigmergic algorithms for multi-agent coordination without central control</span><span class="meeting-topic">Advice complexity and minimal agent instruction sets for search problems</span><span class="meeting-topic">Applications to modern systems: robot swarms, LLM coordination, and distributed task management</span><span class="meeting-topic">Spider web stigmergy as a natural inspiration for engineered protocols</span><span class="meeting-topic">Pheromone watermarking and secure agent signaling</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, danfschmidt, cml7588</p>
   <p class="meeting-summary">The first half of the session was a discussion of the ANTS paper, framed by Patrick as a &quot;bridge&quot; between weak-assumption automata models (pebbles/finite-state agents) and richer computational models like ACO. The group explored how evaporation-as-memory changes what stigmergic agents can compute, and floated framings from computer memory (DRAM), information theory, and security. The second half pivoted into planning for the group's late-September **hackathon/workshop**, reviewing a Miro board of proposed game modes for a stigmergy simulator and aligning on an MVP.</p>
   <ul class="meeting-insights">
     <li>**No reinforcement:** unlike ACO, agents don't distinguish paths by pheromone intensity, so there's no feedback loop toward shortest paths. Agents also **die after a lifetime parameter τ**.</li>
@@ -74,12 +90,22 @@
     <li>**Robby:** read it as breadth-first search with memory in the environment; evaporation becomes a *feature* by reopening paths for re-exploration. Noted correctness argument: any treasure within the ant lifetime τ is guaranteed found. Saw Algorithm 2 as &quot;hacking the algorithm&quot; (turning ants into signal, so μ effectively becomes τ) rather than a new development; wished for reinforcement so signaling ants would emerge naturally.</li>
     <li>**Vibhav:** mapped pheromones onto agents dropping **memories in folders** (in a codebase) with a **TTL** so stale memory can't be read — keeping memory &quot;fresh.&quot;</li>
   </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://arxiv.org/pdf/1701.02555" target="_blank" rel="noopener noreferrer">arxiv.org</a></li>
+      <li><a href="https://www.cs.cmu.edu/~saketn/BDA2014/Material/RomanKecher/RomanKecher-talk.pdf" target="_blank" rel="noopener noreferrer">www.cs.cmu.edu</a></li>
+      <li><a href="https://www.sciencedirect.com/science/article/pii/S0890540121000201" target="_blank" rel="noopener noreferrer">www.sciencedirect.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1540069150041313381" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 
 <li class="meeting-item">
   <div class="meeting-date">August 14, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-14-sig-fpt-2026-08-14">SIG-FPT 2026-08-14</a></div>
-  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, Dan Schmidt, Ergod, Giovanni Merlino, Vibhav, Robby Rao</p>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-14-sig-fpt-2026-08-14">SIGFPT Workshop and Simulator Development Thread</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Ant colony simulation game mechanics and competitive/cooperative modes</span><span class="meeting-topic">Repository architecture and branching strategy for stigsim project</span><span class="meeting-topic">War mode prototype with real-time doctrine adjustment and metrics</span><span class="meeting-topic">Continuous space terrain models for realistic ant environments</span><span class="meeting-topic">Low-code/no-code participation framework for workshop participants</span><span class="meeting-topic">Emergent gameplay dynamics and emergent behaviors in colony simulation</span></div>
+  <p class="meeting-participants">Participants: _vgr, borrisx, giovanni.merlino, zoesh, _ergod, danfschmidt, waveywaves., ediblebadger, drwip</p>
   <p class="meeting-summary">The group met to plan a two-day hackathon/workshop built around a browser-based ant colony (&quot;stigmergy&quot;) simulator that Dan has developed. Dan demoed the current single-player simulator and a newer multiplayer &quot;shared world&quot; version with a colony-survival leaderboard. Discussion centered on how to structure the workshop (synchronous vs. asynchronous formats, how many design variables to expose, a competitive vs. exploratory two-track model), how to frame it around a security/adversarial theme, and what technical work is still needed. The group closed with concrete next steps and logistics (dates, sessions, registration).</p>
   <ul class="meeting-insights">
     <li>**Dan:** The simulator runs entirely in the browser (no backend/database). Ants leave the nest, drop pheromones to find their way back, and lay a second pheromone trail to food once found. Users can adjust simulation speed, colony size (up to 100), number/size of food sources, pheromone evaporation rate, signal-following strength, and &quot;gland size&quot; (how long ants can lay pheromones).</li>
@@ -89,12 +115,25 @@
     <li>**Venkatesh Rao:** Proposed a **two-track structure**: a competitive contest for &quot;killer&quot; types, and a non-adversarial exploratory track (e.g. &quot;produce the most interesting phenomenon and save a video&quot;). Referenced the Bartle taxonomy of player types to appeal to more than one motivation.</li>
     <li>**Venkatesh Rao:** Keep entry **low-code/zero-code** — ideally define your team's parameters via a web interface and enter a bracket/tournament.</li>
   </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://github.com/Protocol-Institute/stigsim/pull/1" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://antmaze.replit.app/infinite" target="_blank" rel="noopener noreferrer">antmaze.replit.app</a></li>
+      <li><a href="https://miro.com/app/board/uXjVHxoY18Y=/?share_link_id=302114468135" target="_blank" rel="noopener noreferrer">miro.com</a></li>
+      <li><a href="https://cleanshot.com/share/6M5rRqvF" target="_blank" rel="noopener noreferrer">cleanshot.com</a></li>
+      <li><a href="https://stigsim-experiments.netlify.app/" target="_blank" rel="noopener noreferrer">stigsim-experiments.netlify.app</a></li>
+      <li><a href="https://github.com/Protocol-Institute/stigsim/pull/3" target="_blank" rel="noopener noreferrer">github.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1537880289215250572" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
 </li>
 
 <li class="meeting-item">
   <div class="meeting-date">August 7, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-07-sig-fpt-2026-08-07">SIG-FPT 2026-08-07</a></div>
-  <p class="meeting-participants">Participants: Patrick Nast, Venkatesh Rao, PAtwater, Ellen Kaye-Cheveldayoff (UTC -4), Ergod, Giovanni Merlino, Jordan Peacock, Matthew Bright UTC-7</p>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-07-sig-fpt-2026-08-07">Engineered Stigmergic Algorithms: Ant Colony Optimization and Beyond</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Ant Colony Optimization (ACO) as formalized stigmergy for combinatorial optimization</span><span class="meeting-topic">Synchronous vs. asynchronous stigmergic models and their computational implications</span><span class="meeting-topic">Learning location: environment-stored pheromone matrices as policy parameters</span><span class="meeting-topic">Stigmergic pathologies including deception, selection bias, and adversarial pheromone dynamics</span><span class="meeting-topic">Multi-agent reinforcement learning (MARL) applied to stigmergy with heterogeneous, self-interested agents</span><span class="meeting-topic">Real-world applications in disaster response logistics and urban water demand modeling</span></div>
+  <p class="meeting-participants">Participants: _vgr, ediblebadger, attracteuretrange, plague_year, giovanni.merlino</p>
   <p class="meeting-summary">This is part of the group's &quot;summer of stigmergy&quot; series within the formal protocol theory SIG. Having previously covered the Deneubourg pheromone-signaling model and termite-construction (sematectonic vs. marker, qualitative vs. quantitative) stigmergy, the group now moved from natural/foundational models to *engineered* systems that use stigmergy — specifically ACO. Discussion centered on how ACO recasts combinatorial optimization as ants laying pheromone on abstract graphs, why the classic approach underperformed and where it still shines (dynamic routing), and how the newer deep-learning approach learns the heuristic rather than hand-tuning it. Much of the conversation was participants still working to understand the papers, plus threads on locality, stability, and real-world applications.</p>
   <ul class="meeting-insights">
     <li>**From nature to engineered protocols (Patrick):** The natural progression is moving from foundational models (Deneubourg pheromones, termite construction) to engineered systems that borrow/extend them. ACO is the cleanest computer-science example — casting problems like TSP, network routing, or protein folding as graph-path problems where digital &quot;ants&quot; lay pheromone tracks.</li>
@@ -104,6 +143,28 @@
     <li>**What the second paper actually does (Venkatesh):** Initially confused, he clarified it is *not* just exploring parameters of a single heuristic form (e.g., evaporation rates). It explores the **space of functional forms** for choosing between next nodes in the construction graph — e.g., the simple &quot;nearer cities are better&quot; form (1/distance) vs. alternatives like 1/distance². Open question for him: how much of the value is computational advantage vs. intuition/interpretability advantage over traditional optimization.</li>
     <li>**Where stigmergy earns its keep (Patrick):** Little computational benefit on static/centralized combinatorial problems (classical algorithms do fine). The exception is **dynamic routing** — nonstationary environments, distributed, partial-information settings — which is also the environment ants evolved to thrive in, making the fit natural. Connects to multi-agent reinforcement learning problems.</li>
   </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://en.wikipedia.org/wiki/Combinatorial_optimization" target="_blank" rel="noopener noreferrer">en.wikipedia.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1534932867535081532" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">July 30, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-30-sig-fpt-2026-07-30">SIG-FPT 2026-07-30</a></div>
+  <p class="meeting-participants">Participants: Venkatesh Rao, Aneesh Sathe, Sean Stevenson, Matthew McDowell-Sweet (UTC), Kyle Mathews, Florian Lohse (UTC+0), Chris R., Andre Comeau</p>
+  <p class="meeting-summary">The group examined whether history can be modeled and predicted mathematically the way physics or modern biology is. Most participants were sympathetic to Turchin's approach as a tool for *retrospective* historical analysis but skeptical of its *predictive* power, largely aligning with Popper's critique. Venkatesh developed an extended synthesis distinguishing &quot;cyclical&quot; phenomena (with underlying integrable quantities) from &quot;eventful&quot;/discontinuous phenomena, arguing the useful target is the *intersection* of the two — making focused &quot;prophecies&quot; rather than long-range trajectory forecasts. The conversation closed on the idea (from Florian, Aneesh, and Andre) of prophecies as remembered causal packages, and of mathematical modeling as valuable for taxonomy/mapping even if not predictive.</p>
+  <ul class="meeting-insights">
+    <li>**Sean:** Sympathetic to Turchin for historical analysis of the &quot;contained&quot; past, but finds Popper's argument compelling that prediction is hard — vaccines, technology, and human free will make history unlike a clock or machine. Noted the analogy to biology transforming (over ~200 years) from descriptive taxonomy into an experimental, hypothesis-testing science, which is what Turchin wants to do for history. Also flagged Turchin's own claim that *developing theories* (not gathering data) will be the hardest future task.</li>
+    <li>**Kyle:** Endorsed Popper — history is not like physics because &quot;the law of gravity&quot; keeps changing; humanity reconfigures itself, technology reconfigures. &quot;The past is not just a foreign country; sometimes it's a completely alien planet.&quot; Any analytical framework is vulnerable to a core assumption being negated. Cited &quot;generals fight the last war&quot; / going into the future looking through the rearview mirror.</li>
+    <li>**Matthew:** Struck by the provocative &quot;without mathematics we're doomed to vague statements and wrong conclusions&quot; — thinks it needs a qualifier and only holds above a certain complexity threshold; curious how reasoning worked *before* formalized mathematics. Linked &quot;prediction verified in the marketplace&quot; to management thinking (couldn't recall the author). Raised the **blind spots** of Cliodynamics: indigenous/embodied ways of knowing it is inherently blind to, and the &quot;empty space&quot; of day-to-day &quot;non-history&quot; that rarely gets documented. Suggested the information environment increasingly leads the &quot;atoms of the built environment,&quot; strengthening the case that ideas shape history.</li>
+    <li>**Aneesh:** Amused that the critique disregards Lee/Larry Darwin. Argued we need someone like Turchin to attempt formalization even if wrong — a &quot;stone soup&quot; situation that mobilizes useful work. Key substantive point: humans see problems arriving on the horizon and *act to solve them* (e.g., food crises), so historical systems have an **active/adaptive element** — this differs from mere chaos. Feedback can't go back in time; it feeds back into an already-changed system. Used the potato/island example: population grew from a new food source but the economy didn't keep pace, producing externalities — the kind of causal dynamic a mathematical model could capture.</li>
+    <li>**True cycles** exist and can be modeled with underlying physics/&quot;integrable quantities&quot;: earthquakes (tectonic pressure builds and must release; e.g., the overdue Pacific Northwest quake, ~50% chance in a 50-year window) and **demographic cycles** (aging populations generate and absorb fewer ideas — e.g., Japan aging rapidly and not leading AI).</li>
+    <li>**Eventful phenomena** (from the prior reading): revolutions, pandemics, tsunamis — self-contained, analyzable on their own terms, with a &quot;billiard-ball impulse&quot; impact.</li>
+  </ul>
 </li>
 
 <li class="meeting-item">
@@ -111,13 +172,14 @@
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-24-formal-methods-in-stigmergy-part-2-construction-models">Formal Methods in Stigmergy Part 2: Construction Models and Discrete Configurations</a></div>
   <div class="meeting-topics"><span class="meeting-topic">Construction stigmergy in biological systems (termites, bees, ants, wasps)</span><span class="meeting-topic">Lattice swarms as models for qualitative stigmergy with discrete configurations</span><span class="meeting-topic">Discrete primitives for producing complex collective behavior</span><span class="meeting-topic">Stigmergy applied to multi-agent coordination in software (agentic coding via GitHub PRs)</span><span class="meeting-topic">3D printing slicing as a dual/inverse problem to stigmergic task execution</span><span class="meeting-topic">Ant maze simulation and dynamic environmental modification during execution</span></div>
   <p class="meeting-participants">Participants: ediblebadger, _ergod, _vgr, heterotic, .unipuff, danfschmidt</p>
-  <p class="meeting-summary">The SIGFPT group continued their discussion of formal methods in stigmergy, focusing on construction stigmergy and lattice swarm models as canonical examples of qualitative stigmergy. Rather than responding to continuous parameters like pheromone concentration, agents in these systems respond to discrete, conceptually differentiated configurations. The group explored how selecting the right set of discrete primitives is crucial for producing desired emergent behavior—a problem with direct applications to multi-agent coordination in software systems, such as coordinating agents through GitHub pull requests. A significant insight emerged around conceptualizing 3D printing slicing as the inverse of stigmergic execution: just as a stigmergic printer would decompose an abstract task into executable configurations, traditional slicing converts CAD models into printable primitives. The discussion also touched on the flexibility of stigmergic systems, noting that environmental modifications during execution (such as adding or removing walls in ant mazes) cause agents to adapt their behavior and discover new pathways. The group emphasized that additive and subtractive approaches in stigmergic systems have unique constraints and design implications, much like their manufacturing analogues.</p>
+  <p class="meeting-summary">Participants went around sharing individual takeaways from the paper(s) on stigmergic swarm construction, focusing especially on the finding that coherent structures are rare in the space of possible local-rule algorithms, and on the &quot;non-overlapping stimulating configurations&quot; condition that makes coherence possible. Several people connected this to concurrency/computation, security/robustness, and human coordination. The session closed with logistics for the upcoming symposium/workshop modeling effort (extending an &quot;ant maze&quot; simulator).</p>
   <ul class="meeting-insights">
-    <li>Qualitative stigmergy uses discrete, differentiated configurations rather than continuous parameters, offering a framework applicable to both biological systems and robot swarms.</li>
-    <li>The problem of selecting appropriate discrete primitives to achieve desired complex emergent behavior has direct parallels to challenges in multi-agent agentic coding systems.</li>
-    <li>3D printing slicing can be conceptualized as the inverse of stigmergic execution—decomposing abstract tasks into executable primitives comparable to how stigmergic agents respond to environmental configurations.</li>
-    <li>Stigmergic systems can be dynamically modified during execution; agents demonstrate flexibility in adjusting to environmental changes like wall additions or removals that alter communication pathways.</li>
-    <li>Additive and subtractive manufacturing approaches in stigmergy have distinct constraints and possibilities, suggesting complementary design strategies for collective construction.</li>
+    <li>**Combining signal types (Patrick):** Wondered what complex, under-explored states could arise from mixing continuous chemical signals, discrete qualitative environmental states, and structural signals via some &quot;complicated grammar.&quot;</li>
+    <li>**Core result — coherence is rare (Patrick):** The space of architectures buildable from local rules is vast, but only a very small subset produces coherent, modular structure. The paper frames the &quot;non-overlapping&quot; criterion (configurations/rules must be sufficiently disjoint/resolvable in space and time) as a **concurrency problem** — a connection Patrick found surprising given past discussions of formal computation modeling.</li>
+    <li>**Security angle (Patrick):** Since coordinated algorithms are a tiny subset, disrupting coordination (e.g., injecting noise) may be relatively easy — relevant to the group's upcoming series on security and robustness.</li>
+    <li>**Protocol/compiler framing (Giovanni):** Appreciated the paper's dual approach — imposing a kind of protocol via a &quot;struct path&quot;/compiler that prunes possible system evolutions, plus the non-overlapping property. Curious how sound/exhaustive the underlying math is; hasn't yet dug into it.</li>
+    <li>**Applying non-overlap to organizations (Fotis):** Drawn to the &quot;third lesson&quot; in the larger paper — the non-overlapping stimulation condition as essential for producing ordered structure. Tried applying it to more complex cases like organizational pipelines: if two people share the same state and overlap, a divergence (two diverging workflows) is created.</li>
+    <li>**Uniform response requirement (Wip):** Highlighted the paper's point that all agents must respond to a local configuration in a uniform manner (a shared lookup table: state → action, agent-independent) for a swarm to build coherent state. Noted humans do *not* respond uniformly, and speculated that &quot;protocol&quot; serves to nudge/align our responses enough to produce coherence. Extended this: humans produce coherent structures not just physically but in mental/other &quot;landscapes or realms&quot; (acknowledged as a tangent).</li>
   </ul>
   <div class="meeting-links">
     <div class="meeting-links-label">Links discussed</div>
@@ -134,12 +196,14 @@
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-10-formal-modeling-of-stigmergy-sigfpt-summer-deep-dive">Formal Modeling of Stigmergy: Double Bridge Experiments and Computational Simulation</a></div>
   <div class="meeting-topics"><span class="meeting-topic">Deneubourg's double bridge experiments as foundational stigmergy model</span><span class="meeting-topic">Computational reproduction and simulation of ant colony self-organization</span><span class="meeting-topic">Mathematical formalization of pheromone trail dynamics and nonlinearity</span><span class="meeting-topic">Path selection and switching behavior in stigmergic systems</span><span class="meeting-topic">Parameter tuning (evaporation rates and nonlinearity) for behavioral control</span></div>
   <p class="meeting-participants">Participants: _vgr, _ergod, ediblebadger, danfschmidt, mtraven, drwip, zoesh</p>
-  <p class="meeting-summary">The SIGFPT group conducted a deep dive into the mathematics of self-organization in stigmergic systems, centered on Jean-Louis Deneubourg's classic double bridge experiments with ant colonies. The session focused on how local pheromone deposition and evaporation rules lead to global path selection behavior without centralized coordination. Participants shared multiple computational implementations of the double bridge simulation—including a NetLogo model and a custom reproduction—and discussed how to manipulate system parameters to observe emergent phenomena such as path switching. The group treated the simulations as interactive challenges, with hints provided to explore how nonlinearity and evaporation rate adjustments affect collective decision-making.</p>
+  <p class="meeting-summary">This was part of a summer-long track on stigmergic systems, aimed toward a workshop on security, robustness, and fault tolerance in stigmergy. Participants read papers modeling ant path selection via pheromone-based positive feedback, discussed the mathematical choice function and its parameters, and connected the dynamics to protocol theory concepts. The latter half turned to planning the workshop as a hackathon built on a simulation platform, with Venkat proposing a separate architecture call for code contributors.</p>
   <ul class="meeting-insights">
-    <li>The double bridge experiment provides a tractable mathematical model for understanding how local pheromone interactions produce collective path selection without centralized control.</li>
-    <li>Stigmergic behavior can be reliably reproduced in simulation and exhibits phase transitions between stable states based on evaporation rates and nonlinearity parameters.</li>
-    <li>Ant colonies can be induced to 'flip' between selected paths by adjusting key simulation parameters, demonstrating the sensitivity of self-organized systems to environmental conditions.</li>
-    <li>Multiple implementations (NetLogo, Claude artifacts, custom simulations) enable comparative study of stigmergy models and validation of theoretical predictions.</li>
+    <li>**Patrick's summary of the mechanism:** The double-bridge experiments use experimental controls (red light, sand) to isolate pheromone sensing. With equal paths, ants break symmetry via an **autocatalytic / positive-feedback loop** and randomly settle on one branch. With unequal paths, ants traverse the shorter path faster, laying more pheromone per unit time, which reinforces the shorter path — the beginnings of a path-optimization algorithm.</li>
+    <li>**Evaporation rate as memory (Patrick's &quot;hobby horse&quot;):** The pheromone evaporation rate is the crucial memory-like parameter. High evaporation gives flexibility (re-routing, defense against adversarial pheromone-laying) but risks decoherence; low evaporation entrenches paths. It effectively controls the &quot;hardness&quot; of changing the signaling path.</li>
+    <li>**Choice function parameters (Patrick):** Roughly `a / (a+b)` on pheromone concentrations, plus parameter **k** (attraction to an unmarked branch — the marking threshold needed for non-random choice) and **n** (a nonlinearity governing how strongly relative imbalance drives selection).</li>
+    <li>**Lock-in / inability to switch (Ergod):** Once a strong trail is established, ants keep reinforcing it and won't switch even if a shorter path is introduced later. Ergod tried but couldn't observe decay of a longer path in favor of a better one in the simulator. He connected this to network-effect lock-in / **protocol ossification**, and framed **k** as a cold-start/bootstrapping threshold and the nonlinearity as consensus &quot;sharpness.&quot;</li>
+    <li>**Protocol-theory framing (Ergod):** Ants can be understood in capability terms; they use **temporal asymmetry** to achieve coordination-as-computation. He raised the idea of an adversarial hackathon where teams write behaviors for competing colonies and try to break each other's protocols (comparing to games like Screeps).</li>
+    <li>**Anonymity/replaceability (Wip):** Ants coordinate effectively under complete anonymity — every ant is replaceable. He drew a loose blockchain analogy (competing paths, one &quot;wins&quot; via hard-coded rules) and a &quot;broom/funnel/frontier&quot; analogy applied to humans navigating mental (not just physical) territory.</li>
   </ul>
   <div class="meeting-links">
     <div class="meeting-links-label">Links discussed</div>
@@ -151,21 +215,6 @@
     </ul>
   </div>
   <a href="https://discord.com/channels/1082444651946049567/1524115603517079632" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
-</li>
-
-<li class="meeting-item">
-  <div class="meeting-date">July 10, 2026</div>
-  <div class="meeting-title"><a href="/sigs/sigfpt/2026-07-10-formal-modeling-of-stigmergy-sigfpt-summer-deep-dive">sigfpt 2026-07-10</a></div>
-  <p class="meeting-participants">Participants: Robby Rao, Kyle Mathews, Patrick Nast, Wip, Ergod, Fritz, Mike Travers, 🙊 Anuraj R, Venkatesh Rao, Senthil Gandhi</p>
-  <p class="meeting-summary">This was part of a summer-long track on stigmergic systems, aimed toward a workshop on security, robustness, and fault tolerance in stigmergy. Participants read papers modeling ant path selection via pheromone-based positive feedback, discussed the mathematical choice function and its parameters, and connected the dynamics to protocol theory concepts. The latter half turned to planning the workshop as a hackathon built on a simulation platform, with Venkat proposing a separate architecture call for code contributors.</p>
-  <ul class="meeting-insights">
-    <li>**Patrick's summary of the mechanism:** The double-bridge experiments use experimental controls (red light, sand) to isolate pheromone sensing. With equal paths, ants break symmetry via an **autocatalytic / positive-feedback loop** and randomly settle on one branch. With unequal paths, ants traverse the shorter path faster, laying more pheromone per unit time, which reinforces the shorter path — the beginnings of a path-optimization algorithm.</li>
-    <li>**Evaporation rate as memory (Patrick's &quot;hobby horse&quot;):** The pheromone evaporation rate is the crucial memory-like parameter. High evaporation gives flexibility (re-routing, defense against adversarial pheromone-laying) but risks decoherence; low evaporation entrenches paths. It effectively controls the &quot;hardness&quot; of changing the signaling path.</li>
-    <li>**Choice function parameters (Patrick):** Roughly `a / (a+b)` on pheromone concentrations, plus parameter **k** (attraction to an unmarked branch — the marking threshold needed for non-random choice) and **n** (a nonlinearity governing how strongly relative imbalance drives selection).</li>
-    <li>**Lock-in / inability to switch (Ergod):** Once a strong trail is established, ants keep reinforcing it and won't switch even if a shorter path is introduced later. Ergod tried but couldn't observe decay of a longer path in favor of a better one in the simulator. He connected this to network-effect lock-in / **protocol ossification**, and framed **k** as a cold-start/bootstrapping threshold and the nonlinearity as consensus &quot;sharpness.&quot;</li>
-    <li>**Protocol-theory framing (Ergod):** Ants can be understood in capability terms; they use **temporal asymmetry** to achieve coordination-as-computation. He raised the idea of an adversarial hackathon where teams write behaviors for competing colonies and try to break each other's protocols (comparing to games like Screeps).</li>
-    <li>**Anonymity/replaceability (Wip):** Ants coordinate effectively under complete anonymity — every ant is replaceable. He drew a loose blockchain analogy (competing paths, one &quot;wins&quot; via hard-coded rules) and a &quot;broom/funnel/frontier&quot; analogy applied to humans navigating mental (not just physical) territory.</li>
-  </ul>
 </li>
 
 <li class="meeting-item">
