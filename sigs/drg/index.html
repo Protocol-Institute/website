@@ -58,22 +58,69 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 4 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 6 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">August 20, 2026</div>
+  <div class="meeting-title"><a href="/sigs/drg/2026-08-20-drg-06-anthropic-robotics-research-visual-perception-to">DRG#06: Anthropic Robotics Research - Visual Perception Tools for Teleoperation</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Claude model application to robotics tasks</span><span class="meeting-topic">Teleoperation mechanisms and control</span><span class="meeting-topic">Visual perception tools for egocentric robot vision</span><span class="meeting-topic">Comparative evaluation of perception assistance methods</span><span class="meeting-topic">Compass-based orientation guidance for models</span></div>
+  <p class="meeting-participants">Participants: anurajenp, sn37, rafa_0x</p>
+  <p class="meeting-summary">The group went around sharing reactions to Anthropic's robotics/LLM experiments, then broadened into discussion of the practical stack for LLM-controlled robots — teleoperation, latency, and where compute should live. Jenna introduced an organizational note about a planned PI (Protocol Institute) quarterly journal and possible written/interactive outputs from the group. The session ended with Anuraj demonstrating a live browser-based teleoperation setup controlling his robot in Finland.</p>
+  <ul class="meeting-insights">
+    <li>**rafa:** Robotic control by LLMs feels increasingly like a &quot;solved problem&quot; in principle — the open questions are *when* and *which narrow use cases* get solved first. Noted a recent general AI model for robotics that learns by watching examples. Raised the &quot;stack of problems&quot; that remain even if driving/control is solved: latency, real-time reconstruction, and deciding what compute lives on the robot vs. off it. Anchored this in his own struggle to get reliable home Wi-Fi/mesh networking.</li>
+    <li>**shreeram:** Wants to see the actual implementation code, not just the writeup (his robotics background is minimal). Found it notable that in the &quot;policy task,&quot; supervision made older models *worse*. Confused by unexplained ~20-second gaps in the pendulum/classic-control tasks. His main critique: the paper never establishes what the *best non-LLM method* can achieve as a baseline, so it's unclear whether LLMs are actually the right tool or just a hammer being applied everywhere.</li>
+    <li>**Spencer:** Most interested in the experiment-level details — how small setup changes yield outsized improvements. Highlighted two examples: adding a &quot;compass&quot; giving the locomotive robot orientation in degrees, and adding a crosshairs/reticle to the camera view. Argued we should look for ways to help models &quot;in the way they want to be helped,&quot; rather than forcing them into human-style control paradigms.</li>
+    <li>**Anuraj:** Had a &quot;meh&quot; reaction. Argued the path of using a language model alone won't yield much for real-world navigation — you need a *world model* for embodied action (humans don't verbally reason about walking or holding a cup; it's a different mode of thinking). Thinks LLMs are better suited to higher-level planning, while low-level control needs models trained from scratch with embodiment. Agreed with shreeram's &quot;hammer&quot; framing — Anthropic seems to try many reward setups to see what sticks. Suspects robotics isn't a major Anthropic priority, hence the simple experiments.</li>
+    <li>**Maier:** Read the goal as a mix of *safety* (will people use our AI to build killer robots?) and *capability assessment* (how good are LLMs today?). Noted they tested LLMs at ~four levels of abstraction but tried to solve all layers with one model — whereas he'd use a *different LLM per layer*, both because that mirrors biology and because these problems are too hard to solve simultaneously in one decision. Called Anuraj's &quot;let LLMs do what they're good at, glue from elsewhere&quot; view exactly the kind of prescription the paper lacked. Found &quot;points of light&quot;: LLMs writing their own control code, and the question of what *protocol* a robot should use to get help from an LLM (given LLMs are energy/CPU heavy — maybe a robot runs a small/pretrained model locally).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.anthropic.com/research/claude-plays-robotics" target="_blank" rel="noopener noreferrer">www.anthropic.com</a></li>
+      <li><a href="https://www.anthropic.com/research/project-pilot" target="_blank" rel="noopener noreferrer">www.anthropic.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1540018742224887858" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
+<li class="meeting-item">
+  <div class="meeting-date">August 6, 2026</div>
+  <div class="meeting-title"><a href="/sigs/drg/2026-08-06-drg-05-robot-kit-http-mcp-server-workshop-planning-and">DRG#05 Robot Kit HTTP/MCP Server - Workshop Planning and API Design</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">HTTP/MCP Server implementation for PiCar Freenove robot kit</span><span class="meeting-topic">Two-tier API architecture (high-level autonomous agent vs. low-level tethered control)</span><span class="meeting-topic">Low-level telemetry and verbose monitoring capabilities</span><span class="meeting-topic">Workshop logistics and participant recruitment for symposium</span><span class="meeting-topic">Registration and onboarding infrastructure setup</span></div>
+  <p class="meeting-participants">Participants: anurajenp, _vgr, shreeram8484, drevius., rafa_0x</p>
+  <p class="meeting-summary">Anuraj R gave a live demonstration of a small (~$80) four-wheeled robot kit he assembled and programmed, showing how he ported its stock software to a custom FastAPI HTTP server and connected it to the group's robot gateway/MCP server so that a browser-based Claude agent could teleoperate it. The discussion covered the technical architecture (adapters, plugins, gateway, tunneling), how the build was done with AI coding agents, ideas for future features, and a recurring open problem of how to *verify* that a robot actually performed a task. The group also began planning a hands-on workshop where participants would assemble and register robots on the marketplace.</p>
+  <ul class="meeting-insights">
+    <li>_vgr advocated for a dual-mode API design supporting both autonomous agent behavior and direct controller tethering, with comprehensive low-level telemetry access.</li>
+    <li>drevius. expressed interest in purchasing the kit and volunteered to participate in workshop dry-runs while on vacation through August 30.</li>
+    <li>The group decided to use a Google Form for participant registration rather than email-based systems to avoid spam filter complications.</li>
+    <li>Hardware assembly requires separate procurement of Raspberry Pi and batteries beyond the robot kit itself.</li>
+    <li>The project is being integrated into the Protocol Symposium 2026 workshop program under 'Robots as Protocol Citizens' theme.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://github.com/pi-drg/picar_freenove_fastapi" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://protocol-institute.org/events/protocol-symposium-2026/program/workshops/workshop-robots-as-protocol-citizens-assembling/" target="_blank" rel="noopener noreferrer">protocol-institute.org</a></li>
+      <li><a href="https://www.amazon.com/dp/B07YD2LT9D" target="_blank" rel="noopener noreferrer">www.amazon.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1534956713667461140" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">July 23, 2026</div>
   <div class="meeting-title"><a href="/sigs/drg/2026-07-23-drg-04-a2a-protocol-integration-for-robotics">DRG#04 - A2A Protocol Integration for Robotics</a></div>
   <div class="meeting-topics"><span class="meeting-topic">A2A (Agent-to-Agent) Protocol applicability for robotics</span><span class="meeting-topic">Integration of A2A protocol with yakrobot-gateway (currently MCP-based)</span><span class="meeting-topic">Comparison of deterministic vs. probabilistic coordination protocols</span><span class="meeting-topic">Core objects and structure of A2A for robot task management</span><span class="meeting-topic">Agent-to-robot coordination at swarm scale</span><span class="meeting-topic">Symposium capstone incentivization strategies</span></div>
   <p class="meeting-participants">Participants: anurajenp, rafa_0x, maier.fenster, sn37</p>
-  <p class="meeting-summary">The DRG group met to evaluate the A2A (Agent-to-Agent) Protocol for integration with their yakrobot-gateway system. The discussion centered on whether A2A's probabilistic negotiation model is appropriate for their robotics use cases. Participants noted that while A2A is powerful for enterprise multi-agent coordination, their current work focuses on more direct robot-to-tool (human work-orderer) interactions using MCP patterns. A2A's core objects—particularly Task and AgentCard—were identified as potentially valuable for marketplace-style robot task offerings and negotiation, though some felt they were too low-level. The group contrasted A2A with faster deterministic protocols (zenoh, ROS-DDS) and acknowledged that true agent-to-robot swarm-scale coordination doesn't yet exist in industry.</p>
-  <p class="meeting-summary">Key concerns included whether A2A's complexity is necessary for their use cases and how to translate different frameworks into different physical robot abilities. However, there was agreement that adopting a shared protocol like A2A could prevent inconsistencies in agent theory models and allow robots to operate as simply as possible with tunable parameters. The meeting briefly pivoted to discuss symposium capstone incentivization, with a suggestion to award NFT badges (POAPs) for successful participation. The group concluded that further investigation into OpenRMF and deeper evaluation of A2A's practical applicability was warranted.</p>
+  <p class="meeting-summary">The session compared the A2A protocol and a &quot;marketplace protocol&quot; as candidate negotiation layers for a robot marketplace, questioning how well web-agent standards map onto physical robots. Participants debated task verification, timing mismatches, centralized vs. distributed coordination, and how payments/authentication would work. The second half turned to logistics for an upcoming symposium workshop involving assembling and registering Raspberry Pi–based robots.</p>
   <ul class="meeting-insights">
-    <li>A2A protocol may be overly complex for current robotics use cases; the group's work focuses on robot-to-tool coordination rather than large-scale multi-robot data coordination.</li>
-    <li>A2A's probabilistic negotiation approach differs from faster deterministic protocols like zenoh and ROS-DDS, making it better suited for marketplace-style interactions than real-time swarm coordination.</li>
-    <li>A2A's core objects (particularly Task and AgentCard/skills) could provide a shared protocol foundation that prevents inconsistent agent theory models and simplifies code.</li>
-    <li>OpenRMF and agent-to-robot coordination frameworks at swarm scale remain underdeveloped in the industry, representing both a gap and potential opportunity.</li>
-    <li>Using A2A as a protocol layer could enable robots and agents to operate as simply as possible while maintaining customizable parameters for user optimization.</li>
+    <li>**Reusing web standards for robot agents (christopher boette):** Suggested leaning on existing web-based tech and letting broadcasting agents declare which schemes they accept. Noted the trustless agents spec called out something composable with A2A, making interoperability worth exploring. Robot capabilities change over time (sensor degradation, tool loss); the spec points to broadcasting via a `.well-known` mechanism, and keeping that index up to date seems &quot;easily solvable.&quot;</li>
+    <li>**Timescale mismatch (christopher boette):** A recurring concern he'd raised before — verification and task completion for a physical robot operate on very different time scales than a database operation for a web agent. Liked seeing that a task has a start and an ID, plus a streaming mechanism, and presumed you can also query task status by ID.</li>
+    <li>**Two-layer marketplace (rafa):** Envisions robots having an &quot;agent mediation layer.&quot; A2A-style communication fits the *initial* phase — task definition, negotiation, bidding — but there's a **handover** to a different tempo for *execution management*. He doubts the agent-to-agent framework fits the physical execution phase; the two layers may need different standards.</li>
+    <li>**Verification problem (shreeram):** Unclear how you verify a task was done optimally or as intended — even the A2A trip-planning example doesn't make this obvious. Raised whether robotic comms even need to piggyback on web-agent flows plus a separate physical endpoint, and weighed the A2A approach as a hedge against lock-in by big companies (e.g., Google).</li>
+    <li>**Protocol as a negotiation layer (Anuraj R):** In the current stack, a robot is just an MCP tool with little agency, requiring continuous monitoring by the calling agent (e.g., a persistent cloud-session connection to an MCP gateway/orchestrator). This protocol would let a sufficiently autonomous robot negotiate more independently and separate the task state from the calling agent. Direct coordination/control already has standards (**OpenRMF**, originally from hospitals, used as a factory orchestrator); the novel piece is *probabilistic negotiation between autonomous agents*. Gave an example: broadcast &quot;get me the map of this field, I'll pay $10,&quot; and three robots + a drone bid different prices; the protocol lets you pick (e.g., choose the drone).</li>
+    <li>**Meta-concern: robots are different (Maier):** Worried the process copies concepts from autonomous agents to shrink the work, but the underlying problems of robots are genuinely different — changing abilities, physical/spatial limits, power, much slower operation. Fears locking into a mindset via inherited standards that won't fit robot needs.</li>
   </ul>
   <div class="meeting-links">
     <div class="meeting-links-label">Links discussed</div>
