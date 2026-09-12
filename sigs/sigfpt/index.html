@@ -58,9 +58,32 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 42 sessions, 39 dated</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 43 sessions, 40 dated</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">September 4, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-09-04-stigmergic-fragility-and-exploit-security-vulnerabiliti">Stigmergic Fragility and Exploit: Security Vulnerabilities in Swarm Systems</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Security vulnerabilities in stigmergic systems exploited by malicious actors</span><span class="meeting-topic">Distinction between swarm mechanisms and true stigmergic mechanisms</span><span class="meeting-topic">Ownership and controllability spectrum in distributed systems (from centralized routing tables to ownerless light fields)</span><span class="meeting-topic">Capture resistance and merge rule enforcement in replicated state systems</span><span class="meeting-topic">Real-world attack vectors: pheromone disruption, swarm attacks, and recommender system shilling</span></div>
+  <p class="meeting-participants">Participants: ediblebadger, _vgr, _ergod, jdbb, giovanni.merlino, rafa_0x, reegoeswhee, anurajenp, wbnns</p>
+  <p class="meeting-summary">The first half was a paper discussion synthesizing several readings on how stigmergic systems can be attacked and defended, and on what makes an attack specifically &quot;stigmergic&quot; versus merely a swarm. The group probed the underlying substrate of stigmergy (physical space vs. graphs vs. probability distributions) and dimensions like memory location, decay, and agency. The second half shifted to a project standup on the ant-simulator being built for an upcoming workshop/symposium (Sept 21–22), covering architecture consolidation, war modes, adversarial mechanics, and a prioritized list of features to finish before the workshop.</p>
+  <ul class="meeting-insights">
+    <li>**Patrick Nast:** A swarm is defined by *number of agents*; what makes an attack stigmergic is exploiting the *feedback/amplification* mechanism of the system. Attacks in the routing paper only make sense with control nodes/ownership over data — you inject &quot;false ants&quot; backward, drop traveling ants, or fake path-length counts.</li>
+    <li>**Patrick:** For a continuous open field, you could add secondary colony points / control nodes (&quot;capture-the-flag&quot; style) that colonies own, giving attackers a place to inject.</li>
+    <li>**Patrick:** Leverage needed to attack varies by system — a fraction of a percent (hacking-the-colony), many more fake than real ants (routing), or a very small number of good fake accounts (recommenders). Decay rate is a trade-off: enough is needed to make stigmergy work and to avoid sticking on false paths / add robustness, but the robots paper suggests it should be time-sensitive (front-load then taper as density grows) — a potential control slider for the workshop.</li>
+    <li>**Venkatesh Rao:** Stigmergy is a much wider class than physical space. In the routing paper the substrate is a graph with active nodes producing a &quot;wave-like&quot; phenomenon; in the recommender case it's a probability distribution (a thumbs-up adds +1 to a statistical distribution). Substrate need not be literally spatial.</li>
+    <li>**Venkatesh:** Reframed the whole thing as **distributed logic-in-memory** — the substrate is always a memory space, mobility is memory access, and mobile agents are like &quot;read/write heads on a magnetic disk.&quot;</li>
+    <li>**Venkatesh:** Proposed three dimensions of stigmergy: (1) **internal vs. external memory strength** — stigmergic when external memory exceeds internal; (2) **routing agency** — who decides where an agent goes next; (3) **read/write/execute permissions** (Unix-style), where &quot;execute&quot; (e.g., depositing material that reshapes the environment) fits termite-type systems.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://www.cs.virginia.edu/~evans/pubs/whenantsattack.pdf" target="_blank" rel="noopener noreferrer">www.cs.virginia.edu</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1545090287938838669" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">August 28, 2026</div>
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-08-28-sig-fpt-2026-08-28">SIG-FPT 2026-08-28</a></div>
