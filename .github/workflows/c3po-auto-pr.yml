@@ -10,6 +10,15 @@
 #
 # Pushing to an already-open PR's branch updates that PR by itself, so this only
 # has to act on the first push after each merge.
+#
+# Uses WEBSITE_PR_TOKEN, not the default github.token: the Protocol-Institute
+# org has "Allow GitHub Actions to create and approve pull requests" disabled,
+# so the default token cannot open a PR here regardless of the `permissions:`
+# block below (confirmed 2026-09-12 — every push since this workflow went live
+# on 2026-09-09 silently failed at the `gh pr create` step with "GitHub Actions
+# is not permitted to create or approve pull requests"). WEBSITE_PR_TOKEN is a
+# fine-grained PAT scoped to this repo only, Pull requests: write + Contents:
+# read — see admin/keys.md.
 
 name: Open PR for c3po SIG page updates
 
@@ -27,7 +36,7 @@ jobs:
     steps:
       - name: Open a PR if one is not already open
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.WEBSITE_PR_TOKEN }}
           BRANCH: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
         run: |
