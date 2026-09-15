@@ -66,6 +66,8 @@ functions/          Cloudflare Pages Functions (API endpoints)
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
   api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
 events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium landing page + full program merged into one page (Session 43); /program redirects here
+                    Header countdown hardcodes two UTC instants (WORKSHOPS_START, SYMPOSIUM_START) in
+                    its own IIFE — update by hand if event dates move; they are not derived from D1
   program/          No index.html — listing merged into the parent page above. Still holds edit-proposal.html (admin) and workshops/ (detail pages)
   program/workshops/  Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
