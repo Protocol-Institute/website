@@ -476,10 +476,37 @@
     const zone = parts.find(p => p.type === 'timeZoneName');
     return zone ? zone.value : '';
   }
+  // Viewer-local calendar date for an instant, as YYYY-MM-DD. Assembled from
+  // formatToParts rather than a formatted string so field order and locale
+  // never matter.
+  function localYMD(d) {
+    const o = {};
+    new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(d).forEach(p => { o[p.type] = p.value; });
+    return `${o.year}-${o.month}-${o.day}`;
+  }
+  // Whole days between the viewer's local date for this instant and the UTC
+  // date printed next to it. Both sides are parsed as UTC midnight so a DST
+  // transition in the viewer's zone can never make this land on a fraction.
+  function localDayOffset(dateStr, timeStr) {
+    const d = new Date(dateStr + 'T' + timeStr + ':00Z');
+    return Math.round((Date.parse(localYMD(d) + 'T00:00:00Z') - Date.parse(dateStr + 'T00:00:00Z')) / 86400000);
+  }
+  // Airline-itinerary convention: a local time that lands on a different
+  // calendar day than the UTC date shown beside it carries a (+1) / (-1).
+  function dayOffsetMarker(n) { return n ? ` (${n > 0 ? '+' : '-'}${Math.abs(n)})` : ''; }
   function localLabel(dateStr, startTime, endTime) {
+    const zone  = localZoneName(dateStr, startTime);
     const start = localTimeOnly(dateStr, startTime);
-    const zone = localZoneName(dateStr, startTime);
-    const range = endTime ? `${start}–${localTimeOnly(dateStr, endTime)}` : start;
+    const so    = localDayOffset(dateStr, startTime);
+    if (!endTime) return `${start}${dayOffsetMarker(so)} in ${zone}`;
+    const end = localTimeOnly(dateStr, endTime);
+    const eo  = localDayOffset(dateStr, endTime);
+    // Both ends on the same local day: one marker covers the pair. Different
+    // days (the range crosses local midnight): mark each side that shifted.
+    const range = so === eo
+      ? `${start}–${end}${dayOffsetMarker(so)}`
+      : `${start}${dayOffsetMarker(so)}–${end}${dayOffsetMarker(eo)}`;
     return `${range} in ${zone}`;
   }
   function renderWorkshopSchedule(p) {

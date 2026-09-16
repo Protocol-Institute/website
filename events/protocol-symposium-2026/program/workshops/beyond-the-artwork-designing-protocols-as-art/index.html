@@ -92,7 +92,16 @@ function fmtDate(d){var dt=new Date(d+'T00:00:00Z');return dt.toLocaleDateString
 // load no page-specific JS; if a third page needs this, lift all four into js/.
 function localTimeOnly(dateStr,timeStr){var d=new Date(dateStr+'T'+timeStr+':00Z');return new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(d);}
 function localZoneName(dateStr,timeStr){var d=new Date(dateStr+'T'+timeStr+':00Z');var parts=new Intl.DateTimeFormat(undefined,{timeZoneName:'long'}).formatToParts(d);var zone=parts.find(function(p){return p.type==='timeZoneName';});return zone?zone.value:'';}
-function localLabel(dateStr,startTime,endTime){var start=localTimeOnly(dateStr,startTime);var zone=localZoneName(dateStr,startTime);var range=endTime?start+'\u2013'+localTimeOnly(dateStr,endTime):start;return range+' in '+zone;}
+// Viewer-local calendar date as YYYY-MM-DD, from formatToParts so field order
+// and locale never matter. Day offset is measured against the UTC date printed
+// beside the time; both sides parse as UTC midnight so a DST shift in the
+// viewer's zone cannot make the subtraction land on a fraction.
+function localYMD(d){var o={};new Intl.DateTimeFormat('en-US',{year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).forEach(function(p){o[p.type]=p.value;});return o.year+'-'+o.month+'-'+o.day;}
+function localDayOffset(dateStr,timeStr){var d=new Date(dateStr+'T'+timeStr+':00Z');return Math.round((Date.parse(localYMD(d)+'T00:00:00Z')-Date.parse(dateStr+'T00:00:00Z'))/86400000);}
+// Airline-itinerary convention: a local time landing on a different calendar
+// day than the UTC date shown carries a (+1) / (-1).
+function dayOffsetMarker(n){return n?' ('+(n>0?'+':'-')+Math.abs(n)+')':'';}
+function localLabel(dateStr,startTime,endTime){var zone=localZoneName(dateStr,startTime);var start=localTimeOnly(dateStr,startTime);var so=localDayOffset(dateStr,startTime);if(!endTime)return start+dayOffsetMarker(so)+' in '+zone;var end=localTimeOnly(dateStr,endTime);var eo=localDayOffset(dateStr,endTime);var range=(so===eo)?start+'\u2013'+end+dayOffsetMarker(so):start+dayOffsetMarker(so)+'\u2013'+end+dayOffsetMarker(eo);return range+' in '+zone;}
 function renderText(text){
   if(!text||text.trim()===''||text.trim().toLowerCase()==='n/a') return '';
   return esc(text).split(/\n\n+/).map(block=>{
