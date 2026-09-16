@@ -33,6 +33,8 @@
     .workshop-sessions { list-style:none; margin:0 0 0.75rem; padding:0; font-size:0.85rem; color:#3A3A3A; }
     .workshop-sessions li { padding:0.15rem 0; }
     .workshop-session-note { color:#8A8A8A; font-style:italic; }
+    /* Matches .local-time on the program page. */
+    .local-time { color:#8A8A8A; font-weight:400; font-style:italic; }
     .workshop-register-btn { display:inline-block; font-size:0.85rem; font-weight:600;
       color:#fff; background:#2A6B6B; padding:0.5rem 1.1rem; margin-bottom:1rem;
       text-decoration:none; letter-spacing:0.02em; }
@@ -84,6 +86,13 @@ const PROPOSAL_ID = 23;
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function renderInline(s){return s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');}
 function fmtDate(d){var dt=new Date(d+'T00:00:00Z');return dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'});}
+// Viewer-local time, mirroring localTimeOnly/localZoneName/localLabel on the
+// program page (events/protocol-symposium-2026/index.html). Kept as a copy
+// rather than a shared module because these detail pages are standalone and
+// load no page-specific JS; if a third page needs this, lift all four into js/.
+function localTimeOnly(dateStr,timeStr){var d=new Date(dateStr+'T'+timeStr+':00Z');return new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(d);}
+function localZoneName(dateStr,timeStr){var d=new Date(dateStr+'T'+timeStr+':00Z');var parts=new Intl.DateTimeFormat(undefined,{timeZoneName:'long'}).formatToParts(d);var zone=parts.find(function(p){return p.type==='timeZoneName';});return zone?zone.value:'';}
+function localLabel(dateStr,startTime,endTime){var start=localTimeOnly(dateStr,startTime);var zone=localZoneName(dateStr,startTime);var range=endTime?start+'\u2013'+localTimeOnly(dateStr,endTime):start;return range+' in '+zone;}
 function renderText(text){
   if(!text||text.trim()===''||text.trim().toLowerCase()==='n/a') return '';
   return esc(text).split(/\n\n+/).map(block=>{
@@ -104,7 +113,8 @@ function renderProposal(p){
   if(sessions.length){
     html+='<ul class="workshop-sessions">'+sessions.map(function(s){
       var note=s.note?' <span class="workshop-session-note">('+esc(s.note)+')</span>':'';
-      return '<li>Session '+s.seq+' \u2014 '+fmtDate(s.date)+' \u00b7 '+esc(s.start_time)+'\u2013'+esc(s.end_time)+' UTC'+note+'</li>';
+      var local=localLabel(s.date,s.start_time,s.end_time);
+      return '<li>Session '+s.seq+' \u2014 '+fmtDate(s.date)+' \u00b7 '+esc(s.start_time)+'\u2013'+esc(s.end_time)+' UTC <span class="local-time">('+esc(local)+')</span>'+note+'</li>';
     }).join('')+'</ul>';
   }
   if(p.registration_url){
