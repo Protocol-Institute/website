@@ -63,6 +63,8 @@ functions/          Cloudflare Pages Functions (API endpoints)
   api/sigs/links.js SIG links (GET public, POST admin) — kind='website' renders under the SIG page blurb, kind='link' in the resources block
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
   _shared/session.js  Shared pi_session cookie validator
+  _shared/response.js sessionVaryingJson() — Vary: Cookie + Cache-Control: private, no-store
+                      for any JSON response whose body depends on the caller's session
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
   api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
 events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium landing page + full program merged into one page (Session 43); /program redirects here
@@ -87,6 +89,8 @@ js/
   managed-page.js     Shared module for D1-backed editable pages (viewer + EasyMDE editor); requires PAGE_KEY global
                       main.js also renders each SIG page's website line + resources block from sig_links and /api/projects?sig= — the
                       sigs/*/index.html pages carry #sig-website and #sig-resources placeholders; do not hand-write link HTML into them
+deploy.sh           Manual deploy from a clean `git archive` export — see Deployment.
+                    Never `wrangler pages deploy .`; Pages ignores .gitignore
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
