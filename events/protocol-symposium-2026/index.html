@@ -482,6 +482,18 @@
     const range = endTime ? `${start}–${localTimeOnly(dateStr, endTime)}` : start;
     return `${range} in ${zone}`;
   }
+  // A workshop runs across both workshop days, so a single date would misreport
+  // it. The card states the span; the session list below it carries the detail.
+  function workshopDays(p) {
+    return [...new Set((p.workshop_sessions || []).map(s => s.date).filter(Boolean))].sort();
+  }
+  function workshopSpanLabel(p) {
+    const days = workshopDays(p);
+    if (!days.length) return '';
+    return days.length === 1
+      ? dayHeaderLabel(days[0])
+      : `${dayHeaderLabel(days[0])} – ${dayHeaderLabel(days[days.length - 1])}`;
+  }
   function renderWorkshopSchedule(p) {
     const sessions = p.workshop_sessions || [];
     const sessionsHtml = sessions.length
@@ -590,7 +602,7 @@
 
     const sessionFilter = p => currentSession === 'all' || (p.session || 'General') === currentSession;
     const talksAndInteractive = [...allTalks, ...allInteractive].filter(sessionFilter).sort(scheduleSort);
-    const sortedWorkshops     = [...workshops].sort(alphSort);
+    const sortedWorkshops     = [...workshops].sort(scheduleSort);
 
     document.getElementById('talks-count').textContent     = talksAndInteractive.length;
     document.getElementById('workshops-count').textContent = sortedWorkshops.length;
@@ -601,7 +613,7 @@
       const everything = [...proposals].sort(scheduleSort);
       document.getElementById('panel-all').innerHTML = renderSchedule(everything, true);
     } else if (currentTab === 'workshops') {
-      document.getElementById('panel-workshops').innerHTML = sortedWorkshops.map(renderCard).join('');
+      document.getElementById('panel-workshops').innerHTML = renderSchedule(sortedWorkshops, false);
     } else {
       document.getElementById('panel-talks').innerHTML = renderSchedule(talksAndInteractive, currentSession === 'all');
     }
@@ -623,6 +635,14 @@
       : '';
 
     let timeHtml = '';
+    if (isWorkshop) {
+      const span = workshopSpanLabel(p);
+      const count = (p.workshop_sessions || []).length;
+      if (span) {
+        const sessionsLabel = count ? ` · ${count} session${count === 1 ? '' : 's'}` : '';
+        timeHtml = `<div class="proposal-time">${span}${sessionsLabel}</div>`;
+      }
+    }
     if (!isWorkshop) {
       if (p.scheduled_date && p.scheduled_time_utc) {
         const range = p.scheduled_end_time_utc
