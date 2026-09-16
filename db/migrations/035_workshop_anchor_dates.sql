@@ -12,6 +12,21 @@
 -- workshop spans both days and symposium_workshop_sessions remains the
 -- authoritative schedule. renderCard() guards its single-date line with
 -- `if (!isWorkshop)`, so this does not change what the page displays.
+--
+-- RE-RUNNABLE ON PURPOSE. The anchor is derived data, and nothing in
+-- functions/ writes to symposium_workshop_sessions, so there is no code path
+-- that refreshes it when a workshop's times move. An earlier draft guarded
+-- this with `AND scheduled_date IS NULL`, which would have set the anchor once
+-- and let it rot: the Stigmergy Hackathon's first session moved 13:00 -> 15:00
+-- on 2026-09-16, and a one-shot migration run before that would now disagree
+-- with the real schedule -- invisibly, because the program page never renders
+-- a workshop's anchor. Re-run this after any workshop timing change and it
+-- re-derives every anchor from the current session rows.
+--
+-- Consequence of being re-runnable: a hand-set anchor on a workshop that has
+-- session rows will be overwritten. That is intended -- symposium_workshop_sessions
+-- is the source of truth. Workshops with no session rows are left untouched by
+-- the EXISTS clause.
 
 UPDATE symposium_proposals
 SET
@@ -30,7 +45,6 @@ SET
     LIMIT 1
   )
 WHERE type = 'workshop'
-  AND scheduled_date IS NULL
   AND EXISTS (
     SELECT 1 FROM symposium_workshop_sessions ws WHERE ws.proposal_id = symposium_proposals.id
   );
