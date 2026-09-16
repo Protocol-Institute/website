@@ -2,6 +2,7 @@
 // approved team, linked challenges, and (if authenticated) voting/team status.
 
 import { getSession } from '../../_shared/session.js';
+import { sessionVaryingJson } from '../../_shared/response.js';
 
 export async function onRequestGet({ params, request, env }) {
   const { slug } = params;
@@ -63,7 +64,7 @@ export async function onRequestGet({ params, request, env }) {
       delete publicProject.admin_notes;
     }
 
-    return Response.json({
+    return sessionVaryingJson({
       project: publicProject,
       team,
       pending_team: pendingTeam,

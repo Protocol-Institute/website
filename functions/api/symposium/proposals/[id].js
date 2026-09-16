@@ -4,6 +4,7 @@
 // PATCH /api/symposium/proposals/:id — owners: title+abstract only; admins: all fields
 
 import { getSession } from '../../../_shared/session.js';
+import { sessionVaryingJson } from '../../../_shared/response.js';
 
 const ALL_FIELDS = [
   'type', 'slug', 'track', 'title', 'abstract', 'session', 'is_shortlisted',
@@ -70,7 +71,7 @@ export async function onRequestGet({ request, env, params }) {
     for (const field of PRIVATE_FIELDS) delete proposal[field];
   }
 
-  return Response.json({ proposal });
+  return sessionVaryingJson({ proposal });
 }
 
 export async function onRequestPatch({ request, env, params }) {

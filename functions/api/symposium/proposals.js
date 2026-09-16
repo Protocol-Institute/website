@@ -8,6 +8,7 @@
 // deliberation data and are returned only to authenticated members.
 
 import { getSession } from '../../_shared/session.js';
+import { sessionVaryingJson } from '../../_shared/response.js';
 
 // Allowlist, not a denylist: a column added to symposium_proposals later is
 // withheld until it is listed here, rather than silently published.
@@ -91,14 +92,14 @@ export async function onRequestGet({ request, env }) {
   const project = opts => rows.map(p => publicView(p, opts));
 
   // Public response when not authenticated
-  if (!email) return Response.json({ proposals: project() });
+  if (!email) return sessionVaryingJson({ proposals: project() });
 
   const member = await env.DB.prepare(
     'SELECT tier, is_admin, is_early_voter FROM members WHERE email = ? AND is_public = 1'
   ).bind(email).first();
 
   // Unknown/non-member session: still return proposals publicly
-  if (!member) return Response.json({ proposals: project() });
+  if (!member) return sessionVaryingJson({ proposals: project() });
 
   // Authenticated member: include their vote allocations and budget
   const { results: myVotes } = await env.DB.prepare(
@@ -112,7 +113,7 @@ export async function onRequestGet({ request, env }) {
     myTotal += v.votes;
   });
 
-  return Response.json({
+  return sessionVaryingJson({
     proposals: project({ includeVotes: true, viewerEmail: email }),
     my_votes: myVoteMap,
     my_total: myTotal,

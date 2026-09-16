@@ -190,6 +190,16 @@ If a c3po PR fails any of these, it's a regression in the automation, not someth
 
 The site is deployed via Cloudflare Pages, connected to this GitHub repo. Pushes to `main` deploy automatically. No build command — publish directory is `.` (configured in `wrangler.toml`). CF Pages Functions in `functions/` handle all API endpoints. D1 database binding: `DB` (`pi-members`). R2 bucket binding: `ASSETS_BUCKET` (`pi-assets`).
 
+Propagation to the custom domain can lag several minutes behind a deployment showing as complete. In `wrangler pages deployment list`, the Status column shows a *timestamp* for past deployments and the word `Active` only for the one currently live — a fresh deploy reading "just now" is normal, not a failure. Give it a few minutes before concluding anything is stuck.
+
+### Manual deploy — use `./deploy.sh`, never `wrangler pages deploy .`
+
+To recover when the automatic path has genuinely failed, run `./deploy.sh` (optionally `./deploy.sh <ref>`; defaults to `HEAD`). It exports the commit with `git archive` into a temp directory and deploys that.
+
+**Do not run `npx wrangler pages deploy .` from the repo root.** Pages uploads the directory you give it, filtered only by a hardcoded list inside wrangler (`_worker.js`, `_redirects`, `_headers`, `_routes.json`, `functions`, `**/.DS_Store`, `**/node_modules`, `**/.git`, `.wrangler`). It does **not** read `.gitignore`, and `.assetsignore` applies to Workers Assets (`wrangler deploy`), **not** to Pages — adding one here would be a control that silently does nothing. A root deploy would therefore publish `inbox/` (Luma guest CSVs with attendee emails), `backups/` (D1 member exports) and `.env` to a public CDN.
+
+`deploy.sh` also refuses to run if anything sensitive turns out to be *tracked* in git, since `.gitignore` does not retroactively untrack a committed file. And because it deploys a commit rather than the working directory, it cannot publish uncommitted work — which matters when more than one session shares this checkout.
+
 ## At Session Start
 
 1. Read `status.md` — review active and upcoming items from the last session.

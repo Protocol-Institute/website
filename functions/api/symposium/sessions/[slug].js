@@ -2,6 +2,7 @@
 // PATCH /api/symposium/sessions/:slug — session owner or admin may update
 
 import { getSession } from '../../../_shared/session.js';
+import { sessionVaryingJson } from '../../../_shared/response.js';
 
 export async function onRequestGet({ request, params, env }) {
   const session = await env.DB.prepare(
@@ -14,7 +15,7 @@ export async function onRequestGet({ request, params, env }) {
   const { owner_email, ...rest } = session;
   const viewer = (await getSession(request, env) || '').trim().toLowerCase();
   rest.is_owner = !!viewer && viewer === (owner_email || '').trim().toLowerCase();
-  return Response.json({ session: rest });
+  return sessionVaryingJson({ session: rest });
 }
 
 export async function onRequestPatch({ request, params, env }) {
