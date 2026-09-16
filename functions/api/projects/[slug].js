@@ -55,8 +55,16 @@ export async function onRequestGet({ params, request, env }) {
       ? allTeam.filter(t => t.status === 'pending').map(t => ({ slug: t.member_slug, name: t.name }))
       : [];
 
+    // Same shape as the symposium endpoints: the submitter's address and the
+    // reviewers' notes are staff data and must not ride along on a public page.
+    const publicProject = { ...project, voted_by_me: votedByMe };
+    if (!viewerIsLeadOrAdmin) {
+      delete publicProject.submitted_by;
+      delete publicProject.admin_notes;
+    }
+
     return Response.json({
-      project: { ...project, voted_by_me: votedByMe },
+      project: publicProject,
       team,
       pending_team: pendingTeam,
       challenges: (chalRes.results || []).map(r => ({ id: r.id, title: r.title })),
