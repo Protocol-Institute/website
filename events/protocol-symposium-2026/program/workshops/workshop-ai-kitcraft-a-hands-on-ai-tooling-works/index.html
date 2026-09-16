@@ -140,8 +140,7 @@ Promise.all([
     document.getElementById('proposal-body').innerHTML=renderProposal(_proposal);
     document.getElementById('main-view').style.display='';
     document.getElementById('comment-section').style.display='';
-    const ownerEmail=(_proposal.organizer_email||_proposal.speaker_email||'').toLowerCase();
-    const isOwner=!_isAdmin&&_memberEmail&&_memberEmail===ownerEmail;
+    const isOwner=!_isAdmin&&!!_proposal.is_owner;
     const bar=document.getElementById('workshop-edit-bar');
     if(_isAdmin){
       bar.innerHTML='<a class="edit-own-btn" href="/events/protocol-symposium-2026/program/edit-proposal.html?id='+PROPOSAL_ID+'" style="text-decoration:none;display:inline-block;">Edit details</a>';

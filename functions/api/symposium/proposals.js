@@ -1,8 +1,55 @@
 // GET /api/symposium/proposals
 // Returns all shortlisted proposals with aggregate quadratic-weighted scores.
 // Public: no auth required. If authenticated, also returns my_votes, budget, tier, is_admin.
+//
+// Contact emails are never returned to anyone — the program is a public page, so
+// speaker/organizer/host addresses must not ride along in the payload. Ownership is
+// reported as a computed `is_owner` flag instead. Vote aggregates are member
+// deliberation data and are returned only to authenticated members.
 
 import { getSession } from '../../_shared/session.js';
+
+// Allowlist, not a denylist: a column added to symposium_proposals later is
+// withheld until it is listed here, rather than silently published.
+const PUBLIC_FIELDS = [
+  'id', 'type', 'slug', 'track', 'title', 'abstract', 'session', 'is_shortlisted',
+  'speaker_name', 'speaker_website', 'artifact_type', 'co_speakers',
+  'organizer_name', 'organizer_bio',
+  'co_organizer_name', 'co_organizer_bio',
+  'host3_name', 'host3_bio',
+  'host4_name', 'host4_bio',
+  'host5_name', 'host5_bio',
+  'audience', 'takeaways', 'activities', 'max_participants',
+  'created_at', 'scheduled_date', 'scheduled_time_utc', 'scheduled_end_time_utc',
+  'registration_url', 'schedule_track',
+  'comment_count', 'workshop_sessions',
+];
+
+// Withheld from the public payload; released to authenticated members only.
+const MEMBER_FIELDS = ['score', 'voter_count', 'total_votes'];
+
+function normalize(v) {
+  return (v || '').trim().toLowerCase();
+}
+
+// Matches the ownership test used by PATCH /api/symposium/proposals/:id
+function isOwner(proposal, email) {
+  const e = normalize(email);
+  if (!e) return false;
+  return normalize(proposal.speaker_email) === e || normalize(proposal.organizer_email) === e;
+}
+
+function publicView(proposal, { includeVotes = false, viewerEmail = null } = {}) {
+  const out = {};
+  for (const field of PUBLIC_FIELDS) {
+    if (proposal[field] !== undefined) out[field] = proposal[field];
+  }
+  if (includeVotes) {
+    for (const field of MEMBER_FIELDS) out[field] = proposal[field];
+  }
+  if (viewerEmail) out.is_owner = isOwner(proposal, viewerEmail);
+  return out;
+}
 
 export async function onRequestGet({ request, env }) {
   const email = await getSession(request, env);
@@ -40,15 +87,18 @@ export async function onRequestGet({ request, env }) {
     if (p.type === 'workshop') p.workshop_sessions = sessionsByProposal[p.id] || [];
   });
 
+  const rows = proposals || [];
+  const project = opts => rows.map(p => publicView(p, opts));
+
   // Public response when not authenticated
-  if (!email) return Response.json({ proposals: proposals || [] });
+  if (!email) return Response.json({ proposals: project() });
 
   const member = await env.DB.prepare(
     'SELECT tier, is_admin, is_early_voter FROM members WHERE email = ? AND is_public = 1'
   ).bind(email).first();
 
   // Unknown/non-member session: still return proposals publicly
-  if (!member) return Response.json({ proposals: proposals || [] });
+  if (!member) return Response.json({ proposals: project() });
 
   // Authenticated member: include their vote allocations and budget
   const { results: myVotes } = await env.DB.prepare(
@@ -63,7 +113,7 @@ export async function onRequestGet({ request, env }) {
   });
 
   return Response.json({
-    proposals: proposals || [],
+    proposals: project({ includeVotes: true, viewerEmail: email }),
     my_votes: myVoteMap,
     my_total: myTotal,
     budget: 55,

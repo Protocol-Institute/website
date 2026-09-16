@@ -1,5 +1,6 @@
-// GET   /api/symposium/proposals/:id — public, returns full proposal record
-//       (including its workshop_sessions, if any)
+// GET   /api/symposium/proposals/:id — public, returns the proposal record
+//       (including its workshop_sessions, if any). Contact emails and internal
+//       notes are returned only to an admin or to the proposal's own owner.
 // PATCH /api/symposium/proposals/:id — owners: title+abstract only; admins: all fields
 
 import { getSession } from '../../../_shared/session.js';
@@ -27,7 +28,18 @@ async function resolve(request, env, id) {
   return { email, proposal, member, isAdmin: !!member.is_admin };
 }
 
-export async function onRequestGet({ env, params }) {
+// Columns withheld from callers who are neither an admin nor the proposal's owner.
+// `comments` is the submitter's private note to the organizers, not public copy.
+const PRIVATE_FIELDS = [
+  'speaker_email', 'organizer_email', 'co_organizer_email',
+  'host3_email', 'host4_email', 'host5_email', 'comments',
+];
+
+function normalize(v) {
+  return (v || '').trim().toLowerCase();
+}
+
+export async function onRequestGet({ request, env, params }) {
   const id = parseInt(params.id);
   if (!id) return Response.json({ error: 'Invalid ID' }, { status: 400 });
 
@@ -39,6 +51,23 @@ export async function onRequestGet({ env, params }) {
       'SELECT seq, date, start_time, end_time, note FROM symposium_workshop_sessions WHERE proposal_id = ? ORDER BY seq ASC'
     ).bind(id).all();
     proposal.workshop_sessions = results || [];
+  }
+
+  // The edit form (admin-gated) needs the full record to prefill; nobody else does.
+  const email = await getSession(request, env);
+  let privileged = false;
+  if (email) {
+    const member = await env.DB.prepare(
+      'SELECT is_admin FROM members WHERE email = ?'
+    ).bind(email).first();
+    const isOwner = normalize(proposal.speaker_email) === normalize(email)
+                 || normalize(proposal.organizer_email) === normalize(email);
+    proposal.is_owner = !!(member && isOwner);
+    privileged = !!(member && (member.is_admin || isOwner));
+  }
+
+  if (!privileged) {
+    for (const field of PRIVATE_FIELDS) delete proposal[field];
   }
 
   return Response.json({ proposal });

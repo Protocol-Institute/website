@@ -639,8 +639,7 @@
       }
     }
 
-    const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-    const isOwner    = !isAdmin && memberEmail && memberEmail === ownerEmail;
+    const isOwner    = !isAdmin && !!p.is_owner;
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
     const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : (isTrack2 ? 'proposal-card--track2' : '');
 

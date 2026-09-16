@@ -3,12 +3,18 @@
 
 import { getSession } from '../../../_shared/session.js';
 
-export async function onRequestGet({ params, env }) {
+export async function onRequestGet({ request, params, env }) {
   const session = await env.DB.prepare(
     'SELECT slug, name, owner_email, date, start_time, end_time, description, agenda FROM symposium_sessions WHERE slug = ?'
   ).bind(params.slug).first();
   if (!session) return Response.json({ error: 'Not found' }, { status: 404 });
-  return Response.json({ session });
+
+  // Session pages are public, so the host's address never goes out on the wire —
+  // the page only needs to know whether the current viewer is that host.
+  const { owner_email, ...rest } = session;
+  const viewer = (await getSession(request, env) || '').trim().toLowerCase();
+  rest.is_owner = !!viewer && viewer === (owner_email || '').trim().toLowerCase();
+  return Response.json({ session: rest });
 }
 
 export async function onRequestPatch({ request, params, env }) {
