@@ -172,7 +172,7 @@
       if (allFilled) document.getElementById('draft-banner').style.display = 'none';
 
       // Show edit bar for owner or admin
-      const isOwner = sess.owner_email && memberEmail === sess.owner_email.toLowerCase();
+      const isOwner = !!sess.is_owner;
       if (isAdmin || isOwner) document.getElementById('session-edit-bar').style.display = '';
 
       const data = proposalsData;
@@ -198,8 +198,7 @@
       });
 
       list.innerHTML = proposals.map(p => {
-        const ownerEmail = (p.speaker_email || p.organizer_email || '').toLowerCase();
-        const isOwner = !isAdmin && memberEmail && memberEmail === ownerEmail;
+        const isOwner = !isAdmin && !!p.is_owner;
         const key = p.slug || ('p' + p.id);
         return `
         <div class="proposal-card">
