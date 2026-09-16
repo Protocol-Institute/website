@@ -58,9 +58,32 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 6 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 7 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">September 3, 2026</div>
+  <div class="meeting-title"><a href="/sigs/drg/2026-09-03-stigmergy-in-robotics">Stigmergy in Robotics</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Stigmergy as a coordination mechanism in distributed robotics</span><span class="meeting-topic">Robots as protocol citizens</span><span class="meeting-topic">Workshop on robot autonomy and decentralized systems</span></div>
+  <p class="meeting-participants">Participants: anurajenp, rafa_0x</p>
+  <p class="meeting-summary">The group did a round-robin of reactions to a swarm-robotics paper, praising it as &quot;really cool&quot; while probing its limitations (an engineered/constrained environment, and a claim about automated control software that may only hold for simple finite-state machines). Discussion evolved into a generative brainstorm about how to apply the paper's ideas to an upcoming symposium/workshop, coalescing around Will's coined term &quot;ferrabyte&quot; (a digital pheromone). The session closed with logistics about the hands-on robot-kit workshop and a possible physical maze experiment in Berlin.</p>
+  <ul class="meeting-insights">
+    <li>**Maier — critique of the experiment:** Two shortcomings. (1) The paper ignores robots *changing* the environment (e.g., moving LEGO bricks), which he finds more interesting; this omission is what forces the engineered, constrained UV/photo-floor setup. (2) The &quot;computers write control software better than humans&quot; conclusion is overstated — what they optimized was a small-state **finite state machine**, which computers optimize easily; this approach likely wouldn't scale to more open control (e.g., using LLMs), and suits many-simple-robot swarms more than fewer sophisticated robots.</li>
+    <li>**Maier — layers of protocol:** Robots must first agree on *what counts as a marking* (recognition), then agree on *what each marking means* (semantics), and only then tackle a third layer: distributed algorithms for coordinated action. Non-engineered, heterogeneous environments make defining and accurately interpreting environmental changes much harder.</li>
+    <li>**rafa — biological/analog framing:** Recommended the book *Vehicles* by Valentino Braitenberg (short, ~140 pages, read five times), about simple sensor-driven vehicles that appear &quot;alive&quot; in aggregate. Proposed the need for a **global robot-interaction protocol** analogous to TCP/IP packet handling, and asked what an appropriate &quot;stigmergic&quot; (stigmatizing, per transcript) protocol looks like in the real world. Suggested pheromones might live on a **digital map overlay** rather than physically.</li>
+    <li>**rafa — deeper questions:** Do pheromones live on the map itself or on a *mapping of the map* (e.g., a blockchain-hosted coordinate system, akin to but more specific than what3words)? Digital maps also degrade/diverge locally over time like physical ones. Also floated that **one robot might itself be a swarm of agents** (some agents acting like the robot's &quot;organs&quot;), so a robot may not evolve to be a monolithic agent.</li>
+    <li>**shreeram:** Skeptical of the sweeping claim that &quot;Habanero&quot; beats humans in all cases — a determined human might still win. Noted the method is constrained to a fixed set of software modules; unclear from the paper exactly what those modules are and how they're grouped per task. Found it striking that such a constrained setup still yields good outcomes. Later raised teleoperation over wireless (e.g., a mining robot on an asteroid) where data/power is limited.</li>
+    <li>**Spencer:** Interested in applying the ideas to the symposium. Suggested a rectangular built environment; robots could come **pre-wired with a shared protocol (like instinct in ants)** rather than negotiating one. Proposed a sliding weight too heavy for one robot but movable by two+ (a way to let robots change their environment, addressing Maier's point). For distributed/remote robots, aim for near-identical environments where agents navigate to the same pose and measure how closely different algorithms converge. Later proposed **battery life as an analog of an ant's lifetime**: send consecutive bots into a maze with limited time to leave &quot;ferrabyte breadcrumbs,&quot; so later bots navigate faster; test 1 vs 2 vs 3 bots and randomized time limits.</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://yakrobot.com/robots-as-protocol-citizens/#robot" target="_blank" rel="noopener noreferrer">yakrobot.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1544666833926357104" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">August 20, 2026</div>
   <div class="meeting-title"><a href="/sigs/drg/2026-08-20-drg-06-anthropic-robotics-research-visual-perception-to">DRG#06: Anthropic Robotics Research - Visual Perception Tools for Teleoperation</a></div>
