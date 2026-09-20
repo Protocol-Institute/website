@@ -24,3 +24,8 @@ assets/**/*.jpg
 assets/**/*.jpeg
 assets/**/*.webp
 backups/
+
+# Brochure generator: font cache and the intermediate HTML it renders from.
+# The PDF itself is covered by *.pdf above; publish it to R2, not git.
+.brochure-cache/
+symposium-2026-program.html

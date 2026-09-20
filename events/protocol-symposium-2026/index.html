@@ -172,6 +172,8 @@
       border-bottom:2px solid transparent; margin-bottom:-2px; }
     .parallel-tab.active { color:#2A6B6B; border-bottom-color:#2A6B6B; }
     .parallel-panel { display:none; } .parallel-panel.active { display:block; }
+    .order-note { font-size:0.8rem; color:#2A6B6B; margin:0 0 0.9rem;
+      padding:0.5rem 0.75rem; background:#FAFAF7; border-left:2px solid #2A6B6B; }
   </style>
 </head>
 <body>
@@ -347,7 +349,10 @@
     const select = document.getElementById('session-select');
     (sessionsData.sessions || []).forEach(function (s) {
       SESSION_SLUGS[s.name] = s.slug;
-      if (s.date) SESSION_BLOCKS[s.name] = { date: s.date, start_time: s.start_time, end_time: s.end_time };
+      if (s.date) SESSION_BLOCKS[s.name] = {
+        date: s.date, start_time: s.start_time, end_time: s.end_time,
+        running_order_note: s.running_order_note || ''
+      };
       const opt = document.createElement('option');
       opt.value = s.name;
       opt.textContent = s.name;
@@ -413,13 +418,17 @@
     const range = (block.start_time && block.end_time) ? `${esc(block.start_time)}–${esc(block.end_time)}` : '';
     const local = block.date ? localLabel(block.date, block.start_time, block.end_time) : '';
     const blockId = 'par-' + (sessionSlug || p.session.replace(/\W+/g, '-').toLowerCase());
+    // Sessions whose per-talk times only fill the block; the host sets the real
+    // running order on the day (symposium_sessions.running_order_note, mig 036).
+    const orderNote = block.running_order_note
+      ? `<p class="order-note">${esc(block.running_order_note)}</p>` : '';
     return `<div class="parallel-block" id="${blockId}">
       <div class="parallel-block-time">${dayHeaderLabel(block.date)} &middot; ${range} UTC <span class="local-time">(${esc(local)})</span> &mdash; two parallel tracks</div>
       <div class="parallel-tabs">
         <button class="parallel-tab active" data-target="${blockId}-a">${esc(p.session)}</button>
         <button class="parallel-tab" data-target="${blockId}-b">Track II</button>
       </div>
-      <div class="parallel-panel active" id="${blockId}-a">${p.mainItems.map(renderCard).join('')}</div>
+      <div class="parallel-panel active" id="${blockId}-a">${orderNote}${p.mainItems.map(renderCard).join('')}</div>
       <div class="parallel-panel" id="${blockId}-b">${p.track2Items.map(item => renderCard(item, true)).join('')}</div>
     </div>
     <div class="track-divider">Two-track portion ends</div>`;
