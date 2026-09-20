@@ -217,6 +217,13 @@ link never changes. **Nothing regenerates the PDF automatically** — a schedule
 change in D1 updates the site instantly and leaves the PDF stale until someone
 reruns those two commands.
 
+A replaced asset takes up to an hour to appear, because `functions/assets/[[path]].js`
+serves `max-age=3600, stale-while-revalidate=86400`. It used to send
+`max-age=31536000, immutable`, which froze any overwritten key for a year — the
+first republish of this PDF hit exactly that, with R2 holding the new bytes
+while the edge served the old ones. The link carries a `?v=` token to escape
+that poisoned entry; bump it only when a republish must appear immediately.
+
 Two things in here are easy to break by accident:
 - **Cover art is re-encoded to JPEG at build time.** WeasyPrint embeds WebP
   losslessly, and the New Nature artwork is high-noise; skipping the re-encode
