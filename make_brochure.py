@@ -40,6 +40,9 @@ DEFAULT_OUT = ROOT / "symposium-2026-program.pdf"
 # from the live site and cached.
 COVER_ART_URL = "https://protocol-institute.org/assets/nn_dates_banner.webp"
 
+# Printed on the cover: a PDF is a snapshot, the page is the live schedule.
+LIVE_SCHEDULE_URL = "protocol-institute.org/events/protocol-symposium-2026"
+
 INK = "#1A1A1A"
 TEAL = "#2A6B6B"
 MUTED = "#8A8A8A"
@@ -248,6 +251,12 @@ def byline(p):
         return ""
     if len(names) == 1:
         return names[0]
+    # A single field often holds several names ("Seth Frey, Joseph DeSimone"),
+    # and those are kept whole on purpose (see people()). Joining the last one
+    # with "and" then reads as "X and Y, Z, W", so once any comma is in play
+    # fall back to a plain comma list.
+    if any("," in n for n in names):
+        return ", ".join(names)
     return ", ".join(names[:-1]) + " and " + names[-1]
 
 
@@ -366,11 +375,12 @@ def render_cover(art_uri):
     <h1 class="cover-title">Programme</h1>
     <p class="cover-sub">Workshops, talks and special sessions</p>
     <div class="cover-rule"></div>
-    <p class="cover-foot">All times are UTC, with local conversions
-       &middot; protocol-institute.org</p>
+    <p class="cover-foot">All times are UTC, with local conversions.</p>
+    <p class="cover-generated">Generated on %s. Please see the live schedule at
+       <span class="url">%s</span> for the latest changes.</p>
   </div>
 </section>
-""" % art
+""" % (art, datetime.now().strftime("%-d %B %Y"), LIVE_SCHEDULE_URL)
 
 
 def render_note(days, workshops):
@@ -465,8 +475,13 @@ def render_glance(days):
 
 def render_entry(iso, p):
     label = kind_label(p)
+    body = paras(p["abstract"])
+    # With no abstract there is nothing inside the entry for the head to bond
+    # to, and `break-after: avoid` would instead bond it to the *next* entry,
+    # dragging both to a fresh page. Opt such entries out of that rule.
+    bare = "" if body else " entry--bare"
     return """
-<article class="entry">
+<article class="entry%s">
   <div class="entry-when">%s</div>
   <div class="entry-body">
     <div class="entry-head">
@@ -478,13 +493,14 @@ def render_entry(iso, p):
   </div>
 </article>
 """ % (
+        bare,
         ('<div class="t-utc">time TBA</div>' if p.get("_tba")
          else time_stack(iso, p["scheduled_time_utc"], p["scheduled_end_time_utc"])),
         esc(p["title"]),
         esc(byline(p)) or "&nbsp;",
         ('<p class="entry-meta"><span class="kind">%s</span></p>' % esc(label))
         if label else "",
-        paras(p["abstract"]),
+        body,
     )
 
 
@@ -659,8 +675,12 @@ strong { font-weight: 700; }
 .cover-sub { font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 15pt; color: #555; margin: 0 0 8mm; }
 .cover-rule { border-top: 2pt solid %(teal)s; margin: 0 0 4mm; width: 40mm; }
-.cover-foot { font-size: 8.6pt; color: %(muted)s; margin: 0;
+.cover-foot { font-size: 8.6pt; color: %(muted)s; margin: 0 0 2mm;
   letter-spacing: 0.03em; }
+.cover-generated { font-size: 8.2pt; color: %(muted)s; margin: 0;
+  max-width: 128mm; line-height: 1.45; }
+/* The URL contains hyphens, so an unguarded break reads as hyphenation. */
+.cover-generated .url { white-space: nowrap; }
 
 /* ── section furniture ── */
 .note, .glance, .workshops, .program { break-before: page; }
@@ -712,12 +732,18 @@ strong { font-weight: 700; }
   text-transform: uppercase; color: %(muted)s; border-bottom: 1pt solid %(teal)s; }
 
 /* ── programme entries ── */
-.entry { padding: 3mm 0 3mm 31mm; position: relative;
+/* The time stack is absolutely positioned so an entry can fragment across a
+   page without dragging it along, which means it contributes no height. An
+   entry with little or no body text would otherwise close its bottom rule
+   through the middle of its own timezone lines — hence the min-height, which
+   is the stack's height: one bold line plus four zone lines. */
+.entry { padding: 3mm 0 3mm 31mm; position: relative; min-height: 20mm;
   border-bottom: 0.5pt solid #EFEDE9; }
 .entry-when { position: absolute; left: 0; width: 28mm; padding-top: 0.8mm; }
 /* Keep a title with at least the start of what follows it: the head block is
    never split, and never left stranded at the foot of a page. */
 .entry-head { break-inside: avoid; break-after: avoid; }
+.entry--bare .entry-head { break-after: auto; }
 .entry-title { font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 13.5pt; font-weight: 600; line-height: 1.22; margin: 0 0 1mm; }
 .entry-by { font-size: 9pt; color: %(muted)s; margin: 0 0 1.5mm; }
