@@ -412,6 +412,14 @@
     return result;
   }
 
+  // TRACK NUMBERING. schedule_track === 'ii' in D1 marks the *general* talks
+  // scheduled opposite a curated special session; the session's own talks carry
+  // no track value. Published numbering is the reverse — general talks are
+  // Track I, the special session is Track II — so the swap is applied here at
+  // render time. The stored values are deliberately not flipped: buildTrack2Map
+  // finds a session *through* its 'ii' items, so flipping them would break the
+  // pairing. Hence p.track2Items holds Track I and p.mainItems holds Track II.
+  // make_brochure.py applies the identical swap for the PDF.
   function renderParallelBlock(p) {
     const sessionSlug = SESSION_SLUGS[p.session];
     const block = SESSION_BLOCKS[p.session] || {};
@@ -425,11 +433,11 @@
     return `<div class="parallel-block" id="${blockId}">
       <div class="parallel-block-time">${dayHeaderLabel(block.date)} &middot; ${range} UTC <span class="local-time">(${esc(local)})</span> &mdash; two parallel tracks</div>
       <div class="parallel-tabs">
-        <button class="parallel-tab active" data-target="${blockId}-a">${esc(p.session)}</button>
-        <button class="parallel-tab" data-target="${blockId}-b">Track II</button>
+        <button class="parallel-tab active" data-target="${blockId}-a">Track I</button>
+        <button class="parallel-tab" data-target="${blockId}-b">Track II &middot; ${esc(p.session)}</button>
       </div>
-      <div class="parallel-panel active" id="${blockId}-a">${orderNote}${p.mainItems.map(renderCard).join('')}</div>
-      <div class="parallel-panel" id="${blockId}-b">${p.track2Items.map(item => renderCard(item, true)).join('')}</div>
+      <div class="parallel-panel active" id="${blockId}-a">${p.track2Items.map(item => renderCard(item, true)).join('')}</div>
+      <div class="parallel-panel" id="${blockId}-b">${orderNote}${p.mainItems.map(renderCard).join('')}</div>
     </div>
     <div class="track-divider">Two-track portion ends</div>`;
   }
@@ -655,7 +663,10 @@
     }
   }
 
-  function renderCard(p, isTrack2) {
+  // isParallelGeneral: a general talk running opposite a special session.
+  // Published as Track I (see renderParallelBlock); the CSS class keeps its
+  // original --track2 name, which is only a colour hook.
+  function renderCard(p, isParallelGeneral) {
     const isWorkshop = p.type === 'workshop';
     const speaker = isWorkshop
       ? [p.organizer_name, p.co_organizer_name, p.host3_name, p.host4_name, p.host5_name]
@@ -697,7 +708,7 @@
 
     const isOwner    = !isAdmin && !!p.is_owner;
     store[p.id] = { title: p.title, abstract: p.abstract || '' };
-    const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : (isTrack2 ? 'proposal-card--track2' : '');
+    const colorClass = sessionSlug ? 'proposal-card--' + sessionSlug : (isParallelGeneral ? 'proposal-card--track2' : '');
 
     const anchorIcon =
       `<a class="anchor-link" href="#p-${p.id}" onclick="copyLink(${p.id},event)" title="Copy link to this item" aria-label="Copy link">` +

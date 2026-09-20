@@ -27,12 +27,18 @@ import re
 import subprocess
 import sys
 from collections import OrderedDict
-from datetime import date as _date
+from datetime import date as _date, datetime
+from zoneinfo import ZoneInfo
 
 DB = "pi-members"
 ROOT = pathlib.Path(__file__).resolve().parent
 CACHE = ROOT / ".brochure-cache"
 DEFAULT_OUT = ROOT / "symposium-2026-program.pdf"
+
+# The New Nature key art, which already carries the symposium name and dates.
+# Not in git (assets/*.png is gitignored, binaries live in R2), so it is pulled
+# from the live site and cached.
+COVER_ART_URL = "https://protocol-institute.org/assets/nn_dates_banner.webp"
 
 INK = "#1A1A1A"
 TEAL = "#2A6B6B"
@@ -42,6 +48,17 @@ CREAM = "#FAFAF7"
 
 SYMPOSIUM_DAYS = ["2026-09-23", "2026-09-24", "2026-09-25"]
 WORKSHOP_DAYS = ["2026-09-21", "2026-09-22"]
+
+# Reference timezones shown under every UTC time. Label is the zone's own
+# abbreviation for that date (so CEST/CET and PDT/PST stay correct if the
+# schedule ever moves across a DST boundary); Kuala Lumpur reports "+08", which
+# is not a useful label, so it is overridden.
+ZONES = [
+    ("Europe/Berlin", None),
+    ("Asia/Kuala_Lumpur", "MYT"),
+    ("America/Los_Angeles", None),
+    ("America/New_York", None),
+]
 
 # Values speakers type into an optional field to mean "nobody"; they must not
 # reach a byline.
@@ -87,7 +104,7 @@ def load():
     return proposals, sessions, wsessions
 
 
-# ── fonts ─────────────────────────────────────────────────────────────
+# ── assets ────────────────────────────────────────────────────────────
 
 FONT_QUERY = ("https://fonts.googleapis.com/css?family="
               "Cormorant+Garamond:400,600,700,400italic|DM+Sans:400,500,700")
@@ -117,6 +134,26 @@ def font_css():
     return css
 
 
+def cover_art():
+    """Local URI for the cover artwork, downloading it once into the cache."""
+    CACHE.mkdir(exist_ok=True)
+    src = CACHE / COVER_ART_URL.rsplit("/", 1)[-1]
+    if not src.exists():
+        proc = subprocess.run(["curl", "-sL", "-o", str(src), COVER_ART_URL])
+        if proc.returncode != 0 or not src.exists() or src.stat().st_size < 1000:
+            print("! could not fetch cover art; cover will be type-only",
+                  file=sys.stderr)
+            return ""
+    # Re-encode as JPEG: WeasyPrint embeds a WebP losslessly and the artwork is
+    # high-noise, which pushed the finished PDF past 2.5 MB for one image.
+    jpg = src.with_suffix(".jpg")
+    if not jpg.exists():
+        from PIL import Image
+        Image.open(src).convert("RGB").save(
+            jpg, "JPEG", quality=85, optimize=True, progressive=True)
+    return jpg.as_uri()
+
+
 # ── formatting helpers ────────────────────────────────────────────────
 
 def esc(value):
@@ -142,6 +179,30 @@ def time_range(start, end):
     if start and end:
         return "%s&ndash;%s" % (start, end)
     return start or "TBA"
+
+
+def time_stack(iso_date, start, end=None, show_range=True):
+    """A UTC time with the four reference timezones stacked beneath it.
+
+    The UTC line carries the full range where an end time is known, since that
+    is what gives the duration; the converted lines show start times only, so
+    the stack stays narrow enough for a margin column.
+    """
+    if not start or not iso_date:
+        return '<div class="t-utc">time TBA</div>'
+    y, m, d = (int(x) for x in iso_date.split("-"))
+    hour, minute = (int(x) for x in hhmm(start).split(":"))
+    base = datetime(y, m, d, hour, minute, tzinfo=ZoneInfo("UTC"))
+
+    head = time_range(start, end) if (show_range and end) else hhmm(start)
+    rows = ['<div class="t-utc">%s UTC</div>' % head]
+    for zone, override in ZONES:
+        local = base.astimezone(ZoneInfo(zone))
+        shift = (local.date() - base.date()).days
+        mark = ' <span class="t-day">(%+d)</span>' % shift if shift else ""
+        rows.append('<div class="t-zone">%s %s%s</div>'
+                    % (local.strftime("%H:%M"), esc(override or local.tzname()), mark))
+    return "".join(rows)
 
 
 def day_label(iso, short=False):
@@ -186,14 +247,27 @@ def kind_label(p):
 
 
 # ── schedule assembly ─────────────────────────────────────────────────
+#
+# TRACK NUMBERING. In D1, schedule_track = 'ii' marks the *general* talks that
+# run parallel to a curated special session; the special session's own talks
+# carry no track value. The published numbering is the other way round —
+# general talks are Track I, the special session is Track II — so the mapping
+# is applied here at render time rather than by rewriting the column, because
+# the page's pairing logic looks up a special session *through* its 'ii' items
+# and flipping the stored values would break that lookup. The website applies
+# the same swap in renderParallelBlock().
+
+def is_parallel_general(p):
+    """True for a general talk scheduled against a special session (Track I)."""
+    return p.get("schedule_track") == "ii"
+
 
 def build_days(proposals, sessions):
-    """Group the symposium talks into per-day, per-time-slot blocks.
+    """Group symposium talks into per-day segments.
 
-    A handful of talks belong to a curated special session that has its own
-    date and time but whose individual talks have not been given times yet;
-    those are attached to their session's slot and shown as TBA, so the
-    brochure stays correct before and after those times are assigned.
+    Each day becomes an ordered list of segments: a "single" segment is one
+    time slot running one track; a "dual" segment is a contiguous run of slots
+    where a special session and a set of general talks run in parallel.
     """
     by_name = {s["name"]: s for s in sessions}
     scheduled, unplaced = [], []
@@ -205,72 +279,103 @@ def build_days(proposals, sessions):
         elif p["session"] in by_name and by_name[p["session"]]["date"]:
             unplaced.append(p)
 
-    days = OrderedDict()
-    for iso in SYMPOSIUM_DAYS:
-        days[iso] = OrderedDict()
+    slots_by_day = OrderedDict((iso, OrderedDict()) for iso in SYMPOSIUM_DAYS)
 
     def slot_for(iso, start):
-        if iso not in days:
-            days[iso] = OrderedDict()
-        return days[iso].setdefault(start, {"i": [], "ii": []})
+        if iso not in slots_by_day:
+            slots_by_day[iso] = OrderedDict()
+        return slots_by_day[iso].setdefault(start, [])
 
     for p in scheduled:
-        slot = slot_for(p["scheduled_date"], hhmm(p["scheduled_time_utc"]))
-        slot["ii" if p["schedule_track"] == "ii" else "i"].append(p)
-
+        slot_for(p["scheduled_date"], hhmm(p["scheduled_time_utc"])).append(p)
+    # A talk inside a special session that has no time of its own yet still
+    # belongs to that session's block; show it there rather than dropping it.
     for p in unplaced:
         s = by_name[p["session"]]
-        slot = slot_for(s["date"], hhmm(s["start_time"]))
-        p = dict(p, _tba=True)
-        slot["i"].append(p)
+        slot_for(s["date"], hhmm(s["start_time"])).append(dict(p, _tba=True))
 
-    for iso in list(days):
-        days[iso] = OrderedDict(sorted(days[iso].items()))
+    days = OrderedDict()
+    for iso in SYMPOSIUM_DAYS:
+        slots = sorted(slots_by_day.get(iso, {}).items())
+        segments, run = [], []
+
+        def flush_run():
+            if not run:
+                return
+            track1, track2 = [], []
+            for _, items in run:
+                for p in items:
+                    (track1 if is_parallel_general(p) else track2).append(p)
+            key = lambda p: (hhmm(p["scheduled_time_utc"]) or "99:99", p["id"])
+            track1.sort(key=key)
+            track2.sort(key=key)
+            ends = [hhmm(p["scheduled_end_time_utc"]) for p in track1 + track2
+                    if p["scheduled_end_time_utc"]]
+            session = next((by_name[p["session"]] for p in track2
+                            if p["session"] in by_name), None)
+            segments.append({
+                "kind": "dual",
+                "start": run[0][0],
+                "end": max(ends) if ends else "",
+                "session": session,
+                "track1": track1,
+                "track2": track2,
+            })
+            run.clear()
+
+        for start, items in slots:
+            if any(is_parallel_general(p) for p in items):
+                run.append((start, items))
+                continue
+            flush_run()
+            segments.append({"kind": "single", "start": start, "items": items})
+        flush_run()
+        days[iso] = segments
     return days, unplaced
 
 
-def session_banner_points(days, sessions):
-    """First (date, slot) at which each special session appears."""
-    by_name = {s["name"]: s for s in sessions}
-    seen, points = set(), {}
-    for iso, slots in days.items():
-        for start, slot in slots.items():
-            for p in slot["i"] + slot["ii"]:
-                name = p["session"]
-                if name in by_name and name not in seen:
-                    seen.add(name)
-                    points[(iso, start)] = by_name[name]
-    return points
+def talk_count(days):
+    total = 0
+    for segments in days.values():
+        for seg in segments:
+            total += (len(seg["items"]) if seg["kind"] == "single"
+                      else len(seg["track1"]) + len(seg["track2"]))
+    return total
 
 
 # ── HTML rendering ────────────────────────────────────────────────────
 
-def render_cover():
+def render_cover(art_uri):
+    art = ('<div class="cover-art"><img src="%s" alt=""></div>' % art_uri
+           if art_uri else "")
     return """
 <section class="cover">
-  <div class="cover-rule"></div>
-  <p class="cover-org">Protocol Institute</p>
-  <h1 class="cover-title">Protocol&nbsp;Symposium<br>2026</h1>
-  <p class="cover-dates">21&ndash;25 September 2026 &middot; Online</p>
-  <p class="cover-sub">Programme of workshops, talks and special sessions</p>
-  <div class="cover-rule"></div>
-  <p class="cover-foot">All times are UTC &middot; protocol-institute.org</p>
+  %s
+  <div class="cover-text">
+    <p class="cover-org">Protocol Institute</p>
+    <h1 class="cover-title">Programme</h1>
+    <p class="cover-sub">Workshops, talks and special sessions</p>
+    <div class="cover-rule"></div>
+    <p class="cover-foot">All times are UTC, with local conversions
+       &middot; protocol-institute.org</p>
+  </div>
 </section>
-"""
+""" % art
 
 
 def render_note(days, workshops):
-    talks = sum(len(s["i"]) + len(s["ii"]) for d in days.values() for s in d.values())
-    two_track = [iso for iso, slots in days.items()
-                 if any(s["ii"] for s in slots.values())]
-    two_track_note = ""
-    if two_track:
-        two_track_note = (
-            "<p>On %s the programme runs on <strong>two parallel tracks</strong>. "
-            "Track&nbsp;I carries the curated special session of that block; "
-            "Track&nbsp;II runs general talks alongside it. Both are listed "
-            "against the same time slot throughout.</p>"
-            % " and ".join(day_label(iso) for iso in two_track)
+    dual_days = [iso for iso, segs in days.items()
+                 if any(s["kind"] == "dual" for s in segs)]
+    dual_note = ""
+    if dual_days:
+        dual_note = (
+            "<p>On %s part of the programme runs on <strong>two parallel "
+            "tracks</strong>. Track&nbsp;I carries general talks; "
+            "Track&nbsp;II is the curated special session of that block. In "
+            "the full programme each track is printed as a continuous run, "
+            "with a page reference at the top of each so you can jump to the "
+            "other one.</p>"
+            % " and ".join(day_label(iso) for iso in dual_days)
         )
     return """
 <section class="note">
@@ -282,113 +387,147 @@ def render_note(days, workshops):
      <strong>%(nt)d talks and sessions</strong>. It is generated from the live
      schedule; the authoritative and most current version is always the one on
      the web at <span class="url">protocol-institute.org/events/protocol-symposium-2026</span>.</p>
-  %(two)s
-  <p class="tz"><strong>All times in this programme are UTC.</strong> Convert to
-     your own timezone before planning your day &mdash; the web programme shows
-     local times automatically.</p>
+  %(dual)s
+  <p class="tz"><strong>Times are given in UTC first</strong>, with
+     Central European, Malaysia, US Pacific and US Eastern times stacked
+     beneath. A <strong>(+1)</strong> or <strong>(&minus;1)</strong> marks a
+     conversion that lands on the next or previous day.</p>
 </section>
 """ % {
         "wdays": " and ".join(day_label(d) for d in WORKSHOP_DAYS),
         "sdays": ", ".join(day_label(d) for d in SYMPOSIUM_DAYS[:-1])
                  + " and " + day_label(SYMPOSIUM_DAYS[-1]),
         "nw": len(workshops),
-        "nt": talks,
-        "two": two_track_note,
+        "nt": talk_count(days),
+        "dual": dual_note,
     }
 
 
+def glance_item(p):
+    tba = ' <span class="tba">time TBA</span>' if p.get("_tba") else ""
+    return ('<div class="g-item"><span class="g-title">%s</span>%s'
+            '<span class="g-by">%s</span></div>'
+            % (esc(p["title"]), tba, esc(byline(p))))
+
+
 def render_glance(days):
-    out = ['<section class="glance"><h2 class="section-head">Programme at a glance</h2>']
-    for iso, slots in days.items():
-        if not slots:
+    out = ['<section class="glance"><h2 class="section-head">'
+           'Programme at a glance</h2>']
+    for iso, segments in days.items():
+        if not segments:
             continue
-        two_track = any(slot["ii"] for slot in slots.values())
         out.append('<div class="glance-day">')
         out.append('<h3 class="day-head">%s</h3>' % esc(day_label(iso)))
-        out.append('<table class="glance-table">')
-        if two_track:
-            out.append('<thead><tr><th class="c-time">UTC</th>'
-                       '<th>Track I</th><th>Track II</th></tr></thead>')
-        out.append("<tbody>")
-        for start, slot in slots.items():
-            def cell(items):
-                if not items:
-                    return '<td class="empty">&mdash;</td>'
-                bits = []
-                for p in items:
-                    tba = ' <span class="tba">time TBA</span>' if p.get("_tba") else ""
-                    bits.append(
-                        '<div class="g-item"><span class="g-title">%s</span>%s'
-                        '<span class="g-by">%s</span></div>'
-                        % (esc(p["title"]), tba, esc(byline(p)))
-                    )
-                return "<td>" + "".join(bits) + "</td>"
+        out.append('<table class="glance-table"><tbody>')
+        for seg in segments:
+            if seg["kind"] == "single":
+                out.append(
+                    '<tr><td class="c-time">%s</td><td colspan="2">%s</td></tr>'
+                    % (time_stack(iso, seg["start"], show_range=False),
+                       "".join(glance_item(p) for p in seg["items"]))
+                )
+                continue
 
-            out.append('<tr><td class="c-time">%s</td>%s%s</tr>' % (
-                esc(start), cell(slot["i"]),
-                cell(slot["ii"]) if two_track else "",
-            ))
+            out.append('<tr class="dual-head"><td class="c-time">%s&ndash;%s'
+                       '</td><th>Track I</th><th>Track II%s</th></tr>'
+                       % (esc(seg["start"]), esc(seg["end"]),
+                          (' &middot; ' + esc(seg["session"]["name"]))
+                          if seg["session"] else ""))
+            starts = sorted({hhmm(p["scheduled_time_utc"])
+                             for p in seg["track1"] + seg["track2"]
+                             if p["scheduled_time_utc"]})
+            for start in starts:
+                pick = lambda items: "".join(
+                    glance_item(p) for p in items
+                    if hhmm(p["scheduled_time_utc"]) == start)
+                one, two = pick(seg["track1"]), pick(seg["track2"])
+                out.append('<tr><td class="c-time">%s</td><td>%s</td>'
+                           '<td>%s</td></tr>'
+                           % (time_stack(iso, start, show_range=False),
+                              one or '<span class="empty">&mdash;</span>',
+                              two or '<span class="empty">&mdash;</span>'))
+            out.append('<tr class="dual-end"><td colspan="3">'
+                       'End two-track portion</td></tr>')
         out.append("</tbody></table></div>")
     out.append("</section>")
     return "".join(out)
 
 
-def render_entry(p, track=None):
-    meta = []
-    if track:
-        meta.append('<span class="track-tag">%s</span>' % esc(track))
+def render_entry(iso, p):
     label = kind_label(p)
-    if label:
-        meta.append('<span class="kind">%s</span>' % esc(label))
-    when = ("time TBA" if p.get("_tba")
-            else time_range(p["scheduled_time_utc"], p["scheduled_end_time_utc"]))
     return """
 <article class="entry">
   <div class="entry-when">%s</div>
   <div class="entry-body">
-    <h4 class="entry-title">%s</h4>
-    <p class="entry-by">%s</p>
-    %s
+    <div class="entry-head">
+      <h4 class="entry-title">%s</h4>
+      <p class="entry-by">%s</p>
+      %s
+    </div>
     %s
   </div>
 </article>
 """ % (
-        when,
+        ('<div class="t-utc">time TBA</div>' if p.get("_tba")
+         else time_stack(iso, p["scheduled_time_utc"], p["scheduled_end_time_utc"])),
         esc(p["title"]),
         esc(byline(p)) or "&nbsp;",
-        ('<p class="entry-meta">%s</p>' % " ".join(meta)) if meta else "",
+        ('<p class="entry-meta"><span class="kind">%s</span></p>' % esc(label))
+        if label else "",
         paras(p["abstract"]),
     )
 
 
-def render_program(days, sessions):
-    banners = session_banner_points(days, sessions)
-    out = ['<section class="program"><h2 class="section-head">The programme</h2>']
-    for iso, slots in days.items():
-        if not slots:
+def render_session_banner(s):
+    if not s:
+        return ""
+    return ('<div class="session-banner">'
+            '<p class="session-kicker">Special session &middot; %s&ndash;%s UTC</p>'
+            '<h4 class="session-name">%s</h4>%s%s%s</div>'
+            % (esc(hhmm(s["start_time"])), esc(hhmm(s["end_time"])),
+               esc(s["name"]), paras(s["description"]),
+               ('<p class="session-agenda">%s</p>' % esc(s["agenda"]))
+               if s["agenda"] and s["agenda"] != "TBD" else "",
+               ('<p class="session-order-note">%s</p>'
+                % esc(s["running_order_note"]))
+               if s.get("running_order_note") else ""))
+
+
+def render_program(days):
+    out = ['<section class="program"><h2 class="section-head">'
+           'The programme</h2>']
+    for iso, segments in days.items():
+        if not segments:
             continue
         out.append('<div class="program-day">')
-        out.append('<h3 class="day-head day-head--major">%s</h3>' % esc(day_label(iso)))
-        for start, slot in slots.items():
-            s = banners.get((iso, start))
-            if s:
-                out.append(
-                    '<div class="session-banner">'
-                    '<p class="session-kicker">Special session &middot; %s&ndash;%s UTC</p>'
-                    '<h4 class="session-name">%s</h4>%s%s%s</div>'
-                    % (esc(hhmm(s["start_time"])), esc(hhmm(s["end_time"])),
-                       esc(s["name"]), paras(s["description"]),
-                       ('<p class="session-agenda">%s</p>' % esc(s["agenda"]))
-                       if s["agenda"] and s["agenda"] != "TBD" else "",
-                       ('<p class="session-order-note">%s</p>'
-                        % esc(s["running_order_note"]))
-                       if s.get("running_order_note") else "")
-                )
-            two_track = bool(slot["ii"])
-            for p in slot["i"]:
-                out.append(render_entry(p, "Track I" if two_track else None))
-            for p in slot["ii"]:
-                out.append(render_entry(p, "Track II"))
+        out.append('<h3 class="day-head day-head--major">%s</h3>'
+                   % esc(day_label(iso)))
+        for seg in segments:
+            if seg["kind"] == "single":
+                for p in seg["items"]:
+                    out.append(render_entry(iso, p))
+                continue
+
+            one_id, two_id = "t1-%s" % iso, "t2-%s" % iso
+            out.append('<p class="dual-open">Two parallel tracks &middot; '
+                       '%s&ndash;%s UTC</p>' % (esc(seg["start"]), esc(seg["end"])))
+
+            out.append('<h4 class="track-head" id="%s">Track I</h4>' % one_id)
+            out.append('<p class="xref"><a href="#%s">For Track II, skip to '
+                       'page </a></p>' % two_id)
+            for p in seg["track1"]:
+                out.append(render_entry(iso, p))
+
+            out.append('<h4 class="track-head" id="%s">Track II%s</h4>'
+                       % (two_id, (' &middot; ' + esc(seg["session"]["name"]))
+                          if seg["session"] else ""))
+            out.append('<p class="xref"><a href="#%s">For Track I, skip to '
+                       'page </a></p>' % one_id)
+            out.append(render_session_banner(seg["session"]))
+            for p in seg["track2"]:
+                out.append(render_entry(iso, p))
+
+            out.append('<p class="track-end">End two-track portion.</p>')
         out.append("</div>")
     out.append("</section>")
     return "".join(out)
@@ -411,15 +550,14 @@ def render_workshops(workshops, wsessions):
         rows = by_proposal.get(p["id"], [])
         grid = ""
         if rows:
-            grid = ('<table class="ws-table"><thead><tr><th>Session</th>'
-                    '<th>Date</th><th>Time (UTC)</th></tr></thead><tbody>'
+            grid = ('<table class="ws-table"><tbody>'
                     + "".join(
-                        '<tr><td class="c-seq">%d%s</td><td>%s</td><td>%s</td></tr>'
+                        '<tr><td class="c-seq">Session %d%s</td>'
+                        '<td class="c-wtime">%s</td></tr>'
                         % (r["seq"],
                            (' <span class="ws-note">%s</span>' % esc(r["note"]))
                            if r["note"] else "",
-                           esc(day_label(r["date"], short=True)),
-                           time_range(r["start_time"], r["end_time"]))
+                           time_stack(r["date"], r["start_time"], r["end_time"]))
                         for r in rows)
                     + "</tbody></table>")
 
@@ -437,8 +575,10 @@ def render_workshops(workshops, wsessions):
 
         out.append("""
 <article class="workshop">
-  <h3 class="ws-title">%s</h3>
-  <p class="ws-by">%s</p>
+  <div class="ws-head">
+    <h3 class="ws-title">%s</h3>
+    <p class="ws-by">%s</p>
+  </div>
   %s
   <div class="ws-abstract">%s</div>
   %s
@@ -473,24 +613,21 @@ strong { font-weight: 700; }
 .url { font-variant: all-small-caps; letter-spacing: 0.03em; color: %(teal)s; }
 
 /* ── cover ── */
-.cover {
-  page: cover; height: 297mm; box-sizing: border-box;
-  padding: 38mm 22mm; background: %(cream)s;
-  display: flex; flex-direction: column; justify-content: center;
-}
-.cover-rule { border-top: 2.5pt solid %(teal)s; margin: 0 0 8mm; }
-.cover-rule + .cover-rule, .cover-rule:last-of-type { margin: 8mm 0 6mm; }
-.cover-org { font-family: 'DM Sans', sans-serif; font-size: 11pt;
-  letter-spacing: 0.22em; text-transform: uppercase; color: %(teal)s;
-  margin: 0 0 14mm; }
+.cover { page: cover; height: 297mm; box-sizing: border-box;
+  background: %(cream)s; display: flex; flex-direction: column; }
+.cover-art img { display: block; width: 100%%; }
+.cover-text { flex: 1 1 auto; display: flex; flex-direction: column;
+  justify-content: center; padding: 0 22mm; }
+.cover-org { font-size: 10pt; letter-spacing: 0.22em; text-transform: uppercase;
+  color: %(teal)s; margin: 0 0 6mm; }
 .cover-title { font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 46pt; font-weight: 600; line-height: 1.05; margin: 0 0 9mm;
+  font-size: 42pt; font-weight: 600; line-height: 1; margin: 0 0 4mm;
   letter-spacing: -0.01em; }
-.cover-dates { font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 17pt; color: %(ink)s; margin: 0 0 2mm; }
-.cover-sub { font-size: 10.5pt; color: %(muted)s; margin: 0; }
-.cover-foot { font-size: 9pt; color: %(muted)s; margin: 0;
-  letter-spacing: 0.04em; }
+.cover-sub { font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 15pt; color: #555; margin: 0 0 8mm; }
+.cover-rule { border-top: 2pt solid %(teal)s; margin: 0 0 4mm; width: 40mm; }
+.cover-foot { font-size: 8.6pt; color: %(muted)s; margin: 0;
+  letter-spacing: 0.03em; }
 
 /* ── section furniture ── */
 .note, .glance, .workshops, .program { break-before: page; }
@@ -513,46 +650,69 @@ strong { font-weight: 700; }
 .program-day:first-of-type .day-head--major,
 .glance-day:first-of-type .day-head { margin-top: 2mm; }
 
+/* ── time stacks ── */
+.t-utc { font-size: 8.4pt; font-weight: 700; color: %(teal)s;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.t-zone { font-size: 7.2pt; color: %(muted)s; line-height: 1.45;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+.t-day { color: %(teal)s; }
+
 /* ── at a glance ── */
 .glance-table, .ws-table { width: 100%%; border-collapse: collapse;
   font-size: 8.8pt; }
-.glance-table th, .ws-table th { text-align: left; font-weight: 500;
-  font-size: 7.6pt; letter-spacing: 0.1em; text-transform: uppercase;
-  color: %(muted)s; border-bottom: 1pt solid %(rule)s;
-  padding: 0 3mm 1.5mm 0; }
-.glance-table td, .ws-table td { vertical-align: top;
-  padding: 2mm 3mm 2mm 0; border-bottom: 0.5pt solid #EFEDE9; }
+.glance-table td, .glance-table th, .ws-table td { vertical-align: top;
+  padding: 2.5mm 3mm 2.5mm 0; border-bottom: 0.5pt solid #EFEDE9;
+  text-align: left; }
 .glance-table tr, .ws-table tr { break-inside: avoid; }
-.c-time { white-space: nowrap; font-variant-numeric: tabular-nums;
-  color: %(teal)s; font-weight: 500; width: 16mm; }
-.c-seq { width: 22mm; color: %(muted)s; }
+.c-time { white-space: nowrap; width: 27mm; }
+.c-seq { width: 30mm; color: %(muted)s; }
+.c-wtime { width: 30mm; }
 .g-item + .g-item { margin-top: 2mm; padding-top: 2mm;
   border-top: 0.5pt dotted %(rule)s; }
 .g-title { display: block; font-weight: 500; }
 .g-by { display: block; color: %(muted)s; font-size: 8.2pt; }
 .empty { color: %(rule)s; }
 .tba { font-size: 7.5pt; color: %(teal)s; letter-spacing: 0.06em; }
+.glance-table .dual-head th { font-size: 7.6pt; letter-spacing: 0.1em;
+  text-transform: uppercase; color: %(teal)s; font-weight: 500;
+  border-bottom: 1pt solid %(teal)s; padding-top: 4mm; }
+.glance-table .dual-head .c-time { font-size: 8pt; font-weight: 700;
+  color: %(teal)s; border-bottom: 1pt solid %(teal)s; padding-top: 4mm; }
+.glance-table .dual-end td { font-size: 7.4pt; letter-spacing: 0.1em;
+  text-transform: uppercase; color: %(muted)s; border-bottom: 1pt solid %(teal)s; }
 
 /* ── programme entries ── */
-.entry { padding: 3mm 0 3mm 28mm; position: relative;
+.entry { padding: 3mm 0 3mm 31mm; position: relative;
   border-bottom: 0.5pt solid #EFEDE9; }
-.entry-when { position: absolute; left: 0; width: 24mm; font-size: 8.6pt;
-  color: %(teal)s; font-weight: 500; font-variant-numeric: tabular-nums;
-  padding-top: 0.6mm; }
-.entry-body { }
+.entry-when { position: absolute; left: 0; width: 28mm; padding-top: 0.8mm; }
+/* Keep a title with at least the start of what follows it: the head block is
+   never split, and never left stranded at the foot of a page. */
+.entry-head { break-inside: avoid; break-after: avoid; }
 .entry-title { font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 13.5pt; font-weight: 600; line-height: 1.22; margin: 0 0 1mm;
-  break-after: avoid; }
-.entry-by { font-size: 9pt; color: %(muted)s; margin: 0 0 1.5mm;
-  break-after: avoid; }
+  font-size: 13.5pt; font-weight: 600; line-height: 1.22; margin: 0 0 1mm; }
+.entry-by { font-size: 9pt; color: %(muted)s; margin: 0 0 1.5mm; }
 .entry-meta { margin: 0 0 1.5mm; }
-.track-tag, .kind { font-size: 7.4pt; letter-spacing: 0.1em;
-  text-transform: uppercase; color: %(teal)s; border: 0.5pt solid %(teal)s;
-  border-radius: 1mm; padding: 0.4mm 1.4mm; }
-.kind { color: %(muted)s; border-color: %(rule)s; }
+.entry-body > p:first-of-type { orphans: 3; }
+.kind { font-size: 7.4pt; letter-spacing: 0.1em; text-transform: uppercase;
+  color: %(muted)s; border: 0.5pt solid %(rule)s; border-radius: 1mm;
+  padding: 0.4mm 1.4mm; }
+
+/* ── two-track apparatus ── */
+.dual-open { margin: 7mm 0 0; font-size: 7.8pt; letter-spacing: 0.12em;
+  text-transform: uppercase; color: %(muted)s; break-after: avoid; }
+.track-head { font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 16pt; font-weight: 600; color: %(teal)s; margin: 1mm 0 1mm;
+  break-after: avoid; }
+.xref { margin: 0 0 3mm; font-size: 8.4pt; break-after: avoid; }
+.xref a { color: %(teal)s; text-decoration: none;
+  border-bottom: 0.5pt dotted %(teal)s; }
+.xref a::after { content: target-counter(attr(href), page); }
+.track-end { margin: 4mm 0 7mm; padding-top: 2mm;
+  border-top: 1pt solid %(teal)s; font-size: 7.8pt; letter-spacing: 0.12em;
+  text-transform: uppercase; color: %(muted)s; }
 
 .session-banner { break-inside: avoid; background: %(cream)s;
-  border-left: 2.5pt solid %(teal)s; padding: 3.5mm 4mm; margin: 6mm 0 3mm; }
+  border-left: 2.5pt solid %(teal)s; padding: 3.5mm 4mm; margin: 0 0 3mm; }
 .session-kicker { font-size: 7.6pt; letter-spacing: 0.12em;
   text-transform: uppercase; color: %(teal)s; margin: 0 0 1mm; }
 .session-name { font-family: 'Cormorant Garamond', Georgia, serif;
@@ -563,16 +723,13 @@ strong { font-weight: 700; }
   border-top: 0.5pt dotted %(teal)s; font-size: 8.4pt; color: %(teal)s; }
 
 /* ── workshops ── */
-/* Workshop entries are routinely taller than a page, so they must be allowed
-   to break; only the small units inside them are kept whole. */
-.workshop { padding: 0 0 5mm; margin: 0 0 6mm;
-  border-bottom: 0.5pt solid %(rule)s; }
+/* Each workshop opens on a fresh right-hand page. */
+.workshop { break-before: right; padding: 0 0 5mm; }
+.ws-head { break-inside: avoid; break-after: avoid; }
 .ws-title { font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 16pt; font-weight: 600; margin: 0 0 1mm; line-height: 1.2;
-  break-after: avoid; }
-.ws-by { font-size: 9.2pt; color: %(muted)s; margin: 0 0 3mm;
-  break-after: avoid; }
-.ws-table { margin: 0 0 3.5mm; width: 78mm; }
+  font-size: 18pt; font-weight: 600; margin: 0 0 1mm; line-height: 1.2; }
+.ws-by { font-size: 9.2pt; color: %(muted)s; margin: 0; }
+.ws-table { margin: 4mm 0 4mm; width: 68mm; }
 .ws-note { font-size: 7.4pt; color: %(teal)s; text-transform: uppercase;
   letter-spacing: 0.08em; }
 .facts { margin: 3mm 0 0; padding: 3mm 0 0; border-top: 0.5pt dotted %(rule)s; }
@@ -600,11 +757,11 @@ def build_html(page_size):
 %s%s%s%s%s
 </body></html>""" % (
         font_css(), stylesheet(page_size),
-        render_cover(),
+        render_cover(cover_art()),
         render_note(days, workshops),
         render_glance(days),
         render_workshops(workshops, wsessions),
-        render_program(days, sessions),
+        render_program(days),
     )
     return doc, days, workshops, unplaced
 
@@ -612,8 +769,7 @@ def build_html(page_size):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("-o", "--out", default=str(DEFAULT_OUT))
-    ap.add_argument("--page-size", default="A4",
-                    choices=["A4", "letter"],
+    ap.add_argument("--page-size", default="A4", choices=["A4", "letter"],
                     help="page size (default: A4)")
     ap.add_argument("--html-only", action="store_true",
                     help="write the intermediate HTML and stop")
@@ -625,9 +781,16 @@ def main():
     html_path = pathlib.Path(args.out).with_suffix(".html")
     html_path.write_text(doc)
 
-    talks = sum(len(s["i"]) + len(s["ii"]) for d in days.values() for s in d.values())
     print("  %d workshops, %d talks/sessions across %d days"
-          % (len(workshops), talks, len([d for d in days.values() if d])))
+          % (len(workshops), talk_count(days),
+             len([d for d in days.values() if d])))
+    for iso, segments in days.items():
+        for seg in segments:
+            if seg["kind"] == "dual":
+                print("  two-track %s %s-%s: Track I %d talks, Track II %d (%s)"
+                      % (iso, seg["start"], seg["end"], len(seg["track1"]),
+                         len(seg["track2"]),
+                         seg["session"]["name"] if seg["session"] else "?"))
     if unplaced:
         print("  ! %d talk(s) have no individual time yet and print as "
               "'time TBA':" % len(unplaced))
@@ -640,8 +803,7 @@ def main():
 
     from weasyprint import HTML
     HTML(string=doc, base_url=str(ROOT)).write_pdf(args.out)
-    size_kb = os.path.getsize(args.out) / 1024
-    print("Wrote %s (%.0f KB)" % (args.out, size_kb))
+    print("Wrote %s (%.0f KB)" % (args.out, os.path.getsize(args.out) / 1024))
 
 
 if __name__ == "__main__":
