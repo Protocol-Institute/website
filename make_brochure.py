@@ -181,6 +181,23 @@ def time_range(start, end):
     return start or "TBA"
 
 
+def zone_rows(iso_date, start):
+    """[(label, "HH:MM", day_shift)] for each reference zone at a UTC time."""
+    y, m, d = (int(x) for x in iso_date.split("-"))
+    hour, minute = (int(x) for x in hhmm(start).split(":"))
+    base = datetime(y, m, d, hour, minute, tzinfo=ZoneInfo("UTC"))
+    rows = []
+    for zone, override in ZONES:
+        local = base.astimezone(ZoneInfo(zone))
+        rows.append((override or local.tzname(), local.strftime("%H:%M"),
+                     (local.date() - base.date()).days))
+    return rows
+
+
+def day_mark(shift):
+    return ' <span class="t-day">(%+d)</span>' % shift if shift else ""
+
+
 def time_stack(iso_date, start, end=None, show_range=True):
     """A UTC time with the four reference timezones stacked beneath it.
 
@@ -190,19 +207,12 @@ def time_stack(iso_date, start, end=None, show_range=True):
     """
     if not start or not iso_date:
         return '<div class="t-utc">time TBA</div>'
-    y, m, d = (int(x) for x in iso_date.split("-"))
-    hour, minute = (int(x) for x in hhmm(start).split(":"))
-    base = datetime(y, m, d, hour, minute, tzinfo=ZoneInfo("UTC"))
-
     head = time_range(start, end) if (show_range and end) else hhmm(start)
-    rows = ['<div class="t-utc">%s UTC</div>' % head]
-    for zone, override in ZONES:
-        local = base.astimezone(ZoneInfo(zone))
-        shift = (local.date() - base.date()).days
-        mark = ' <span class="t-day">(%+d)</span>' % shift if shift else ""
-        rows.append('<div class="t-zone">%s %s%s</div>'
-                    % (local.strftime("%H:%M"), esc(override or local.tzname()), mark))
-    return "".join(rows)
+    out = ['<div class="t-utc">%s UTC</div>' % head]
+    for label, when, shift in zone_rows(iso_date, start):
+        out.append('<div class="t-zone">%s %s%s</div>'
+                   % (when, esc(label), day_mark(shift)))
+    return "".join(out)
 
 
 def day_label(iso, short=False):
@@ -533,6 +543,40 @@ def render_program(days):
     return "".join(out)
 
 
+def workshop_times(rows):
+    """A workshop's sessions as a compact grid: one column per session.
+
+    A workshop meets four or five times, and stacking five timezone lines under
+    each of those ran to most of a page. Here the zones are the rows and the
+    sessions are the columns, so the whole schedule is seven short lines however
+    many times the workshop meets.
+    """
+    if not rows:
+        return ""
+    heads, dates, utc = [], [], []
+    for r in rows:
+        heads.append('<th>Session %d%s</th>'
+                     % (r["seq"], ('<span class="ws-note">%s</span>' % esc(r["note"]))
+                        if r["note"] else ""))
+        dates.append('<td>%s</td>' % esc(day_label(r["date"], short=True)))
+        utc.append('<td>%s</td>' % time_range(r["start_time"], r["end_time"]))
+
+    body = ['<tr class="ws-utc"><th>UTC</th>%s</tr>' % "".join(utc)]
+    for idx, (label, _, _) in enumerate(zone_rows(rows[0]["date"], rows[0]["start_time"])):
+        cells = []
+        for r in rows:
+            zlabel, when, shift = zone_rows(r["date"], r["start_time"])[idx]
+            # The label is taken per column too: a workshop could in principle
+            # straddle a DST change, in which case the abbreviations differ.
+            cells.append('<td>%s%s</td>' % (when, day_mark(shift)))
+        body.append('<tr><th>%s</th>%s</tr>' % (esc(label), "".join(cells)))
+
+    return ('<table class="ws-times"><thead>'
+            '<tr><th></th>%s</tr><tr class="ws-dates"><td></td>%s</tr>'
+            '</thead><tbody>%s</tbody></table>'
+            % ("".join(heads), "".join(dates), "".join(body)))
+
+
 def render_workshops(workshops, wsessions):
     by_proposal = {}
     for row in wsessions:
@@ -548,18 +592,7 @@ def render_workshops(workshops, wsessions):
 
     for p in workshops:
         rows = by_proposal.get(p["id"], [])
-        grid = ""
-        if rows:
-            grid = ('<table class="ws-table"><tbody>'
-                    + "".join(
-                        '<tr><td class="c-seq">Session %d%s</td>'
-                        '<td class="c-wtime">%s</td></tr>'
-                        % (r["seq"],
-                           (' <span class="ws-note">%s</span>' % esc(r["note"]))
-                           if r["note"] else "",
-                           time_stack(r["date"], r["start_time"], r["end_time"]))
-                        for r in rows)
-                    + "</tbody></table>")
+        grid = workshop_times(rows)
 
         # audience / takeaways / activities are raw proposal-form answers —
         # long, and partly internal (selection criteria, application handling).
@@ -658,15 +691,12 @@ strong { font-weight: 700; }
 .t-day { color: %(teal)s; }
 
 /* ── at a glance ── */
-.glance-table, .ws-table { width: 100%%; border-collapse: collapse;
-  font-size: 8.8pt; }
-.glance-table td, .glance-table th, .ws-table td { vertical-align: top;
+.glance-table { width: 100%%; border-collapse: collapse; font-size: 8.8pt; }
+.glance-table td, .glance-table th { vertical-align: top;
   padding: 2.5mm 3mm 2.5mm 0; border-bottom: 0.5pt solid #EFEDE9;
   text-align: left; }
-.glance-table tr, .ws-table tr { break-inside: avoid; }
+.glance-table tr { break-inside: avoid; }
 .c-time { white-space: nowrap; width: 27mm; }
-.c-seq { width: 30mm; color: %(muted)s; }
-.c-wtime { width: 30mm; }
 .g-item + .g-item { margin-top: 2mm; padding-top: 2mm;
   border-top: 0.5pt dotted %(rule)s; }
 .g-title { display: block; font-weight: 500; }
@@ -729,9 +759,23 @@ strong { font-weight: 700; }
 .ws-title { font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 18pt; font-weight: 600; margin: 0 0 1mm; line-height: 1.2; }
 .ws-by { font-size: 9.2pt; color: %(muted)s; margin: 0; }
-.ws-table { margin: 4mm 0 4mm; width: 68mm; }
-.ws-note { font-size: 7.4pt; color: %(teal)s; text-transform: uppercase;
-  letter-spacing: 0.08em; }
+.ws-times { border-collapse: collapse; margin: 4mm 0 5mm;
+  font-variant-numeric: tabular-nums; break-inside: avoid; }
+.ws-times th, .ws-times td { text-align: left; white-space: nowrap;
+  padding: 1mm 6mm 1mm 0; }
+.ws-times thead th { font-size: 7.4pt; letter-spacing: 0.08em;
+  text-transform: uppercase; color: %(teal)s; font-weight: 500;
+  vertical-align: bottom; }
+.ws-times .ws-dates td { font-size: 8.2pt; font-weight: 500;
+  padding-bottom: 1.5mm; border-bottom: 0.75pt solid %(rule)s; }
+.ws-times .ws-dates td:first-child { border-bottom: none; }
+.ws-times tbody th { font-size: 7.2pt; letter-spacing: 0.08em;
+  text-transform: uppercase; color: %(muted)s; font-weight: 500; }
+.ws-times tbody td { font-size: 8.2pt; color: #3A3A3A; }
+.ws-times .ws-utc th, .ws-times .ws-utc td { font-weight: 700; color: %(teal)s;
+  font-size: 8.4pt; padding-top: 2mm; }
+.ws-note { display: block; font-size: 6.6pt; color: %(muted)s;
+  letter-spacing: 0.06em; }
 .facts { margin: 3mm 0 0; padding: 3mm 0 0; border-top: 0.5pt dotted %(rule)s; }
 .fact { margin: 0 0 1.5mm; break-inside: avoid; }
 .fact dt { font-size: 7.6pt; letter-spacing: 0.1em; text-transform: uppercase;
