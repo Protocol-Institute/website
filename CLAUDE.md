@@ -217,12 +217,23 @@ link never changes. **Nothing regenerates the PDF automatically** — a schedule
 change in D1 updates the site instantly and leaves the PDF stale until someone
 reruns those two commands.
 
-A replaced asset takes up to an hour to appear, because `functions/assets/[[path]].js`
-serves `max-age=3600, stale-while-revalidate=86400`. It used to send
-`max-age=31536000, immutable`, which froze any overwritten key for a year — the
-first republish of this PDF hit exactly that, with R2 holding the new bytes
-while the edge served the old ones. The link carries a `?v=` token to escape
-that poisoned entry; bump it only when a republish must appear immediately.
+A replaced asset now takes a few hours to appear rather than a year.
+`functions/assets/[[path]].js` used to send `max-age=31536000, immutable`, which
+froze any overwritten key; the first republish of this PDF hit exactly that,
+with R2 holding the new bytes while the public URL served the old ones. It now
+sends `max-age=3600, stale-while-revalidate=86400` — note the zone's Browser
+Cache TTL rewrites that to `max-age=14400` on the way out, so observed freshness
+is ~4h, not 1h.
+
+**The header change does not retroactively free already-cached assets.** An
+entry cached under the old header keeps it until it expires — a year out. At the
+time of writing, `/assets/logo-static.png`, `/assets/nn_dates_banner.webp` and
+the *bare* `/assets/symposium-2026-program.pdf` URL are all still pinned
+`immutable` at the edge. Replacing any of them will appear to do nothing. The
+only way to clear those is a Cloudflare cache purge (dashboard → Caching →
+Configuration, purge by URL or purge everything). The programme link works
+around its own poisoned entry with a `?v=` token; bump that token if a
+republished PDF must appear immediately.
 
 Two things in here are easy to break by accident:
 - **Cover art is re-encoded to JPEG at build time.** WeasyPrint embeds WebP
