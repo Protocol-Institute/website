@@ -92,6 +92,7 @@ js/
 deploy.sh           Manual deploy from a clean `git archive` export — see Deployment.
                     Never `wrangler pages deploy .`; Pages ignores .gitignore
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
+make_brochure.py    Generates the symposium PDF programme from D1 via WeasyPrint — see PDF programme
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
 .github/workflows/
@@ -189,6 +190,54 @@ Two consequences for debugging:
 - **The PR doesn't clobber website-side work c3po has no visibility into.** c3po only knows about the SIG-page content it generates — it cannot know about presentation/structural changes made on this side in the same window (new CSS classes, layout changes, manual edits to files it also touches). Before merging, diff the PR's target files against recent commits here (`git log --oneline -10 -- <file>`) and check whether anything committed since the PR's base commit touches the same files or the same content patterns (e.g. anchor-text conventions, calendar links, structural markup) in a way the PR would silently undo. **This check is this project's responsibility, not c3po's** — c3po can't pre-empt a conflict it doesn't know exists, so the reviewer here must catch it before merge, not after.
 
 If a c3po PR fails any of these, it's a regression in the automation, not something to hand-fix in the PR — flag it back to c3po.
+
+## PDF programme
+
+`make_brochure.py` renders the Protocol Symposium 2026 programme as a PDF. It
+reads the schedule live from D1 through `wrangler` (no fixtures, nothing
+hand-maintained), builds a print-styled HTML document and hands it to
+WeasyPrint. **Regenerate it rather than editing anything downstream.**
+
+```bash
+/opt/homebrew/bin/python3 make_brochure.py            # -> symposium-2026-program.pdf
+/opt/homebrew/bin/python3 make_brochure.py --html-only # inspect the intermediate HTML
+```
+
+The PDF, the intermediate HTML and `.brochure-cache/` (brand fonts and cover
+art, fetched once) are all gitignored. The published copy lives in R2 and is
+linked from the symposium header as "Download PDF Program":
+
+```bash
+npx wrangler r2 object put pi-assets/symposium-2026-program.pdf \
+    --file symposium-2026-program.pdf --content-type application/pdf --remote
+```
+
+The R2 key is stable, so re-uploading replaces the file in place and the page
+link never changes. **Nothing regenerates the PDF automatically** — a schedule
+change in D1 updates the site instantly and leaves the PDF stale until someone
+reruns those two commands.
+
+Two things in here are easy to break by accident:
+- **Cover art is re-encoded to JPEG at build time.** WeasyPrint embeds WebP
+  losslessly, and the New Nature artwork is high-noise; skipping the re-encode
+  puts the finished PDF over 2.5 MB for that one image.
+- **Track numbering is swapped at render time**, matching the website — see
+  Track numbering below.
+
+### Track numbering
+
+`symposium_proposals.schedule_track = 'ii'` marks the *general* talks scheduled
+opposite a curated special session; the session's own talks carry no track
+value. The **published** numbering is the reverse: general talks are Track I,
+the special session is Track II.
+
+The stored values are deliberately not flipped. `buildTrack2Map()` in
+`events/protocol-symposium-2026/index.html` locates a special session *through*
+its `'ii'` items, so rewriting the column would break the pairing that builds
+the parallel block. Both surfaces apply the swap when rendering
+(`renderParallelBlock()` on the page, `build_days()` in `make_brochure.py`),
+which means the page's `mainItems`/`track2Items` publish as the opposite of what
+their names suggest. Both files carry a comment saying so; keep it that way.
 
 ## Deployment
 

@@ -1894,6 +1894,44 @@
           "html": "Two process findings worth recording. <strong>First</strong>, another session worked in this same checkout mid-task, at one point leaving 13 uncommitted files including a half-finished PII fix, and later checking out branches under this session's feet. A <code>wrangler pages deploy .</code> at that moment would have published that work; the collision was caught only because <code>git status</code> was run before deploying. Everything this session produced was therefore built in throwaway <code>git worktree</code>s off <code>origin/main</code> and pushed as fast-forwards, leaving the shared tree untouched &mdash; and each change was test-merged against the other session's open branches first. <code>deploy.sh</code> closes the deploy half of this permanently by deploying a commit rather than a directory. <strong>Second</strong>, a slow deploy was twice mistaken for a stuck one. <code>wrangler pages deployment list</code> puts a <em>timestamp</em> in its Status column for past deployments and the word <code>Active</code> only on the live one, so a fresh deploy reading &ldquo;just now&rdquo; looks un-deployed; each deployment's own <code>&lt;hash&gt;.pages.dev</code> URL returns 404, which reads as a failed upload; and a <code>curl -I</code> probe sends HEAD, which never reaches <code>onRequestGet</code>, so API response headers appear missing. All three are now documented in <code>CLAUDE.md</code>."
         }
       ]
+    },
+    {
+      "id": 51,
+      "sort_key": 51.0,
+      "label": "Session 51",
+      "title": "PDF programme generator, track renumbering, final schedule edits",
+      "date": "2026-09-20",
+      "time_pt": "",
+      "tracks": [
+        "content",
+        "operations",
+        "static-site"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "make_brochure.py — the programme as a generated artifact, not a document",
+          "html": "<p>The symposium programme now exists as a 43-page A4 PDF produced by <code>make_brochure.py</code>, which reads the schedule live from D1 through <code>wrangler</code> and renders print-styled HTML through WeasyPrint. Nothing in it is hand-maintained: there is no fixture file, no copy of the schedule, and no editable intermediate. The correct response to a schedule change is to rerun the script.</p><p>That choice closes off the obvious alternative of hand-building a deck or document once and patching it as things move. It also creates the failure mode recorded in <code>status.md</code>: the published PDF has no trigger behind it, so a D1 edit updates the website instantly and leaves the PDF stale until someone reruns the generator and re-uploads. The R2 key is deliberately stable (<code>pi-assets/symposium-2026-program.pdf</code>) so a refresh replaces the file in place and the page link never changes.</p><p>Two build-time details are load-bearing. The cover artwork is re-encoded to JPEG before embedding, because WeasyPrint embeds WebP losslessly and the New Nature image is high-noise — that one image alone produced a 2.7 MB file; re-encoded it is ~700 KB. Brand fonts are fetched from Google Fonts as TTF using an old User-Agent, which sidesteps needing brotli in WeasyPrint for woff2, and cached in the gitignored <code>.brochure-cache/</code>.</p>"
+        },
+        {
+          "title": "Published track numbering swapped, without touching the stored values",
+          "html": "<p>Parallel blocks now publish general talks as Track I and the curated special session as Track II, on both the programme page and the PDF. The underlying <code>symposium_proposals.schedule_track = 'ii'</code> values were deliberately left alone.</p><p>The reason is that <code>buildTrack2Map()</code> finds a special session <em>through</em> its <code>'ii'</code> items — it reads their <code>session</code> field to locate the block they run against. Flipping the column would break that lookup and with it the whole parallel-block construction. So the swap is applied at render time in both surfaces instead, which leaves the page's <code>mainItems</code> and <code>track2Items</code> publishing as the opposite of what their names say. Both files carry a comment documenting the inversion, <code>renderCard</code>'s misleading <code>isTrack2</code> parameter was renamed, and the trap is written up under Track numbering in <code>CLAUDE.md</code>. This is a knowingly accepted naming debt, chosen over a migration that would have required rewriting the pairing logic during symposium week.</p>"
+        },
+        {
+          "title": "Migration 036: running_order_note on symposium_sessions",
+          "html": "<p>A special session owns a block while its talks are scheduled individually inside it, using the same columns as any other talk. The consequence, unnoticed until now, is that every per-talk time reads as equally decided. That is wrong for a session whose slots exist only to make the block render.</p><p>The Art of Memory forced the issue: its five talks had no times at all, so the Friday 19:00–21:30 block rendered with everything stacked at 19:00. They were given 30-minute slots in database order, which is arbitrary — the host sets the real order on the day. <code>running_order_note</code> carries that caveat, set for <code>memory</code> only; NULL means the order is firm.</p><p>It lives on the session rather than in either renderer because both surfaces need it and they read different sources — the page through <code>/api/symposium/sessions</code>, the brochure straight from D1. One limitation is recorded in the migration: the page can only display it inside a <em>parallel</em> block, since a special session without a Track II pairing renders as bare cards with no session header to attach it to.</p>"
+        },
+        {
+          "title": "Typographic decisions that changed the document's structure",
+          "html": "<p>Every time is now a stack — UTC in bold, then CEST, MYT, PDT and EDT beneath, with <code>(+1)</code>/<code>(−1)</code> day-boundary markers matching the site's convention. Zone abbreviations are read from each zone for the specific date rather than hardcoded, so they stay correct if the schedule ever crosses a DST boundary; Kuala Lumpur reports a useless <code>+08</code> and is overridden to MYT.</p><p>The full programme prints each parallel track as one continuous run rather than interleaving the two by time slot, headed by a resolved page cross-reference (\"For Track II, skip to page 34\") built with CSS <code>target-counter</code>. Interleaving reads fine on a scrolling web page and badly on paper, where a reader follows one track.</p><p>Workshops open on a fresh recto, and their schedules were transposed — zones as rows, sessions as columns. A workshop meets four or five times, and a five-line stack per meeting consumed most of a page; transposed it is seven short lines regardless. That alone brought all five workshops onto a single page each, so the abstract and bio trimming that had been planned was not needed and was not done.</p>"
+        },
+        {
+          "title": "Content corrections, two of them live site bugs",
+          "html": "<p>Tim Beiko's talk was retitled from \"Marking to Reality\" to \"Ethereum: A Microcosm for Protocol Studies\" with a full abstract replacing a one-line placeholder; the slug was left as <code>marking-to-reality</code> since slugs are only user-facing for workshops.</p><p>Two <code>co_speakers</code> fields held the strings <code>\"n/a\"</code> and <code>\"none\"</code>, which were rendering as bylines reading \"trent van epps and n/a\" <em>on the live site</em>, not only in the new PDF — the brochure work surfaced an existing defect. Both cleared in D1, and the generator now filters a placeholder set defensively. Related: name fields are never split on commas or ampersands, because a studio credited as \"Paragonday Systems (Norm O'Hagan &amp; Yatú Espinosa)\" is one name.</p><p>c3po PR #15 (four SIG sessions) was reviewed against the standing checklist and merged clean.</p>"
+        }
+      ]
     }
   ]
 }
