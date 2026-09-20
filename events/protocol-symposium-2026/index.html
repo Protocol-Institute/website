@@ -64,6 +64,17 @@
       font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
       color: #5A5A5A; margin-top: 0.6rem;
     }
+    /* Outlined, so it reads as secondary to the solid livestream CTA above it. */
+    .program-pdf-btn {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; font-weight: 600; letter-spacing: 0.03em;
+      color: #2A6B6B; background: none;
+      border: 2px solid #2A6B6B; padding: 0.55rem 1.6rem;
+      text-decoration: none;
+    }
+    .program-pdf-btn:hover { background: #2A6B6B; color: #fff; }
+
     .countdown {
       font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
       color: #2A6B6B; margin-top: 0.75rem;
@@ -204,6 +215,11 @@
             <a class="livestream-btn" id="livestream-link" href="https://www.youtube.com/@protocol-institute/live" target="_blank" rel="noopener noreferrer" hidden>Watch Livestream &rarr;</a>
             <div class="livestream-note">Registered participants will receive Zoom links for live participation each morning.</div>
             <div class="countdown" id="symposium-countdown" role="status" aria-live="polite"></div>
+          </div>
+
+          <div style="margin-top:1.1rem;">
+            <a class="program-pdf-btn" href="/assets/symposium-2026-program.pdf"
+               target="_blank" rel="noopener">Download PDF Program</a>
           </div>
         </div>
 
