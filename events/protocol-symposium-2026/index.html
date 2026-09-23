@@ -64,6 +64,12 @@
       font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
       color: #5A5A5A; margin-top: 0.6rem;
     }
+    /* Outage notice under the dead CTA — darker and heavier than .livestream-note
+       so it reads as the reason the button is grey, not as fine print. */
+    .livestream-outage {
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600;
+      color: #8A3A2A; margin-top: 0.75rem;
+    }
     /* Outlined, so it reads as secondary to the solid livestream CTA above it. */
     .program-pdf-btn {
       display: inline-block;
@@ -213,6 +219,7 @@
           <div style="margin-top:1.1rem;">
             <button type="button" class="livestream-btn" id="livestream-btn" disabled>Watch Livestream</button>
             <a class="livestream-btn" id="livestream-link" href="https://www.youtube.com/@protocol-institute/live" target="_blank" rel="noopener noreferrer" hidden>Watch Livestream &rarr;</a>
+            <div class="livestream-outage" role="status">Apologies, our livestream isn&rsquo;t working. If you&rsquo;re registered, please use the Zoom link you were emailed to join the event.</div>
             <div class="livestream-note">Registered participants will receive Zoom links for live participation each morning.</div>
             <div class="countdown" id="symposium-countdown" role="status" aria-live="polite"></div>
           </div>
@@ -299,13 +306,18 @@
   // /live URL 404s once nothing is broadcasting.
   var LIVESTREAM_GO_LIVE = Date.parse('2026-09-23T14:45:00Z'); // 15 min before the Welcome Session
 
+  // 2026-09-23: the livestream is down. Held off by hand — go-live has passed,
+  // so without this the tick below re-shows the /live link every 60s. Flip back
+  // to false and drop .livestream-outage from the markup once it is working.
+  var LIVESTREAM_BROKEN = true;
+
   var el = document.getElementById('symposium-countdown');
   var lsBtn  = document.getElementById('livestream-btn');
   var lsLink = document.getElementById('livestream-link');
 
   function syncLivestream(now) {
     if (!lsBtn || !lsLink) return;
-    var live = now >= LIVESTREAM_GO_LIVE && now < EVENT_END;
+    var live = !LIVESTREAM_BROKEN && now >= LIVESTREAM_GO_LIVE && now < EVENT_END;
     lsBtn.hidden  = live;
     lsLink.hidden = !live;
   }
