@@ -67,9 +67,12 @@ functions/          Cloudflare Pages Functions (API endpoints)
                       for any JSON response whose body depends on the caller's session
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
   api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
+  api/symposium/livestream.js  Resolves the YouTube channel's current live broadcast to a video id
+                      for the symposium page's inline player — see Livestream player
 events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium landing page + full program merged into one page (Session 43); /program redirects here
                     Header countdown hardcodes two UTC instants (WORKSHOPS_START, SYMPOSIUM_START) in
                     its own IIFE — update by hand if event dates move; they are not derived from D1
+                    The same IIFE owns the livestream CTA and inline player — see Livestream player
   program/          No index.html — listing merged into the parent page above. Still holds edit-proposal.html (admin) and workshops/ (detail pages)
   program/workshops/  Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
@@ -95,6 +98,9 @@ fetch_form_data.py  Fetch and display current Google Form responses (network + c
 make_brochure.py    Generates the symposium PDF programme from D1 via WeasyPrint — see PDF programme
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
+_headers            Site-wide security headers, including the CSP. `frame-src` is an allowlist —
+                    anything the site embeds in an iframe must be named there or it renders as a
+                    grey broken box with no violation logged in the page's own console
 .github/workflows/
   c3po-auto-pr.yml  Opens the PR for c3po's SIG-page regeneration on a push to `c3po/auto-sig-pages`
 ```
@@ -190,6 +196,57 @@ Two consequences for debugging:
 - **The PR doesn't clobber website-side work c3po has no visibility into.** c3po only knows about the SIG-page content it generates — it cannot know about presentation/structural changes made on this side in the same window (new CSS classes, layout changes, manual edits to files it also touches). Before merging, diff the PR's target files against recent commits here (`git log --oneline -10 -- <file>`) and check whether anything committed since the PR's base commit touches the same files or the same content patterns (e.g. anchor-text conventions, calendar links, structural markup) in a way the PR would silently undo. **This check is this project's responsibility, not c3po's** — c3po can't pre-empt a conflict it doesn't know exists, so the reviewer here must catch it before merge, not after.
 
 If a c3po PR fails any of these, it's a regression in the automation, not something to hand-fix in the PR — flag it back to c3po.
+
+## Livestream player
+
+The symposium page carries both a "Watch Livestream" link and an inline YouTube
+player. Both live in the countdown IIFE in
+`events/protocol-symposium-2026/index.html`, which is deliberately decoupled from
+the program fetch so they survive a failed `/api/symposium/proposals` call.
+
+Three switches, in the order they are consulted:
+
+| Switch | Meaning |
+|--------|---------|
+| `LIVESTREAM_BROKEN` | Manual outage override. `true` greys the button, hides the player, and shows the outage note. Used in anger on 2026-09-23. |
+| `LIVESTREAM_GO_LIVE` / `EVENT_END` | Hardcoded UTC instants. Outside that window the CTA is the disabled `<button>` and the player is not rendered. |
+| `GET /api/symposium/livestream` | Supplies the video id. No id, no player — the link is unaffected. |
+
+**To take the stream down:** set `LIVESTREAM_BROKEN = true` and push. That one flag
+is the whole procedure — the outage notice is an already-present hidden element
+the flag reveals, not markup to add. Set it back to `false` to restore.
+
+### Why the player needs a server-side endpoint
+
+YouTube's channel-scoped embed, `/embed/live_stream?channel=<channel id>`, is the
+form that would need no per-day maintenance. **It does not work** — it renders
+"This video is unavailable", verified against this channel on 2026-09-24 while a
+broadcast was live and `playableInEmbed` was `true`. Only `/embed/<video id>`
+renders, and that id is different for every day of a multi-day event.
+
+So `functions/api/symposium/livestream.js` fetches the channel's `/live` page
+server-side, reads `isLiveNow` and `videoId` out of it, and returns
+`{live, videoId}` with a 2-minute edge cache. The page polls it on the same 60s
+tick as the CTA, so a page left open overnight picks up the next day's broadcast.
+
+It is deliberately silent on failure: a fetch error, a consent interstitial, a
+markup change at YouTube's end, or nothing broadcasting all return
+`{live: false}` and the player is simply not rendered. Because it scrapes a page
+Google can change without notice, **assume this will break eventually** — when it
+does, the symptom is a missing player, never a broken page, and the link CTA
+still works.
+
+### The CSP is part of this
+
+`_headers` sets `frame-src 'self' https://calendar.google.com https://www.youtube.com`.
+Without `www.youtube.com` there the player renders as a grey broken box **and
+logs no violation in the page's own console**, which is a slow thing to diagnose
+from the symptom. Anything else the site ever embeds needs the same treatment.
+
+The iframe ships with no `src` and is pointed at YouTube only while the stream is
+live, so nothing loads from youtube.com before go-live, after `EVENT_END`, or
+during an outage — and a no-JS visitor gets the disabled button rather than a
+dead box.
 
 ## PDF programme
 

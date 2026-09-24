@@ -1940,6 +1940,47 @@
           "html": "<p><code>functions/assets/[[path]].js</code> stamped every <code>/assets/*</code> response <code>max-age=31536000, immutable</code>. Assets in <code>pi-assets</code> are keyed by bare filename and replaced in place &mdash; that is the documented way to add or refresh one &mdash; so the header asserted the opposite of how the bucket is actually used, and any replaced object kept serving its old bytes for a year.</p><p>It surfaced on the first republish of the programme PDF: <code>wrangler</code> reported a successful upload, a direct <code>r2 object get</code> returned the new build, and the public URL still served the previous one. Worth recording that four Pages deployments in between did <em>not</em> clear it &mdash; these are Function responses and are not tied to the deployment lifecycle the way static files are.</p><p>Now <code>max-age=3600, stale-while-revalidate=86400</code>; note the zone's Browser Cache TTL rewrites that to <code>max-age=14400</code> on the way out, so observed freshness is about four hours rather than one. <strong>The change is not retroactive</strong> &mdash; an entry cached under the old header keeps it until it expires &mdash; so the three already-poisoned URLs (the programme PDF, <code>logo-static.png</code>, <code>nn_dates_banner.webp</code>) were purged by hand from the Cloudflare dashboard, which is zone-level and not reachable from the account or Workers &amp; Pages views. All three verified afterwards as <code>MISS</code> carrying the new header, with the bare PDF URL serving a byte-identical copy of the local build.</p><p>The latent version of this bug was a year old and would have hit anyone replacing the logo; it was only found because this session happened to overwrite an asset and then check the result rather than trusting the upload's success message.</p>"
         }
       ]
+    },
+    {
+      "id": 52,
+      "sort_key": 52.0,
+      "label": "Session 52",
+      "title": "Livestream restored mid-event and embedded inline",
+      "date": "2026-09-24",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Outage switch made reusable, not disposable",
+          "html": "The stream went down mid-event on 2026-09-23 and was disabled by <code>148131e</code>, a session that never wrapped up &mdash; that work exists only in git history, which is why this session is 52 with no 09-23 entry above it. Restoring it is now <code>LIVESTREAM_BROKEN = false</code> and nothing else. The original disable left an outage notice in the markup that a future restore had to remember to delete, and the commit message said so in as many words (&ldquo;drop the <code>.livestream-outage</code> div&rdquo;) &mdash; a procedure that lives in a commit message is a procedure that will be missed. The notice is now a permanently-present hidden element that <code>syncLivestream()</code> reveals, alongside a matching pre-stream note, so the flag is the whole interface in both directions. <code>LIVESTREAM_GO_LIVE</code> also moved to <code>2026-09-24T14:45:00Z</code>."
+        },
+        {
+          "title": "YouTube's channel-scoped embed does not work",
+          "html": "<code>/embed/live_stream?channel=&lt;channel id&gt;</code> is the documented way to embed &ldquo;whatever this channel is broadcasting right now&rdquo;, and it is the only form that would need no per-day maintenance. It renders <strong>&ldquo;This video is unavailable&rdquo;</strong>. Verified against <code>UCcNZ6wTbeeAJ-O_OIhs2j3A</code> on 2026-09-24 while a broadcast was live and the video's own <code>playableInEmbed</code> was <code>true</code>, with <code>/embed/&lt;video id&gt;</code> for the same broadcast rendering correctly in the same page seconds later &mdash; so this is the endpoint, not the channel, not embedding permissions, and not a transient. Treat it as dead. This closes off the obvious no-maintenance design and forces everything below."
+        },
+        {
+          "title": "GET /api/symposium/livestream &mdash; resolving the day's video id server-side",
+          "html": "Because only <code>/embed/&lt;video id&gt;</code> works and that id differs for every day of a five-day event, hardcoding it would mean a deploy every morning &mdash; precisely what <code>LIVESTREAM_GO_LIVE</code> was introduced to avoid. The new endpoint fetches the channel's <code>/live</code> page server-side, reads <code>isLiveNow</code> and <code>videoId</code> out of the <code>ytInitialPlayerResponse</code> blob, and returns <code>{live, videoId}</code>. <code>isLiveNow</code> is load-bearing: <code>/live</code> happily serves the most recent <em>finished</em> broadcast when nothing is on, so matching the id alone would embed yesterday's recording as though it were live. Cached at the edge (<code>s-maxage=120</code>, <code>stale-while-revalidate=600</code>) rather than per-viewer, since during a session every viewer wants the same answer; the page polls it on the same 60s tick as the CTA, so a page left open overnight picks up the next day's broadcast without a reload. <strong>This scrapes a page Google can change without notice, so assume it breaks eventually.</strong> Every failure mode &mdash; fetch error, non-200, consent interstitial, markup change, nothing broadcasting &mdash; returns <code>{live: false}</code> and the player is simply not rendered. The &ldquo;Watch Livestream&rdquo; link is static markup and is unaffected either way, so the floor is exactly the behaviour before this session, never a dead box."
+        },
+        {
+          "title": "The CSP was the actual blocker, and it fails invisibly",
+          "html": "<code>_headers</code> has carried a site-wide <code>Content-Security-Policy</code> since June whose <code>frame-src</code> allowed only <code>'self'</code> and <code>https://calendar.google.com</code> &mdash; the latter for an embedded Google Calendar that Session 37 removed. Nothing has been embeddable here for months and nobody had reason to notice. <strong>A CSP-blocked iframe renders as a grey box with a broken-image glyph and logs no violation in the page's own console</strong>, so the symptom is indistinguishable from a YouTube-side failure, and the natural next move is to go debug YouTube. What isolated it was a difference in test harness, not in code: the same embed rendered correctly under a plain <code>python3 -m http.server</code> and failed under <code>wrangler pages dev</code>, because only the latter applies <code>_headers</code>. <strong>Local verification of anything header-sensitive has to go through <code>wrangler pages dev</code>; a static server silently tests a different site.</strong> <code>_headers</code> now lists <code>https://www.youtube.com</code> with a comment explaining the failure mode, since there is nowhere else that knowledge would live."
+        },
+        {
+          "title": "Player lifecycle: src, not [hidden]",
+          "html": "The iframe ships with no <code>src</code> at all and is pointed at YouTube only while <code>syncLivestream()</code> says the stream is live, so nothing loads from youtube.com before go-live, after <code>EVENT_END</code>, or during an outage &mdash; and a no-JS visitor gets the existing disabled button rather than an empty frame. When the stream ends the <code>src</code> is <em>removed</em> rather than the element merely hidden, because a hidden iframe with a live src keeps playing audio and holds the YouTube session open. This follows the precedent already set by the button/anchor pair: both ship in markup, JS toggles between them, and a script failure degrades to the honest disabled state. Sizing is <code>aspect-ratio: 16 / 9</code> with <code>max-width: 100%</code> rather than the padding-top hack, so it tracks the 760px column down to phone width."
+        },
+        {
+          "title": "Still hand-moved once per day",
+          "html": "<code>LIVESTREAM_GO_LIVE</code> is a single instant and the symposium runs five days, so it has now been edited once per morning &mdash; 09-23, then 09-24 &mdash; which is the maintenance the constant was meant to eliminate. It is not causing harm during this event because the player is separately gated on the resolver returning a live id, which is already honest about whether anything is actually broadcasting. The clean version is to let the resolver drive the CTA too, with the hardcoded instants kept only as a floor so a stray broadcast outside the event cannot light up the page. Deliberately not attempted mid-event: this one ends 2026-09-25T22:30:00Z, after which the whole block reverts to the disabled button on its own. Logged in status.md for the next multi-day event."
+        }
+      ]
     }
   ]
 }
