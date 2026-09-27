@@ -58,9 +58,23 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 7 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 8 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">September 17, 2026</div>
+  <div class="meeting-title"><a href="/sigs/drg/2026-09-17-sig-drg-2026-09-17">SIG-DRG 2026-09-17</a></div>
+  <p class="meeting-participants">Participants: Anuraj, Spencer Norwick, shreeram, Andre Comeau</p>
+  <p class="meeting-summary">This was a working session ahead of an upcoming robotics workshop/symposium in which participants will assemble a small &quot;PiCar&quot;-style robot and put it behind a crypto-payment gateway. Anuraj gave an extended screen-share walkthrough of his current build: an MCP server plus a browser teleoperation UI, a Cloudflare Worker payment service using testnet USDC, on-chain robot registration/attestation, and hashed time-based access tokens. The rest of the group (Spencer, Andre, shreeram) asked questions about hardware readiness, security/hackability, extending the gateway to other IoT devices, and adding a Stripe-based payment option.</p>
+  <ul class="meeting-insights">
+    <li>**Hardware readiness (mixed):**</li>
+    <li>**The gateway demo (Anuraj):**</li>
+    <li>**Extending to other devices (shreeram's interest):** shreeram asked whether household devices (he has a rootable, dead Roomba) could be placed behind the gateway. Anuraj said yes — the robot is essentially an ESP32-class device, and IoT devices can be put behind the gateway by writing a **plugin** (a protocol adapter + the MCP tools). Adapter type depends on the device's interface (HTTP endpoint → HTTP adapter; UDP → UDP adapter). He'd previously tried Home Assistant devices behind the gateway but hit issues and didn't pursue it.</li>
+    <li>**Assembly/config detail (Anuraj):** There's a setup script that runs a series of tests and, because everyone mounts motors differently, walks you through identifying each wheel's rotation direction (e.g. &quot;front right wheel, which direction?&quot;) and stores the result in a config file. This is installed as a **system service** on the Pi so it persists across reboots; the HTTP endpoints read the config to drive wheels in the correct direction. Anuraj runs the Pi headless via SSH.</li>
+    <li>**Vibe-coding the plugin:** Anuraj mentioned building the PiCar plugin quickly (~15–18 minutes) by pointing his coding assistant at the SDK, the gateway, and templates/&quot;little parts.&quot;</li>
+  </ul>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">September 3, 2026</div>
   <div class="meeting-title"><a href="/sigs/drg/2026-09-03-stigmergy-in-robotics">Stigmergy in Robotics</a></div>
