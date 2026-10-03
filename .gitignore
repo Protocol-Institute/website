@@ -29,3 +29,6 @@ backups/
 # The PDF itself is covered by *.pdf above; publish it to R2, not git.
 .brochure-cache/
 symposium-2026-program.html
+
+# Recording-page generator: YouTube caption cache.
+.recordings-cache/

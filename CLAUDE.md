@@ -67,17 +67,20 @@ functions/          Cloudflare Pages Functions (API endpoints)
                       for any JSON response whose body depends on the caller's session
   api/              /api/* endpoints (members, auth, membership, admin, symposium)
   api/pages/[[path]].js  Managed page content (GET public, POST auth-gated; POST not PUT — CF WAF blocks PUT on Pages)
-  api/symposium/livestream.js  Resolves the YouTube channel's current live broadcast to a video id
-                      for the symposium page's inline player — see Livestream player
-events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium landing page + full program merged into one page (Session 43); /program redirects here
-                    Header countdown hardcodes two UTC instants (WORKSHOPS_START, SYMPOSIUM_START) in
-                    its own IIFE — update by hand if event dates move; they are not derived from D1
-                    The same IIFE owns the livestream CTA and inline player — see Livestream player
+  api/symposium/livestream.js  Resolves the YouTube channel's current live broadcast to a video id.
+                      Unused since the symposium page went archival (Session 53); kept for the
+                      next live event — see Livestream player
+events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium **archive** (Session 53): program + embedded
+                    recordings. Landing + program merged into one page in Session 43; /program redirects here.
+                    Countdown, registration and livestream CTA were removed when the event ended
+  recordings/<slug>/  One generated page per recorded item (video + transcript) — see Symposium recordings.
+                    Never hand-edit; regenerate with make_recordings.py
   program/          No index.html — listing merged into the parent page above. Still holds edit-proposal.html (admin) and workshops/ (detail pages)
   program/workshops/  Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
 data/
   devlog.json       Build log source of truth
+  symposium-2026-recordings.json  Hand-edited map: proposal id -> YouTube video id (+ optional start/end)
   alumni.json       SoP23–25 alumni reference data (70 entries)
 backups/            D1 JSON exports written by check_members.py at session start (gitignored)
 assets/             SVG files only — binary assets (PNG/JPG/WEBP) are in R2, not git
@@ -95,6 +98,7 @@ js/
 deploy.sh           Manual deploy from a clean `git archive` export — see Deployment.
                     Never `wrangler pages deploy .`; Pages ignores .gitignore
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
+make_recordings.py  Generates recordings/<slug>/ pages from data/symposium-2026-recordings.json + D1 + YouTube captions
 make_brochure.py    Generates the symposium PDF programme from D1 via WeasyPrint — see PDF programme
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
@@ -197,24 +201,55 @@ Two consequences for debugging:
 
 If a c3po PR fails any of these, it's a regression in the automation, not something to hand-fix in the PR — flag it back to c3po.
 
+## Symposium recordings
+
+The 2026 symposium page is an archive. Recordings are attached to program items
+by **`data/symposium-2026-recordings.json`** — hand-edited, the single source of
+truth. Each row is `{proposal_id, video_id}`, plus `start`/`end` seconds when one
+upload covers several items (the "Opening Talk" video holds the Welcome Session,
+David Lang's talk and the panel, split at 1176s and 2147s).
+
+Two consumers read it:
+- **The program page** fetches it at load and gives each matched card a thumbnail
+  facade that turns into the YouTube iframe on click (no eager players — ~40 of
+  them would cost several MB before anyone presses play). A failed fetch just
+  means no videos; the program still renders.
+- **`make_recordings.py`** writes `events/protocol-symposium-2026/recordings/<slug>/`
+  — the video, the abstract and a transcript — and the pages are committed.
+
+```bash
+/opt/homebrew/bin/python3 make_recordings.py          # all rows
+/opt/homebrew/bin/python3 make_recordings.py 93 101   # just these proposal ids
+```
+
+**To add a recording:** append a row to the JSON, run the script for that id, and
+commit both. Matching videos to proposals is by hand: the channel's upload titles
+are `NN - Speaker - Title` in schedule order, but titles drift from D1 (Nicholas
+Fett's talk was retitled), so check each match.
+
+Transcripts are YouTube's **auto-generated** `en-orig` captions fetched with
+`yt-dlp`, cleaned mechanically only — words joined, paragraphs broken at speaker
+changes (`>>`) or about once a minute at a sentence end. The wording is not edited,
+and the page says so; do not "fix" the text by hand in a generated page, because
+the next run will overwrite it. Captions are cached in `.recordings-cache/`
+(gitignored). YouTube rate-limits caption downloads (HTTP 429); the script retries,
+and if it still fails it writes the page without a transcript — re-run that id later.
+
+Timestamps re-point the iframe at `?start=` rather than using the IFrame API,
+which would need youtube.com in `script-src`. Thumbnails come from `i.ytimg.com`,
+which is in `img-src` for that reason.
+
+As of Session 53, 42 items are recorded. Not yet on the channel: the Worldbuilding
+in New Nature and Art of Memory special sessions, the Track I talks that ran
+alongside them, and the workshops.
+
 ## Livestream player
 
-The symposium page carries both a "Watch Livestream" link and an inline YouTube
-player. Both live in the countdown IIFE in
-`events/protocol-symposium-2026/index.html`, which is deliberately decoupled from
-the program fetch so they survive a failed `/api/symposium/proposals` call.
+Removed from the symposium page in Session 53 when it became an archive, along
+with the countdown. What follows is kept for the next live event.
 
-Three switches, in the order they are consulted:
-
-| Switch | Meaning |
-|--------|---------|
-| `LIVESTREAM_BROKEN` | Manual outage override. `true` greys the button, hides the player, and shows the outage note. Used in anger on 2026-09-23. |
-| `LIVESTREAM_GO_LIVE` / `EVENT_END` | Hardcoded UTC instants. Outside that window the CTA is the disabled `<button>` and the player is not rendered. |
-| `GET /api/symposium/livestream` | Supplies the video id. No id, no player — the link is unaffected. |
-
-**To take the stream down:** set `LIVESTREAM_BROKEN = true` and push. That one flag
-is the whole procedure — the outage notice is an already-present hidden element
-the flag reveals, not markup to add. Set it back to `false` to restore.
+`functions/api/symposium/livestream.js` is still deployed. It is unused, and
+nothing else depends on it.
 
 ### Why the player needs a server-side endpoint
 
@@ -238,15 +273,11 @@ still works.
 
 ### The CSP is part of this
 
-`_headers` sets `frame-src 'self' https://calendar.google.com https://www.youtube.com`.
+`_headers` sets `frame-src 'self' https://calendar.google.com https://www.youtube.com`
+(now also needed by the recording embeds).
 Without `www.youtube.com` there the player renders as a grey broken box **and
 logs no violation in the page's own console**, which is a slow thing to diagnose
 from the symptom. Anything else the site ever embeds needs the same treatment.
-
-The iframe ships with no `src` and is pointed at YouTube only while the stream is
-live, so nothing loads from youtube.com before go-live, after `EVENT_END`, or
-during an outage — and a no-JS visitor gets the disabled button rather than a
-dead box.
 
 ## PDF programme
 

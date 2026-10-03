@@ -1,5 +1,6 @@
-# frame-src carries https://www.youtube.com for the symposium page's inline
-# livestream player. Without it the iframe renders as a grey broken frame with
+# frame-src carries https://www.youtube.com for the symposium recording embeds
+# (program page + recordings/<slug>/ pages); img-src carries https://i.ytimg.com
+# for their click-to-play thumbnails. Without it the iframe renders as a grey broken frame with
 # nothing logged as a CSP violation in the page's own console, which is a slow
 # thing to diagnose — note it before removing.
 /*
@@ -7,4 +8,4 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
-  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; img-src 'self' data: blob:; frame-src 'self' https://calendar.google.com https://www.youtube.com; connect-src 'self' https://cloudflareinsights.com https://cdn.jsdelivr.net
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com https://cdn.jsdelivr.net data:; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://i.ytimg.com; frame-src 'self' https://calendar.google.com https://www.youtube.com; connect-src 'self' https://cloudflareinsights.com https://cdn.jsdelivr.net
