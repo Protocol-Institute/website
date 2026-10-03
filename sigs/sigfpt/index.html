@@ -58,9 +58,23 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 44 sessions, 41 dated</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 45 sessions, 42 dated</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">September 18, 2026</div>
+  <div class="meeting-title"><a href="/sigs/sigfpt/2026-09-18-sig-fpt-2026-09-18">SIG-FPT 2026-09-18</a></div>
+  <p class="meeting-participants">Participants: Patrick Nast, Ergod, ComplexSy, Venkatesh Rao, Wip, Giovanni Merlino, Dan Schmidt</p>
+  <p class="meeting-summary">The session (apparently the last reading discussion of a summer series) compared two contrasting strategies for making stigmergic systems robust against corruption: enforcing correctness by enriching signals with metadata/identity vs. ensuring errors remain reversible via probabilistic decay. Participants went around the call sharing reactions, converging on a preference for the decay/reversibility approach and a shared discomfort with adding centralized authority or identity systems. The back half of the session shifted to project logistics for an upcoming hands-on workshop (a swarm/ant simulator), covering a pending PR, traceability/replay features, and playtesting.</p>
+  <ul class="meeting-insights">
+    <li>**Paper 1** breaks the indistinguishability of the basic stigmergic setup by adding per-ant identity and travel-time metadata; slower/divergent ants accumulate &quot;suspicion&quot; and are eventually excluded. Uses clustering to separate legitimate food-source connections from bad ones.</li>
+    <li>**Paper 2** is less centralized: given a known target structure, it identifies points where an error would be catastrophic and then **probabilistically decays** those points (uniformly, concentrated at critical points, or time-varying with less decay later). Patrick called this the more interesting direction than the DBSCAN approach, though it risks **deleting too much** and hindering the structure.</li>
+    <li>**Paper 1 = enforce correctness** by infusing knowledge/metadata into signals (loaded signals).</li>
+    <li>**Paper 2 = don't pursue correctness; add mortality** — make states non-permanent and let the system heal, relying on the &quot;if-mortality&quot; that correct dynamics will drive correct reconstruction. Closer to true stigmergy given the locality-of-knowledge constraint (agents should only know local state; intelligence should be emergent, not infused).</li>
+    <li>**Coordinate reversal for AI:** the readings assume the swarm is the blue team defending against a centralized red attacker; AI flips this — the defended entity is often centralized and the **attackers are swarms**. He mapped the four quadrants (centralized vs. centralized = traditional security; centralized blue vs. swarm red; swarm blue vs. centralized red = many of these papers) and argued the truly interesting case is **swarm vs. swarm**.</li>
+  </ul>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">September 10, 2026</div>
   <div class="meeting-title"><a href="/sigs/sigfpt/2026-09-10-sig-fpt-2026-09-10">SIG-FPT 2026-09-10</a></div>
