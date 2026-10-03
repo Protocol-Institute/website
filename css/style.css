@@ -2573,3 +2573,35 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   margin: 0 0 0.5rem;
 }
 #bwm-books .entity-card:last-child { border-bottom: none; }
+
+/* ── Program editor (programs/edit) ───────────────────────────── */
+.pe-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #E0DDD8; }
+.pe-heading { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+.pe-admin-note { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: #B07A1F; margin: 1.5rem 0 0.5rem; }
+.pe-checks { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; font-size: 0.9rem; }
+.pe-list { list-style: none; padding: 0; margin: 0.75rem 0 1rem; }
+.pe-list li { padding: 0.55rem 0; border-bottom: 1px solid #EDEAE4; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.pe-empty { color: #8A8A8A; font-style: italic; }
+.pe-tag { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; border: 1px solid #E0DDD8; padding: 0.05em 0.45em; }
+.pe-note { font-size: 0.85rem; color: #8A8A8A; }
+.pe-remove { margin-left: auto; background: none; border: none; color: #A04040; font-size: 0.8rem; cursor: pointer; padding: 0; }
+.pe-remove:hover { text-decoration: underline; }
+.pe-inline-form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.pe-inline-form .form-input, .pe-inline-form .form-select { flex: 1 1 10rem; min-width: 0; width: auto; }
+
+/* ── Markdown editor (js/managed-page.js) ─────────────────────── */
+.md-editor-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; margin-bottom: 0.5rem; font-size: 0.85rem; }
+.md-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 0.3rem 0.1rem; cursor: pointer; color: #6A6A6A; font: inherit; }
+.md-tab--active { color: #1A1A1A; border-bottom-color: #2A6B6B; }
+.md-upload { color: #2A6B6B; cursor: pointer; margin-left: auto; }
+.md-upload:hover, .md-help:hover { text-decoration: underline; }
+.md-help { color: #8A8A8A; }
+.md-textarea {
+  width: 100%; min-height: 420px; box-sizing: border-box; resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88rem; line-height: 1.6;
+  padding: 0.85rem; border: 1px solid #D8D5CF; border-radius: 4px; background: #fff; color: #1A1A1A;
+}
+.md-preview { min-height: 420px; border: 1px dashed #D8D5CF; padding: 0.5rem 1rem; }
+.md-status { font-size: 0.85rem; color: #6A6A6A; min-height: 1.2em; margin-top: 0.4rem; }
+.pe-section:first-of-type { border-top: none; padding-top: 0; margin-top: 1rem; }
+.about-body .sig-edit-link { font-size: 0.85rem; margin-top: 0.35rem; }

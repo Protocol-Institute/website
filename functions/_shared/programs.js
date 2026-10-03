@@ -138,3 +138,26 @@ export async function syncAffiliations(env, projectId, rows, actor, approvable) 
 
   if (stmts.length) await env.DB.batch(stmts);
 }
+
+// ── Editing authority ───────────────────────────────────────────────────────
+// Programs, editions' parents and areas are created by admins; hosts (assigned
+// by an admin in program_hosts) edit their own programs' content, links,
+// editions and tags. See programs/PLAN.md. When the volunteer task board is
+// built (tasks/PLAN.md) this should grow into one authorityFor(node) resolver.
+
+export async function memberForSession(env, email) {
+  if (!email) return null;
+  return env.DB.prepare('SELECT slug, name, is_admin FROM members WHERE email = ?').bind(email).first();
+}
+
+export async function canEditProgram(env, member, programSlug) {
+  if (!member) return false;
+  if (member.is_admin) return true;
+  const row = await env.DB.prepare(
+    'SELECT 1 FROM program_hosts WHERE program_slug = ? AND member_slug = ?'
+  ).bind(programSlug, member.slug).first();
+  return !!row;
+}
+
+export const PROGRAM_KINDS = ['sig', 'event', 'workshop', 'course', 'collaboration', 'initiative'];
+export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,62}$/;

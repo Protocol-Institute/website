@@ -88,6 +88,7 @@
           <button class="admin-tab active" data-tab="pending-members">Pending Members</button>
           <button class="admin-tab" data-tab="member-directory">Member Directory</button>
           <button class="admin-tab" data-tab="pending-projects">Pending Affiliations</button>
+          <button class="admin-tab" data-tab="programs">Programs</button>
           <button class="admin-tab" data-tab="voting-analytics">Voting Analytics</button>
         </div>
 
@@ -104,6 +105,32 @@
         <!-- Tab: Pending Projects -->
         <div class="admin-panel" id="panel-pending-projects">
           <div id="projects-list"><p class="section-loading">Loading…</p></div>
+        </div>
+
+        <!-- Tab: Programs (areas > programs; hosts are assigned on each program's edit page) -->
+        <div class="admin-panel" id="panel-programs">
+          <div id="programs-admin"><p class="section-loading">Loading…</p></div>
+          <h3 class="pe-heading" style="margin-top:2rem;">New program</h3>
+          <form id="new-program-form" class="pe-inline-form">
+            <input class="form-input" id="np-title" placeholder="Title" required>
+            <input class="form-input" id="np-slug" placeholder="slug" required>
+            <input class="form-input" id="np-short" placeholder="Short title (optional)">
+            <select class="form-select" id="np-kind">
+              <option value="sig">SIG</option><option value="event">Event</option><option value="workshop">Workshop</option>
+              <option value="course">Course</option><option value="collaboration">Collaboration</option><option value="initiative">Initiative</option>
+            </select>
+            <select class="form-select" id="np-area"></select>
+            <button type="submit" class="form-btn form-btn--inline">Create</button>
+          </form>
+          <p class="form-msg" id="np-msg" style="display:none;"></p>
+          <h3 class="pe-heading" style="margin-top:2rem;">New area</h3>
+          <form id="new-area-form" class="pe-inline-form">
+            <input class="form-input" id="na-title" placeholder="Title" required>
+            <input class="form-input" id="na-slug" placeholder="slug" required>
+            <select class="form-select" id="na-realm"><option value="research">Research realm</option><option value="admin">Admin realm</option></select>
+            <button type="submit" class="form-btn form-btn--inline">Create</button>
+          </form>
+          <p class="form-msg" id="na-msg" style="display:none;"></p>
         </div>
 
         <!-- Tab: Voting Analytics -->
@@ -183,6 +210,7 @@
       this.classList.add('active');
       document.getElementById('panel-' + this.dataset.tab).classList.add('active');
 
+      if (this.dataset.tab === 'programs') loadPrograms();
       if (this.dataset.tab === 'voting-analytics') {
         if (!analyticsLoaded) { analyticsLoaded = true; fetchAnalytics(); }
         else startAnalyticsTimer();
@@ -336,7 +364,6 @@
         <label class="edit-checkbox"><input type="checkbox" data-field="is_consultant" ${m.is_consultant?'checked':''}> Consultant</label>
         <label class="edit-checkbox"><input type="checkbox" data-field="is_public" ${m.is_public?'checked':''}> Public</label>
         <label class="edit-checkbox"><input type="checkbox" data-field="is_admin" ${m.is_admin?'checked':''}> Admin</label>
-        <label class="edit-checkbox"><input type="checkbox" data-field="is_sig_host" ${m.is_sig_host?'checked':''}> SIG Host</label>
         <label class="edit-checkbox"><input type="checkbox" data-field="welcome_sent" ${m.welcome_sent?'checked':''}> Welcome sent</label>
         <div class="edit-section-label">Event tags</div>
         <div class="edit-checkbox-grid">${tagChecks}</div>
@@ -440,6 +467,48 @@
       msg.textContent = data.error || 'Error.';
     }
   }
+
+  // ── Tab: Programs ──────────────────────────────────────────────
+  async function loadPrograms() {
+    const box = document.getElementById('programs-admin');
+    try {
+      const d = await fetch('/api/programs').then(r => r.json());
+      const sel = document.getElementById('np-area');
+      sel.innerHTML = d.areas.map(a => `<option value="${esc(a.slug)}">${esc(a.title)}${a.realm === 'admin' ? ' (admin)' : ''}</option>`).join('');
+      box.innerHTML = d.areas.map(a => {
+        const progs = d.programs.filter(p => (p.areas.find(x => x.is_primary) || p.areas[0] || {}).slug === a.slug);
+        return `<h3 class="pe-heading" style="font-size:1.2rem;margin-top:1.5rem;">${esc(a.title)}${a.realm === 'admin' ? ' <span class="pe-tag">admin realm</span>' : ''}</h3>
+          <ul class="pe-list">${progs.map(p => `<li><a href="${esc(p.href)}" target="_blank">${esc(p.title)}</a>
+            <span class="pe-note">${esc(p.kind)} · ${p.project_count} project${p.project_count === 1 ? '' : 's'}${p.editions.length ? ' · ' + p.editions.length + ' editions' : ''}</span>
+            <a class="pe-remove" style="color:#2A6B6B" href="/programs/edit?slug=${encodeURIComponent(p.slug)}">Edit / hosts →</a></li>`).join('') || '<li class="pe-empty">No programs.</li>'}</ul>`;
+      }).join('');
+    } catch { box.innerHTML = '<p style="color:#C44">Error loading.</p>'; }
+  }
+
+  async function adminPost(url, body, msgId, form) {
+    const msg = document.getElementById(msgId);
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    msg.style.display = '';
+    msg.className = 'form-msg ' + (r.ok ? 'form-msg--success' : 'form-msg--error');
+    msg.textContent = r.ok ? 'Created.' : (d.error || 'Error.');
+    if (r.ok) { form.reset(); loadPrograms(); }
+  }
+  document.getElementById('new-program-form').addEventListener('submit', e => {
+    e.preventDefault();
+    adminPost('/api/programs', {
+      title: document.getElementById('np-title').value, slug: document.getElementById('np-slug').value,
+      short_title: document.getElementById('np-short').value, kind: document.getElementById('np-kind').value,
+      areas: [document.getElementById('np-area').value],
+    }, 'np-msg', e.target);
+  });
+  document.getElementById('new-area-form').addEventListener('submit', e => {
+    e.preventDefault();
+    adminPost('/api/areas', {
+      title: document.getElementById('na-title').value, slug: document.getElementById('na-slug').value,
+      realm: document.getElementById('na-realm').value,
+    }, 'na-msg', e.target);
+  });
 
   // ── Tab 4: Voting Analytics ────────────────────────────────────
   let analyticsCountdown = REFRESH_SEC;

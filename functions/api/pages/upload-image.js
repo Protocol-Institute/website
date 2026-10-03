@@ -2,21 +2,25 @@
 // Accepts multipart/form-data: { image: File, page_key: string }
 // Stores in R2 at pages/{page_key_slug}/{timestamp}.{ext}
 // Returns { url: '/assets/pages/...' }
-// Auth: any logged-in member (tighten later if needed)
+// Auth: whoever may edit page_key — an admin, or a host of the program it
+// belongs to (sigs/<slug>/…, programs/<slug>/…). Was "any logged-in member".
+//
+// No SVG: uploads are served from this origin via /assets/, and an SVG can
+// carry script, so accepting one would be stored XSS on protocol-institute.org.
 
 import { getSession } from '../../_shared/session.js';
+import { memberForSession, canEditProgram } from '../../_shared/programs.js';
 
-const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']);
+const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
 const EXT_MAP = {
-  'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif',
-  'image/webp': 'webp', 'image/svg+xml': 'svg',
+  'image/jpeg': 'jpg', 'image/png': 'png', 'image/gif': 'gif', 'image/webp': 'webp',
 };
 
 export async function onRequestPost({ request, env }) {
   const email = await getSession(request, env);
   if (!email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const member = await env.DB.prepare('SELECT slug FROM members WHERE email = ?').bind(email).first();
+  const member = await memberForSession(env, email);
   if (!member) return Response.json({ error: 'Forbidden' }, { status: 403 });
 
   let formData;
@@ -25,6 +29,11 @@ export async function onRequestPost({ request, env }) {
 
   const image = formData.get('image');
   const pageKey = (formData.get('page_key') || 'general').replace(/[^a-z0-9\-_\/]/gi, '-');
+
+  const [scope, programSlug] = pageKey.split('/');
+  const allowed = member.is_admin ||
+    ((scope === 'sigs' || scope === 'programs') && programSlug && await canEditProgram(env, member, programSlug));
+  if (!allowed) return Response.json({ error: 'Forbidden' }, { status: 403 });
 
   if (!image || typeof image === 'string') {
     return Response.json({ error: 'image file required' }, { status: 400 });

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Program — The Protocol Institute</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="pe-loading"><p class="section-loading">Loading…</p></div>
+      <div id="pe-denied" style="display:none;"><p class="projects-intro" id="pe-denied-msg"></p></div>
+
+      <div id="pe-content" style="display:none;">
+        <div class="project-detail-breadcrumb"><a href="/members/dashboard">← Dashboard</a> &nbsp;·&nbsp; <a id="pe-view">View page →</a></div>
+        <div class="page-header">
+          <p class="program-kind" id="pe-kind"></p>
+          <h1 id="pe-title"></h1>
+        </div>
+
+        <!-- Page content -->
+        <section class="pe-section">
+          <h2 class="pe-heading">Page content</h2>
+          <form id="pe-basics" class="member-form">
+            <div class="form-group">
+              <label class="form-label" for="pe-description">Blurb</label>
+              <textarea class="form-textarea" id="pe-description" rows="4" maxlength="2000"></textarea>
+              <p class="form-hint">One short paragraph shown at the top of the page and in listings. Plain text.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pe-byline">Byline</label>
+              <input class="form-input" id="pe-byline" maxlength="300" placeholder="Led by … — Biweekly Thursdays, 8am Pacific">
+              <p class="form-hint">Who runs it and when it meets. Plain text.</p>
+            </div>
+
+            <div id="pe-admin-fields" style="display:none;">
+              <p class="pe-admin-note">Admin only</p>
+              <div class="form-row">
+                <div class="form-group form-group--half">
+                  <label class="form-label" for="pe-ftitle">Title</label>
+                  <input class="form-input" id="pe-ftitle" maxlength="200">
+                </div>
+                <div class="form-group form-group--half">
+                  <label class="form-label" for="pe-short">Short title</label>
+                  <input class="form-input" id="pe-short" maxlength="40">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group form-group--half">
+                  <label class="form-label" for="pe-status">Status</label>
+                  <select class="form-select" id="pe-status"><option value="active">Active</option><option value="past">Past</option></select>
+                </div>
+                <div class="form-group form-group--half">
+                  <label class="form-label" for="pe-policy">Tagging</label>
+                  <select class="form-select" id="pe-policy">
+                    <option value="open">Open — tags apply at once</option>
+                    <option value="moderated">Moderated — tags need approval</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pe-pageurl">Own page URL <span class="optional">(blank = generic program page)</span></label>
+                <input class="form-input" id="pe-pageurl" maxlength="300" placeholder="/sigs/… or https://…">
+              </div>
+              <div class="form-group">
+                <span class="form-label">Areas <span class="optional">(first checked is primary — it sets the realm)</span></span>
+                <div id="pe-areas" class="pe-checks"></div>
+              </div>
+            </div>
+
+            <div class="form-actions"><button type="submit" class="form-btn">Save</button></div>
+            <p class="form-msg" id="pe-basics-msg" style="display:none;"></p>
+          </form>
+          <p id="pe-about-row" style="display:none;margin-top:1rem;">
+            <a id="pe-about" class="form-btn form-btn--secondary form-btn--inline">Edit the About page (markdown) →</a>
+          </p>
+        </section>
+
+        <!-- Links -->
+        <section class="pe-section">
+          <h2 class="pe-heading">Links</h2>
+          <p class="form-hint">"Website" is the program's own site, shown under the blurb. "Channel" is an outlet that carries its work (Substack, YouTube…). "Link" is anything else related.</p>
+          <ul class="pe-list" id="pe-links"></ul>
+          <form id="pe-link-form" class="pe-inline-form">
+            <select class="form-select" id="pe-link-kind"><option value="link">Link</option><option value="website">Website</option><option value="channel">Channel</option></select>
+            <input class="form-input" id="pe-link-label" placeholder="Label" maxlength="120" required>
+            <input class="form-input" id="pe-link-url" placeholder="https://" type="url" required>
+            <input class="form-input" id="pe-link-note" placeholder="Note (optional)" maxlength="200">
+            <button type="submit" class="form-btn form-btn--inline">Add link</button>
+          </form>
+          <p class="form-msg" id="pe-link-msg" style="display:none;"></p>
+        </section>
+
+        <!-- Editions -->
+        <section class="pe-section" id="pe-editions-section" style="display:none;">
+          <h2 class="pe-heading">Editions</h2>
+          <p class="form-hint">Dated runs of this program. Projects can be tagged to a specific edition.</p>
+          <ul class="pe-list" id="pe-editions"></ul>
+          <form id="pe-edition-form" class="pe-inline-form">
+            <input class="form-input" id="pe-ed-title" placeholder="Title, e.g. November 2027" maxlength="200" required>
+            <input class="form-input" id="pe-ed-slug" placeholder="slug, e.g. 2027-11" maxlength="63" required>
+            <input class="form-input" id="pe-ed-start" type="date" title="Start date">
+            <input class="form-input" id="pe-ed-end" type="date" title="End date">
+            <input class="form-input" id="pe-ed-location" placeholder="Location" maxlength="200">
+            <select class="form-select" id="pe-ed-status"><option value="planned">Planned</option><option value="active">Active</option><option value="past">Past</option></select>
+            <button type="submit" class="form-btn form-btn--inline">Add edition</button>
+          </form>
+          <p class="form-msg" id="pe-edition-msg" style="display:none;"></p>
+        </section>
+
+        <!-- Projects -->
+        <section class="pe-section">
+          <h2 class="pe-heading">Tagged projects</h2>
+          <p class="form-hint" id="pe-projects-hint"></p>
+          <ul class="pe-list" id="pe-projects"></ul>
+        </section>
+
+        <!-- Hosts (admin) -->
+        <section class="pe-section" id="pe-hosts-section">
+          <h2 class="pe-heading">Hosts</h2>
+          <ul class="pe-list" id="pe-hosts"></ul>
+          <form id="pe-host-form" class="pe-inline-form" style="display:none;">
+            <input class="form-input" id="pe-host-slug" list="pe-member-options" placeholder="Member slug" required>
+            <datalist id="pe-member-options"></datalist>
+            <button type="submit" class="form-btn form-btn--inline">Add host</button>
+          </form>
+          <p class="form-msg" id="pe-host-msg" style="display:none;"></p>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+// Program editor for hosts and admins (programs/PLAN.md). Hosts edit content
+// (blurb, byline, About page, links, editions) and can remove tags from their
+// program; admins additionally edit identity/placement and assign hosts.
+// Every write is re-authorised server-side.
+(function () {
+  const slug = new URLSearchParams(location.search).get('slug');
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const KIND_LABELS = { sig: 'Special Interest Group', event: 'Event', workshop: 'Workshop', course: 'Course', collaboration: 'Collaboration', initiative: 'Initiative' };
+  let isAdmin = false;
+  let program = null;
+
+  function msg(id, text, ok) {
+    const el = $(id);
+    el.className = 'form-msg ' + (ok ? 'form-msg--success' : 'form-msg--error');
+    el.textContent = text;
+    el.style.display = '';
+  }
+
+  async function post(url, body) {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'Request failed');
+    return d;
+  }
+
+  function deny(text) {
+    $('pe-loading').style.display = 'none';
+    $('pe-denied-msg').innerHTML = text;
+    $('pe-denied').style.display = '';
+  }
+
+  async function load() {
+    const [me, data, all] = await Promise.all([
+      fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/programs/' + encodeURIComponent(slug)).then(r => r.ok ? r.json() : null),
+      fetch('/api/programs').then(r => r.json()),
+    ]);
+    if (!me || !me.member) return deny('Please <a href="/members/join?return=' + encodeURIComponent(location.pathname + location.search) + '">log in</a> to edit this program.');
+    if (!data) return deny('Program not found.');
+    isAdmin = !!me.member.is_admin;
+    if (!isAdmin && !(me.hosted_programs || []).some(p => p.slug === slug)) {
+      return deny('Only this program\'s hosts or an admin can edit it.');
+    }
+    program = data;
+    render(data, all.areas || []);
+  }
+
+  function render(data, areas) {
+    const p = data.program;
+    document.title = 'Edit ' + p.title + ' — The Protocol Institute';
+    $('pe-title').textContent = p.title;
+    $('pe-kind').textContent = KIND_LABELS[p.kind] || p.kind;
+    $('pe-view').href = p.href;
+    $('pe-description').value = p.description || '';
+    $('pe-byline').value = p.byline || '';
+
+    if (isAdmin) {
+      $('pe-admin-fields').style.display = '';
+      $('pe-ftitle').value = p.title;
+      $('pe-short').value = p.short_title || '';
+      $('pe-status').value = p.status;
+      $('pe-policy').value = p.affiliation_policy;
+      $('pe-pageurl').value = p.page_url || '';
+      const mine = data.areas.map(a => a.slug);
+      $('pe-areas').innerHTML = areas.map(a =>
+        `<label><input type="checkbox" value="${esc(a.slug)}"${mine.includes(a.slug) ? ' checked' : ''}> ${esc(a.title)}${a.realm === 'admin' ? ' (admin)' : ''}</label>`).join('');
+      $('pe-host-form').style.display = '';
+      fetch('/api/members').then(r => r.json()).then(d => {
+        $('pe-member-options').innerHTML = (d.members || []).map(m => `<option value="${esc(m.slug)}">${esc(m.name)}</option>`).join('');
+      }).catch(() => {});
+    }
+
+    if (p.kind === 'sig') {
+      $('pe-about-row').style.display = '';
+      $('pe-about').href = '/sigs/' + encodeURIComponent(p.slug) + '/about/';
+    }
+
+    // Links
+    $('pe-links').innerHTML = data.links.length ? data.links.map(l => `
+      <li><span class="pe-tag">${esc(l.kind)}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}</a>
+        ${l.note ? '<span class="pe-note">— ' + esc(l.note) + '</span>' : ''}
+        <button class="pe-remove" data-link="${l.id}">Remove</button></li>`).join('')
+      : '<li class="pe-empty">No links yet.</li>';
+
+    // Editions
+    if (p.kind !== 'sig' || data.editions.length) {
+      $('pe-editions-section').style.display = '';
+      $('pe-editions').innerHTML = data.editions.length ? data.editions.map(e => `
+        <li><strong>${esc(e.title)}</strong> <span class="pe-note">${esc([e.start_date, e.end_date].filter(Boolean).join(' – '))} ${esc(e.location || '')} · ${esc(e.status)}</span>
+          <button class="pe-remove" data-edition="${e.id}">Delete</button></li>`).join('')
+        : '<li class="pe-empty">No editions yet.</li>';
+    }
+
+    // Projects
+    $('pe-projects-hint').textContent = p.affiliation_policy === 'open'
+      ? 'Any member can tag a research project to this program; it appears at once. Remove a tag if a project doesn\'t belong here.'
+      : 'Tags to this program need approval — pending ones are in the admin queue.';
+    const direct = data.projects.filter(pr => !pr.via);
+    $('pe-projects').innerHTML = direct.length ? direct.map(pr => `
+      <li><a href="/projects/project?slug=${encodeURIComponent(pr.slug)}">${esc(pr.title)}</a>
+        <span class="pe-note">— ${esc(pr.lead_name || pr.lead_slug)}</span>
+        <button class="pe-remove" data-untag="${esc(pr.slug)}">Remove tag</button></li>`).join('')
+      : '<li class="pe-empty">No projects tagged yet.</li>';
+
+    // Hosts
+    $('pe-hosts').innerHTML = data.hosts.length ? data.hosts.map(h => `
+      <li><a href="/members/profile?slug=${encodeURIComponent(h.slug)}">${esc(h.name || h.slug)}</a>
+        ${isAdmin ? `<button class="pe-remove" data-host="${esc(h.slug)}">Remove</button>` : ''}</li>`).join('')
+      : '<li class="pe-empty">No hosts assigned.</li>';
+
+    $('pe-loading').style.display = 'none';
+    $('pe-content').style.display = '';
+  }
+
+  async function refresh() {
+    const [data, all] = await Promise.all([
+      fetch('/api/programs/' + encodeURIComponent(slug)).then(r => r.json()),
+      fetch('/api/programs').then(r => r.json()),
+    ]);
+    program = data;
+    render(data, all.areas || []);
+  }
+
+  // Basics
+  $('pe-basics').addEventListener('submit', async e => {
+    e.preventDefault();
+    const body = { description: $('pe-description').value, byline: $('pe-byline').value };
+    if (isAdmin) {
+      Object.assign(body, {
+        title: $('pe-ftitle').value, short_title: $('pe-short').value, status: $('pe-status').value,
+        affiliation_policy: $('pe-policy').value, page_url: $('pe-pageurl').value,
+        areas: Array.from(document.querySelectorAll('#pe-areas input:checked')).map(i => i.value),
+      });
+    }
+    try { await post('/api/programs/' + encodeURIComponent(slug), body); msg('pe-basics-msg', 'Saved.', true); refresh(); }
+    catch (err) { msg('pe-basics-msg', err.message); }
+  });
+
+  // Links
+  $('pe-link-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await post('/api/program-links', {
+        program_slug: slug, kind: $('pe-link-kind').value, label: $('pe-link-label').value,
+        url: $('pe-link-url').value, note: $('pe-link-note').value || null,
+        sort_order: (program.links || []).length,
+      });
+      e.target.reset(); msg('pe-link-msg', 'Link added.', true); refresh();
+    } catch (err) { msg('pe-link-msg', err.message); }
+  });
+
+  // Editions
+  $('pe-edition-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await post('/api/programs/' + encodeURIComponent(slug) + '/editions', {
+        action: 'create', title: $('pe-ed-title').value, slug: $('pe-ed-slug').value,
+        start_date: $('pe-ed-start').value || null, end_date: $('pe-ed-end').value || null,
+        location: $('pe-ed-location').value, status: $('pe-ed-status').value,
+      });
+      e.target.reset(); msg('pe-edition-msg', 'Edition added.', true); refresh();
+    } catch (err) { msg('pe-edition-msg', err.message); }
+  });
+
+  // Hosts
+  $('pe-host-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await post('/api/programs/' + encodeURIComponent(slug) + '/hosts', { member_slug: $('pe-host-slug').value.trim(), action: 'add' });
+      e.target.reset(); msg('pe-host-msg', 'Host added.', true); refresh();
+    } catch (err) { msg('pe-host-msg', err.message); }
+  });
+
+  // Remove buttons (links, editions, tags, hosts)
+  $('pe-content').addEventListener('click', async e => {
+    const b = e.target.closest('.pe-remove');
+    if (!b) return;
+    b.disabled = true;
+    try {
+      if (b.dataset.link) await post('/api/program-links', { id: Number(b.dataset.link), action: 'delete' });
+      else if (b.dataset.edition) await post('/api/programs/' + encodeURIComponent(slug) + '/editions', { id: Number(b.dataset.edition), action: 'delete' });
+      else if (b.dataset.untag) await post('/api/affiliations', { project_slug: b.dataset.untag, program_slug: slug, action: 'reject' });
+      else if (b.dataset.host) await post('/api/programs/' + encodeURIComponent(slug) + '/hosts', { member_slug: b.dataset.host, action: 'remove' });
+      refresh();
+    } catch (err) {
+      b.disabled = false;
+      b.textContent = err.message;
+    }
+  });
+
+  if (!slug) { deny('No program specified.'); return; }
+  load().catch(() => deny('Could not load this program.'));
+}());
+</script>
+</body>
+</html>

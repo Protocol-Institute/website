@@ -92,7 +92,8 @@
         </div>
 
         <div id="section-sig-host" style="display:none;" class="dashboard-section">
-          <h2>SIG host tools</h2>
+          <h2>Programs you host</h2>
+          <p class="dashboard-link-desc" style="margin-bottom:0.75rem;">Edit each program's page — blurb, byline, About page, links and editions — and manage the projects tagged to it.</p>
           <div class="dashboard-links" id="sig-host-links"></div>
         </div>
 
@@ -127,30 +128,29 @@
         'Welcome' + (firstName ? ', ' + firstName : '') + '.';
       document.getElementById('my-profile-link').href = '/members/profile?slug=' + encodeURIComponent(m.slug);
 
-      if (m.is_sig_host && m.sig_host_slugs) {
-        var slugs;
-        try { slugs = JSON.parse(m.sig_host_slugs); } catch { slugs = []; }
-        if (slugs.length) {
-          document.getElementById('section-sig-host').style.display = '';
-          var container = document.getElementById('sig-host-links');
-          var SIG_NAMES = {
-            sigfpt: 'SIGFPT', mrg: 'MRG', sigpfb: 'SIGPfB',
-            protfisig: 'ProtFiSIG', drg: 'DRG', sigpsy: 'SIGPSY', prg: 'PRG'
-          };
-          slugs.forEach(function (slug) {
-            var name = SIG_NAMES[slug] || slug.toUpperCase();
-            var el = document.createElement('div');
-            el.className = 'dashboard-link-item';
-            el.style.flexDirection = 'column';
-            el.style.gap = '0.5rem';
-            el.innerHTML =
-              '<div class="dashboard-link-title">' + name + '</div>' +
-              '<div class="dashboard-links" style="flex-direction:row;flex-wrap:wrap;gap:0.5rem;">' +
-                '<a href="/sigs/' + slug + '/" style="font-size:0.85rem;color:#2A6B6B;">View SIG page</a>' +
-              '</div>';
-            container.appendChild(el);
-          });
-        }
+      // Programs this member hosts (program_hosts, assigned by an admin).
+      // Admins can edit every program; they reach the full list from /admin.
+      var hosted = data.hosted_programs || [];
+      if (hosted.length) {
+        document.getElementById('section-sig-host').style.display = '';
+        var container = document.getElementById('sig-host-links');
+        hosted.forEach(function (p) {
+          var view = p.page_url || ('/programs/program?slug=' + encodeURIComponent(p.slug));
+          var el = document.createElement('div');
+          el.className = 'dashboard-link-item';
+          el.style.flexDirection = 'column';
+          el.style.gap = '0.5rem';
+          el.innerHTML =
+            '<div class="dashboard-link-title"></div>' +
+            '<div class="dashboard-links" style="flex-direction:row;flex-wrap:wrap;gap:1rem;">' +
+              '<a class="host-edit" style="font-size:0.85rem;color:#2A6B6B;">Edit</a>' +
+              '<a class="host-view" style="font-size:0.85rem;color:#2A6B6B;">View page</a>' +
+            '</div>';
+          el.querySelector('.dashboard-link-title').textContent = p.title + (p.short_title ? ' (' + p.short_title + ')' : '');
+          el.querySelector('.host-edit').href = '/programs/edit?slug=' + encodeURIComponent(p.slug);
+          el.querySelector('.host-view').href = view;
+          container.appendChild(el);
+        });
       }
     })
     .catch(function () {

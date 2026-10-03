@@ -57,5 +57,13 @@ export async function onRequestGet({ request, env }) {
     'SELECT * FROM members WHERE owner_email = ?'
   ).bind(email).all();
 
-  return Response.json({ member: own, owned: owned || [] });
+  // Programs this member hosts (program_hosts) — drives the dashboard's
+  // "Programs you host" section and client-side edit affordances.
+  const { results: hosted } = await env.DB.prepare(`
+    SELECT p.slug, p.kind, p.title, p.short_title, p.page_url
+    FROM program_hosts h JOIN programs p ON p.slug = h.program_slug
+    WHERE h.member_slug = ? ORDER BY p.sort_order, p.title
+  `).bind(own.slug).all();
+
+  return Response.json({ member: own, owned: owned || [], hosted_programs: hosted || [] });
 }

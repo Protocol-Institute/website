@@ -2,7 +2,7 @@
 --
 -- See programs/PLAN.md. Additive only: projects.sig_slug / program / sub_program /
 -- themes are left in place so the code running at the moment this is applied keeps
--- working; migration 039 drops them once the code that reads the new tables is live.
+-- working; migration 040 drops them once the code that reads the new tables is live.
 --
 -- Semantics in brief:
 --   realm    'research' or 'admin' — two parallel hierarchies. Admin (the
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS project_programs (
 -- Links that are not projects: a program's own site, related resources, and the
 -- outlets that carry its work (kind='channel': Substack, YouTube, …).
 -- Generalizes sig_links (migration 034), whose rows are copied below; sig_links
--- itself is dropped in 039.
+-- itself is dropped in 040.
 CREATE TABLE IF NOT EXISTS program_links (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
   program_slug TEXT NOT NULL REFERENCES programs(slug),

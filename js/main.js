@@ -259,12 +259,13 @@ var FOOTER_HTML =
     .catch(function () {});
 }());
 
-// SIG page — website link, related links, and affiliated projects, all from D1.
+// SIG page — blurb, byline, About link, website, links and projects, all from D1.
 // Runs only on a SIG home page (/sigs/<slug>), never on /sigs itself or on a
-// session page. Two sources, deliberately kept separate: program_links holds links
-// that are not projects (a SIG's own site, resources); project_programs holds
-// the affiliated projects (programs/PLAN.md) and is the single source of truth. Both
-// used to be hand-written HTML on each SIG page, which silently drifted.
+// session page. Everything above the meeting archive is host-editable
+// (programs/edit) and lives in D1: programs.description (blurb), programs.byline
+// ("Led by … — schedule"), program_links (site + links), project_programs
+// (projects), managed_pages sigs/<slug>/about. The HTML holds fallbacks only.
+// The archive below is c3po's, regenerated in place — never touched from here.
 (function () {
   var match = window.location.pathname.replace(/\/$/, '').match(/^\/sigs\/([a-z0-9-]+)$/);
   if (!match) return;
@@ -273,6 +274,9 @@ var FOOTER_HTML =
   var websiteEl = document.getElementById('sig-website');
   var resourcesEl = document.getElementById('sig-resources');
   if (!websiteEl && !resourcesEl) return;
+  var blurbEl = document.getElementById('sig-blurb');
+  var bylineEl = document.getElementById('sig-byline');
+  var aboutLinkEl = document.getElementById('sig-about-link');
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
@@ -298,16 +302,24 @@ var FOOTER_HTML =
       '</div>';
   }
 
+  function json(url, fallback) {
+    return fetch(url).then(function (r) { return r.ok ? r.json() : fallback; }).catch(function () { return fallback; });
+  }
+
   Promise.all([
-    fetch('/api/program-links?program=' + encodeURIComponent(slug))
-      .then(function (r) { return r.ok ? r.json() : { links: [] }; })
-      .catch(function () { return { links: [] }; }),
-    fetch('/api/projects?sig=' + encodeURIComponent(slug))
-      .then(function (r) { return r.ok ? r.json() : { projects: [] }; })
-      .catch(function () { return { projects: [] }; }),
+    json('/api/programs/' + encodeURIComponent(slug), null),
+    json('/api/pages/sigs/' + encodeURIComponent(slug) + '/about', null),
+    json('/api/members/me', null),
   ]).then(function (res) {
-    var links = res[0].links || [];
-    var projects = res[1].projects || [];
+    var data = res[0];
+    if (!data) return; // keep the HTML fallbacks
+    var program = data.program;
+    var links = data.links || [];
+    var projects = (data.projects || []).filter(function (p) { return p.realm !== 'admin'; });
+
+    if (blurbEl && program.description) blurbEl.textContent = program.description;
+    if (bylineEl && program.byline) bylineEl.textContent = program.byline;
+    if (aboutLinkEl && res[1] && String(res[1].content_md || '').trim()) aboutLinkEl.style.display = '';
 
     // The SIG's own site sits under the page blurb, labelled by its own row so
     // the wording can be changed per SIG without touching this file.
@@ -315,6 +327,18 @@ var FOOTER_HTML =
     if (websiteEl && site) {
       websiteEl.innerHTML = extLink(site.url, site.label || 'Project Website') + ' &#8594;';
       websiteEl.style.display = '';
+    }
+
+    // Hosts and admins get an edit link (the server re-checks on every write).
+    var me = res[2];
+    var canEdit = me && me.member && (me.member.is_admin ||
+      (me.hosted_programs || []).some(function (p) { return p.slug === slug; }));
+    if (canEdit && bylineEl && !document.getElementById('sig-edit-link')) {
+      var edit = document.createElement('p');
+      edit.id = 'sig-edit-link';
+      edit.className = 'sig-edit-link';
+      edit.innerHTML = '<a href="/programs/edit?slug=' + encodeURIComponent(slug) + '">Edit this page &#8594;</a>';
+      bylineEl.parentNode.insertBefore(edit, bylineEl.nextSibling);
     }
 
     if (!resourcesEl) return;

@@ -104,16 +104,23 @@ Symposium.
 One-off things (a retreat, Bridge Atlas) are still a program with one edition —
 not a separate kind. Retreats are individual events, not a recurring template.
 
-### Moderation
+### Moderation and authority
 
-- **Project itself** — no gate. Members are already vetted at membership
-  approval. Admins can hide a project (`status='rejected'`).
-- **Affiliation** — `pending` until approved by an admin or a host of that
-  program (`program_hosts`). Only approved affiliations show on program/area
-  pages and on the project's own tag list.
-- **Open programs** — `programs.affiliation_policy = 'open'` auto-approves.
-  Intended for participatory events like Book Writing Month, where anyone
-  writing a book should just be able to tag in.
+*(Revised Session 54 after the first deploy.)*
+
+- **Areas and programs** are created by admins only (`/admin` → Programs tab).
+  An admin then assigns **hosts** (`program_hosts`) on the program's edit page.
+- **Hosts** edit their programs at `/programs/edit?slug=` — reached from the
+  "Programs you host" section of their member dashboard: blurb
+  (`programs.description`), byline (`programs.byline`), the About page (raw
+  markdown in `managed_pages`, `sigs/<slug>/about`), links, editions, and the
+  tags on their program. Admins can additionally edit title, status, page URL,
+  tagging policy and areas, and assign hosts.
+- **Projects** — any member creates them, no gate. Admins can hide one.
+- **Tags (affiliations)** — research-realm programs are `affiliation_policy =
+  'open'`: any member may tag any of them and the tag applies at once; a host
+  removes a tag that doesn't fit (`status = 'rejected'`). Admin-realm programs
+  stay `moderated`.
 
 `/research` (the global project index) lists every published project,
 affiliated or not.
@@ -138,7 +145,7 @@ kind website|channel|link, label, url, note, sort_order)` — generalizes
 `/api/sigs/links`; `functions/_shared/sigs.js` is gone (programs are validated
 against the table).
 
-Migration 039 (after the phase 1 code is live, never before — Pages
+Migration 040 (after the phase 1 code is live, never before — Pages
 auto-deploys on push but migrations are applied by hand, so dropping columns
 first would break the running code): drop `projects.sig_slug`, `program`,
 `sub_program`, `themes`, and the `sig_links` table.
@@ -224,7 +231,7 @@ Event editions keep their existing `/events/<id>` pages as `page_url`; SIGs keep
 4. Retire the static stubs: `/jamverse`, `/worldmachines`, `/protocolized-dev`
    → 301 to their project pages; `/longnow`, `/c3po` → 301 to the new
    project/program pages.
-5. Migration 039 drops the dead columns. (038 points Book Writing Month at its landing page.)
+5. Migration 040 drops the dead columns. (038 points Book Writing Month at its landing page.)
 
 ### Phase 2 — Book Writing Month
 Program page for the November 2026 edition listing tagged books; "Start a book

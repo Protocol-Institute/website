@@ -1,27 +1,21 @@
 // GET /api/pages/{page_key} — public, returns page content
 // PUT /api/pages/{page_key} — auth-gated, upserts content
 //
-// page_key is a slash-joined path: sigs/mrg/about, projects/foo, static/bar
+// page_key is a slash-joined path: sigs/mrg/about, programs/foo/about, static/bar
 // Auth rules:
 //   is_admin → any page
-//   is_sig_host + sig_host_slugs contains X → sigs/X/*
-//   (future) project owner → projects/{their_slug}
+//   host of program X (program_hosts) → sigs/X/* and programs/X/*
+//   (future) project lead → projects/{their_slug}
 
 import { getSession } from '../../_shared/session.js';
+import { memberForSession, canEditProgram } from '../../_shared/programs.js';
 
 async function canEdit(email, pageKey, env) {
-  const member = await env.DB.prepare(
-    'SELECT is_admin, is_sig_host, sig_host_slugs FROM members WHERE email = ?'
-  ).bind(email).first();
+  const member = await memberForSession(env, email);
   if (!member) return false;
   if (member.is_admin) return true;
-  if (member.is_sig_host && member.sig_host_slugs) {
-    try {
-      const slugs = JSON.parse(member.sig_host_slugs);
-      const parts = pageKey.split('/');
-      if (parts[0] === 'sigs' && slugs.includes(parts[1])) return true;
-    } catch {}
-  }
+  const [scope, slug] = pageKey.split('/');
+  if ((scope === 'sigs' || scope === 'programs') && slug) return canEditProgram(env, member, slug);
   return false;
 }
 

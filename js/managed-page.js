@@ -1,19 +1,32 @@
-// managed-page.js — shared module for managed content pages.
+// managed-page.js — shared module for managed content pages (D1 managed_pages).
 //
 // Requires PAGE_KEY to be defined as a global before this script loads.
 // Shell HTML must contain these elements by id:
 //   page-loading, page-content, page-body, edit-bar, edit-btn,
 //   page-editor, editor-mount, save-btn, cancel-btn
-
+//
+// Editing is a plain markdown textarea with a preview toggle and an image
+// upload button — deliberately no WYSIWYG/markdown-editor library (Session 54:
+// EasyMDE's toolbar icons never rendered, and the dependency wasn't worth it).
+//
+// Who may edit: admins, and hosts of the program the page belongs to
+// (sigs/<slug>/… or programs/<slug>/…), via /api/members/me's hosted_programs.
+// The server enforces the same rule in functions/api/pages/[[path]].js.
+//
+// Rendered markdown is sanitized with DOMPurify: hosts are not admins, and the
+// site CSP allows inline script, so raw HTML in markdown must not reach the DOM.
 (function () {
   if (typeof PAGE_KEY === 'undefined') {
     console.error('managed-page.js: PAGE_KEY not defined');
     return;
   }
 
+  var MARKED = 'https://cdn.jsdelivr.net/npm/marked@9/marked.min.js';
+  var PURIFY = 'https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js';
+
   var currentMd = '';
-  var editor = null;
   var canEdit = false;
+  var textarea = null;
 
   function el(id) { return document.getElementById(id); }
 
@@ -26,44 +39,27 @@
     });
   }
 
-  function loadStylesheet(href) {
-    return new Promise(function (resolve) {
-      if (document.querySelector('link[href="' + href + '"]')) { resolve(); return; }
-      var l = document.createElement('link');
-      l.rel = 'stylesheet'; l.href = href;
-      l.onload = resolve;
-      l.onerror = resolve; // CSS failure is non-fatal; editor will be unstyled but functional
-      document.head.appendChild(l);
-    });
-  }
-
-  function renderMarkdown(md) {
-    var p = window.marked
-      ? Promise.resolve()
-      : loadScript('https://cdn.jsdelivr.net/npm/marked@9/marked.min.js');
-    return p.then(function () {
-      // marked v9 exports parse as a named export; handle both calling styles
-      var parse = (window.marked && window.marked.parse) || window.marked;
-      if (typeof parse !== 'function') throw new Error('marked not loaded');
-      var result = parse(md || '');
-      // marked v9+ may return a Promise in async mode
-      return (result && typeof result.then === 'function') ? result : Promise.resolve(result);
-    });
+  function escapeHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function plainFallback(md) {
-    // Minimal inline fallback: paragraphs + headings + links, no CDN needed
-    var html = (md || '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/^#{1,6}\s+(.+)$/gm, '<strong>$1</strong>')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-      .split(/\n\n+/)
-      .filter(Boolean)
-      .map(function (b) { return '<p>' + b.replace(/\n/g, '<br>') + '</p>'; })
-      .join('\n');
-    return Promise.resolve(html);
+    // CDN unavailable: show the markdown as escaped paragraphs rather than nothing.
+    return escapeHtml(md).split(/\n\n+/).filter(Boolean)
+      .map(function (b) { return '<p>' + b.replace(/\n/g, '<br>') + '</p>'; }).join('\n');
+  }
+
+  function renderMarkdown(md) {
+    return Promise.all([
+      window.marked ? null : loadScript(MARKED),
+      window.DOMPurify ? null : loadScript(PURIFY),
+    ]).then(function () {
+      var parse = (window.marked && window.marked.parse) || window.marked;
+      if (typeof parse !== 'function' || !window.DOMPurify) throw new Error('renderer not loaded');
+      return Promise.resolve(parse(md || '')).then(function (html) {
+        return window.DOMPurify.sanitize(html);
+      });
+    }).catch(function () { return plainFallback(md); });
   }
 
   function checkEditPermission() {
@@ -72,179 +68,119 @@
       .then(function (data) {
         if (!data || !data.member) return false;
         if (data.member.is_admin) return true;
-        if (data.member.is_sig_host && data.member.sig_host_slugs) {
-          try {
-            var slugs = JSON.parse(data.member.sig_host_slugs);
-            var parts = PAGE_KEY.split('/');
-            if (parts[0] === 'sigs' && slugs.indexOf(parts[1]) !== -1) return true;
-          } catch (e) {}
-        }
-        return false;
+        var parts = PAGE_KEY.split('/');
+        if (parts[0] !== 'sigs' && parts[0] !== 'programs') return false;
+        return (data.hosted_programs || []).some(function (p) { return p.slug === parts[1]; });
       })
       .catch(function () { return false; });
   }
 
   function fetchContent() {
     return fetch('/api/pages/' + PAGE_KEY)
-      .then(function (r) { return (r.status === 404) ? null : r.ok ? r.json() : null; })
+      .then(function (r) { return r.ok ? r.json() : null; })
       .catch(function () { return null; });
   }
 
   function showContent(md) {
-    function reveal(html) {
+    renderMarkdown(md).then(function (html) {
       el('page-body').innerHTML = html;
       el('page-loading').style.display = 'none';
+      el('page-editor').style.display = 'none';
       el('page-content').style.display = '';
       if (canEdit) el('edit-bar').style.display = '';
-    }
-    renderMarkdown(md)
-      .then(reveal)
-      .catch(function () { return plainFallback(md).then(reveal); });
+    });
   }
 
-  function mountTextarea(mount, md) {
-    var ta = document.createElement('textarea');
-    ta.value = md || '';
-    ta.style.cssText = 'width:100%;height:420px;font-family:monospace;font-size:0.88rem;' +
-      'padding:0.75rem;border:1px solid #D8D5CF;border-radius:4px;box-sizing:border-box;resize:vertical;';
-    mount.appendChild(ta);
-    editor = { getMarkdown: function () { return ta.value; }, _isTextarea: true };
-  }
-
-  function injectEditorStyles() {
-    if (document.getElementById('managed-editor-styles')) return;
-    var s = document.createElement('style');
-    s.id = 'managed-editor-styles';
-    s.textContent = [
-      '.editor-toolbar { background: #FAFAF7; border-color: #D8D5CF; opacity: 1 !important; }',
-      '.editor-toolbar button { color: #1A1A1A !important; }',
-      '.editor-toolbar button i, .editor-toolbar button i::before { color: #1A1A1A !important; }',
-      '.editor-toolbar button:hover, .editor-toolbar button.active { background: #EDEAE4 !important; }',
-      '.editor-toolbar button:hover i, .editor-toolbar button.active i { color: #2A6B6B !important; }',
-      '.editor-toolbar i.separator { border-color: #D8D5CF !important; }',
-      '.CodeMirror { background: #fff; color: #1A1A1A; border-color: #D8D5CF; }',
-    ].join('\n');
-    document.head.appendChild(s);
+  function insertAtCursor(text) {
+    var start = textarea.selectionStart, end = textarea.selectionEnd;
+    textarea.value = textarea.value.slice(0, start) + text + textarea.value.slice(end);
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    textarea.focus();
   }
 
   function showEditor(md) {
-    var EMDE_BASE = 'https://cdn.jsdelivr.net/npm/easymde@2/dist/';
-    var ready = window.EasyMDE
-      ? Promise.resolve()
-      : Promise.all([
-          loadStylesheet(EMDE_BASE + 'easymde.min.css'),
-          loadScript(EMDE_BASE + 'easymde.min.js'),
-        ]);
+    el('page-content').style.display = 'none';
+    el('page-editor').style.display = '';
+    var mount = el('editor-mount');
+    mount.innerHTML =
+      '<div class="md-editor-bar">' +
+        '<button type="button" class="md-tab md-tab--active" data-mode="write">Write</button>' +
+        '<button type="button" class="md-tab" data-mode="preview">Preview</button>' +
+        '<label class="md-upload">Insert image<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" hidden></label>' +
+        '<a class="md-help" href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener noreferrer">Markdown help</a>' +
+      '</div>' +
+      '<textarea class="md-textarea" spellcheck="true"></textarea>' +
+      '<div class="md-preview about-body" style="display:none;"></div>' +
+      '<p class="md-status" aria-live="polite"></p>';
+    textarea = mount.querySelector('.md-textarea');
+    textarea.value = md || '';
+    var preview = mount.querySelector('.md-preview');
+    var status = mount.querySelector('.md-status');
 
-    function openEditor() {
-      injectEditorStyles();
-      el('page-content').style.display = 'none';
-      el('page-editor').style.display = '';
-      var mount = el('editor-mount');
-      mount.innerHTML = '';
+    mount.querySelectorAll('.md-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        mount.querySelectorAll('.md-tab').forEach(function (t) { t.classList.remove('md-tab--active'); });
+        tab.classList.add('md-tab--active');
+        var previewing = tab.dataset.mode === 'preview';
+        textarea.style.display = previewing ? 'none' : '';
+        preview.style.display = previewing ? '' : 'none';
+        if (previewing) renderMarkdown(textarea.value).then(function (html) { preview.innerHTML = html; });
+      });
+    });
 
-      if (!window.EasyMDE) {
-        mountTextarea(mount, md);
-        return;
-      }
-      try {
-        var ta = document.createElement('textarea');
-        mount.appendChild(ta);
-        var mde = new EasyMDE({
-          element: ta,
-          initialValue: md || '',
-          spellChecker: false,
-          autosave: { enabled: false },
-          uploadImage: true,
-          imageUploadFunction: function (file, onSuccess, onError) {
-            var fd = new FormData();
-            fd.append('image', file, file.name || 'upload.jpg');
-            fd.append('page_key', PAGE_KEY);
-            fetch('/api/pages/upload-image', { method: 'POST', body: fd })
-              .then(function (r) { return r.json(); })
-              .then(function (d) { onSuccess(d.url || ''); })
-              .catch(function () { onError('Upload failed'); });
-          },
-        });
-        editor = { getMarkdown: function () { return mde.value(); } };
-      } catch (e) {
-        console.error('EasyMDE failed:', e);
-        mount.innerHTML = '';
-        mountTextarea(mount, md);
-      }
-    }
+    mount.querySelector('.md-upload input').addEventListener('change', function () {
+      var file = this.files && this.files[0];
+      if (!file) return;
+      var fd = new FormData();
+      fd.append('image', file, file.name || 'upload.jpg');
+      fd.append('page_key', PAGE_KEY);
+      status.textContent = 'Uploading image…';
+      fetch('/api/pages/upload-image', { method: 'POST', body: fd })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok || !res.d.url) throw new Error(res.d.error || 'Upload failed');
+          insertAtCursor('\n![](' + res.d.url + ')\n');
+          status.textContent = 'Image inserted.';
+        })
+        .catch(function (e) { status.textContent = 'Image upload failed: ' + e.message; });
+      this.value = '';
+    });
 
-    ready.then(openEditor).catch(function () { openEditor(); });
+    textarea.focus();
   }
 
   function save() {
-    if (!editor) return;
-    var md = editor.getMarkdown();
-    var saveBtn = el('save-btn');
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving…';
-
+    var md = textarea ? textarea.value : currentMd;
+    var btn = el('save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
     fetch('/api/pages/' + PAGE_KEY, {
-      method: 'POST',
+      method: 'POST', // not PUT: the CF WAF blocks PUT on Pages
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content_md: md }),
     })
-      .then(function (r) {
-        if (r.ok) return r.json();
-        return r.text().then(function (text) {
-          var msg = 'HTTP ' + r.status;
-          try { msg = JSON.parse(text).error || msg; } catch (e) {}
-          throw new Error(msg);
-        });
-      })
-      .then(function () {
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.d.error || 'Save failed');
         currentMd = md;
-        editor = null;
-        el('page-editor').style.display = 'none';
         showContent(md);
       })
-      .catch(function (e) { alert('Save failed: ' + e.message); })
-      .finally(function () {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save';
-      });
+      .catch(function (e) { alertInline('Could not save: ' + e.message); })
+      .then(function () { btn.disabled = false; btn.textContent = 'Save'; });
   }
 
-  function cancelEdit() {
-    editor = null;
-    el('page-editor').style.display = 'none';
-    el('page-content').style.display = '';
-    if (canEdit) el('edit-bar').style.display = '';
+  function alertInline(msg) {
+    var status = document.querySelector('#editor-mount .md-status');
+    if (status) status.textContent = msg;
   }
 
-  // Wire buttons
-  var editBtn = el('edit-btn');
-  var saveBtn = el('save-btn');
-  var cancelBtn = el('cancel-btn');
-  if (editBtn) editBtn.addEventListener('click', function () { showEditor(currentMd); });
-  if (saveBtn) saveBtn.addEventListener('click', save);
-  if (cancelBtn) cancelBtn.addEventListener('click', cancelEdit);
-
-  // Init
-  Promise.all([fetchContent(), checkEditPermission()])
-    .then(function (results) {
-      var content = results[0];
-      canEdit = results[1];
-
-      if (!content) {
-        if (canEdit) {
-          el('page-loading').style.display = 'none';
-          showEditor('');
-        } else {
-          el('page-loading').textContent = 'No content yet.';
-        }
-        return;
-      }
-
-      currentMd = content.content_md || '';
-      showContent(currentMd);
-    })
-    .catch(function () {
-      el('page-loading').textContent = 'Error loading page content.';
-    });
+  Promise.all([fetchContent(), checkEditPermission()]).then(function (res) {
+    currentMd = (res[0] && res[0].content_md) || '';
+    canEdit = res[1];
+    showContent(currentMd);
+    if (!canEdit) return;
+    el('edit-btn').addEventListener('click', function () { showEditor(currentMd); });
+    el('cancel-btn').addEventListener('click', function () { showContent(currentMd); });
+    el('save-btn').addEventListener('click', save);
+  });
 }());

@@ -1,8 +1,10 @@
+// POST /api/programs — admin only: create a program (then assign hosts on its edit page).
 // GET /api/programs — public: every area, program and edition, for the project
 // affiliation picker, the program pages and /operations. A program's realm
 // ('research' | 'admin') is its primary area's. See programs/PLAN.md.
 
-import { programHref } from '../_shared/programs.js';
+import { getSession } from '../_shared/session.js';
+import { programHref, memberForSession, PROGRAM_KINDS, SLUG_RE } from '../_shared/programs.js';
 
 export async function onRequestGet({ env }) {
   try {
@@ -60,4 +62,41 @@ export async function onRequestGet({ env }) {
     console.error('programs GET error:', err);
     return Response.json({ error: 'Database error' }, { status: 500 });
   }
+}
+
+export async function onRequestPost({ request, env }) {
+  const member = await memberForSession(env, await getSession(request, env));
+  if (!member?.is_admin) return Response.json({ error: 'Admins only' }, { status: 403 });
+
+  let body;
+  try { body = await request.json(); }
+  catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
+
+  const slug  = String(body.slug || '').trim().toLowerCase();
+  const title = String(body.title || '').trim();
+  const kind  = String(body.kind || '').trim();
+  const areas = Array.isArray(body.areas) ? body.areas.map(String) : [];
+
+  if (!SLUG_RE.test(slug)) return Response.json({ error: 'Slug: lowercase letters, digits and hyphens' }, { status: 400 });
+  if (!title) return Response.json({ error: 'Title required' }, { status: 400 });
+  if (!PROGRAM_KINDS.includes(kind)) return Response.json({ error: 'Invalid kind' }, { status: 400 });
+  if (!areas.length) return Response.json({ error: 'At least one area required' }, { status: 400 });
+  if (await env.DB.prepare('SELECT 1 FROM programs WHERE slug = ?').bind(slug).first()) {
+    return Response.json({ error: 'A program with that slug already exists' }, { status: 409 });
+  }
+  const primary = await env.DB.prepare('SELECT realm FROM areas WHERE slug = ?').bind(areas[0]).first();
+  if (!primary) return Response.json({ error: 'Unknown area' }, { status: 400 });
+
+  // Research programs take tags freely; admin-realm programs are moderated.
+  const policy = primary.realm === 'admin' ? 'moderated' : 'open';
+  const stmts = [env.DB.prepare(`
+    INSERT INTO programs (slug, kind, title, short_title, description, status, affiliation_policy, sort_order)
+    VALUES (?, ?, ?, ?, ?, 'active', ?, 100)
+  `).bind(slug, kind, title, String(body.short_title || '').trim() || null,
+          String(body.description || '').trim() || null, policy)];
+  areas.forEach((a, i) => stmts.push(env.DB.prepare(
+    'INSERT INTO program_areas (program_slug, area_slug, is_primary) SELECT ?, slug, ? FROM areas WHERE slug = ?'
+  ).bind(slug, i === 0 ? 1 : 0, a)));
+  await env.DB.batch(stmts);
+  return Response.json({ ok: true, slug }, { status: 201 });
 }

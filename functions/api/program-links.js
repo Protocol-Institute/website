@@ -1,5 +1,5 @@
 // GET  /api/program-links?program=<slug> — public list of a program's links (all if no ?program=)
-// POST /api/program-links                — admin only: create, update, or delete a link
+// POST /api/program-links                — the program's hosts or an admin: create, update, or delete a link
 //
 // Links that are not projects: a program's own site (kind='website', rendered
 // under a SIG page's blurb), the outlets that carry its work (kind='channel':
@@ -8,15 +8,9 @@
 // /api/sigs/links (migration 037 copied sig_links into program_links).
 
 import { getSession } from '../_shared/session.js';
+import { memberForSession, canEditProgram } from '../_shared/programs.js';
 
 const VALID_KINDS = new Set(['website', 'channel', 'link']);
-
-async function checkAdmin(request, env) {
-  const email = await getSession(request, env);
-  if (!email) return false;
-  const member = await env.DB.prepare('SELECT is_admin FROM members WHERE email = ?').bind(email).first();
-  return member?.is_admin === 1;
-}
 
 export async function onRequestGet({ request, env }) {
   const program = new URL(request.url).searchParams.get('program');
@@ -28,9 +22,8 @@ export async function onRequestGet({ request, env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!await checkAdmin(request, env)) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const member = await memberForSession(env, await getSession(request, env));
+  if (!member) return Response.json({ error: 'Not authenticated' }, { status: 401 });
 
   let body;
   try { body = await request.json(); } catch {
@@ -39,10 +32,24 @@ export async function onRequestPost({ request, env }) {
 
   const { id, action, program_slug, kind, label, url, note, sort_order } = body;
 
+  // Authority is checked against the link's current program (for update/delete)
+  // and the requested one (for create/move), so a host can't touch other programs.
+  if (id) {
+    const existing = await env.DB.prepare('SELECT program_slug FROM program_links WHERE id = ?').bind(id).first();
+    if (!existing) return Response.json({ error: 'Link not found' }, { status: 404 });
+    if (!await canEditProgram(env, member, existing.program_slug)) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+  }
+
   if (action === 'delete') {
     if (!id) return Response.json({ error: 'id required' }, { status: 400 });
     await env.DB.prepare('DELETE FROM program_links WHERE id = ?').bind(id).run();
     return Response.json({ ok: true, action: 'deleted' });
+  }
+
+  if (!await canEditProgram(env, member, program_slug)) {
+    return Response.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const program = program_slug
