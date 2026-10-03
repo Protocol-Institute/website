@@ -257,6 +257,11 @@
       // Deep link from a program page: /projects/submit?program=…&edition=…
       const preProgram = params.get('program');
       if (preProgram && programsBySlug[preProgram]) addAffiliationRow(preProgram, params.get('edition'));
+      // e.g. artifact=text from the Book Writing Month page
+      const preArtifact = params.get('artifact');
+      if (preArtifact && $('f-artifact-type').querySelector(`option[value="${CSS.escape(preArtifact)}"]`)) {
+        $('f-artifact-type').value = preArtifact;
+      }
     }
     if (me.member.is_admin) {
       $('f-realm-group').style.display = '';

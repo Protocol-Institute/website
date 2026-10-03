@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Writing Month 2026 — The Protocol Institute</title>
+  <meta name="description" content="In November 2026 the Protocol Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <p class="event-kicker">Event &mdash; November 1&ndash;30, 2026 &mdash; Online, on Discord</p>
+        <h1>Book Writing Month 2026</h1>
+      </div>
+
+      <div class="event-body">
+
+        <p>In November 2026, the Protocol Institute will host its first book-writing month, inspired by the old NaNoWriMo. This will be a mostly asynchronous event on our Discord, with just enough structure to keep you motivated and moving.</p>
+
+        <p>If you have a protocol-themed book project underway, or just an idea for one, join us. Sign in, list some details of your book project, and tag it as part of the month. It will show up in the index below.</p>
+
+        <p>We will have coworking sessions, peer mentorship, and mutual accountability mechanisms. Details forthcoming.</p>
+
+        <div class="bwm-actions">
+          <a id="bwm-add" href="/projects/submit?program=book-writing-month&amp;artifact=text" class="form-btn">Add your book project &rarr;</a>
+          <a href="https://discord.gg/Aj5FbGsNYV" class="form-btn form-btn--secondary" target="_blank" rel="noopener noreferrer">Join us on Discord &rarr;</a>
+        </div>
+
+        <h2 class="bwm-index-heading">Books in progress</h2>
+        <ul class="entity-list" id="bwm-books"><li class="entity-empty">Loading&hellip;</li></ul>
+
+      </div>
+
+      <div class="event-back">
+        <a href="/events/">&larr; All events</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/research.js?v=54"></script>
+<script>
+// The book index is every project linked to this program's November 2026
+// edition (or to the program with no edition), from the programs model —
+// see programs/PLAN.md. Book Writing Month is an open program, so a member's
+// link appears here as soon as they save it; nothing is curated by hand.
+(function () {
+  const R = window.PI_RESEARCH;
+  const esc = R.escHtml;
+  const STATE_LABELS = { stub: 'Idea', beta: 'In progress', production: 'Complete' };
+  const list = document.getElementById('bwm-books');
+
+  fetch('/api/programs/book-writing-month')
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const edition = data.editions.find(e => e.slug === '2026-11');
+      if (edition) {
+        document.getElementById('bwm-add').href =
+          '/projects/submit?program=book-writing-month&edition=' + edition.id + '&artifact=text';
+      }
+      const books = data.projects.filter(p => !p.via && (!edition || p.edition_id == null || p.edition_id === edition.id) && p.realm !== 'admin');
+      list.innerHTML = books.length
+        ? books.map(p => `
+            <li class="entity-card">
+              <h3 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h3>
+              <div class="entity-meta">${esc(STATE_LABELS[p.state] || p.state)} &middot; by <a href="${R.profileHref(p.lead_slug)}">${esc(p.lead_name || p.lead_slug)}</a></div>
+              <div class="entity-description">${esc(p.description)}</div>
+            </li>`).join('')
+        : '<li class="entity-empty">No books listed yet. Yours could be the first.</li>';
+    })
+    .catch(() => {
+      list.innerHTML = '<li class="entity-empty">The book index could not be loaded. Please try again later.</li>';
+    });
+}());
+</script>
+</body>
+</html>

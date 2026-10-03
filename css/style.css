@@ -2565,3 +2565,11 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 .project-badges { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.15rem; }
 .sig-project-artifact { font-size: 0.85em; color: #8A8A8A; }
 .ops-program-title { font-size: 1.7rem; margin: 1.5rem 0 0.25rem; }
+
+/* ── Book Writing Month landing (events/book-writing-month-2026) ── */
+.bwm-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 1.75rem 0 2.5rem; }
+.bwm-index-heading {
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+#bwm-books .entity-card:last-child { border-bottom: none; }
