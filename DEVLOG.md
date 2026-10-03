@@ -953,3 +953,23 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `LIVESTREAM_GO_LIVE` is a single instant and the symposium runs five days, so it has now been edited once per morning &mdash; 09-23, then 09-24 &mdash; which is the maintenance the constant was meant to eliminate. It is not causing harm during this event because the player is separately gated on the resolver returning a live id, which is already honest about whether anything is actually broadcasting. The clean version is to let the resolver drive the CTA too, with the hardcoded instants kept only as a floor so a stray broadcast outside the event cannot light up the page. Deliberately not attempted mid-event: this one ends 2026-09-25T22:30:00Z, after which the whole block reverts to the disabled button on its own. Logged in status.md for the next multi-day event.
 
 ---
+
+## Session 53: Symposium 2026 archive: recordings and transcripts
+
+*2026-10-02*
+
+**Tracks:** static-site, content
+
+- Everything that only made sense during the event &mdash; registration chip, livestream CTA and inline player, outage note, countdown IIFE, workshop registration buttons &mdash; is removed from `events/protocol-symposium-2026/index.html` rather than hidden behind flags. The page keeps its D1-driven program (tabs, parallel blocks, comments) and gains recordings. `functions/api/symposium/livestream.js` stays deployed but unused, kept for the next live event; CLAUDE.md's Livestream player section is retained as reference for that.
+
+- `data/symposium-2026-recordings.json` maps `proposal_id` &rarr; `video_id` with optional `start`/`end` seconds for uploads covering several items (the Opening Talk video holds three). Chosen over a D1 column because the mapping is curated editorial data that changes a handful of times, wants review in diffs, and would otherwise need a migration plus an addition to the proposals API allowlist. The program page fetches it directly and degrades to no videos if it fails; the generator reads the same file, so there is one source of truth. Matching is manual by design: upload titles drift from D1 titles.
+
+- `make_recordings.py` writes one committed page per item at `recordings/&lt;slug&gt;/` (existing D1 slugs, some stale-looking, kept for stability). Static output rather than a `?slug=` template so transcripts are indexable and have no runtime dependency on D1 or YouTube. Transcripts are YouTube `en-orig` auto-captions cleaned mechanically only (no LLM polish, at Venkat's choice) &mdash; the page labels them unedited; hand edits would be overwritten on regeneration. Caption downloads are rate-limited (429), so the script caches in `.recordings-cache/`, retries, and writes a transcript-less page rather than failing.
+
+- The program page renders a thumbnail button that becomes the iframe on click, so ~40 cards do not each open a YouTube connection on load. Transcript timestamps reset the iframe `src` with `?start=` instead of using the IFrame API, which would require adding youtube.com to `script-src`. CSP change limited to `img-src https://i.ytimg.com`; `frame-src www.youtube.com` was already present from the livestream work.
+
+- The weighted banner carousel (`carousel/banners.md` + inline loader) is gone from `index.html` and its config deleted &mdash; recoverable from git if a future event wants it. The home page is the Session 20 interior layout with an added explore-list link to the symposium archive.
+
+- PR #16 (six SIG sessions) passed the review checklist and was merged. Review surfaced literal `**markdown**` and heading-only insight bullets &mdash; present on main since July, so not a regression of this PR. Root cause traced to `sync_meeting_notes.py` keeping only top-level `- **` lines and both page renderers HTML-escaping markdown; filed as c3po#7 per the PR-only rule rather than hand-fixed.
+
+---

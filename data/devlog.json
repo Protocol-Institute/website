@@ -1981,6 +1981,47 @@
           "html": "<code>LIVESTREAM_GO_LIVE</code> is a single instant and the symposium runs five days, so it has now been edited once per morning &mdash; 09-23, then 09-24 &mdash; which is the maintenance the constant was meant to eliminate. It is not causing harm during this event because the player is separately gated on the resolver returning a live id, which is already honest about whether anything is actually broadcasting. The clean version is to let the resolver drive the CTA too, with the hardcoded instants kept only as a floor so a stray broadcast outside the event cannot light up the page. Deliberately not attempted mid-event: this one ends 2026-09-25T22:30:00Z, after which the whole block reverts to the disabled button on its own. Logged in status.md for the next multi-day event."
         }
       ]
+    },
+    {
+      "id": 53,
+      "sort_key": 53.0,
+      "label": "Session 53",
+      "title": "Symposium 2026 archive: recordings and transcripts",
+      "date": "2026-10-02",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Symposium page becomes an archive",
+          "html": "Everything that only made sense during the event &mdash; registration chip, livestream CTA and inline player, outage note, countdown IIFE, workshop registration buttons &mdash; is removed from <code>events/protocol-symposium-2026/index.html</code> rather than hidden behind flags. The page keeps its D1-driven program (tabs, parallel blocks, comments) and gains recordings. <code>functions/api/symposium/livestream.js</code> stays deployed but unused, kept for the next live event; CLAUDE.md's Livestream player section is retained as reference for that."
+        },
+        {
+          "title": "Recording mapping is a hand-edited JSON file, not a D1 column",
+          "html": "<code>data/symposium-2026-recordings.json</code> maps <code>proposal_id</code> &rarr; <code>video_id</code> with optional <code>start</code>/<code>end</code> seconds for uploads covering several items (the Opening Talk video holds three). Chosen over a D1 column because the mapping is curated editorial data that changes a handful of times, wants review in diffs, and would otherwise need a migration plus an addition to the proposals API allowlist. The program page fetches it directly and degrades to no videos if it fails; the generator reads the same file, so there is one source of truth. Matching is manual by design: upload titles drift from D1 titles."
+        },
+        {
+          "title": "Static generated transcript pages",
+          "html": "<code>make_recordings.py</code> writes one committed page per item at <code>recordings/&lt;slug&gt;/</code> (existing D1 slugs, some stale-looking, kept for stability). Static output rather than a <code>?slug=</code> template so transcripts are indexable and have no runtime dependency on D1 or YouTube. Transcripts are YouTube <code>en-orig</code> auto-captions cleaned mechanically only (no LLM polish, at Venkat's choice) &mdash; the page labels them unedited; hand edits would be overwritten on regeneration. Caption downloads are rate-limited (429), so the script caches in <code>.recordings-cache/</code>, retries, and writes a transcript-less page rather than failing."
+        },
+        {
+          "title": "Embeds: facade on the program, timestamp seeking by reload",
+          "html": "The program page renders a thumbnail button that becomes the iframe on click, so ~40 cards do not each open a YouTube connection on load. Transcript timestamps reset the iframe <code>src</code> with <code>?start=</code> instead of using the IFrame API, which would require adding youtube.com to <code>script-src</code>. CSP change limited to <code>img-src https://i.ytimg.com</code>; <code>frame-src www.youtube.com</code> was already present from the livestream work."
+        },
+        {
+          "title": "Home page banner removed",
+          "html": "The weighted banner carousel (<code>carousel/banners.md</code> + inline loader) is gone from <code>index.html</code> and its config deleted &mdash; recoverable from git if a future event wants it. The home page is the Session 20 interior layout with an added explore-list link to the symposium archive."
+        },
+        {
+          "title": "c3po PR #16 merged; c3po#7 filed",
+          "html": "PR #16 (six SIG sessions) passed the review checklist and was merged. Review surfaced literal <code>**markdown**</code> and heading-only insight bullets &mdash; present on main since July, so not a regression of this PR. Root cause traced to <code>sync_meeting_notes.py</code> keeping only top-level <code>- **</code> lines and both page renderers HTML-escaping markdown; filed as c3po#7 per the PR-only rule rather than hand-fixed."
+        }
+      ]
     }
   ]
 }
