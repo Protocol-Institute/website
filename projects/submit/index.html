@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submit a Project — The Protocol Institute</title>
-  <meta name="description" content="Submit a project to the Protocol Institute directory.">
+  <title>Add a Project — The Protocol Institute</title>
+  <meta name="description" content="Add a project to the Protocol Institute directory.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -18,16 +18,16 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Submit a Project</h1>
+        <h1 id="page-title">Add a Project</h1>
       </div>
 
       <div id="auth-gate" style="display:none;">
-        <p class="projects-intro">You must be a logged-in member to submit a project.</p>
+        <p class="projects-intro">You must be a logged-in member to add or edit a project.</p>
         <a id="login-link" href="/members/join?return=/projects/submit" class="form-btn">Log in to continue</a>
       </div>
 
       <div id="submit-form-area" style="display:none;">
-        <p class="projects-intro">Projects that produce specific artifacts — documents, tools, websites, or other outputs. Submissions are reviewed before appearing in the index.</p>
+        <p class="projects-intro" id="form-intro">Projects that produce specific artifacts — documents, tools, books, websites, or other outputs. Your project is published on your profile and in the project index as soon as you save it. Linking it to a program — a SIG, an event, a workshop, a collaboration — is optional, and each link is confirmed by that program's hosts before the project appears on the program's page.</p>
 
         <form id="project-form" class="member-form">
 
@@ -45,13 +45,13 @@
             <label class="form-label" for="f-lead">Lead <span class="form-required">*</span></label>
             <input class="form-input" type="text" id="f-lead-display" readonly style="background:#F4F2EE;cursor:default;">
             <input type="hidden" id="f-lead">
-            <p class="form-hint">Defaults to you. The lead must have a member profile.</p>
+            <p class="form-hint" id="f-lead-hint">Defaults to you. The lead must have a member profile.</p>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="f-url">Artifact URL <span class="form-required">*</span></label>
             <input class="form-input" type="url" id="f-url" placeholder="https://" required>
-            <p class="form-hint">The current location of the artifact. Can be updated after approval.</p>
+            <p class="form-hint">The current location of the artifact. You can change it later.</p>
           </div>
 
           <div class="form-row">
@@ -93,26 +93,33 @@
             <input class="form-input" type="text" id="f-artifact-other" maxlength="100" placeholder="e.g. database, dataset, protocol spec…">
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="f-sig">SIG alignment <span class="optional">(optional)</span></label>
-            <select class="form-select" id="f-sig">
-              <option value="">Independent — not aligned with a SIG</option>
-              <option value="sigfpt">Formal Protocol Theory (SIGFPT)</option>
-              <option value="mrg">Memory Research Group (MRG)</option>
-              <option value="sigpfb">Protocols for Business (SIGPfB)</option>
-              <option value="protfisig">Protocol Fiction (ProtFiSIG)</option>
-              <option value="drg">Distributed Robotics Group (DRG)</option>
-              <option value="sigpsy">Psychohistory (SIGPSY)</option>
-              <option value="prg">Personhood Research Group (PRG)</option>
+          <div class="form-group" id="f-version-group" style="display:none;">
+            <label class="form-label" for="f-version">Current version <span class="optional">(optional)</span></label>
+            <input class="form-input" type="text" id="f-version" maxlength="40" placeholder="e.g. 1.2">
+          </div>
+
+          <div class="form-group" id="f-realm-group" style="display:none;">
+            <label class="form-label" for="f-realm">Kind of project</label>
+            <select class="form-select" id="f-realm">
+              <option value="research">Research — listed in the public project index</option>
+              <option value="admin">Operations — Institute admin work, kept off the research index</option>
             </select>
+            <p class="form-hint">Admins only. Operations projects (websites, channels, logistics) appear on /operations, not /research.</p>
           </div>
 
           <div class="form-group">
-            <p class="form-hint">Team members and responses to open Challenges can be added from the project's own page once it's approved.</p>
+            <span class="form-label">Programs <span class="optional">(optional)</span></span>
+            <div id="f-affiliations"></div>
+            <button type="button" class="form-btn form-btn--secondary form-btn--inline" id="f-add-affiliation">+ Link to a program</button>
+            <p class="form-hint">A program can be a SIG, an event, a workshop, a course or a collaboration. Pick a specific edition if the project came out of one run of it. Links wait for approval by the program's hosts, except for open programs such as Book Writing Month.</p>
+          </div>
+
+          <div class="form-group">
+            <p class="form-hint">Team members and responses to open Challenges can be added from the project's own page.</p>
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="form-btn" id="submit-btn">Submit for review</button>
+            <button type="submit" class="form-btn" id="submit-btn">Save project</button>
           </div>
 
           <div class="form-msg" id="form-msg" style="display:none;"></div>
@@ -130,82 +137,180 @@
 <script src="/js/main.js"></script>
 <script>
 (function () {
-  let memberSlug = '';
+  const params = new URLSearchParams(window.location.search);
+  const editSlug = params.get('slug');
+  let programs = [];          // from /api/programs
+  let programsBySlug = {};
 
-  fetch('/api/members/me')
-    .then(r => r.ok ? r.json() : null)
-    .then(data => {
-      if (!data || !data.member) {
-        document.getElementById('auth-gate').style.display = '';
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  }
+  const $ = id => document.getElementById(id);
+
+  // ── Program picker ────────────────────────────────────────────
+  // One row per affiliation: a program select grouped by the program's primary
+  // area, and an edition select when the program has dated runs.
+  function programOptionsHtml(selected, areas) {
+    const groups = areas.map(area => {
+      const opts = programs
+        .filter(p => (p.areas.find(a => a.is_primary) || p.areas[0] || {}).slug === area.slug)
+        .map(p => `<option value="${esc(p.slug)}"${p.slug === selected ? ' selected' : ''}>${esc(p.title)}${p.short_title ? ' (' + esc(p.short_title) + ')' : ''}${p.affiliation_policy === 'open' ? ' — open' : ''}</option>`)
+        .join('');
+      return opts ? `<optgroup label="${esc(area.title)}">${opts}</optgroup>` : '';
+    }).join('');
+    return '<option value="">Choose a program…</option>' + groups;
+  }
+
+  function editionOptionsHtml(program, selectedId) {
+    const eds = program ? program.editions : [];
+    return '<option value="">Any / not a specific edition</option>' + eds.map(e =>
+      `<option value="${e.id}"${String(e.id) === String(selectedId) ? ' selected' : ''}>${esc(e.title)}${e.status === 'planned' ? ' (upcoming)' : ''}</option>`
+    ).join('');
+  }
+
+  let areasCache = [];
+  function addAffiliationRow(programSlug, editionId, status) {
+    const row = document.createElement('div');
+    row.className = 'affiliation-row';
+    row.innerHTML = `
+      <select class="form-select aff-program">${programOptionsHtml(programSlug, areasCache)}</select>
+      <select class="form-select aff-edition"></select>
+      <button type="button" class="affiliation-remove" title="Remove">&times;</button>
+      ${status === 'pending' ? '<span class="affiliation-status">awaiting approval</span>' : ''}`;
+    const progSel = row.querySelector('.aff-program');
+    const edSel = row.querySelector('.aff-edition');
+    function syncEditions(selected) {
+      const p = programsBySlug[progSel.value];
+      edSel.innerHTML = editionOptionsHtml(p, selected);
+      edSel.style.display = p && p.editions.length ? '' : 'none';
+    }
+    progSel.addEventListener('change', () => syncEditions(null));
+    row.querySelector('.affiliation-remove').addEventListener('click', () => row.remove());
+    syncEditions(editionId);
+    $('f-affiliations').appendChild(row);
+  }
+
+  function collectAffiliations() {
+    return Array.from(document.querySelectorAll('.affiliation-row'))
+      .map(r => ({
+        program_slug: r.querySelector('.aff-program').value,
+        edition_id: r.querySelector('.aff-edition').value || null,
+      }))
+      .filter(a => a.program_slug);
+  }
+
+  $('f-add-affiliation').addEventListener('click', () => addAffiliationRow('', null));
+
+  function syncArtifactOther() {
+    const other = $('f-artifact-type').value === 'other';
+    $('f-artifact-other-group').style.display = other ? '' : 'none';
+    $('f-artifact-other').required = other;
+  }
+  function syncVersion() {
+    $('f-version-group').style.display = $('f-type').value === 'versioned' ? '' : 'none';
+  }
+  $('f-artifact-type').addEventListener('change', syncArtifactOther);
+  $('f-type').addEventListener('change', syncVersion);
+
+  // ── Load ──────────────────────────────────────────────────────
+  Promise.all([
+    fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch('/api/programs').then(r => r.ok ? r.json() : { areas: [], programs: [] }).catch(() => ({ areas: [], programs: [] })),
+    editSlug ? fetch('/api/projects/' + encodeURIComponent(editSlug)).then(r => r.ok ? r.json() : null).catch(() => null) : null,
+  ]).then(([me, prog, existing]) => {
+    if (!me || !me.member) {
+      $('login-link').href = '/members/join?return=' + encodeURIComponent(location.pathname + location.search);
+      $('auth-gate').style.display = '';
+      return;
+    }
+    programs = prog.programs || [];
+    areasCache = prog.areas || [];
+    programsBySlug = Object.fromEntries(programs.map(p => [p.slug, p]));
+
+    if (editSlug) {
+      if (!existing || !existing.viewer_is_lead_or_admin) {
+        $('auth-gate').innerHTML = '<p class="projects-intro">Only the project lead or an admin can edit this project.</p>';
+        $('auth-gate').style.display = '';
         return;
       }
-      memberSlug = data.member.slug;
-      document.getElementById('f-lead').value = memberSlug;
-      document.getElementById('f-lead-display').value = data.member.name;
-      document.getElementById('submit-form-area').style.display = '';
-    })
-    .catch(() => {
-      document.getElementById('auth-gate').style.display = '';
-    });
-
-  document.getElementById('f-artifact-type').addEventListener('change', function () {
-    document.getElementById('f-artifact-other-group').style.display =
-      this.value === 'other' ? '' : 'none';
-    const otherInput = document.getElementById('f-artifact-other');
-    otherInput.required = this.value === 'other';
+      const p = existing.project;
+      document.title = 'Edit ' + p.title + ' — The Protocol Institute';
+      $('page-title').textContent = 'Edit Project';
+      $('f-title').value = p.title;
+      $('f-description').value = p.description;
+      $('f-lead').value = p.lead_slug;
+      $('f-lead-display').value = p.lead_name || p.lead_slug;
+      $('f-lead-hint').style.display = 'none';
+      $('f-url').value = p.url;
+      $('f-state').value = p.state;
+      $('f-type').value = p.type;
+      $('f-artifact-type').value = p.artifact_type;
+      $('f-artifact-other').value = p.artifact_type_other || '';
+      $('f-version').value = p.current_version || '';
+      $('f-realm').value = p.realm || 'research';
+      // Rejected links are left out; saving drops them, and the lead may ask again.
+      (existing.programs || []).filter(a => a.status !== 'rejected')
+        .forEach(a => addAffiliationRow(a.slug, a.edition && a.edition.id, a.status));
+    } else {
+      $('f-lead').value = me.member.slug;
+      $('f-lead-display').value = me.member.name;
+      // Deep link from a program page: /projects/submit?program=…&edition=…
+      const preProgram = params.get('program');
+      if (preProgram && programsBySlug[preProgram]) addAffiliationRow(preProgram, params.get('edition'));
+    }
+    if (me.member.is_admin) {
+      $('f-realm-group').style.display = '';
+      if (!editSlug && params.get('realm') === 'admin') $('f-realm').value = 'admin';
+    }
+    syncArtifactOther();
+    syncVersion();
+    $('submit-form-area').style.display = '';
   });
 
-  document.getElementById('project-form').addEventListener('submit', async function (e) {
+  // ── Save ──────────────────────────────────────────────────────
+  $('project-form').addEventListener('submit', async function (e) {
     e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    const msg = document.getElementById('form-msg');
+    const btn = $('submit-btn');
+    const msg = $('form-msg');
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = 'Saving…';
     msg.style.display = 'none';
 
-    const artifactType = document.getElementById('f-artifact-type').value;
+    const artifactType = $('f-artifact-type').value;
     const body = {
-      title:               document.getElementById('f-title').value.trim(),
-      description:         document.getElementById('f-description').value.trim(),
-      lead_slug:           document.getElementById('f-lead').value,
-      url:                 document.getElementById('f-url').value.trim(),
-      state:               document.getElementById('f-state').value,
-      type:                document.getElementById('f-type').value,
+      title:               $('f-title').value.trim(),
+      description:         $('f-description').value.trim(),
+      lead_slug:           $('f-lead').value,
+      url:                 $('f-url').value.trim(),
+      state:               $('f-state').value,
+      type:                $('f-type').value,
       artifact_type:       artifactType,
-      artifact_type_other: artifactType === 'other' ? document.getElementById('f-artifact-other').value.trim() : undefined,
-      sig_slug:            document.getElementById('f-sig').value || null,
+      artifact_type_other: artifactType === 'other' ? $('f-artifact-other').value.trim() : undefined,
+      current_version:     $('f-version').value.trim() || undefined,
+      affiliations:        collectAffiliations(),
+      realm:               $('f-realm').value,
     };
 
     try {
-      const res = await fetch('/api/projects', {
+      const res = await fetch(editSlug ? '/api/projects/' + encodeURIComponent(editSlug) : '/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       const data = await res.json();
-
       if (res.ok) {
-        msg.className = 'form-msg form-msg--success';
-        msg.textContent = 'Project submitted for review. It will appear in the index once approved.';
-        msg.style.display = '';
-        document.getElementById('project-form').reset();
-        document.getElementById('f-lead').value = memberSlug;
-        document.getElementById('f-lead-display').value = document.getElementById('f-lead-display').value;
-        document.getElementById('f-artifact-other-group').style.display = 'none';
-      } else {
-        msg.className = 'form-msg form-msg--error';
-        msg.textContent = data.error || 'Submission failed.';
-        msg.style.display = '';
-        btn.disabled = false;
-        btn.textContent = 'Submit for review';
+        window.location.href = '/projects/project?slug=' + encodeURIComponent(data.slug);
+        return;
       }
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = data.error || 'Save failed.';
     } catch {
       msg.className = 'form-msg form-msg--error';
       msg.textContent = 'Network error. Please try again.';
-      msg.style.display = '';
-      btn.disabled = false;
-      btn.textContent = 'Submit for review';
     }
+    msg.style.display = '';
+    btn.disabled = false;
+    btn.textContent = 'Save project';
   });
 }());
 </script>

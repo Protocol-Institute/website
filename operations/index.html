@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operations — The Protocol Institute</title>
+  <meta name="description" content="The Institute's own operations: websites, channels and logistics.">
+  <!-- Admin realm (programs/PLAN.md): deliberately low-profile — not in the nav, not indexed. -->
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Operations</h1>
+      </div>
+
+      <p class="projects-intro">The work of running the Institute itself — websites, publishing channels, accounts and event logistics. Research projects are in the <a href="/research?view=projects">project index</a>.</p>
+
+      <div id="ops-body"><p class="section-loading">Loading…</p></div>
+      <p id="ops-add" style="display:none;margin-top:1.5rem;">
+        <a href="/projects/submit?realm=admin" class="form-btn form-btn--inline">Add an operations project →</a>
+      </p>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/research.js"></script>
+<script>
+(function () {
+  const R = window.PI_RESEARCH;
+  const esc = R.escHtml;
+
+  Promise.all([
+    fetch('/api/programs').then(r => r.json()),
+    fetch('/api/projects?realm=admin').then(r => r.json()),
+    fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+  ]).then(([prog, proj, me]) => {
+    const areas = (prog.areas || []).filter(a => a.realm === 'admin');
+    const projects = proj.projects || [];
+    const placed = new Set();
+
+    const card = p => `<li class="entity-card">
+        <h2 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h2>
+        <div class="entity-description">${esc(p.description)}</div>
+        <div class="entity-meta">Lead: <a href="${R.profileHref(p.lead_slug)}">${esc(p.lead_name || p.lead_slug)}</a></div>
+      </li>`;
+
+    let html = areas.map(area => {
+      const programs = (prog.programs || []).filter(p =>
+        (p.areas.find(a => a.is_primary) || p.areas[0] || {}).slug === area.slug);
+      return `<p class="profile-section-label">${esc(area.title)}</p>` + programs.map(pr => {
+        const mine = projects.filter(p => (p.programs || []).some(a => a.slug === pr.slug));
+        mine.forEach(p => placed.add(p.slug));
+        return `<h2 class="entity-title ops-program-title"><a href="${esc(pr.href)}">${esc(pr.title)}</a></h2>
+          ${pr.description ? `<p class="entity-meta">${esc(pr.description)}</p>` : ''}
+          <ul class="entity-list">${mine.map(card).join('') || '<li class="entity-empty">No projects yet.</li>'}</ul>`;
+      }).join('');
+    }).join('');
+
+    // Operations projects not linked to an Operations program (e.g. symposium
+    // logistics linked only to the Symposium edition).
+    const rest = projects.filter(p => !placed.has(p.slug));
+    if (rest.length) html += `<p class="profile-section-label">Other operations</p><ul class="entity-list">${rest.map(card).join('')}</ul>`;
+
+    document.getElementById('ops-body').innerHTML = html || '<p class="entity-empty">Nothing here yet.</p>';
+    if (me && me.member && me.member.is_admin) document.getElementById('ops-add').style.display = '';
+  }).catch(() => {
+    document.getElementById('ops-body').innerHTML = '<p class="entity-empty">Unable to load. Please try again later.</p>';
+  });
+}());
+</script>
+</body>
+</html>

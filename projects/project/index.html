@@ -24,7 +24,7 @@
       <div id="project-content" style="display:none;">
 
         <div class="page-header project-detail-header">
-          <div class="project-detail-breadcrumb"><a href="/research?view=projects">← Projects</a></div>
+          <div class="project-detail-breadcrumb" id="pd-breadcrumb"><a href="/research?view=projects">← Projects</a></div>
           <h1 id="pd-title"></h1>
           <div class="project-meta project-detail-meta" id="pd-meta"></div>
         </div>
@@ -37,9 +37,9 @@
               <span class="project-detail-label">Lead</span>
               <span id="pd-lead"></span>
             </div>
-            <div class="project-detail-field" id="pd-sig-row" style="display:none;">
-              <span class="project-detail-label">SIG</span>
-              <span id="pd-sig"></span>
+            <div class="project-detail-field" id="pd-programs-row" style="display:none;">
+              <span class="project-detail-label">Programs</span>
+              <span id="pd-programs"></span>
             </div>
             <div class="project-detail-field" id="pd-version-row" style="display:none;">
               <span class="project-detail-label">Version</span>
@@ -61,6 +61,7 @@
 
           <div class="entity-actions" style="margin-top:1.25rem;">
             <a id="pd-url" href="#" class="form-btn" target="_blank" rel="noopener noreferrer">View artifact →</a>
+            <a id="pd-edit" href="#" class="form-btn form-btn--secondary" style="display:none;">Edit project</a>
             <span id="pd-watch"></span>
             <span class="entity-value" id="pd-value" title="Score = seed + 1×(anon votes)² + 3×(member votes)²"></span>
           </div>
@@ -120,26 +121,38 @@
       const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
         ? R.escHtml(p.artifact_type_other)
         : (ARTIFACT_LABELS[p.artifact_type] || R.escHtml(p.artifact_type));
-      const sigTag = p.sig_slug
-        ? `<span class="project-theme-tag">${R.escHtml(R.SIG_LABELS[p.sig_slug] || p.sig_slug)}</span>`
-        : `<span class="project-category">Independent</span>`;
+      const programs = data.programs || [];
       const versionTag = p.current_version ? `<span class="project-version">v${R.escHtml(p.current_version)}</span>` : '';
 
       document.getElementById('pd-meta').innerHTML =
         `<span class="project-state state-${R.escHtml(p.state)}">${STATE_LABELS[p.state] || p.state}</span>` +
         `<span class="project-type-badge">${TYPE_LABELS[p.type] || p.type}</span>` +
         `<span class="project-artifact-badge">${artifactLabel}</span>` +
-        versionTag + sigTag;
+        versionTag + (p.realm === 'admin' ? '<span class="project-category">Operations</span>' : '') +
+        R.programTagsHtml(programs.filter(a => a.status === 'approved'));
+      if (p.realm === 'admin') {
+        document.getElementById('pd-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
+      }
 
       document.getElementById('pd-description').textContent = p.description;
 
       document.getElementById('pd-lead').innerHTML =
-        `<a href="/members/${R.escHtml(p.lead_slug)}" class="project-lead-link">${R.escHtml(p.lead_name || p.lead_slug)}</a>`;
+        `<a href="${R.profileHref(p.lead_slug)}" class="project-lead-link">${R.escHtml(p.lead_name || p.lead_slug)}</a>`;
 
-      if (p.sig_slug) {
-        document.getElementById('pd-sig-row').style.display = '';
-        document.getElementById('pd-sig').innerHTML =
-          `<a href="/sigs/${R.escHtml(p.sig_slug)}">${R.escHtml(R.SIG_LABELS[p.sig_slug] || p.sig_slug)}</a>`;
+      // The lead and admins also see pending and rejected affiliations here.
+      const visiblePrograms = programs.filter(a => a.status !== 'rejected');
+      if (visiblePrograms.length) {
+        document.getElementById('pd-programs-row').style.display = '';
+        document.getElementById('pd-programs').innerHTML = visiblePrograms.map(a =>
+          `<a href="${R.escHtml(a.href)}">${R.escHtml(a.title)}</a>` +
+          (a.edition ? ` &middot; ${a.edition.href ? `<a href="${R.escHtml(a.edition.href)}">${R.escHtml(a.edition.title)}</a>` : R.escHtml(a.edition.title)}` : '') +
+          (a.status === 'pending' ? ' <em class="project-affiliation-pending">(awaiting approval)</em>' : '')
+        ).join('<br>');
+      }
+      if (viewerIsLeadOrAdmin) {
+        const edit = document.getElementById('pd-edit');
+        edit.href = '/projects/submit?slug=' + encodeURIComponent(p.slug);
+        edit.style.display = '';
       }
       if (p.current_version) {
         document.getElementById('pd-version-row').style.display = '';
@@ -165,7 +178,7 @@
       // Team
       const team = data.team || [];
       document.getElementById('pd-team-list').innerHTML = team.length
-        ? team.map(t => `<a href="/members/${R.escHtml(t.slug)}">${R.escHtml(t.name)}</a>`).join(', ')
+        ? team.map(t => `<a href="${R.profileHref(t.slug)}">${R.escHtml(t.name)}</a>`).join(', ')
         : '<span style="color:#8A8A8A;font-style:italic;">No approved team members yet.</span>';
 
       if (viewerIsLeadOrAdmin) {

@@ -87,7 +87,7 @@
         <div class="admin-tabs">
           <button class="admin-tab active" data-tab="pending-members">Pending Members</button>
           <button class="admin-tab" data-tab="member-directory">Member Directory</button>
-          <button class="admin-tab" data-tab="pending-projects">Pending Projects</button>
+          <button class="admin-tab" data-tab="pending-projects">Pending Affiliations</button>
           <button class="admin-tab" data-tab="voting-analytics">Voting Analytics</button>
         </div>
 
@@ -384,80 +384,57 @@
     }
   }
 
-  // ── Tab 3: Pending Projects ────────────────────────────────────
-  const PROGRAM_LABELS = {
-    'protocolized':'Protocolized','ai-infrastructure':'AI Infrastructure',
-    'challenges':'Challenges','sigs':'Special Interest Groups',
-    'protocol-symposium':'Protocol Symposium','long-now':'Protocols for the Long Now',
-    'solo-projects':'Solo Projects',
-  };
-  const STATE_LABELS    = { stub:'Stub', beta:'Beta', production:'Production' };
-  const TYPE_LABELS     = { 'one-off':'One-off', versioned:'Versioned', accretive:'Accretive' };
-  const ARTIFACT_LABELS = { text:'Text', code:'Code', website:'Website', rich_media:'Rich media', other:'Other' };
-
+  // ── Tab 3: Pending Affiliations ────────────────────────────────
+  // Projects publish on creation; what's moderated is a project's claim to
+  // belong to a program (programs/PLAN.md). Open programs never appear here.
   async function loadPendingProjects() {
-    const res = await fetch('/api/admin/projects');
+    const res = await fetch('/api/affiliations');
     if (!res.ok) { document.getElementById('projects-list').innerHTML = '<p style="color:#C44">Error loading.</p>'; return; }
     const data = await res.json();
-    renderProjects(data.projects || []);
+    renderAffiliations(data.pending || []);
   }
 
-  function renderProjects(projects) {
+  function renderAffiliations(rows) {
     const list = document.getElementById('projects-list');
-    if (!projects.length) {
-      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:1rem 0;">No pending submissions.</p>';
+    if (!rows.length) {
+      list.innerHTML = '<p style="color:#8A8A8A;font-style:italic;padding:1rem 0;">No pending affiliations.</p>';
       return;
     }
-    list.innerHTML = projects.map(p => {
-      const artifactLabel = p.artifact_type === 'other' && p.artifact_type_other
-        ? esc(p.artifact_type_other) : (ARTIFACT_LABELS[p.artifact_type] || esc(p.artifact_type));
-      return `<div class="request-item" id="proj-${esc(p.slug)}">
-        <div class="request-name">${esc(p.title)}</div>
-        <div class="request-email">slug: ${esc(p.slug)}</div>
-        <div class="request-field"><strong>Lead:</strong> <a href="/members/${esc(p.lead_slug)}" target="_blank">${esc(p.lead_name || p.lead_slug)}</a></div>
-        <div class="request-field"><strong>Description:</strong> ${esc(p.description)}</div>
-        <div class="request-field"><strong>URL:</strong> <a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.url)}</a></div>
-        <div class="request-field"><strong>State:</strong> ${esc(STATE_LABELS[p.state] || p.state)}</div>
-        <div class="request-field"><strong>Type:</strong> ${esc(TYPE_LABELS[p.type] || p.type)}</div>
-        <div class="request-field"><strong>Artifact:</strong> ${artifactLabel}</div>
-        ${p.program ? `<div class="request-field"><strong>Program:</strong> ${esc(PROGRAM_LABELS[p.program] || p.program)}</div>` : ''}
-        <div class="request-field"><strong>Submitted by:</strong> ${esc(p.submitted_by)}</div>
-        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Submitted: ${esc(p.created_at)}</div>
-        <div style="margin-top:0.75rem;">
-          <label style="font-size:0.78rem;font-weight:500;display:block;margin-bottom:0.3rem;">Admin notes (optional)</label>
-          <textarea class="form-textarea notes-input" style="min-height:60px;" data-slug="${esc(p.slug)}"></textarea>
-        </div>
+    list.innerHTML = rows.map((r, i) => {
+      const program = r.program_short_title || r.program_title;
+      return `<div class="request-item" id="aff-${i}">
+        <div class="request-name"><a href="/projects/project?slug=${encodeURIComponent(r.project_slug)}" target="_blank">${esc(r.project_title)}</a> &rarr; ${esc(program)}${r.edition_title ? ' &middot; ' + esc(r.edition_title) : ''}</div>
+        <div class="request-field"><strong>Lead:</strong> <a href="/members/profile?slug=${encodeURIComponent(r.lead_slug)}" target="_blank">${esc(r.lead_name || r.lead_slug)}</a></div>
+        <div class="request-field"><strong>Description:</strong> ${esc(r.description)}</div>
+        <div class="request-field"><strong>URL:</strong> <a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.url)}</a></div>
+        <div class="request-field" style="color:#8A8A8A;font-size:0.82rem;">Requested: ${esc(r.created_at)}</div>
         <div class="request-actions">
-          <button class="form-btn approve-btn" data-slug="${esc(p.slug)}">Approve</button>
-          <button class="form-btn form-btn--secondary reject-btn" data-slug="${esc(p.slug)}">Reject</button>
+          <button class="form-btn approve-btn" data-i="${i}">Approve</button>
+          <button class="form-btn form-btn--secondary reject-btn" data-i="${i}">Reject</button>
         </div>
-        <div class="form-msg" id="pmsg-${CSS.escape(p.slug)}" style="display:none;"></div>
+        <div class="form-msg" id="pmsg-${i}" style="display:none;"></div>
       </div>`;
     }).join('');
 
     list.querySelectorAll('.approve-btn').forEach(btn =>
-      btn.addEventListener('click', () => handleProjectAction(btn.dataset.slug, 'approve')));
+      btn.addEventListener('click', () => handleAffiliation(rows[btn.dataset.i], btn.dataset.i, 'approve')));
     list.querySelectorAll('.reject-btn').forEach(btn =>
-      btn.addEventListener('click', () => handleProjectAction(btn.dataset.slug, 'reject')));
+      btn.addEventListener('click', () => handleAffiliation(rows[btn.dataset.i], btn.dataset.i, 'reject')));
   }
 
-  async function handleProjectAction(slug, action) {
-    const notesInput = document.querySelector(`.notes-input[data-slug="${CSS.escape(slug)}"]`);
-    const msg = document.getElementById('pmsg-' + CSS.escape(slug));
-    const body = { slug, action };
-    if (notesInput?.value.trim()) body.admin_notes = notesInput.value.trim();
-
-    const res = await fetch('/api/admin/projects', {
+  async function handleAffiliation(row, i, action) {
+    const msg = document.getElementById('pmsg-' + i);
+    const res = await fetch('/api/affiliations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ project_slug: row.project_slug, program_slug: row.program_slug, action }),
     });
     const data = await res.json();
     msg.style.display = '';
     if (res.ok) {
       msg.className = 'form-msg form-msg--success';
       msg.textContent = action === 'approve' ? 'Approved.' : 'Rejected.';
-      document.getElementById('proj-' + CSS.escape(slug)).style.opacity = '0.4';
+      document.getElementById('aff-' + i).style.opacity = '0.4';
     } else {
       msg.className = 'form-msg form-msg--error';
       msg.textContent = data.error || 'Error.';

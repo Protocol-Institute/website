@@ -68,11 +68,6 @@
   const TAG_LABELS = PI_TAGS.LABELS;
   const EVENT_TAGS = PI_TAGS.EVENT_TAGS;
 
-  const DETAIL_PAGES = {
-    'c3po':     '/c3po',
-    'humboldt': '/humboldt',
-  };
-
   function initials(name) {
     return String(name || '').split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
   }
@@ -132,11 +127,10 @@
     ).join('')}</div>`;
   }
 
+  // Every public member has a profile page (bio, website, projects). The
+  // website used to be the name link; it now lives on the profile.
   function nameLink(m) {
-    const detailUrl = DETAIL_PAGES[m.slug] || null;
-    if (detailUrl) return `<a href="${escHtml(detailUrl)}" class="member-detail-link">${escHtml(m.name)}</a>`;
-    if (m.website) return `<a href="${escHtml(m.website)}" target="_blank" rel="noopener noreferrer">${escHtml(m.name)}</a>`;
-    return escHtml(m.name);
+    return `<a href="/members/profile?slug=${encodeURIComponent(m.slug)}" class="member-detail-link">${escHtml(m.name)}</a>`;
   }
 
   function photoThumb(m) {

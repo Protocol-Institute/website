@@ -13,6 +13,19 @@
 /challenges  /research                  301
 /challenges/ /research                  301
 
+# Hand-built project pages, replaced by database projects/programs (Session 54,
+# programs/PLAN.md).
+/jamverse            /projects/project?slug=jamverse            301
+/jamverse/           /projects/project?slug=jamverse            301
+/worldmachines       /projects/project?slug=worldmachines       301
+/worldmachines/      /projects/project?slug=worldmachines       301
+/protocolized-dev    /projects/project?slug=protocolized-dev    301
+/protocolized-dev/   /projects/project?slug=protocolized-dev    301
+/c3po                /projects/project?slug=c3po                301
+/c3po/               /projects/project?slug=c3po                301
+/longnow             /programs/program?slug=long-now            301
+/longnow/            /programs/program?slug=long-now            301
+
 /events/protocol-symposium-2026/submissions    /events/protocol-symposium-2026   301
 /events/protocol-symposium-2026/submissions/   /events/protocol-symposium-2026/  301
 /events/protocol-symposium-2026/program        /events/protocol-symposium-2026   301

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Program — The Protocol Institute</title>
+  <meta name="description" content="A Protocol Institute program, its editions and its projects.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="program-loading">
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Loading…</p>
+      </div>
+
+      <div id="program-content" style="display:none;">
+        <div class="project-detail-breadcrumb" id="pg-breadcrumb"><a href="/programs">← Programs</a></div>
+        <div class="page-header">
+          <p class="program-kind" id="pg-kind"></p>
+          <h1 id="pg-title"></h1>
+        </div>
+
+        <p class="about-body" id="pg-description"></p>
+        <p class="profile-links" id="pg-links"></p>
+
+        <div id="pg-channels-section" style="display:none;">
+          <p class="profile-section-label">Channels &amp; links</p>
+          <ul class="sig-projects-list" id="pg-channels"></ul>
+        </div>
+
+        <div id="pg-editions-section" style="display:none;">
+          <p class="profile-section-label" id="pg-editions-label">Editions</p>
+          <ul class="edition-list" id="pg-editions"></ul>
+        </div>
+
+        <p class="profile-section-label">Projects</p>
+        <ul class="entity-list" id="pg-projects"></ul>
+        <p style="margin-top:1.25rem;"><a class="form-btn form-btn--inline" id="pg-add">Add a project to this program →</a></p>
+        <p class="form-hint" id="pg-policy"></p>
+
+        <div id="pg-ops-section" style="display:none;">
+          <p class="profile-section-label">Operations</p>
+          <ul class="entity-list" id="pg-ops"></ul>
+        </div>
+      </div>
+
+      <div id="program-error" style="display:none;">
+        <p style="color:#8A8A8A;font-style:italic;padding:2rem 0;">Program not found. <a href="/programs">Back to programs</a></p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/research.js"></script>
+<script>
+(function () {
+  const esc = window.PI_RESEARCH.escHtml;
+  const KIND_LABELS = {
+    sig: 'Special Interest Group', event: 'Event', workshop: 'Workshop',
+    course: 'Course', collaboration: 'Collaboration', initiative: 'Initiative',
+  };
+  // What one run of a program is called, by kind (programs/PLAN.md).
+  const EDITION_LABELS = { workshop: 'Sessions', course: 'Cohorts' };
+
+  const slug = new URLSearchParams(window.location.search).get('slug');
+  if (!slug) { window.location.replace('/programs'); return; }
+
+  function fmtDate(d) {
+    if (!d) return '';
+    const dt = new Date(d + 'T00:00:00Z');
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  }
+  function dateRange(e) {
+    if (!e.start_date) return '';
+    if (!e.end_date || e.end_date === e.start_date) return fmtDate(e.start_date);
+    return fmtDate(e.start_date) + ' – ' + fmtDate(e.end_date);
+  }
+  const link = (href, text) => href ? `<a href="${esc(href)}">${esc(text)}</a>` : esc(text);
+
+  fetch('/api/programs/' + encodeURIComponent(slug))
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      const p = data.program;
+      document.title = p.title + ' — The Protocol Institute';
+      document.getElementById('pg-kind').textContent =
+        [KIND_LABELS[p.kind] || p.kind, ...data.areas.map(a => a.title)].join(' · ');
+      document.getElementById('pg-title').textContent = p.title + (p.short_title ? ` (${p.short_title})` : '');
+      document.getElementById('pg-description').textContent = p.description || '';
+      if (data.realm === 'admin') {
+        document.getElementById('pg-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
+      }
+      const ext = href => /^https?:/.test(href) ? ' target="_blank" rel="noopener noreferrer"' : '';
+      const site = (data.links || []).find(l => l.kind === 'website');
+      if (p.has_own_page) {
+        document.getElementById('pg-links').innerHTML =
+          `<a href="${esc(p.href)}"${ext(p.href)}>${esc(p.title)} home page →</a>`;
+      } else if (site) {
+        document.getElementById('pg-links').innerHTML =
+          `<a href="${esc(site.url)}"${ext(site.url)}>${esc(site.label)} →</a>`;
+      }
+      const others = (data.links || []).filter(l => l.kind !== 'website');
+      if (others.length) {
+        document.getElementById('pg-channels-section').style.display = '';
+        document.getElementById('pg-channels').innerHTML = others.map(l =>
+          `<li><a href="${esc(l.url)}"${ext(l.url)}>${esc(l.label)}</a>${l.note ? ' &mdash; ' + esc(l.note) : ''}</li>`).join('');
+      }
+
+      if (data.editions.length) {
+        document.getElementById('pg-editions-section').style.display = '';
+        document.getElementById('pg-editions-label').textContent = EDITION_LABELS[p.kind] || 'Editions';
+        document.getElementById('pg-editions').innerHTML = data.editions.map(e => {
+          const meta = [dateRange(e), e.location, e.host_context ? 'at ' + e.host_context : '',
+                        e.status === 'planned' ? 'upcoming' : ''].filter(Boolean).map(esc).join(' · ');
+          const partOf = e.part_of ? `<div class="edition-meta">Part of ${link(e.part_of.href, e.part_of.title)}</div>` : '';
+          const nested = e.nested.length
+            ? `<div class="edition-nested">Including: ${e.nested.map(n => link(n.href, n.program_title)).join(', ')}</div>` : '';
+          return `<li>${link(e.href, e.title)}<div class="edition-meta">${meta}</div>${partOf}${nested}</li>`;
+        }).join('');
+      }
+
+      // Operations projects linked here are listed separately and last.
+      const research = data.projects.filter(pr => pr.realm !== 'admin');
+      const ops = data.projects.filter(pr => pr.realm === 'admin');
+      const card = pr => {
+            const edition = data.editions.find(e => e.id === pr.edition_id);
+            const context = pr.via ? `via ${link('/programs/program?slug=' + encodeURIComponent(pr.via.slug), pr.via.title)}`
+                          : edition ? esc(edition.title) : '';
+            return `<li class="entity-card">
+              <h2 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(pr.slug)}">${esc(pr.title)}</a></h2>
+              <div class="entity-description">${esc(pr.description)}</div>
+              <div class="entity-meta">Lead: <a href="${window.PI_RESEARCH.profileHref(pr.lead_slug)}">${esc(pr.lead_name || pr.lead_slug)}</a>${context ? ' &middot; ' + context : ''}</div>
+            </li>`;
+      };
+      document.getElementById('pg-projects').innerHTML = research.length
+        ? research.map(card).join('')
+        : '<li class="entity-empty">No projects linked yet.</li>';
+      if (ops.length) {
+        document.getElementById('pg-ops').innerHTML = ops.map(card).join('');
+        document.getElementById('pg-ops-section').style.display = '';
+      }
+
+      // Deep link into the project form, pre-selecting the current/upcoming edition if there is one.
+      const live = data.editions.find(e => e.status === 'active') || data.editions.find(e => e.status === 'planned');
+      document.getElementById('pg-add').href = '/projects/submit?program=' + encodeURIComponent(p.slug) +
+        (live ? '&edition=' + live.id : '') + (data.realm === 'admin' ? '&realm=admin' : '');
+      document.getElementById('pg-policy').textContent = p.affiliation_policy === 'open'
+        ? 'Open program: any member\'s project appears here as soon as it is linked.'
+        : 'Links to this program appear once the program\'s hosts approve them.';
+
+      document.getElementById('program-loading').style.display = 'none';
+      document.getElementById('program-content').style.display = '';
+    })
+    .catch(() => {
+      document.getElementById('program-loading').style.display = 'none';
+      document.getElementById('program-error').style.display = '';
+    });
+}());
+</script>
+</body>
+</html>

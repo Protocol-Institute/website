@@ -8,18 +8,26 @@ window.PI_RESEARCH = (function () {
     return (seed ?? 1) + VALUE_A * (anon || 0) * (anon || 0) + VALUE_B * (member || 0) * (member || 0);
   }
 
-  const SIG_LABELS = {
-    sigfpt:    'Formal Protocol Theory',
-    mrg:       'Memory Research Group',
-    sigpfb:    'Protocols for Business',
-    protfisig: 'Protocol Fiction',
-    drg:       'Distributed Robotics Group',
-    sigpsy:    'Psychohistory',
-    prg:       'Personhood Research Group',
-  };
-
   function escHtml(s) {
     return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  }
+
+  function profileHref(slug) {
+    return '/members/profile?slug=' + encodeURIComponent(slug || '');
+  }
+
+  // Program affiliation tags for a project (programs/PLAN.md). `programs` is the
+  // API's [{title, short_title, href, status, edition}] list; pending ones only
+  // reach the client for the lead or an admin, and are marked as such.
+  function programTagsHtml(programs) {
+    if (!programs || !programs.length) return '<span class="project-category">Independent</span>';
+    return programs.map(a => {
+      const pending = a.status && a.status !== 'approved';
+      const tip = [a.edition ? a.edition.title : a.title, pending ? 'awaiting approval by the program\'s hosts' : '']
+        .filter(Boolean).join(' — ');
+      return `<a class="project-theme-tag${pending ? ' project-theme-tag--pending' : ''}" href="${escHtml(a.href)}" title="${escHtml(tip)}">` +
+        escHtml(a.short_title || a.title) + (pending ? ' (pending)' : '') + `</a>`;
+    }).join('');
   }
 
   function anonVotedSet(cookieName) {
@@ -73,5 +81,5 @@ window.PI_RESEARCH = (function () {
     });
   }
 
-  return { value, SIG_LABELS, escHtml, anonVotedSet, watchButtonHtml, attachWatchHandlers };
+  return { value, escHtml, profileHref, programTagsHtml, anonVotedSet, watchButtonHtml, attachWatchHandlers };
 }());

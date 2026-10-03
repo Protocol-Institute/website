@@ -72,8 +72,20 @@
           <div class="dashboard-links">
             <a class="dashboard-link-item" href="/projects/submit/">
               <div>
-                <div class="dashboard-link-title">Submit a Project</div>
-                <div class="dashboard-link-desc">Add a project to the PI project directory — research, tools, publications, or other outputs connected to protocol work.</div>
+                <div class="dashboard-link-title">Add a Project</div>
+                <div class="dashboard-link-desc">Research, tools, books, or other outputs connected to protocol work. Published on your profile right away; optionally linked to a SIG, event, workshop or other program.</div>
+              </div>
+            </a>
+            <a class="dashboard-link-item" id="my-profile-link" href="/members">
+              <div>
+                <div class="dashboard-link-title">Your Profile &amp; Projects</div>
+                <div class="dashboard-link-desc">Your public member page, with every project you lead or work on.</div>
+              </div>
+            </a>
+            <a class="dashboard-link-item" href="/operations">
+              <div>
+                <div class="dashboard-link-title">Operations</div>
+                <div class="dashboard-link-desc">The Institute's own admin work — websites, channels and logistics.</div>
               </div>
             </a>
           </div>
@@ -113,6 +125,7 @@
       var firstName = (m.name || '').split(' ')[0];
       document.getElementById('welcome-line').textContent =
         'Welcome' + (firstName ? ', ' + firstName : '') + '.';
+      document.getElementById('my-profile-link').href = '/members/profile?slug=' + encodeURIComponent(m.slug);
 
       if (m.is_sig_host && m.sig_host_slugs) {
         var slugs;

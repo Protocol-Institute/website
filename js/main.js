@@ -261,9 +261,9 @@ var FOOTER_HTML =
 
 // SIG page — website link, related links, and affiliated projects, all from D1.
 // Runs only on a SIG home page (/sigs/<slug>), never on /sigs itself or on a
-// session page. Two sources, deliberately kept separate: sig_links holds links
-// that are not projects (a SIG's own site, resources); projects.sig_slug holds
-// the affiliated projects and stays the single source of truth for those. Both
+// session page. Two sources, deliberately kept separate: program_links holds links
+// that are not projects (a SIG's own site, resources); project_programs holds
+// the affiliated projects (programs/PLAN.md) and is the single source of truth. Both
 // used to be hand-written HTML on each SIG page, which silently drifted.
 (function () {
   var match = window.location.pathname.replace(/\/$/, '').match(/^\/sigs\/([a-z0-9-]+)$/);
@@ -299,7 +299,7 @@ var FOOTER_HTML =
   }
 
   Promise.all([
-    fetch('/api/sigs/links?sig=' + encodeURIComponent(slug))
+    fetch('/api/program-links?program=' + encodeURIComponent(slug))
       .then(function (r) { return r.ok ? r.json() : { links: [] }; })
       .catch(function () { return { links: [] }; }),
     fetch('/api/projects?sig=' + encodeURIComponent(slug))
@@ -319,9 +319,13 @@ var FOOTER_HTML =
 
     if (!resourcesEl) return;
 
+    // Title goes to the project's own page (team, programs, challenges); the
+    // artifact itself is the secondary link.
     var projectItems = projects.map(function (p) {
       var desc = clamp(p.description, 150);
-      return '<li>' + extLink(p.url, p.title) + (desc ? ' &mdash; ' + esc(desc) : '') + '</li>';
+      return '<li><a href="/projects/project?slug=' + encodeURIComponent(p.slug) + '">' + esc(p.title) + '</a>' +
+        (desc ? ' &mdash; ' + esc(desc) : '') +
+        (p.url ? ' <span class="sig-project-artifact">(' + extLink(p.url, 'artifact') + ')</span>' : '') + '</li>';
     });
 
     var linkItems = links.filter(function (l) { return l.kind !== 'website'; }).map(function (l) {
