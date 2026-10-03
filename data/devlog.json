@@ -2022,6 +2022,52 @@
           "html": "PR #16 (six SIG sessions) passed the review checklist and was merged. Review surfaced literal <code>**markdown**</code> and heading-only insight bullets &mdash; present on main since July, so not a regression of this PR. Root cause traced to <code>sync_meeting_notes.py</code> keeping only top-level <code>- **</code> lines and both page renderers HTML-escaping markdown; filed as c3po#7 per the PR-only rule rather than hand-fixed."
         }
       ]
+    },
+    {
+      "id": 54,
+      "sort_key": 54.0,
+      "label": "Session 54",
+      "title": "Programs data model, two realms, host-editable SIG pages",
+      "date": "2026-10-03",
+      "time_pt": "",
+      "tracks": [
+        "member-directory",
+        "static-site",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "One data model: areas &gt; programs &gt; editions &gt; projects",
+          "html": "&ldquo;Program&rdquo; had four unrelated meanings (hand-written <code>/programs</code> umbrellas, dead <code>projects.program</code>/<code>sub_program</code>/<code>themes</code> columns, the single <code>sig_slug</code>, and three separate event stores). Migration 037 replaces them with <code>areas</code> &gt; <code>programs</code> &gt; <code>editions</code>, with projects tagging programs many-to-many through <code>project_programs</code> (optionally pinned to one edition). Programs are many-to-many with areas, one marked primary. The key decision is separating a program (the lasting thing: the Symposium, a workshop, a course) from its <em>editions</em> (dated runs). That dissolved the &ldquo;is it an event or a workshop?&rdquo; question: event, workshop and course are kinds of program that have editions. <code>part_of_edition_id</code> nests runs (a workshop run inside Symposium 2026, the Symposium inside a SoP year); <code>host_context</code> names someone else&rsquo;s event (Edge City, Devconnect). Full rationale in <code>programs/PLAN.md</code>."
+        },
+        {
+          "title": "Two realms: research and admin",
+          "html": "Areas carry <code>realm</code> (research|admin); programs inherit it from their primary area; projects carry their own, because an admin project (symposium logistics) can still tag a research program. Admin-realm projects (the two websites) never appear on <code>/research</code>; they live on <code>/operations</code> (not in nav, noindex) and in separate &ldquo;Operations&rdquo; sections. Rule for placing things: an artifact someone builds = project; something others attach to = program; an outlet that carries work = a <code>program_links</code> row of kind <code>channel</code>. Who holds admin on which external account is deliberately <em>not</em> in the public DB."
+        },
+        {
+          "title": "Authority: admins create structure, hosts edit content, members tag freely",
+          "html": "Projects publish on creation (no review). Areas and programs are created only by admins (new <code>/admin</code> Programs tab), who assign hosts in <code>program_hosts</code> &mdash; which replaces <code>members.is_sig_host</code>/<code>sig_host_slugs</code> everywhere (they were unset in production). Hosts edit their programs at <code>/programs/edit</code>, reached from a &ldquo;Programs you host&rdquo; dashboard section. Research-realm programs are <code>affiliation_policy='open'</code> (migration 039): any member&rsquo;s tag applies at once and a host removes misfits; admin-realm programs stay moderated. All authority checks go through <code>functions/_shared/programs.js</code> so the planned volunteer task board (<code>tasks/PLAN.md</code>) can grow it into one <code>authorityFor(node)</code> resolver."
+        },
+        {
+          "title": "SIG pages: header from D1, raw-markdown About pages",
+          "html": "Everything above a SIG page&rsquo;s meeting archive now renders from <code>/api/programs/&lt;slug&gt;</code> into generic placeholders (<code>#sig-blurb</code>, <code>#sig-byline</code>, <code>#sig-about-link</code>, <code>#sig-website</code>, <code>#sig-resources</code>); the HTML keeps fallbacks. Verified first that c3po&rsquo;s <code>_patch_meeting_archive</code> only rewrites the archive block, so host edits can&rsquo;t be clobbered. The blurb is now <code>programs.description</code> (seeded from the static HTML) rather than the About page&rsquo;s first paragraph. EasyMDE (whose toolbar icons never rendered) is replaced by a plain textarea with preview and image upload; rendered markdown is sanitized with DOMPurify because hosts are not admins and the CSP allows inline script. PRG got its About page."
+        },
+        {
+          "title": "Member profiles, program pages, Book Writing Month",
+          "html": "<code>/members/profile?slug=</code> is the first per-member page (lead/team links previously pointed at a nonexistent <code>/members/&lt;slug&gt;</code>). <code>/programs/program?slug=</code> renders any program without its own page, rolling up projects from nested runs. <code>/events/book-writing-month-2026</code> is the first page built on the model: an open program whose book index is just its edition&rsquo;s tagged projects, with a deep link that preselects the edition. Five hand-built project stubs became 301s; C3PO, Humboldt and Long Now became database projects."
+        },
+        {
+          "title": "Security fix: image upload",
+          "html": "<code>/api/pages/upload-image</code> accepted any logged-in member and SVG files. Uploads are served same-origin through the <code>/assets/</code> proxy, so an SVG was stored XSS on protocol-institute.org. Now restricted to the page&rsquo;s editors, SVG rejected."
+        },
+        {
+          "title": "Deploy lesson: 4-hour JS cache",
+          "html": "HTML revalidates on every load but <code>/js/*</code> is cached <code>max-age=14400</code>. The first deploy broke SIG website links for cached visitors (old <code>main.js</code> calling the removed <code>/api/sigs/links</code>) and would have broken <code>/research</code> (new HTML calling helpers absent from cached <code>research.js</code>). Fixed with a temporary read-only alias and <code>?v=54</code> tokens; the rule is now in CLAUDE.md. Cleanup migration 040 (drop dead columns, <code>sig_links</code>, the alias, legacy host flags) is deferred until the cache window has passed."
+        }
+      ]
     }
   ]
 }

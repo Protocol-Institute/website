@@ -973,3 +973,25 @@ A build log for protocol-institute.org — how the static site was built, what i
 - PR #16 (six SIG sessions) passed the review checklist and was merged. Review surfaced literal `**markdown**` and heading-only insight bullets &mdash; present on main since July, so not a regression of this PR. Root cause traced to `sync_meeting_notes.py` keeping only top-level `- **` lines and both page renderers HTML-escaping markdown; filed as c3po#7 per the PR-only rule rather than hand-fixed.
 
 ---
+
+## Session 54: Programs data model, two realms, host-editable SIG pages
+
+*2026-10-03*
+
+**Tracks:** member-directory, static-site, content
+
+- &ldquo;Program&rdquo; had four unrelated meanings (hand-written `/programs` umbrellas, dead `projects.program`/`sub_program`/`themes` columns, the single `sig_slug`, and three separate event stores). Migration 037 replaces them with `areas` &gt; `programs` &gt; `editions`, with projects tagging programs many-to-many through `project_programs` (optionally pinned to one edition). Programs are many-to-many with areas, one marked primary. The key decision is separating a program (the lasting thing: the Symposium, a workshop, a course) from its *editions* (dated runs). That dissolved the &ldquo;is it an event or a workshop?&rdquo; question: event, workshop and course are kinds of program that have editions. `part_of_edition_id` nests runs (a workshop run inside Symposium 2026, the Symposium inside a SoP year); `host_context` names someone else&rsquo;s event (Edge City, Devconnect). Full rationale in `programs/PLAN.md`.
+
+- Areas carry `realm` (research|admin); programs inherit it from their primary area; projects carry their own, because an admin project (symposium logistics) can still tag a research program. Admin-realm projects (the two websites) never appear on `/research`; they live on `/operations` (not in nav, noindex) and in separate &ldquo;Operations&rdquo; sections. Rule for placing things: an artifact someone builds = project; something others attach to = program; an outlet that carries work = a `program_links` row of kind `channel`. Who holds admin on which external account is deliberately *not* in the public DB.
+
+- Projects publish on creation (no review). Areas and programs are created only by admins (new `/admin` Programs tab), who assign hosts in `program_hosts` &mdash; which replaces `members.is_sig_host`/`sig_host_slugs` everywhere (they were unset in production). Hosts edit their programs at `/programs/edit`, reached from a &ldquo;Programs you host&rdquo; dashboard section. Research-realm programs are `affiliation_policy='open'` (migration 039): any member&rsquo;s tag applies at once and a host removes misfits; admin-realm programs stay moderated. All authority checks go through `functions/_shared/programs.js` so the planned volunteer task board (`tasks/PLAN.md`) can grow it into one `authorityFor(node)` resolver.
+
+- Everything above a SIG page&rsquo;s meeting archive now renders from `/api/programs/&lt;slug&gt;` into generic placeholders (`#sig-blurb`, `#sig-byline`, `#sig-about-link`, `#sig-website`, `#sig-resources`); the HTML keeps fallbacks. Verified first that c3po&rsquo;s `_patch_meeting_archive` only rewrites the archive block, so host edits can&rsquo;t be clobbered. The blurb is now `programs.description` (seeded from the static HTML) rather than the About page&rsquo;s first paragraph. EasyMDE (whose toolbar icons never rendered) is replaced by a plain textarea with preview and image upload; rendered markdown is sanitized with DOMPurify because hosts are not admins and the CSP allows inline script. PRG got its About page.
+
+- `/members/profile?slug=` is the first per-member page (lead/team links previously pointed at a nonexistent `/members/&lt;slug&gt;`). `/programs/program?slug=` renders any program without its own page, rolling up projects from nested runs. `/events/book-writing-month-2026` is the first page built on the model: an open program whose book index is just its edition&rsquo;s tagged projects, with a deep link that preselects the edition. Five hand-built project stubs became 301s; C3PO, Humboldt and Long Now became database projects.
+
+- `/api/pages/upload-image` accepted any logged-in member and SVG files. Uploads are served same-origin through the `/assets/` proxy, so an SVG was stored XSS on protocol-institute.org. Now restricted to the page&rsquo;s editors, SVG rejected.
+
+- HTML revalidates on every load but `/js/*` is cached `max-age=14400`. The first deploy broke SIG website links for cached visitors (old `main.js` calling the removed `/api/sigs/links`) and would have broken `/research` (new HTML calling helpers absent from cached `research.js`). Fixed with a temporary read-only alias and `?v=54` tokens; the rule is now in CLAUDE.md. Cleanup migration 040 (drop dead columns, `sig_links`, the alias, legacy host flags) is deferred until the cache window has passed.
+
+---
