@@ -2068,6 +2068,41 @@
           "html": "HTML revalidates on every load but <code>/js/*</code> is cached <code>max-age=14400</code>. The first deploy broke SIG website links for cached visitors (old <code>main.js</code> calling the removed <code>/api/sigs/links</code>) and would have broken <code>/research</code> (new HTML calling helpers absent from cached <code>research.js</code>). Fixed with a temporary read-only alias and <code>?v=54</code> tokens; the rule is now in CLAUDE.md. Cleanup migration 040 (drop dead columns, <code>sig_links</code>, the alias, legacy host flags) is deferred until the cache window has passed."
         }
       ]
+    },
+    {
+      "id": 55,
+      "sort_key": 55.0,
+      "label": "Session 55",
+      "title": "One editor per program, Intelligence Media SIG, Research Roadmap design",
+      "date": "2026-10-03",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "c3po PR #17: the markdown fix lands, two residuals filed",
+          "html": "PR #17 was c3po's fix for <a href=\"https://github.com/Protocol-Institute/c3po/issues/7\">c3po#7</a>: insight bullets now render <code>**bold**</code> and <code>*em*</code> as <code>&lt;strong&gt;</code>/<code>&lt;em&gt;</code> on all seven SIG pages, with heading-only bullets folded into their content. It passed every checklist item (links resolve, no summaries inside the 7-day window, counts match, nothing outside the Meeting Archive touched, base was current <code>main</code>). Two residuals were filed rather than hand-fixed, per the standing rule: <a href=\"https://github.com/Protocol-Institute/c3po/issues/8\">#8</a> (a heading-only bullet that is last in its list is appended to the previous bullet) and <a href=\"https://github.com/Protocol-Institute/c3po/issues/9\">#9</a> (the SIGPfB index shows a 17-minute breakout recording as the 2026-09-21 meeting while the detail page holds the main session). The page-level vs recording-level summary distinction in c3po's output is the thing to watch: the index renderer prefers the recording block."
+        },
+        {
+          "title": "One edit page per program; About markdown moves into /programs/edit",
+          "html": "Session 54 left two editors that linked to each other with different labels: <code>/programs/edit</code> for metadata and an inline editor on each <code>/sigs/&lt;slug&gt;/about</code> page. Now <code>/programs/edit?slug=</code> is the only editor. It gained an <em>About page</em> section (<code>#about</code>: textarea, Write/Preview, image upload, its own Save) backed by <code>/api/pages/sigs/&lt;slug&gt;/about</code>; the About pages are view-only and show one &ldquo;Edit&rdquo; link straight to that section; the SIG page link reads &ldquo;Edit&rdquo; like the dashboard. The marked+DOMPurify renderer moved out of <code>managed-page.js</code> into <code>js/markdown.js</code> (<code>window.PIMarkdown.render</code>) so the editor's Preview and the public page render through one copy. About pages load both scripts at <code>?v=55</code>; <code>managed-page.js</code> carries no editing code. The About editor is shown only for <code>kind='sig'</code> programs, since only those have a managed page key today &mdash; extending it to other kinds means choosing a key convention (<code>programs/&lt;slug&gt;/about</code> is what the pages API already authorises)."
+        },
+        {
+          "title": "Intelligence Media SIG seeded by migration (040)",
+          "html": "A new research group created the way the admin API would: <code>programs</code> row (kind <code>sig</code>, primary area Research &rArr; open tagging), <code>program_areas</code>, <code>program_hosts</code> (Venkatesh Rao), a <code>program_links</code> channel row for its Discord channel, and byline &ldquo;Led by Venkatesh Rao &mdash; no meetings scheduled yet&rdquo;. It is the first SIG with <strong>no <code>/sigs/&lt;slug&gt;</code> page</strong>: <code>page_url</code> is NULL and it is served by the generic program page, with hand-written entries on <code>/sigs</code> and <code>/programs</code>. The static SIG plumbing (<code>PI_SIGS</code>, calendar sync, c3po's <code>SIG_INFO</code>) all keys off meetings and is deferred until the group meets. Two stub projects were seeded &mdash; Blygger (lead Venkat, blygger.org) and SIGPSY Oracle (lead Aneesh Sathe; URL is a worldmachines.org placeholder because the field is NOT NULL and the oracle has no deployed URL) &mdash; and C3PO and Humboldt were tagged to the SIG while keeping their AI Ops tag; tags are many-to-many, so no model change was needed. The migration was first applied with the misspelling &ldquo;Intelligent Media&rdquo; and corrected in place (new program row, child rows repointed, old row deleted, since FKs on <code>programs.slug</code> block a plain UPDATE); the file carries the correct name plus a history note. The schema cleanup that every document called &ldquo;migration 040&rdquo; is now <strong>041</strong>."
+        },
+        {
+          "title": "Research Roadmap: designed as a program kind with year editions, not built",
+          "html": "Venkat wants a &ldquo;2027 PI Research Roadmap&rdquo; &mdash; a curated portfolio of SIG projects presented as a funder-facing prospectus. Decided (Phase 4 in <code>programs/PLAN.md</code>): it is a <strong>program</strong>, not an event (no gathering) and not a new node type; a new kind <code>roadmap</code> whose <strong>editions are years</strong>; inclusion is <strong>moderated</strong> and approved by the roadmap's hosts (server-side authority already exists via <code>approvablePrograms()</code>; the missing piece is a host-facing queue, since pending affiliations are only surfaced in <code>/admin</code>); projects keep their SIG tags and the prospectus groups a year's projects by SIG; the artifact is a page plus a D1-generated PDF on the <code>make_brochure.py</code> pattern. Three calls are deliberately open until the 2027 data arrives: a per-inclusion brief (leaning: <code>note</code> column on <code>project_programs</code>), funding figures (leaning: never in the public database), and ordering (leaning: SIG sort order then title). Six test cases are written down. This locks in that roadmaps are edges on existing projects, not copies of them."
+        }
+      ]
     }
   ]
 }
