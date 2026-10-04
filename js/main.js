@@ -337,7 +337,7 @@ var FOOTER_HTML =
       var edit = document.createElement('p');
       edit.id = 'sig-edit-link';
       edit.className = 'sig-edit-link';
-      edit.innerHTML = '<a href="/programs/edit?slug=' + encodeURIComponent(slug) + '">Edit this page &#8594;</a>';
+      edit.innerHTML = '<a href="/programs/edit?slug=' + encodeURIComponent(slug) + '">Edit &#8594;</a>';
       bylineEl.parentNode.insertBefore(edit, bylineEl.nextSibling);
     }
 

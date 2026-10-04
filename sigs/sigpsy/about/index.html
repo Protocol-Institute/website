@@ -20,7 +20,6 @@
     #page-body hr { border: none; border-top: 1px solid #E0DDD8; margin: 2rem 0; }
     #page-body code { font-family: monospace; font-size: 0.88em; background: #F0EDE8; padding: 0.1em 0.35em; border-radius: 2px; }
     .edit-bar { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid #E0DDD8; }
-    .editor-actions { display: flex; gap: 0.75rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E0DDD8; }
   </style>
 </head>
 <body>
@@ -40,16 +39,7 @@
         </div>
         <div id="page-body" class="about-body"></div>
         <div id="edit-bar" class="edit-bar" style="display:none;">
-          <button class="form-btn form-btn--secondary" id="edit-btn">Edit page</button>
-        </div>
-      </div>
-
-      <div id="page-editor" style="display:none;">
-        <div class="page-header"><h1>Editing — Special Interest Group in Psychohistory</h1></div>
-        <div id="editor-mount"></div>
-        <div class="editor-actions">
-          <button class="form-btn" id="save-btn">Save</button>
-          <button class="form-btn form-btn--secondary" id="cancel-btn">Cancel</button>
+          <a class="form-btn form-btn--secondary" id="edit-link">Edit</a>
         </div>
       </div>
 
@@ -59,6 +49,7 @@
 </div>
 <script src="/js/main.js"></script>
 <script>var PAGE_KEY = 'sigs/sigpsy/about';</script>
-<script src="/js/managed-page.js?v=54"></script>
+<script src="/js/markdown.js?v=55"></script>
+<script src="/js/managed-page.js?v=55"></script>
 </body>
 </html>
