@@ -145,7 +145,7 @@ kind website|channel|link, label, url, note, sort_order)` — generalizes
 `/api/sigs/links`; `functions/_shared/sigs.js` is gone (programs are validated
 against the table).
 
-Migration 040 (after the phase 1 code is live, never before — Pages
+Migration 041 (after the phase 1 code is live, never before — Pages
 auto-deploys on push but migrations are applied by hand, so dropping columns
 first would break the running code): drop `projects.sig_slug`, `program`,
 `sub_program`, `themes`, and the `sig_links` table.
@@ -231,7 +231,7 @@ Event editions keep their existing `/events/<id>` pages as `page_url`; SIGs keep
 4. Retire the static stubs: `/jamverse`, `/worldmachines`, `/protocolized-dev`
    → 301 to their project pages; `/longnow`, `/c3po` → 301 to the new
    project/program pages.
-5. Migration 040 drops the dead columns. (038 points Book Writing Month at its landing page.)
+5. Migration 041 drops the dead columns. (038 points Book Writing Month at its landing page.)
 
 ### Phase 2 — Book Writing Month
 Program page for the November 2026 edition listing tagged books; "Start a book

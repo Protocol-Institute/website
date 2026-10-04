@@ -70,7 +70,7 @@ functions/          Cloudflare Pages Functions (API endpoints)
   api/programs.js, api/programs/[slug].js, …/[slug]/hosts.js, …/[slug]/editions.js, api/areas.js
                     Areas/programs/editions — GET public; create = admin; edit content/editions = host or admin; hosts = admin
   api/program-links.js  Program links (kind website|channel|link) — GET public, POST host/admin. Replaced api/sigs/links.js
-  api/sigs/links.js TEMPORARY read-only alias of program-links for browsers holding pre-Session-54 main.js — delete in migration 040
+  api/sigs/links.js TEMPORARY read-only alias of program-links for browsers holding pre-Session-54 main.js — delete in migration 041
   api/affiliations.js  Pending project↔program tags (admin queue) + approve/reject; hosts use reject to remove a tag
   api/members/profile.js  Public single-member profile (same field projection as /api/members)
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)

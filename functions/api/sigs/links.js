@@ -3,7 +3,7 @@
 // Replaced in Session 54, but js/main.js is browser-cached for up to ~4h
 // (max-age=14400), so visitors holding the old script still call this path and
 // would silently lose the SIG website line on a 404. Remove together with
-// migration 040 — by then no cached copy of the old main.js can survive.
+// migration 041 — by then no cached copy of the old main.js can survive.
 
 export async function onRequestGet({ request, env }) {
   const sig = new URL(request.url).searchParams.get('sig');

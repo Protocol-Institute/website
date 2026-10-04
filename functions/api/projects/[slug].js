@@ -72,7 +72,7 @@ export async function onRequestGet({ params, request, env }) {
     // Same shape as the symposium endpoints: the submitter's address and the
     // reviewers' notes are staff data and must not ride along on a public page.
     const publicProject = { ...project, voted_by_me: votedByMe };
-    // Pre-037 columns, superseded by project_programs; dropped by migration 040.
+    // Pre-037 columns, superseded by project_programs; dropped by migration 041.
     for (const k of ['sig_slug', 'program', 'sub_program', 'themes']) delete publicProject[k];
     if (!viewerIsLeadOrAdmin) {
       delete publicProject.submitted_by;
