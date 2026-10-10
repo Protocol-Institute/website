@@ -784,6 +784,10 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   .home-banner-cta { justify-self: start; margin-top: 0.6rem; }
 }
 
+.home-notice { margin: -0.75rem 0 1.75rem; padding: 0.7rem 1rem; border-left: 3px solid #2A6B6B; background: #EEF4F3; font-size: 1rem; color: #1A1A1A; }
+.home-notice a { color: #2A6B6B; font-weight: 500; }
+.home-notice-tag { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: #B07A1F; padding: 0.15em 0.5em; border-radius: 3px; margin-right: 0.4rem; vertical-align: 0.1em; }
+
 .home-explore {
   max-width: 760px;
   margin: 0 auto 2rem;
