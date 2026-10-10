@@ -2103,6 +2103,56 @@
           "html": "Venkat wants a &ldquo;2027 PI Research Roadmap&rdquo; &mdash; a curated portfolio of SIG projects presented as a funder-facing prospectus. Decided (Phase 4 in <code>programs/PLAN.md</code>): it is a <strong>program</strong>, not an event (no gathering) and not a new node type; a new kind <code>roadmap</code> whose <strong>editions are years</strong>; inclusion is <strong>moderated</strong> and approved by the roadmap's hosts (server-side authority already exists via <code>approvablePrograms()</code>; the missing piece is a host-facing queue, since pending affiliations are only surfaced in <code>/admin</code>); projects keep their SIG tags and the prospectus groups a year's projects by SIG; the artifact is a page plus a D1-generated PDF on the <code>make_brochure.py</code> pattern. Three calls are deliberately open until the 2027 data arrives: a per-inclusion brief (leaning: <code>note</code> column on <code>project_programs</code>), funding figures (leaning: never in the public database), and ordering (leaning: SIG sort order then title). Six test cases are written down. This locks in that roadmaps are edges on existing projects, not copies of them."
         }
       ]
+    },
+    {
+      "id": 56,
+      "sort_key": 56.0,
+      "label": "Session 56",
+      "title": "One markdown editing model; PiBoWriMo; removed tags stick",
+      "date": "2026-10-10",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Every user-written text field is markdown",
+          "html": "Member bios, project and challenge descriptions, program blurbs and bylines and About pages all render through one module, <code>js/markdown.js</code> (marked + DOMPurify, <code>breaks:true</code> because these fields were plain text and written that way; escaped-text fallback if the CDN fails). It renders on view pages, in listing cards and in editor previews, so a field looks the same everywhere. Bylines render inline so hosts can link host names to profiles. Venkat chose markdown in the existing fields over a separate blurb-plus-body pair, accepting markdown in cards; cards render it rather than stripping it, and the SIG resources list uses <code>PIMarkdown.text()</code> for its clamped excerpts. Sanitization is client-side only — the server stores raw markdown — so any new surface that shows these fields must go through <code>PIMarkdown</code>, never <code>innerHTML</code> of the raw value."
+        },
+        {
+          "title": "One editor, no library",
+          "html": "<code>js/md-editor.js</code> wraps a textarea with a live preview beside it (stacked under 640px), auto-grow, Cmd-S, and image upload only where there is a <code>managed_pages</code> key (About pages — upload is gated on editing that page). No toolbar and no editor library: EasyMDE failed in Session 33/54 and Venkat asked for raw markdown with a preview pane. The same file provides <code>PIMdEditor.guard()</code>, a beforeunload unsaved-changes guard that snapshots a form's fields and marks the Save button dirty; immediate-action sub-forms opt out with <code>data-guard-skip</code>."
+        },
+        {
+          "title": "One Edit link, consistent URLs",
+          "html": "<code>PI.editLink(href)</code> in <code>main.js</code> puts a single \"Edit\" link at the top right of <code>.page-header</code> for whoever may edit: member profiles (self, admin, owners of AI profiles) → <code>/members/edit?slug=</code>; projects → <code>/projects/edit?slug=</code>; programs, SIG pages and About pages → <code>/programs/edit?slug=</code>. The project form moved to <code>projects/edit/</code>; <code>/projects/submit</code> is a <code>_redirects</code> 200 rewrite to the clean directory URL (never to <code>index.html</code>, which chains into the clean-URL redirect), and a <code>submit?slug=</code> visit rewrites its own address to <code>/edit</code>. Because new HTML calls new <code>main.js</code> helpers and <code>/js/*</code> is cached 4h, every dependent page carries <code>main.js?v=56</code> — including the c3po-generated SIG index pages, whose next PR must keep it."
+        },
+        {
+          "title": "Program editor: one Save, About for every kind",
+          "html": "Blurb, byline and About now sit in one form with one sticky Save bar (About is only written when it changed, so saving a blurb never creates an empty row). Text fields are filled once; <code>render()</code> re-runs after every link/edition/host change and previously would have clobbered unsaved text. About bodies now exist for all program kinds: SIGs keep <code>sigs/&lt;slug&gt;/about</code>, everything else uses <code>programs/&lt;slug&gt;/about</code>, rendered on the generic program page (and on PiBoWriMo's own page)."
+        },
+        {
+          "title": "Challenge descriptions: HTML → markdown (migration 043)",
+          "html": "<code>challenges.js</code> stored a server-sanitized HTML subset (only <code>&lt;a href&gt;</code> survived, newlines became <code>&lt;br&gt;</code>). It now stores raw markdown. Migration 043 converted the 7 rows that had HTML; each UPDATE matches the exact old text, so it is idempotent and deploy order didn't matter (marked passes the old HTML through and DOMPurify keeps it)."
+        },
+        {
+          "title": "PiBoWriMo (migration 044)",
+          "html": "Book Writing Month became <strong>PiBoWriMo</strong> — Protocol Institute Book Writing Month. Ontology call: it is a <code>workshop</code> program (a repeatable format) whose first run is November 2026, not an <code>event</code>; Venkat confirmed it is always stand-alone (never nested in another event) and likely every November. Slug changed <code>book-writing-month</code> → <code>pibowrimo</code>: D1 FKs have no ON UPDATE CASCADE, so the migration inserts the new program, repoints editions/areas/hosts/links/tags, deletes the old row. Hosts Venkat and Timber. The landing page moved to <code>/events/pibowrimo-2026</code> (301 from the old URL) and its body copy moved into <code>managed_pages</code> so hosts can edit it; the hand-written HTML remains as a fallback. Workshop runs are labelled <strong>\"Runs\"</strong> everywhere (was \"Sessions\", which reads as a sub-event)."
+        },
+        {
+          "title": "Removed tags are blocks, not absences",
+          "html": "Previously a host's \"Remove tag\" set <code>status='rejected'</code>, but the project form omitted rejected rows, so the lead's next save deleted the row and a re-tag of an open program auto-approved. <code>syncAffiliations</code> now never deletes a rejected row and ignores re-adds unless the actor is an admin. The project form lists removed tags read-only (program greyed out in the picker) with a Restore button for admins (<code>/api/affiliations</code> approve). Applies to every program. Hosts can remove but not restore."
+        },
+        {
+          "title": "Home page",
+          "html": "A text banner (<code>.home-banner</code>) for PiBoWriMo 2026 linking to its page, and a \"New! Protocol Symposium videos\" notice (<code>.home-notice</code>) linking to the archive. Both are time-boxed hand edits in <code>index.html</code>."
+        }
+      ]
     }
   ]
 }
