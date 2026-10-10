@@ -101,7 +101,14 @@ export async function validateAffiliations(env, list) {
 // Unchanged affiliations keep their status. New ones, or ones whose edition
 // changed, start pending — unless the program is open or the actor can approve
 // it, in which case they are approved straight away. Removed ones are deleted.
+//
+// A tag a host or admin removed (status 'rejected', via /api/affiliations) is a
+// block, not an absence (Session 56): saving the project never deletes it, and
+// re-adding that program is ignored unless the actor is an admin, whose re-add
+// restores it. Before this, the form's omission of rejected rows deleted them
+// on the next save and the lead could simply tag the program again.
 export async function syncAffiliations(env, projectId, rows, actor, approvable) {
+  const isAdmin = approvable === null;
   const { results: existing } = await env.DB.prepare(
     'SELECT program_slug, edition_id, status FROM project_programs WHERE project_id = ?'
   ).bind(projectId).all();
@@ -109,8 +116,8 @@ export async function syncAffiliations(env, projectId, rows, actor, approvable) 
   const wanted = new Set(rows.map(r => r.program_slug));
   const stmts = [];
 
-  for (const [slug] of current) {
-    if (!wanted.has(slug)) {
+  for (const [slug, prev] of current) {
+    if (!wanted.has(slug) && prev.status !== 'rejected') {
       stmts.push(env.DB.prepare(
         'DELETE FROM project_programs WHERE project_id = ? AND program_slug = ?'
       ).bind(projectId, slug));
@@ -119,7 +126,9 @@ export async function syncAffiliations(env, projectId, rows, actor, approvable) 
 
   for (const r of rows) {
     const prev = current.get(r.program_slug);
-    if (prev && (prev.edition_id ?? null) === r.edition_id) continue;
+    if (prev && prev.status === 'rejected') {
+      if (!isAdmin) continue;
+    } else if (prev && (prev.edition_id ?? null) === r.edition_id) continue;
 
     const autoApprove = r.policy === 'open' || canApprove(approvable, r.program_slug);
     const status = autoApprove ? 'approved' : 'pending';

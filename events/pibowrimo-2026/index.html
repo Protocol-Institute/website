@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Writing Month 2026 — The Protocol Institute</title>
-  <meta name="description" content="In November 2026 the Protocol Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind.">
+  <title>PiBoWriMo 2026 — The Protocol Institute</title>
+  <meta name="description" content="PiBoWriMo, the Protocol Institute Book Writing Month: in November 2026 the Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -18,20 +18,25 @@
     <div class="container">
 
       <div class="page-header">
-        <p class="event-kicker">Event &mdash; November 1&ndash;30, 2026 &mdash; Online, on Discord</p>
-        <h1>Book Writing Month 2026</h1>
+        <p class="event-kicker">Protocol Institute Book Writing Month &mdash; November 1&ndash;30, 2026 &mdash; Online, on Discord</p>
+        <h1>PiBoWriMo 2026</h1>
       </div>
 
       <div class="event-body">
 
+        <!-- Body copy is the program's About page (managed_pages programs/pibowrimo/about),
+             edited by the hosts at /programs/edit?slug=pibowrimo#about. This HTML is the
+             fallback shown until it loads, or if it can't. -->
+        <div class="md" id="pbwm-about">
         <p>In November 2026, the Protocol Institute will host its first book-writing month, inspired by the old NaNoWriMo. This will be a mostly asynchronous event on our Discord, with just enough structure to keep you motivated and moving.</p>
 
-        <p>If you have a protocol-themed book project underway, or just an idea for one, join us. Sign in, list some details of your book project, and tag it as part of the month. It will show up in the index below.</p>
+        <p>If you have a protocol-themed book project underway, or just an idea for one, join us. Sign in, list some details of your book project, and tag it as part of PiBoWriMo. It will show up in the index below.</p>
 
         <p>We will have coworking sessions, peer mentorship, and mutual accountability mechanisms. Details forthcoming.</p>
+        </div>
 
         <div class="bwm-actions">
-          <a id="bwm-add" href="/projects/submit?program=book-writing-month&amp;artifact=text" class="form-btn">Add your book project &rarr;</a>
+          <a id="bwm-add" href="/projects/submit?program=pibowrimo&amp;artifact=text" class="form-btn">Add your book project &rarr;</a>
           <a href="https://discord.gg/Aj5FbGsNYV" class="form-btn form-btn--secondary" target="_blank" rel="noopener noreferrer">Join us on Discord &rarr;</a>
         </div>
 
@@ -51,29 +56,40 @@
 
 </div>
 
-<script src="/js/main.js"></script>
+<script src="/js/main.js?v=56"></script>
 <script src="/js/research.js?v=54"></script>
 <script src="/js/markdown.js?v=56"></script>
 <script>
 // The book index is every project linked to this program's November 2026
 // edition (or to the program with no edition), from the programs model —
-// see programs/PLAN.md. Book Writing Month is an open program, so a member's
-// link appears here as soon as they save it; nothing is curated by hand.
+// see programs/PLAN.md. PiBoWriMo is an open program, so a member's link
+// appears here as soon as they save it; nothing is curated by hand. A host or
+// admin can remove a tag from /programs/edit?slug=pibowrimo, and it stays
+// removed. Program slug was book-writing-month until migration 044.
 (function () {
   const R = window.PI_RESEARCH;
   const esc = R.escHtml;
   const STATE_LABELS = { stub: 'Idea', beta: 'In progress', production: 'Complete' };
   const list = document.getElementById('bwm-books');
 
+  const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
   Promise.all([
-    fetch('/api/programs/book-writing-month').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    fetch('/api/programs/pibowrimo').then(r => r.ok ? r.json() : Promise.reject(r.status)),
     PIMarkdown.load(),
+    json('/api/pages/programs/pibowrimo/about'),
+    json('/api/members/me'),
   ])
-    .then(([data]) => {
+    .then(([data, , about, me]) => {
+      if (about && String(about.content_md || '').trim()) {
+        document.getElementById('pbwm-about').innerHTML = PIMarkdown.html(about.content_md);
+      }
+      if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === 'pibowrimo'))) {
+        PI.editLink('/programs/edit?slug=pibowrimo#about');
+      }
       const edition = data.editions.find(e => e.slug === '2026-11');
       if (edition) {
         document.getElementById('bwm-add').href =
-          '/projects/submit?program=book-writing-month&edition=' + edition.id + '&artifact=text';
+          '/projects/submit?program=pibowrimo&edition=' + edition.id + '&artifact=text';
       }
       const books = data.projects.filter(p => !p.via && (!edition || p.edition_id == null || p.edition_id === edition.id) && p.realm !== 'admin');
       list.innerHTML = books.length

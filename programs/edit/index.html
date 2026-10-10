@@ -106,8 +106,8 @@
 
         <!-- Editions -->
         <section class="pe-section" id="pe-editions-section" style="display:none;">
-          <h2 class="pe-heading">Editions</h2>
-          <p class="form-hint">Dated runs of this program. Projects can be tagged to a specific edition.</p>
+          <h2 class="pe-heading" id="pe-editions-heading">Editions</h2>
+          <p class="form-hint">Dated runs of this program. Projects can be tagged to a specific one.</p>
           <ul class="pe-list" id="pe-editions"></ul>
           <form id="pe-edition-form" class="pe-inline-form" data-guard-skip>
             <input class="form-input" id="pe-ed-title" placeholder="Title, e.g. November 2027" maxlength="200" required>
@@ -240,7 +240,8 @@
         <button class="pe-remove" data-link="${l.id}">Remove</button></li>`).join('')
       : '<li class="pe-empty">No links yet.</li>';
 
-    // Editions
+    // Editions — what a run is called depends on the kind (as on programs/program).
+    $('pe-editions-heading').textContent = { workshop: 'Runs', course: 'Cohorts' }[p.kind] || 'Editions';
     if (p.kind !== 'sig' || data.editions.length) {
       $('pe-editions-section').style.display = '';
       $('pe-editions').innerHTML = data.editions.length ? data.editions.map(e => `
@@ -251,7 +252,7 @@
 
     // Projects
     $('pe-projects-hint').textContent = p.affiliation_policy === 'open'
-      ? 'Any member can tag a research project to this program; it appears at once. Remove a tag if a project doesn\'t belong here.'
+      ? 'Any member can tag a research project to this program; it appears at once. Remove a tag if a project doesn\'t belong here — it stays removed, and only an admin can restore it.'
       : 'Tags to this program need approval — pending ones are in the admin queue.';
     const direct = data.projects.filter(pr => !pr.via);
     $('pe-projects').innerHTML = direct.length ? direct.map(pr => `

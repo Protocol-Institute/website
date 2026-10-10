@@ -95,11 +95,15 @@ Symposium.
 | kind | has editions | edition displayed as | examples |
 |---|---|---|---|
 | `sig` | no | — | SIGFPT, PRG |
-| `event` | yes | edition | Protocol Symposium, Book Writing Month, a retreat |
-| `workshop` | yes | session | Protocolize Your Book, Edge City Workshops |
+| `event` | yes | edition | Protocol Symposium, a retreat |
+| `workshop` | yes | run | Protocolize Your Book, Edge City Workshops, PiBoWriMo |
 | `course` | yes | cohort | Protocol School, future protocol courses |
 | `collaboration` | optional | edition | Protocols for the Long Now |
 | `initiative` | optional | edition | Summer of Protocols, AI Ops, Protocolized |
+
+Workshop runs display as **"Runs"** (Session 56; was "Sessions", which reads as
+a sub-event within an event). A workshop's run may be stand-alone (PiBoWriMo)
+or nested in an event edition (the Symposium workshops); the kind is the same.
 
 One-off things (a retreat, Bridge Atlas) are still a program with one edition —
 not a separate kind. Retreats are individual events, not a recurring template.
@@ -176,7 +180,7 @@ School and future courses; Book Writing Month sits in Events + Publishing.
 | Protocols for the Long Now | collaboration | Collaborations | — |
 | Protocolized Books | initiative | Publishing | — |
 | Web Properties | initiative | Operations (admin) | — |
-| Book Writing Month | event | Events, Publishing | November 2026 (open affiliation) |
+| PiBoWriMo (Protocol Institute Book Writing Month; was Book Writing Month, kind event, until migration 044) | workshop | Events, Publishing | November 2026 (open affiliation; always stand-alone, likely every November) |
 
 Event editions keep their existing `/events/<id>` pages as `page_url`; SIGs keep
 `/sigs/<slug>`. Programs with no page of their own get the generic renderer.

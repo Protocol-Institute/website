@@ -1,13 +1,13 @@
 [
   {
-    "id": "book-writing-month-2026",
-    "title": "Book Writing Month 2026",
+    "id": "pibowrimo-2026",
+    "title": "PiBoWriMo 2026",
     "type": "writing-month",
     "date_start": "2026-11-01",
     "date_end": "2026-11-30",
     "date_display": "November 1–30, 2026",
     "location": "Online (Discord)",
-    "short_description": "The Institute's first book-writing month, inspired by the old NaNoWriMo — a mostly asynchronous month on Discord for anyone with a protocol-themed book underway or in mind, with coworking sessions, peer mentorship and mutual accountability.",
+    "short_description": "Protocol Institute Book Writing Month — the Institute's first book-writing month, inspired by the old NaNoWriMo — a mostly asynchronous month on Discord for anyone with a protocol-themed book underway or in mind, with coworking sessions, peer mentorship and mutual accountability.",
     "image": null,
     "resources_url": null,
     "status": "upcoming"

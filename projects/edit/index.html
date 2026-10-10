@@ -110,6 +110,7 @@
           <div class="form-group">
             <span class="form-label">Programs <span class="optional">(optional)</span></span>
             <div id="f-affiliations"></div>
+            <div id="f-removed" class="form-hint" style="display:none;"></div>
             <button type="button" class="form-btn form-btn--secondary form-btn--inline" id="f-add-affiliation">+ Tag a program</button>
             <p class="form-hint">A program can be a SIG, an event, a workshop, a course or a collaboration. Pick a specific edition if the project came out of one run of it. Tags apply at once; a program's hosts can remove a tag that doesn't fit.</p>
           </div>
@@ -148,6 +149,8 @@
   }
   const save = () => $('project-form').requestSubmit();
   let programs = [];          // from /api/programs
+  let blocked = new Set();    // programs whose host/admin removed this project's tag
+  let viewerIsAdmin = false;
   let programsBySlug = {};
 
   function esc(s) {
@@ -164,7 +167,7 @@
     const groups = areas.map(area => {
       const opts = programs
         .filter(p => (p.areas.find(a => a.is_primary) || p.areas[0] || {}).slug === area.slug)
-        .map(p => `<option value="${esc(p.slug)}"${p.slug === selected ? ' selected' : ''}>${esc(p.title)}${p.short_title ? ' (' + esc(p.short_title) + ')' : ''}${p.affiliation_policy === 'open' ? ' — open' : ''}</option>`)
+        .map(p => `<option value="${esc(p.slug)}"${p.slug === selected ? ' selected' : ''}${blocked.has(p.slug) && !viewerIsAdmin ? ' disabled' : ''}>${esc(p.title)}${p.short_title ? ' (' + esc(p.short_title) + ')' : ''}${p.affiliation_policy === 'open' ? ' — open' : ''}</option>`)
         .join('');
       return opts ? `<optgroup label="${esc(area.title)}">${opts}</optgroup>` : '';
     }).join('');
@@ -210,6 +213,29 @@
   }
 
   $('f-add-affiliation').addEventListener('click', () => addAffiliationRow('', null));
+
+  function renderRemoved(removed, projectSlug) {
+    const box = $('f-removed');
+    if (!removed.length) { box.style.display = 'none'; return; }
+    box.innerHTML = 'Removed by the program\'s hosts: ' + removed.map(a =>
+      `<span class="affiliation-removed">${esc(a.title)}${viewerIsAdmin
+        ? ` <button type="button" class="pe-remove affiliation-restore" data-program="${esc(a.slug)}">Restore</button>` : ''}</span>`
+    ).join(', ') + (viewerIsAdmin ? '' : '. Only an admin can restore a removed tag.');
+    box.style.display = '';
+    box.querySelectorAll('.affiliation-restore').forEach(b => b.addEventListener('click', async () => {
+      b.disabled = true;
+      const r = await fetch('/api/affiliations', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_slug: projectSlug, program_slug: b.dataset.program, action: 'approve' }),
+      });
+      if (!r.ok) { b.textContent = 'Failed'; return; }
+      const a = removed.find(x => x.slug === b.dataset.program);
+      blocked.delete(a.slug);
+      addAffiliationRow(a.slug, a.edition && a.edition.id, 'approved');
+      if (guard) guard.snapshot();
+      renderRemoved(removed.filter(x => x !== a), projectSlug);
+    }));
+  }
 
   function syncArtifactOther() {
     const other = $('f-artifact-type').value === 'other';
@@ -258,16 +284,22 @@
       $('f-artifact-other').value = p.artifact_type_other || '';
       $('f-version').value = p.current_version || '';
       $('f-realm').value = p.realm || 'research';
-      // Rejected links are left out; saving drops them, and the lead may ask again.
+      // Tags a program's host or admin removed are not editable rows: they stay
+      // removed through saves, and only an admin can restore one (Restore below,
+      // or re-adding it). See syncAffiliations in functions/_shared/programs.js.
+      viewerIsAdmin = !!me.member.is_admin;
+      const removed = (existing.programs || []).filter(a => a.status === 'rejected');
+      blocked = new Set(removed.map(a => a.slug));
       (existing.programs || []).filter(a => a.status !== 'rejected')
         .forEach(a => addAffiliationRow(a.slug, a.edition && a.edition.id, a.status));
+      renderRemoved(removed, p.slug);
     } else {
       $('f-lead').value = me.member.slug;
       $('f-lead-display').value = me.member.name;
       // Deep link from a program page: /projects/submit?program=…&edition=…
       const preProgram = params.get('program');
       if (preProgram && programsBySlug[preProgram]) addAffiliationRow(preProgram, params.get('edition'));
-      // e.g. artifact=text from the Book Writing Month page
+      // e.g. artifact=text from the PiBoWriMo page
       const preArtifact = params.get('artifact');
       if (preArtifact && $('f-artifact-type').querySelector(`option[value="${CSS.escape(preArtifact)}"]`)) {
         $('f-artifact-type').value = preArtifact;

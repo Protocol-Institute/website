@@ -75,7 +75,7 @@
     course: 'Course', collaboration: 'Collaboration', initiative: 'Initiative',
   };
   // What one run of a program is called, by kind (programs/PLAN.md).
-  const EDITION_LABELS = { workshop: 'Sessions', course: 'Cohorts' };
+  const EDITION_LABELS = { workshop: 'Runs', course: 'Cohorts' };
 
   const slug = new URLSearchParams(window.location.search).get('slug');
   if (!slug) { window.location.replace('/programs'); return; }
