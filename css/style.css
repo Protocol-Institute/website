@@ -768,20 +768,37 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 
 /* Text banner on the home page for a current event. One whole-link block; swap the
    copy and href in index.html for the next event, or delete the <a> when it's over. */
+/* Home page event banner — PiBoWriMo 2026 artwork (R2: pibowrimo-banner.webp,
+   1024x576). The image is cropped to a wide strip that keeps the peaks; the text
+   sits on the navy sky at the left behind a navy gradient, so the white line
+   scribbles in the sky never compete with it. On narrow screens the strip gets
+   taller and the gradient runs top-down instead. */
 .home-banner {
-  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "title cta" "text cta";
-  align-items: center; gap: 0.2rem 1.25rem;
-  margin: 0 0 1.75rem; padding: 1.1rem 1.4rem;
-  background: #2A6B6B; color: #FAFAF7; border-radius: 4px; text-decoration: none;
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  min-height: 15rem; margin: 0 0 1.75rem; padding: 1.6rem 1.75rem;
+  color: #FAFAF7; border-radius: 4px; text-decoration: none; overflow: hidden;
+  background: #1F2559 url('/assets/pibowrimo-banner.webp') center 30% / cover no-repeat;
 }
-.home-banner:hover { background: #235959; }
-.home-banner-title { grid-area: title; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; font-weight: 600; line-height: 1.1; }
-.home-banner-text { grid-area: text; font-size: 0.95rem; }
-.home-banner-cta { grid-area: cta; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid rgba(250,250,247,0.7); padding: 0.45em 0.9em; border-radius: 3px; white-space: nowrap; }
-.home-banner:hover .home-banner-cta { background: #FAFAF7; color: #2A6B6B; }
+.home-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(24,29,76,0.94) 0%, rgba(24,29,76,0.82) 34%, rgba(24,29,76,0.25) 62%, rgba(24,29,76,0) 80%);
+  transition: background 0.2s ease;
+}
+.home-banner > * { position: relative; }
+.home-banner-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 2.3rem; font-weight: 600; line-height: 1.05; }
+.home-banner-text { font-size: 0.95rem; margin-top: 0.35rem; max-width: 19rem; line-height: 1.45; color: rgba(250,250,247,0.92); }
+.home-banner-cta {
+  margin-top: 1.1rem; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid rgba(250,250,247,0.75); padding: 0.5em 0.95em; border-radius: 3px; white-space: nowrap;
+  background: rgba(24,29,76,0.35); transition: background 0.2s ease, color 0.2s ease;
+}
+.home-banner:hover .home-banner-cta { background: #FAFAF7; color: #1F2559; }
 @media (max-width: 560px) {
-  .home-banner { grid-template-columns: 1fr; grid-template-areas: "title" "text" "cta"; }
-  .home-banner-cta { justify-self: start; margin-top: 0.6rem; }
+  .home-banner { min-height: 17rem; justify-content: flex-start; padding: 1.3rem 1.25rem; background-position: 58% 100%; }
+  .home-banner::before {
+    background: linear-gradient(180deg, rgba(24,29,76,0.92) 0%, rgba(24,29,76,0.75) 42%, rgba(24,29,76,0) 72%);
+  }
+  .home-banner-title { font-size: 2rem; }
 }
 
 .home-notice { margin: -0.75rem 0 1.75rem; padding: 0.7rem 1rem; border-left: 3px solid #2A6B6B; background: #EEF4F3; font-size: 1rem; color: #1A1A1A; }
