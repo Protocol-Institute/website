@@ -253,6 +253,22 @@ project" CTA pre-selecting the edition.
 ### Phase 4 — Research Roadmap (decided Session 55, 2026-10-03; build when the
 2027 project data arrives)
 
+**Built Session 57 (2026-10-10), migration 045.** Program `research-roadmap`
+(kind `initiative` — the `roadmap` kind was dropped: widening the CHECK needs a
+`programs` rebuild that D1 rejects with five FK children, and an indefinitely
+extended program is what an initiative is), edition `2027`, hosts: Venkatesh Rao. Prospectus page at
+`/programs/research-roadmap/2027` (intro = the program's About page). Seeded
+from the 2027 prospectus doc: 7 new stub projects + Cognitive Ergonomics (moved
+MRG → SIGPfB). Open calls resolved as leaned, except #1: no `note` column — a
+card shows the first paragraph of the project description as its abstract, the
+project page shows all of it. SIG grouping uses SIG `sort_order`, not
+first-approved. **Not built yet:** host-facing approval queue (pending roadmap
+tags appear only in `/admin`), the PDF, a per-year intro (the About page is
+per-program, so a 2028 edition will need its own intro key). **Schema limit,
+accepted for now:** `project_programs` is keyed (project_id, program_slug), so a
+project is in only ONE roadmap year; continuing into 2028 means moving its tag
+or widening that key.
+
 **What it is.** A curated portfolio of the Institute's research projects for a
 year, presented as a prospectus page (and PDF) that can be shared with funders.
 The projects themselves live in SIGs; the roadmap collects them.

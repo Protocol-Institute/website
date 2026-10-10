@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Roadmap 2027 — The Protocol Institute</title>
+  <meta name="description" content="The Protocol Institute's 2027 research prospectus: projects proposed by its research groups on how AI and protocols are transforming each other.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <p class="event-kicker">Research Prospectus &mdash; FY 2027</p>
+        <h1>Research Roadmap 2027</h1>
+      </div>
+
+      <div class="event-body">
+
+        <!-- The introduction is the program's About page (managed_pages
+             programs/research-roadmap/about), edited by the roadmap's hosts at
+             /programs/edit?slug=research-roadmap#about. This HTML is the
+             fallback shown until it loads, or if it can't. -->
+        <div class="md" id="rm-intro">
+        <p>Protocol Institute operates as a set of focused, renewably chartered research groups that develop capabilities and expertise related to specific protocol themes. These groups also undertake time-bound research projects with specific goals.</p>
+        <p>In 2027, our projects have a shared focus on how AI and protocols are transforming each other. If you&rsquo;re interested in funding one or more of these projects, please reach out to Venkatesh Rao, <a href="mailto:venkat@protocol-institute.org">venkat@protocol-institute.org</a>, Director of Research.</p>
+        </div>
+
+        <div id="rm-groups"><p class="entity-empty">Loading projects&hellip;</p></div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js?v=56"></script>
+<script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script>
+// The prospectus is every project with an approved tag on the Research Roadmap's
+// 2027 edition (moderated: a member's tag waits for a roadmap host or admin),
+// grouped by the project's research-group (kind='sig') tag in SIG order, then
+// by title. A project with no SIG tag goes under "Institute-wide"; one with two
+// is listed under the first, with the other named. Each card shows the first
+// paragraph of the project's description as its abstract; the project page
+// shows the whole description. See programs/PLAN.md, Phase 4, and migration 045.
+(function () {
+  const R = window.PI_RESEARCH;
+  const esc = R.escHtml;
+  const PROGRAM = 'research-roadmap';
+  const YEAR = '2027';
+  const box = document.getElementById('rm-groups');
+
+  const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
+  const person = (slug, name) => `<a href="${R.profileHref(slug)}">${esc(name || slug)}</a>`;
+  const abstractOf = md => String(md || '').trim().split(/\n\s*\n/)[0];
+
+  Promise.all([
+    fetch('/api/programs/' + PROGRAM).then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    json('/api/programs'),
+    PIMarkdown.load(),
+    json('/api/pages/programs/' + PROGRAM + '/about'),
+    json('/api/members/me'),
+  ])
+    .then(([roadmap, all, , intro, me]) => {
+      if (intro && String(intro.content_md || '').trim()) {
+        document.getElementById('rm-intro').innerHTML = PIMarkdown.html(intro.content_md);
+      }
+      if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === PROGRAM))) {
+        PI.editLink('/programs/edit?slug=' + PROGRAM + '#about');
+      }
+      const edition = roadmap.editions.find(e => e.slug === YEAR);
+      if (!edition) return Promise.reject('no edition');
+      const sigOrder = ((all && all.programs) || []).filter(p => p.kind === 'sig').map(p => p.slug);
+      return fetch('/api/projects?edition=' + edition.id)
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(data => render(data.projects || [], sigOrder));
+    })
+    .catch(() => {
+      box.innerHTML = '<p class="entity-empty">The project list could not be loaded. Please try again later.</p>';
+    });
+
+  function render(projects, sigOrder) {
+    const rank = slug => { const i = sigOrder.indexOf(slug); return i < 0 ? 999 : i; };
+    const groups = new Map();
+    for (const p of projects) {
+      const sigs = (p.programs || []).filter(a => a.kind === 'sig').sort((a, b) => rank(a.slug) - rank(b.slug));
+      const key = sigs[0] ? sigs[0].slug : '';
+      if (!groups.has(key)) groups.set(key, { sig: sigs[0] || null, projects: [] });
+      groups.get(key).projects.push({ p, alsoIn: sigs.slice(1) });
+    }
+    const ordered = [...groups.entries()].sort(([a], [b]) => (a ? rank(a) : 1000) - (b ? rank(b) : 1000));
+    if (!ordered.length) {
+      box.innerHTML = '<p class="entity-empty">No projects are listed for ' + YEAR + ' yet.</p>';
+      return;
+    }
+    box.innerHTML = ordered.map(([, g]) => `
+      <section class="rm-group">
+        <h2 class="rm-group-heading">${g.sig
+          ? `<a href="${esc(g.sig.href)}">${esc(g.sig.title)}</a>`
+          : 'Institute-wide'}</h2>
+        <ul class="entity-list">
+          ${g.projects.sort((a, b) => a.p.title.localeCompare(b.p.title)).map(({ p, alsoIn }) => {
+            const href = '/projects/project?slug=' + encodeURIComponent(p.slug);
+            const people = [person(p.lead_slug, p.lead_name), ...(p.team || []).map(t => person(t.slug, t.name))];
+            const also = alsoIn.length
+              ? ' &middot; also ' + alsoIn.map(s => `<a href="${esc(s.href)}">${esc(s.short_title || s.title)}</a>`).join(', ')
+              : '';
+            return `
+            <li class="entity-card">
+              <h3 class="entity-title"><a href="${href}">${esc(p.title)}</a></h3>
+              <div class="entity-meta">${people.length > 1 ? 'Principal investigators' : 'Principal investigator'}: ${people.join(', ')}${also}</div>
+              <div class="entity-description md">${PIMarkdown.html(abstractOf(p.description))}</div>
+              <a class="rm-more" href="${href}">Project page &rarr;</a>
+            </li>`;
+          }).join('')}
+        </ul>
+      </section>`).join('');
+  }
+}());
+</script>
+</body>
+</html>

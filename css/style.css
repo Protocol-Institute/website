@@ -2606,6 +2606,18 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 }
 #bwm-books .entity-card:last-child { border-bottom: none; }
 
+/* ── Research Roadmap prospectus (programs/research-roadmap/<year>) ── */
+.rm-group { margin-top: 2.75rem; }
+.rm-group-heading {
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+.rm-group-heading a { color: inherit; }
+.rm-group-heading a:hover { color: #2A6B6B; }
+.rm-group .entity-card:last-child { border-bottom: none; }
+.rm-group .entity-description { margin-bottom: 0.6rem; }
+.rm-more { font-size: 0.85rem; color: #2A6B6B; }
+
 /* ── Program editor (programs/edit) ───────────────────────────── */
 .pe-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #E0DDD8; }
 .pe-heading { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
