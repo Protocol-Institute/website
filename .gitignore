@@ -7,6 +7,11 @@ sigs/mrg.html
 sigs/protfisig.html
 sigs/sigfpt.html
 sigs/sigpfb.html
+# sigs/ became research-groups/ (Session 57); a directory move carries these along, so ignore them there too
+research-groups/mrg.html
+research-groups/protfisig.html
+research-groups/sigfpt.html
+research-groups/sigpfb.html
 .wrangler/
 *.pdf
 
