@@ -27,28 +27,10 @@ async function getSession(request, env) {
   return email;
 }
 
-function escText(s) {
-  return String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-}
-
-// Allow only <a href="https://...">text</a>; strip all other HTML; convert \n to <br>.
-function sanitizeDescription(raw) {
-  const links = [];
-  let s = String(raw || '').slice(0, 3000);
-  s = s.replace(
-    /<a\s+href="(https?:\/\/[^"<>\s]{1,512})"[^>]*>([^<]{1,300})<\/a>/gi,
-    (_, href, text) => {
-      const i = links.length;
-      links.push(`<a href="${escText(href)}" target="_blank" rel="noopener noreferrer">${escText(text)}</a>`);
-      return `\x00${i}\x00`;
-    }
-  );
-  s = s.replace(/<[^>]*>/g, '');   // strip remaining tags
-  s = escText(s);                   // escape entities in plain text
-  s = s.replace(/\x00(\d+)\x00/g, (_, i) => links[parseInt(i, 10)]);  // restore links
-  s = s.replace(/\n/g, '<br>');
-  return s;
-}
+// Descriptions are stored as markdown (Session 56, migration 043) and rendered
+// client-side through js/markdown.js, which sanitizes. Before that this file
+// stored a server-sanitized HTML subset (only <a href> survived).
+const MAX_DESCRIPTION = 3000;
 
 export async function onRequestGet({ request, env }) {
   const email = await getSession(request, env);
@@ -133,7 +115,7 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ error: 'Difficulty must be a Fibonacci planning-poker value' }, { status: 400 });
   }
 
-  const description = sanitizeDescription(rawDesc);
+  const description = rawDesc.slice(0, MAX_DESCRIPTION);
 
   let seed = 1;
   if (member.is_admin && body.seed_interesting !== undefined) {

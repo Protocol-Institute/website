@@ -30,7 +30,7 @@
         </div>
 
         <div class="project-detail-body">
-          <p id="pd-description" class="project-detail-description"></p>
+          <div id="pd-description" class="project-detail-description md"></div>
 
           <div class="project-detail-fields">
             <div class="project-detail-field">
@@ -61,7 +61,6 @@
 
           <div class="entity-actions" style="margin-top:1.25rem;">
             <a id="pd-url" href="#" class="form-btn" target="_blank" rel="noopener noreferrer">View artifact →</a>
-            <a id="pd-edit" href="#" class="form-btn form-btn--secondary" style="display:none;">Edit project</a>
             <span id="pd-watch"></span>
             <span class="entity-value" id="pd-value" title="Score = seed + 1×(anon votes)² + 3×(member votes)²"></span>
           </div>
@@ -94,8 +93,9 @@
 
 </div>
 
-<script src="/js/main.js"></script>
+<script src="/js/main.js?v=56"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
   const R = window.PI_RESEARCH;
@@ -134,7 +134,7 @@
         document.getElementById('pd-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
       }
 
-      document.getElementById('pd-description').textContent = p.description;
+      PIMarkdown.render(p.description).then(html => { document.getElementById('pd-description').innerHTML = html; });
 
       document.getElementById('pd-lead').innerHTML =
         `<a href="${R.profileHref(p.lead_slug)}" class="project-lead-link">${R.escHtml(p.lead_name || p.lead_slug)}</a>`;
@@ -149,11 +149,7 @@
           (a.status === 'pending' ? ' <em class="project-affiliation-pending">(awaiting approval)</em>' : '')
         ).join('<br>');
       }
-      if (viewerIsLeadOrAdmin) {
-        const edit = document.getElementById('pd-edit');
-        edit.href = '/projects/submit?slug=' + encodeURIComponent(p.slug);
-        edit.style.display = '';
-      }
+      if (viewerIsLeadOrAdmin) PI.editLink('/projects/edit?slug=' + encodeURIComponent(p.slug));
       if (p.current_version) {
         document.getElementById('pd-version-row').style.display = '';
         document.getElementById('pd-version').textContent = p.current_version;

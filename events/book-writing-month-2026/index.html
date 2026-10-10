@@ -53,6 +53,7 @@
 
 <script src="/js/main.js"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 // The book index is every project linked to this program's November 2026
 // edition (or to the program with no edition), from the programs model —
@@ -64,9 +65,11 @@
   const STATE_LABELS = { stub: 'Idea', beta: 'In progress', production: 'Complete' };
   const list = document.getElementById('bwm-books');
 
-  fetch('/api/programs/book-writing-month')
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(data => {
+  Promise.all([
+    fetch('/api/programs/book-writing-month').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    PIMarkdown.load(),
+  ])
+    .then(([data]) => {
       const edition = data.editions.find(e => e.slug === '2026-11');
       if (edition) {
         document.getElementById('bwm-add').href =
@@ -78,7 +81,7 @@
             <li class="entity-card">
               <h3 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h3>
               <div class="entity-meta">${esc(STATE_LABELS[p.state] || p.state)} &middot; by <a href="${R.profileHref(p.lead_slug)}">${esc(p.lead_name || p.lead_slug)}</a></div>
-              <div class="entity-description">${esc(p.description)}</div>
+              <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
             </li>`).join('')
         : '<li class="entity-empty">No books listed yet. Yours could be the first.</li>';
     })

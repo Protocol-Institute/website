@@ -70,3 +70,9 @@
 /humboldt-architecture/     https://humboldt.protocol-institute.org/architecture/ 301
 /humboldt-behaviors         https://humboldt.protocol-institute.org/            301
 /humboldt-behaviors/        https://humboldt.protocol-institute.org/            301
+
+# Project form (Session 56): editing moved to /projects/edit?slug=; creating
+# stays at /projects/submit, served by the same page. Rewrite to the clean
+# directory URL, never .../index.html, which chains into a clean-URL redirect.
+/projects/submit    /projects/edit/  200
+/projects/submit/   /projects/edit/  200

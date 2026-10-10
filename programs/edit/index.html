@@ -27,19 +27,24 @@
           <h1 id="pe-title"></h1>
         </div>
 
-        <!-- Page content -->
+        <!-- Page content: blurb, byline, About body and (admin) identity, saved together -->
         <section class="pe-section">
           <h2 class="pe-heading">Page content</h2>
           <form id="pe-basics" class="member-form">
             <div class="form-group">
               <label class="form-label" for="pe-description">Blurb</label>
+              <p class="form-hint">One short paragraph shown at the top of the page and in listings.</p>
               <textarea class="form-textarea" id="pe-description" rows="4" maxlength="2000"></textarea>
-              <p class="form-hint">One short paragraph shown at the top of the page and in listings. Plain text.</p>
             </div>
             <div class="form-group">
               <label class="form-label" for="pe-byline">Byline</label>
-              <input class="form-input" id="pe-byline" maxlength="300" placeholder="Led by … — Biweekly Thursdays, 8am Pacific">
-              <p class="form-hint">Who runs it and when it meets. Plain text.</p>
+              <p class="form-hint">Who runs it and when it meets, e.g. "Led by [Jane Doe](/members/profile?slug=jane-doe) — Biweekly Thursdays, 8am Pacific".</p>
+              <textarea class="form-textarea" id="pe-byline" rows="1" maxlength="300"></textarea>
+            </div>
+            <div class="form-group" id="about">
+              <label class="form-label" for="pe-about-md">About page</label>
+              <p class="form-hint" id="pe-about-hint"></p>
+              <textarea class="form-textarea" id="pe-about-md"></textarea>
             </div>
 
             <div id="pe-admin-fields" style="display:none;">
@@ -77,26 +82,11 @@
               </div>
             </div>
 
-            <div class="form-actions"><button type="submit" class="form-btn">Save</button></div>
-            <p class="form-msg" id="pe-basics-msg" style="display:none;"></p>
+            <div class="form-save-bar">
+              <button type="submit" class="form-btn" id="pe-save">Save</button>
+              <p class="form-msg" id="pe-basics-msg" style="display:none;"></p>
+            </div>
           </form>
-        </section>
-
-        <!-- About page (markdown, managed_pages) -->
-        <section class="pe-section" id="about" style="display:none;">
-          <h2 class="pe-heading">About page</h2>
-          <p class="form-hint">A longer page about the program, reached from the "More about …" link under the blurb. Markdown; images are uploaded into the text. <a id="pe-about-view" target="_blank" rel="noopener">View the About page →</a></p>
-          <div class="md-editor-bar">
-            <button type="button" class="md-tab md-tab--active" data-mode="write">Write</button>
-            <button type="button" class="md-tab" data-mode="preview">Preview</button>
-            <label class="md-upload">Insert image<input type="file" id="pe-about-image" accept="image/png,image/jpeg,image/gif,image/webp" hidden></label>
-            <a class="md-help" href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener noreferrer">Markdown help</a>
-          </div>
-          <textarea class="md-textarea" id="pe-about-md" spellcheck="true"></textarea>
-          <div class="md-preview about-body" id="pe-about-preview" style="display:none;"></div>
-          <p class="md-status" id="pe-about-status" aria-live="polite"></p>
-          <div class="form-actions"><button type="button" class="form-btn" id="pe-about-save">Save</button></div>
-          <p class="form-msg" id="pe-about-msg" style="display:none;"></p>
         </section>
 
         <!-- Links -->
@@ -104,7 +94,7 @@
           <h2 class="pe-heading">Links</h2>
           <p class="form-hint">"Website" is the program's own site, shown under the blurb. "Channel" is an outlet that carries its work (Substack, YouTube…). "Link" is anything else related.</p>
           <ul class="pe-list" id="pe-links"></ul>
-          <form id="pe-link-form" class="pe-inline-form">
+          <form id="pe-link-form" class="pe-inline-form" data-guard-skip>
             <select class="form-select" id="pe-link-kind"><option value="link">Link</option><option value="website">Website</option><option value="channel">Channel</option></select>
             <input class="form-input" id="pe-link-label" placeholder="Label" maxlength="120" required>
             <input class="form-input" id="pe-link-url" placeholder="https://" type="url" required>
@@ -119,7 +109,7 @@
           <h2 class="pe-heading">Editions</h2>
           <p class="form-hint">Dated runs of this program. Projects can be tagged to a specific edition.</p>
           <ul class="pe-list" id="pe-editions"></ul>
-          <form id="pe-edition-form" class="pe-inline-form">
+          <form id="pe-edition-form" class="pe-inline-form" data-guard-skip>
             <input class="form-input" id="pe-ed-title" placeholder="Title, e.g. November 2027" maxlength="200" required>
             <input class="form-input" id="pe-ed-slug" placeholder="slug, e.g. 2027-11" maxlength="63" required>
             <input class="form-input" id="pe-ed-start" type="date" title="Start date">
@@ -142,7 +132,7 @@
         <section class="pe-section" id="pe-hosts-section">
           <h2 class="pe-heading">Hosts</h2>
           <ul class="pe-list" id="pe-hosts"></ul>
-          <form id="pe-host-form" class="pe-inline-form" style="display:none;">
+          <form id="pe-host-form" class="pe-inline-form" data-guard-skip style="display:none;">
             <input class="form-input" id="pe-host-slug" list="pe-member-options" placeholder="Member slug" required>
             <datalist id="pe-member-options"></datalist>
             <button type="submit" class="form-btn form-btn--inline">Add host</button>
@@ -159,7 +149,8 @@
 </div>
 
 <script src="/js/main.js"></script>
-<script src="/js/markdown.js?v=55"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
 <script>
 // Program editor for hosts and admins (programs/PLAN.md). Hosts edit content
 // (blurb, byline, About page, links, editions) and can remove tags from their
@@ -219,10 +210,13 @@
     $('pe-title').textContent = p.title;
     $('pe-kind').textContent = KIND_LABELS[p.kind] || p.kind;
     $('pe-view').href = p.href;
-    $('pe-description').value = p.description || '';
-    $('pe-byline').value = p.byline || '';
 
-    if (isAdmin) {
+    // The text fields are filled once. render() re-runs after every link,
+    // edition, tag or host change and must not clobber unsaved edits.
+    if (!contentLoaded) loadContent(p);
+
+    if (isAdmin && !adminLoaded) {
+      adminLoaded = true;
       $('pe-admin-fields').style.display = '';
       $('pe-ftitle').value = p.title;
       $('pe-short').value = p.short_title || '';
@@ -238,7 +232,6 @@
       }).catch(() => {});
     }
 
-    if (p.kind === 'sig' && !aboutLoaded) loadAbout(p);
 
     // Links
     $('pe-links').innerHTML = data.links.length ? data.links.map(l => `
@@ -286,66 +279,44 @@
     render(data, all.areas || []);
   }
 
-  // About page — markdown held in managed_pages under sigs/<slug>/about (the
-  // key the About page's PAGE_KEY uses). Loaded once; render() re-runs after
-  // every other save and must not clobber text being edited.
-  let aboutLoaded = false;
+  // Page content. The About body is markdown in managed_pages: SIGs keep
+  // their original key sigs/<slug>/about (what /sigs/<slug>/about/ reads);
+  // every other program uses programs/<slug>/about, shown on its generic
+  // program page (Session 56 — before that only SIGs had an About page).
+  let contentLoaded = false;
+  let adminLoaded = false;
   let aboutKey = null;
-  async function loadAbout(p) {
-    aboutLoaded = true;
-    aboutKey = 'sigs/' + encodeURIComponent(p.slug) + '/about';
-    $('pe-about-view').href = '/sigs/' + encodeURIComponent(p.slug) + '/about/';
+  let guard = null;
+  let savedAbout = '';
+  async function loadContent(p) {
+    contentLoaded = true;
+    const isSig = p.kind === 'sig';
+    aboutKey = (isSig ? 'sigs/' : 'programs/') + p.slug + '/about';
+    const aboutHref = isSig ? '/sigs/' + encodeURIComponent(p.slug) + '/about/' : '/programs/program?slug=' + encodeURIComponent(p.slug) + '#about';
+    $('pe-about-hint').innerHTML = (isSig
+      ? 'A longer page, reached from the "More about …" link under the blurb.'
+      : 'A longer section shown below the blurb on the program page.') +
+      ' Optional. <a href="' + aboutHref + '" target="_blank" rel="noopener">View →</a>';
+    const save = () => $('pe-save').click();
+    const desc = PIMdEditor.attach($('pe-description'), { onSave: save });
+    const byline = PIMdEditor.attach($('pe-byline'), { inline: true, onSave: save });
+    const about = PIMdEditor.attach($('pe-about-md'), { wide: true, pageKey: aboutKey, onSave: save });
+    desc.setValue(p.description);
+    byline.setValue(p.byline);
     const page = await fetch('/api/pages/' + aboutKey).then(r => r.ok ? r.json() : null).catch(() => null);
-    $('pe-about-md').value = (page && page.content_md) || '';
-    $('about').style.display = '';
+    savedAbout = (page && page.content_md) || '';
+    about.setValue(savedAbout);
+    guard = PIMdEditor.guard($('pe-basics'), $('pe-save'));
+    guard.snapshot();
     if (location.hash === '#about') $('about').scrollIntoView();
   }
 
-  document.querySelectorAll('#about .md-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('#about .md-tab').forEach(t => t.classList.remove('md-tab--active'));
-      tab.classList.add('md-tab--active');
-      const previewing = tab.dataset.mode === 'preview';
-      $('pe-about-md').style.display = previewing ? 'none' : '';
-      $('pe-about-preview').style.display = previewing ? '' : 'none';
-      if (previewing) window.PIMarkdown.render($('pe-about-md').value).then(html => { $('pe-about-preview').innerHTML = html; });
-    });
-  });
-
-  $('pe-about-image').addEventListener('change', async function () {
-    const file = this.files && this.files[0];
-    this.value = '';
-    if (!file) return;
-    const fd = new FormData();
-    fd.append('image', file, file.name || 'upload.jpg');
-    fd.append('page_key', decodeURIComponent(aboutKey));
-    $('pe-about-status').textContent = 'Uploading image…';
-    try {
-      const r = await fetch('/api/pages/upload-image', { method: 'POST', body: fd });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok || !d.url) throw new Error(d.error || 'Upload failed');
-      const ta = $('pe-about-md'), start = ta.selectionStart, end = ta.selectionEnd, text = '\n![](' + d.url + ')\n';
-      ta.value = ta.value.slice(0, start) + text + ta.value.slice(end);
-      ta.selectionStart = ta.selectionEnd = start + text.length;
-      ta.focus();
-      $('pe-about-status').textContent = 'Image inserted.';
-    } catch (err) { $('pe-about-status').textContent = 'Image upload failed: ' + err.message; }
-  });
-
-  $('pe-about-save').addEventListener('click', async () => {
-    const btn = $('pe-about-save');
-    btn.disabled = true;
-    try {
-      await post('/api/pages/' + aboutKey, { content_md: $('pe-about-md').value });
-      msg('pe-about-msg', 'Saved.', true);
-    } catch (err) { msg('pe-about-msg', err.message); }
-    btn.disabled = false;
-  });
-
-  // Basics
+  // Basics + About, one Save. The About body is only written when it changed,
+  // so saving a blurb never creates an empty managed_pages row.
   $('pe-basics').addEventListener('submit', async e => {
     e.preventDefault();
-    const body = { description: $('pe-description').value, byline: $('pe-byline').value };
+    const btn = $('pe-save');
+    const body = { description: $('pe-description').value.trim(), byline: $('pe-byline').value.trim() };
     if (isAdmin) {
       Object.assign(body, {
         title: $('pe-ftitle').value, short_title: $('pe-short').value, status: $('pe-status').value,
@@ -353,8 +324,19 @@
         areas: Array.from(document.querySelectorAll('#pe-areas input:checked')).map(i => i.value),
       });
     }
-    try { await post('/api/programs/' + encodeURIComponent(slug), body); msg('pe-basics-msg', 'Saved.', true); refresh(); }
-    catch (err) { msg('pe-basics-msg', err.message); }
+    btn.disabled = true;
+    try {
+      await post('/api/programs/' + encodeURIComponent(slug), body);
+      const aboutMd = $('pe-about-md').value;
+      if (aboutMd !== savedAbout) {
+        await post('/api/pages/' + aboutKey, { content_md: aboutMd });
+        savedAbout = aboutMd;
+      }
+      guard.snapshot();
+      msg('pe-basics-msg', 'Saved.', true);
+      refresh();
+    } catch (err) { msg('pe-basics-msg', err.message); }
+    btn.disabled = false;
   });
 
   // Links

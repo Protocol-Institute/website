@@ -38,7 +38,7 @@
 
           <div class="form-group">
             <label class="form-label" for="f-description">Description <span class="form-required">*</span></label>
-            <textarea class="form-textarea" id="f-description" rows="4" maxlength="2000" required></textarea>
+            <textarea class="form-textarea" id="f-description" rows="4" maxlength="5000" required></textarea>
           </div>
 
           <div class="form-group">
@@ -118,11 +118,10 @@
             <p class="form-hint">Team members and responses to open Challenges can be added from the project's own page.</p>
           </div>
 
-          <div class="form-actions">
+          <div class="form-save-bar">
             <button type="submit" class="form-btn" id="submit-btn">Save project</button>
+            <div class="form-msg" id="form-msg" style="display:none;"></div>
           </div>
-
-          <div class="form-msg" id="form-msg" style="display:none;"></div>
 
         </form>
       </div>
@@ -135,10 +134,19 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
 <script>
+// One form for creating and editing a project. /projects/edit?slug= edits;
+// /projects/submit (a _redirects rewrite to this page) creates, and is what
+// the "Add a project" links across the site point at.
 (function () {
   const params = new URLSearchParams(window.location.search);
   const editSlug = params.get('slug');
+  if (editSlug && location.pathname.replace(/\/$/, '') === '/projects/submit') {
+    history.replaceState(null, '', '/projects/edit' + location.search + location.hash);
+  }
+  const save = () => $('project-form').requestSubmit();
   let programs = [];          // from /api/programs
   let programsBySlug = {};
 
@@ -146,6 +154,8 @@
     return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   }
   const $ = id => document.getElementById(id);
+  const description = PIMdEditor.attach($('f-description'), { onSave: () => save() });
+  let guard = null;
 
   // ── Program picker ────────────────────────────────────────────
   // One row per affiliation: a program select grouped by the program's primary
@@ -237,7 +247,7 @@
       document.title = 'Edit ' + p.title + ' — The Protocol Institute';
       $('page-title').textContent = 'Edit Project';
       $('f-title').value = p.title;
-      $('f-description').value = p.description;
+      description.setValue(p.description);
       $('f-lead').value = p.lead_slug;
       $('f-lead-display').value = p.lead_name || p.lead_slug;
       $('f-lead-hint').style.display = 'none';
@@ -270,6 +280,8 @@
     syncArtifactOther();
     syncVersion();
     $('submit-form-area').style.display = '';
+    guard = PIMdEditor.guard($('project-form'), $('submit-btn'));
+    guard.snapshot();
   });
 
   // ── Save ──────────────────────────────────────────────────────
@@ -304,6 +316,7 @@
       });
       const data = await res.json();
       if (res.ok) {
+        if (guard) guard.snapshot();
         window.location.href = '/projects/project?slug=' + encodeURIComponent(data.slug);
         return;
       }

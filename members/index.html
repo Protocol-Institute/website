@@ -63,6 +63,7 @@
 
 <script src="/js/tags.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
   const TAG_LABELS = PI_TAGS.LABELS;
@@ -155,7 +156,7 @@
         ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
       <h2 class="member-name">${nameLink(m)}</h2>
       ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
-      ${m.bio ? `<p class="member-bio">${escHtml(m.bio)}</p>` : ''}
+      ${m.bio ? `<div class="member-bio md">${PIMarkdown.html(m.bio)}</div>` : ''}
       ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
       ${tagsHtml(tags)}
     </li>`;
@@ -192,7 +193,7 @@
           <h2 class="member-name">${nameLink(m)}</h2>
           ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
           ${expertiseChips}
-          ${m.bio ? `<p class="member-bio">${escHtml(m.bio)}</p>` : ''}
+          ${m.bio ? `<div class="member-bio md">${PIMarkdown.html(m.bio)}</div>` : ''}
           ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
           ${cardLinksHtml}
           ${tagsHtml(tags)}
@@ -254,9 +255,8 @@
   // Load members; apply URL param filter if present
   const urlFilter = new URLSearchParams(location.search).get('filter') || '';
 
-  fetch('/api/members')
-    .then(r => r.json())
-    .then(data => {
+  Promise.all([fetch('/api/members').then(r => r.json()), PIMarkdown.load()])
+    .then(([data]) => {
       allMembers = data.members || [];
       if (urlFilter) {
         const btn = document.querySelector(`.filter-btn[data-filter="${CSS.escape(urlFilter)}"]`);

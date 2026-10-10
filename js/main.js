@@ -259,6 +259,49 @@ var FOOTER_HTML =
     .catch(function () {});
 }());
 
+// Shared helpers for pages that show user-written content (Session 56).
+//
+// PI.markdown() loads /js/markdown.js on demand and resolves with
+// window.PIMarkdown once it can render; pages that render many fields can also
+// include the script tag directly. Every user-written text field is markdown.
+//
+// PI.editLink(href) puts the one "Edit" affordance every viewable thing has —
+// member profile, project, program, SIG page, About page — in the same place:
+// the top right of the page's .page-header. Callers decide who sees it; the
+// server re-checks on every write.
+(function () {
+  var MD_SRC = '/js/markdown.js?v=56';
+  var mdPromise = null;
+  function markdown() {
+    if (!mdPromise) {
+      mdPromise = (window.PIMarkdown ? Promise.resolve() : new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = MD_SRC; s.onload = resolve; s.onerror = resolve;
+        document.head.appendChild(s);
+      })).then(function () {
+        if (!window.PIMarkdown) throw new Error('markdown.js failed to load');
+        return window.PIMarkdown.load().then(function () { return window.PIMarkdown; });
+      });
+    }
+    return mdPromise;
+  }
+
+  function editLink(href) {
+    var header = document.querySelector('.page-header');
+    if (!header || header.querySelector('.page-edit-link')) return;
+    var a = document.createElement('a');
+    a.className = 'page-edit-link';
+    a.href = href;
+    a.textContent = 'Edit';
+    header.classList.add('page-header--editable');
+    header.appendChild(a);
+  }
+
+  window.PI = window.PI || {};
+  window.PI.markdown = markdown;
+  window.PI.editLink = editLink;
+}());
+
 // SIG page — blurb, byline, About link, website, links and projects, all from D1.
 // Runs only on a SIG home page (/sigs/<slug>), never on /sigs itself or on a
 // session page. Everything above the meeting archive is host-editable
@@ -317,8 +360,23 @@ var FOOTER_HTML =
     var links = data.links || [];
     var projects = (data.projects || []).filter(function (p) { return p.realm !== 'admin'; });
 
-    if (blurbEl && program.description) blurbEl.textContent = program.description;
-    if (bylineEl && program.byline) bylineEl.textContent = program.byline;
+    // Blurb and byline are markdown. The blurb can be several paragraphs, so
+    // its <p> fallback is swapped for a <div> rather than filled.
+    if ((blurbEl && program.description) || (bylineEl && program.byline)) {
+      window.PI.markdown().then(function (md) {
+        if (blurbEl && program.description) {
+          var div = document.createElement('div');
+          div.id = 'sig-blurb';
+          div.className = 'md';
+          div.innerHTML = md.html(program.description);
+          blurbEl.parentNode.replaceChild(div, blurbEl);
+        }
+        if (bylineEl && program.byline) bylineEl.innerHTML = md.inline(program.byline);
+      }).catch(function () {
+        if (blurbEl && program.description) blurbEl.textContent = program.description;
+        if (bylineEl && program.byline) bylineEl.textContent = program.byline;
+      });
+    }
     if (aboutLinkEl && res[1] && String(res[1].content_md || '').trim()) aboutLinkEl.style.display = '';
 
     // The SIG's own site sits under the page blurb, labelled by its own row so
@@ -333,31 +391,26 @@ var FOOTER_HTML =
     var me = res[2];
     var canEdit = me && me.member && (me.member.is_admin ||
       (me.hosted_programs || []).some(function (p) { return p.slug === slug; }));
-    if (canEdit && bylineEl && !document.getElementById('sig-edit-link')) {
-      var edit = document.createElement('p');
-      edit.id = 'sig-edit-link';
-      edit.className = 'sig-edit-link';
-      edit.innerHTML = '<a href="/programs/edit?slug=' + encodeURIComponent(slug) + '">Edit &#8594;</a>';
-      bylineEl.parentNode.insertBefore(edit, bylineEl.nextSibling);
-    }
+    if (canEdit) window.PI.editLink('/programs/edit?slug=' + encodeURIComponent(slug));
 
     if (!resourcesEl) return;
 
     // Title goes to the project's own page (team, programs, challenges); the
-    // artifact itself is the secondary link.
-    var projectItems = projects.map(function (p) {
-      var desc = clamp(p.description, 150);
-      return '<li><a href="/projects/project?slug=' + encodeURIComponent(p.slug) + '">' + esc(p.title) + '</a>' +
-        (desc ? ' &mdash; ' + esc(desc) : '') +
-        (p.url ? ' <span class="sig-project-artifact">(' + extLink(p.url, 'artifact') + ')</span>' : '') + '</li>';
-    });
-
+    // artifact itself is the secondary link. Descriptions are markdown, shown
+    // here as a clamped plain-text excerpt.
     var linkItems = links.filter(function (l) { return l.kind !== 'website'; }).map(function (l) {
       return '<li>' + extLink(l.url, l.label) + (l.note ? ' &mdash; ' + esc(l.note) : '') + '</li>';
     });
-
-    resourcesEl.innerHTML =
-      block(projectItems.length === 1 ? 'Associated Project' : 'Associated Projects', projectItems) +
-      block('Links', linkItems);
+    window.PI.markdown().catch(function () { return null; }).then(function (md) {
+      var projectItems = projects.map(function (p) {
+        var desc = clamp(md ? md.text(p.description) : p.description, 150);
+        return '<li><a href="/projects/project?slug=' + encodeURIComponent(p.slug) + '">' + esc(p.title) + '</a>' +
+          (desc ? ' &mdash; ' + esc(desc) : '') +
+          (p.url ? ' <span class="sig-project-artifact">(' + extLink(p.url, 'artifact') + ')</span>' : '') + '</li>';
+      });
+      resourcesEl.innerHTML =
+        block(projectItems.length === 1 ? 'Associated Project' : 'Associated Projects', projectItems) +
+        block('Links', linkItems);
+    });
   });
 }());

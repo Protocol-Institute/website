@@ -32,7 +32,8 @@ programs/           /programs — still hand-written (generating it from D1 is p
   PLAN.md           **Areas > programs > editions > projects data model** — semantics, realms, authority. Read before touching projects/programs
   program/          /programs/program?slug= — generic program page (editions, nested runs, links/channels, projects) for programs with no page of their own
   edit/             /programs/edit?slug= — the ONE editor per program: blurb, byline, About page markdown (section #about, managed_pages
-                    sigs/<slug>/about), links, editions, tags, hosts. SIG page and About page both link here as "Edit"
+                    sigs/<slug>/about for SIGs, programs/<slug>/about for every other kind — shown on the generic program page), links,
+                    editions, tags, hosts. Blurb, byline and About save together under one sticky Save bar; lists apply at once
   protocol-school/  /programs/protocol-school — biennial Protocol School program
 operations/         /operations — admin-realm projects (websites etc.). Deliberately low-profile: not in nav, noindex
 tasks/PLAN.md       Stub plan for a volunteer task board + hour logging (not designed/built)
@@ -52,7 +53,8 @@ network/            /network — PIN member directory (data from Google Form)
 consulting/         /consulting — consultant directory (data from Google Form)
 research/           /research — Challenges + Projects, unified (2 tab views, shared watching mechanism + value formula in js/research.js); see research/PLAN.md
 projects/
-  submit/           /projects/submit — create AND edit (?slug=) form; program/edition tag picker; ?program=&edition=&artifact= deep-link presets
+  edit/             /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
+                    Program/edition tag picker; ?program=&edition=&artifact= deep-link presets. "Add a project" links use /projects/submit
   project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
@@ -61,7 +63,7 @@ pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)
 license/            /license — CC+ license for SoP23 outputs
 members/            /members — member directory (D1-backed, PIN auth)
   join/             /members/join — login + registration flow
-  edit/             /members/edit — authenticated profile editor
+  edit/             /members/edit?slug= — profile editor (no slug = your own); reached from the Edit link on /members/profile
   profile/          /members/profile?slug= — public member page: bio + projects (research, then Operations). Query-param URL on
                     purpose: a /members/<slug> rewrite would collide with join/edit/dashboard
   dashboard/        /members/dashboard — includes "Programs you host" (from /api/members/me hosted_programs)
@@ -108,10 +110,15 @@ js/
   sig-meta.js         Shared SIG metadata (Discord channel ids/names, calendar-link helpers) — window.PI_SIGS etc.; consumed by main.js and events/index.html
   tags.js             Canonical tag labels/lists for client-side pages
   research.js         Shared project/challenge helpers (value formula, watching, programTagsHtml, profileHref) — load as research.js?v=N
-  markdown.js         window.PIMarkdown.render(md): marked + DOMPurify with an escaped-text fallback — the single renderer for
-                      managed-page content (About pages) and the editor's Preview tab in programs/edit
-  managed-page.js     Viewer for D1 managed pages: fetches /api/pages/PAGE_KEY, renders via markdown.js, shows an "Edit" link to
+  markdown.js         window.PIMarkdown (load/render/html/inline/text): marked + DOMPurify, breaks:true, escaped-text fallback. The
+                      single renderer for EVERY user-written text field — bios, project/challenge descriptions, program blurbs and
+                      bylines, About pages — on view pages, listing cards and editor previews (Session 56)
+  md-editor.js        PIMdEditor.attach(textarea) — the one markdown editor: raw textarea + live preview beside it, image upload for
+                      managed pages, Cmd-S. PIMdEditor.guard(form, saveBtn) — unsaved-changes warning. No toolbar/library on purpose
+  managed-page.js     Viewer for D1 managed pages: fetches /api/pages/PAGE_KEY, renders via markdown.js, shows the Edit link to
                       /programs/edit?slug=#about for admins/hosts. No editing code since Session 55 — the editor lives in programs/edit
+                    main.js also exports window.PI: PI.editLink(href) puts the one "Edit" link at the top right of .page-header
+                      (profiles, projects, programs, SIG and About pages); PI.markdown() lazy-loads markdown.js
                       main.js renders everything above a SIG page's meeting archive from /api/programs/<slug>: #sig-blurb
                       (programs.description), #sig-byline (programs.byline), #sig-about-link, #sig-website, #sig-resources
                       (links + tagged projects) and a host-only edit link. The HTML holds fallbacks only — never hand-edit those
@@ -374,7 +381,7 @@ Propagation to the custom domain can lag several minutes behind a deployment sho
 
 ### JS is browser-cached for 4 hours; HTML is not
 
-`/js/*` is served `max-age=14400` while HTML revalidates on every load. So a deploy where **new HTML calls a new function in a shared script**, or **old cached JS calls an endpoint you removed**, breaks for anyone who visited in the last 4h. Session 54 hit both. Rules: bump a `?v=` token on the `<script>` tag of every page that depends on new shared-JS behaviour (research.js, main.js on SIG pages, managed-page.js on About pages all carry `?v=54` now); and keep a removed endpoint alive as an alias for at least 4h after the JS that called it is gone.
+`/js/*` is served `max-age=14400` while HTML revalidates on every load. So a deploy where **new HTML calls a new function in a shared script**, or **old cached JS calls an endpoint you removed**, breaks for anyone who visited in the last 4h. Session 54 hit both. Rules: bump a `?v=` token on the `<script>` tag of every page that depends on new shared-JS behaviour (research.js carries `?v=54`; main.js on SIG/About/profile/project/program pages, markdown.js, md-editor.js and managed-page.js carry `?v=56`); and keep a removed endpoint alive as an alias for at least 4h after the JS that called it is gone.
 
 ### Manual deploy — use `./deploy.sh`, never `wrangler pages deploy .`
 
@@ -441,3 +448,16 @@ After completing the checklist, report to Venkat with a table:
 | 4 | DEVLOG.md regenerated | ✅ / ❌ | |
 | 5 | git commit + push | ✅ / ❌ | |
 | 6 | Memory updated | ✅ / ❌ / n/a | |
+
+## Session rituals
+
+**Base:** [`Code/devops/rituals.md`](../../devops/rituals.md) — v1.0. Startup is S1–S7, wrap-up is W0–W7 (IDs reserved). Everything below is this
+project's **local config**; it adds to the base and never replaces it.
+
+**Ritual config**
+- **Log:** `status.md` (dated entry, non-skippable). Devlog: none.
+- **Startup extras (S5):** `gh pr list --repo Protocol-Institute/website` — review open c3po PRs before merging (see the section above).
+- **Verification (W2):** open the changed page locally; check the Pages preview.
+- **Wrap-up extras (after W5):** none
+- **Deploy policy:** **push = deploy** here (Cloudflare Pages publishes on push to `main`), so push only if Venkat says so.
+- **Carry-overs (S6):** none

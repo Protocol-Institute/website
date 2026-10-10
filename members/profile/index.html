@@ -31,7 +31,7 @@
           </div>
         </div>
 
-        <p class="profile-bio" id="pf-bio"></p>
+        <div class="profile-bio md" id="pf-bio"></div>
         <p class="profile-links" id="pf-links"></p>
 
         <p class="profile-section-label">Projects</p>
@@ -56,8 +56,9 @@
 
 </div>
 
-<script src="/js/main.js"></script>
+<script src="/js/main.js?v=56"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
   const R = window.PI_RESEARCH;
@@ -77,6 +78,7 @@
     fetch('/api/members/profile?slug=' + encodeURIComponent(slug)).then(r => r.ok ? r.json() : Promise.reject(r.status)),
     fetch('/api/projects?member=' + encodeURIComponent(slug)).then(r => r.ok ? r.json() : { projects: [] }).catch(() => ({ projects: [] })),
     fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+    PIMarkdown.load(),
   ]).then(([prof, proj, me]) => {
     const m = prof.member;
     document.title = m.name + ' — The Protocol Institute';
@@ -91,7 +93,7 @@
     const role = [m.team_title, m.tier === 'community_lead' ? m.community_lead_title : '', m.type === 'ai' ? 'AI' : '', m.city]
       .filter(Boolean).map(esc).join(' · ');
     document.getElementById('pf-role').innerHTML = role;
-    document.getElementById('pf-bio').textContent = m.bio || '';
+    document.getElementById('pf-bio').innerHTML = PIMarkdown.html(m.bio);
 
     const links = [];
     if (m.website) links.push(`<a href="${esc(m.website)}" target="_blank" rel="noopener noreferrer">Website →</a>`);
@@ -110,7 +112,7 @@
               ${p.lead_slug === m.slug ? '' : '<span class="project-category">Team</span>'}
               ${R.programTagsHtml(p.programs)}
             </div>
-            <div class="entity-description">${esc(p.description)}</div>
+            <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
           </li>`;
     document.getElementById('pf-projects').innerHTML = projects.length
       ? projects.map(card).join('')
@@ -120,6 +122,10 @@
       document.getElementById('pf-ops-section').style.display = '';
     }
     if (isMe) document.getElementById('pf-add-project').style.display = '';
+    // Your own profile, any profile for admins, and AI profiles you own.
+    const canEdit = isMe || !!(me && me.member && (me.member.is_admin ||
+      (me.owned || []).some(o => o.slug === m.slug)));
+    if (canEdit) PI.editLink('/members/edit?slug=' + encodeURIComponent(m.slug));
 
     document.getElementById('profile-loading').style.display = 'none';
     document.getElementById('profile-content').style.display = '';

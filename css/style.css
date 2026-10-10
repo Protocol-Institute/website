@@ -318,6 +318,16 @@ a:hover {
   font-size: clamp(2rem, 4vw, 3rem);
 }
 
+/* The one "Edit" affordance (PI.editLink in main.js), same place on every page. */
+.page-header { position: relative; }
+.page-header--editable { padding-right: 4.5rem; }
+.page-edit-link {
+  position: absolute; top: 1.25rem; right: 0;
+  font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+  color: #2A6B6B; border: 1px solid #2A6B6B; border-radius: 3px; padding: 0.3em 0.75em; background: #FAFAF7;
+}
+.page-edit-link:hover { background: #2A6B6B; color: #fff; }
+
 /* ---- Footer ---- */
 
 .site-footer {
@@ -2537,7 +2547,7 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: #6A6A6A;
 }
 .profile-role { color: #6A6A6A; margin-top: 0.25rem; }
-.profile-bio { white-space: pre-line; margin: 1.5rem 0; }
+.profile-bio { margin: 1.5rem 0; }
 .profile-links { font-size: 0.9rem; color: #6A6A6A; }
 .profile-section-label {
   font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
@@ -2590,18 +2600,51 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 .pe-inline-form .form-input, .pe-inline-form .form-select { flex: 1 1 10rem; min-width: 0; width: auto; }
 
 /* ── Markdown editor (js/managed-page.js) ─────────────────────── */
-.md-editor-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1rem; margin-bottom: 0.5rem; font-size: 0.85rem; }
-.md-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 0.3rem 0.1rem; cursor: pointer; color: #6A6A6A; font: inherit; }
-.md-tab--active { color: #1A1A1A; border-bottom-color: #2A6B6B; }
-.md-upload { color: #2A6B6B; cursor: pointer; margin-left: auto; }
-.md-upload:hover, .md-help:hover { text-decoration: underline; }
-.md-help { color: #8A8A8A; }
-.md-textarea {
-  width: 100%; min-height: 420px; box-sizing: border-box; resize: vertical;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88rem; line-height: 1.6;
-  padding: 0.85rem; border: 1px solid #D8D5CF; border-radius: 4px; background: #fff; color: #1A1A1A;
+/* Markdown editor (js/md-editor.js): raw textarea + live preview, side by side
+   when there is room. .mde--wide breaks out of the 760px column on wide screens. */
+.mde { margin: 0.25rem 0 0.5rem; }
+.mde-bar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 1rem; margin-bottom: 0.35rem; font-size: 0.78rem; }
+.mde-label { letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; }
+.mde-upload { color: #2A6B6B; cursor: pointer; }
+.mde-status { color: #6A6A6A; }
+.mde-help { color: #8A8A8A; margin-left: auto; }
+.mde-upload:hover, .mde-help:hover { text-decoration: underline; }
+.mde-panes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; align-items: stretch; }
+.mde .mde-input {
+  width: 100%; box-sizing: border-box; min-height: 7rem; resize: vertical; overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; line-height: 1.6; font-weight: 400;
+  padding: 0.7rem 0.8rem; border: 1px solid #D8D5CF; border-radius: 4px; background: #fff; color: #1A1A1A;
 }
-.md-preview { min-height: 420px; border: 1px dashed #D8D5CF; padding: 0.5rem 1rem; }
-.md-status { font-size: 0.85rem; color: #6A6A6A; min-height: 1.2em; margin-top: 0.4rem; }
+.mde-preview { border: 1px dashed #D8D5CF; border-radius: 4px; padding: 0.7rem 0.9rem; font-size: 0.95rem; line-height: 1.65; color: #2C2C2C; overflow-wrap: anywhere; min-width: 0; }
+.mde-empty { color: #B8B4AE; font-style: italic; }
+.mde--wide .mde-input, .mde.mde--wide .mde-input { min-height: 24rem; }
+.mde.mde--inline .mde-input { min-height: 0; height: auto; resize: none; overflow: auto; }
+.mde--inline .mde-preview { display: flex; align-items: center; }
+@media (min-width: 1100px) {
+  .mde--wide { width: 1040px; margin-left: calc((100% - 1040px) / 2); }
+}
+@media (max-width: 640px) {
+  .mde-panes { grid-template-columns: 1fr; }
+}
+.form-btn--dirty::after { content: ' •'; }
+.form-save-bar { position: sticky; bottom: 0; background: #FAFAF7; padding: 0.75rem 0; border-top: 1px solid #E0DDD8; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem; z-index: 5; }
+.form-save-bar .form-msg { margin: 0; }
+
+/* Rendered markdown from a user-written field (js/markdown.js), wherever it appears. */
+.md > :first-child { margin-top: 0; }
+.md > :last-child { margin-bottom: 0; }
+.md p { margin: 0 0 0.75em; }
+.md ul, .md ol { margin: 0 0 0.75em; padding-left: 1.4em; }
+.md li { margin-bottom: 0.2em; }
+.md h1, .md h2, .md h3, .md h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.25; margin: 1em 0 0.4em; }
+.md h1 { font-size: 1.6em; } .md h2 { font-size: 1.4em; } .md h3 { font-size: 1.2em; } .md h4 { font-size: 1.05em; }
+.md blockquote { margin: 0 0 0.75em; padding-left: 0.9em; border-left: 3px solid #D8D5CF; color: #5A5A5A; }
+.md code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; background: #F0EDE8; padding: 0.05em 0.3em; border-radius: 3px; }
+.md pre { background: #F0EDE8; padding: 0.7em 0.9em; overflow-x: auto; margin: 0 0 0.75em; }
+.md pre code { background: none; padding: 0; }
+.md img { max-width: 100%; height: auto; }
+.md a { color: #2A6B6B; }
+.md hr { border: none; border-top: 1px solid #E0DDD8; margin: 1.25em 0; }
+.md table { border-collapse: collapse; margin: 0 0 0.75em; font-size: 0.92em; }
+.md th, .md td { border: 1px solid #E0DDD8; padding: 0.3em 0.6em; text-align: left; }
 .pe-section:first-of-type { border-top: none; padding-top: 0; margin-top: 1rem; }
-.about-body .sig-edit-link { font-size: 0.85rem; margin-top: 0.35rem; }

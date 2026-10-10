@@ -25,7 +25,7 @@
       <div id="edit-form" style="display:none">
 
         <!-- Profile selector (shown if user owns bot records, or for admins) -->
-        <div id="profile-selector" style="display:none;margin-bottom:2rem;">
+        <div id="profile-selector" data-guard-skip style="display:none;margin-bottom:2rem;">
           <div class="form-group">
             <label class="form-label" for="profile-select">Editing profile for:</label>
             <select class="form-input" id="profile-select" style="max-width:360px;"></select>
@@ -49,7 +49,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="bio-input">Short bio</label>
+            <label class="form-label" for="bio-input">Bio</label>
+            <p class="form-hint">Shown on your profile page and in the member directory.</p>
             <textarea class="form-textarea" id="bio-input" rows="4"></textarea>
           </div>
 
@@ -155,10 +156,10 @@
             </div>
           </div>
 
-          <div class="form-actions">
+          <div class="form-save-bar">
             <button class="form-btn" id="save-btn">Save changes</button>
+            <div id="save-msg"></div>
           </div>
-          <div id="save-msg"></div>
         </div>
       </div>
 
@@ -179,8 +180,16 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
 <script>
+// /members/edit?slug=<slug> — the profile editor, reached from the Edit link on
+// a profile page. No slug means your own profile. Members can edit their own
+// profile and AI profiles they own; admins can edit anyone's.
 (function () {
+  const wantSlug = new URLSearchParams(location.search).get('slug');
+  const bio = PIMdEditor.attach(document.getElementById('bio-input'), { onSave: () => document.getElementById('save-btn').click() });
+  let guard = null;
   let userEmail = '';
   let isAdmin = false;
   let profiles = [];
@@ -203,7 +212,7 @@
     currentProfile = profile;
     document.getElementById('name-input').value = profile.name || '';
     document.getElementById('email-readonly').textContent = profile.email || '';
-    document.getElementById('bio-input').value = profile.bio || '';
+    bio.setValue(profile.bio);
     document.getElementById('website-input').value = profile.website || '';
     document.getElementById('city-input').value = profile.city || '';
     document.getElementById('discord-input').value = profile.discord_handle || '';
@@ -250,6 +259,10 @@
     } else {
       document.getElementById('team-tag-display').style.display = profile.is_team ? '' : 'none';
     }
+    if (profile.slug && new URLSearchParams(location.search).get('slug') !== profile.slug) {
+      history.replaceState(null, '', '/members/edit?slug=' + encodeURIComponent(profile.slug));
+    }
+    if (guard) guard.snapshot();
   }
 
   function buildProfileSelector() {
@@ -269,7 +282,12 @@
     document.getElementById('profile-selector').style.display = '';
     sel.addEventListener('change', function () {
       const p = profiles.find(x => x.email === this.value);
-      if (p) populateForm(p);
+      if (!p) return;
+      if (guard && guard.dirty() && !confirm('Discard unsaved changes to this profile?')) {
+        this.value = currentProfile.email;
+        return;
+      }
+      populateForm(p);
     });
   }
 
@@ -310,11 +328,14 @@
     }
 
     document.getElementById('edit-form').style.display = '';
-    const ownProfile = profiles.find(p => p.email === userEmail) || profiles[0];
-    populateForm(ownProfile);
+    const start = (wantSlug && profiles.find(p => p.slug === wantSlug)) ||
+      profiles.find(p => p.email === userEmail) || profiles[0];
+    guard = PIMdEditor.guard(document.getElementById('edit-form'), document.getElementById('save-btn'));
+    populateForm(start);
 
     if (profiles.length > 1 || isAdmin) {
       buildProfileSelector();
+      document.getElementById('profile-select').value = start.email;
     }
   }
 
@@ -327,7 +348,7 @@
       if (!data.member) throw new Error();
       await loadAndSetup(data);
     } catch {
-      window.location.href = '/members/join?return=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '/members/join?return=' + encodeURIComponent(window.location.pathname + window.location.search);
     }
   }());
 
@@ -428,6 +449,7 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Save failed');
       showMsg('save-msg', 'Changes saved.', false);
+      if (guard) guard.snapshot();
       // Sync local profile
       if (currentProfile) Object.assign(currentProfile, fields);
       const savedP = profiles.find(x => x.email === (currentProfile && currentProfile.email));

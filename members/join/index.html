@@ -70,7 +70,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="bio-input">Short bio</label>
+          <label class="form-label" for="bio-input">Bio</label>
           <textarea class="form-textarea" id="bio-input" rows="4" placeholder="2–4 sentences about your work and connection to protocol research."></textarea>
           <p class="form-hint">This appears in your directory profile.</p>
         </div>
@@ -179,6 +179,11 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
+<script>
+PIMdEditor.attach(document.getElementById('bio-input'));
+</script>
 <script>
 (function () {
   let userEmail = '';

@@ -28,8 +28,9 @@
           <h1 id="pg-title"></h1>
         </div>
 
-        <p class="about-body" id="pg-description"></p>
+        <div class="about-body md" id="pg-description"></div>
         <p class="profile-links" id="pg-links"></p>
+        <div class="about-body md" id="about" style="display:none;"></div>
 
         <div id="pg-channels-section" style="display:none;">
           <p class="profile-section-label">Channels &amp; links</p>
@@ -63,8 +64,9 @@
 
 </div>
 
-<script src="/js/main.js"></script>
+<script src="/js/main.js?v=56"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
   const esc = window.PI_RESEARCH.escHtml;
@@ -90,15 +92,30 @@
   }
   const link = (href, text) => href ? `<a href="${esc(href)}">${esc(text)}</a>` : esc(text);
 
-  fetch('/api/programs/' + encodeURIComponent(slug))
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(data => {
+  const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
+  // The About body: SIGs keep sigs/<slug>/about, every other program programs/<slug>/about.
+  const aboutKey = data => (data.program.kind === 'sig' ? 'sigs/' : 'programs/') + data.program.slug + '/about';
+
+  Promise.all([
+    fetch('/api/programs/' + encodeURIComponent(slug)).then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    json('/api/members/me'),
+    PIMarkdown.load(),
+  ])
+    .then(async ([data, me]) => {
       const p = data.program;
+      const about = await json('/api/pages/' + aboutKey(data));
+      if (about && String(about.content_md || '').trim()) {
+        document.getElementById('about').innerHTML = PIMarkdown.html(about.content_md);
+        document.getElementById('about').style.display = '';
+      }
+      if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === p.slug))) {
+        PI.editLink('/programs/edit?slug=' + encodeURIComponent(p.slug));
+      }
       document.title = p.title + ' — The Protocol Institute';
       document.getElementById('pg-kind').textContent =
         [KIND_LABELS[p.kind] || p.kind, ...data.areas.map(a => a.title)].join(' · ');
       document.getElementById('pg-title').textContent = p.title + (p.short_title ? ` (${p.short_title})` : '');
-      document.getElementById('pg-description').textContent = p.description || '';
+      document.getElementById('pg-description').innerHTML = PIMarkdown.html(p.description);
       if (data.realm === 'admin') {
         document.getElementById('pg-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
       }
@@ -140,7 +157,7 @@
                           : edition ? esc(edition.title) : '';
             return `<li class="entity-card">
               <h2 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(pr.slug)}">${esc(pr.title)}</a></h2>
-              <div class="entity-description">${esc(pr.description)}</div>
+              <div class="entity-description md">${PIMarkdown.html(pr.description)}</div>
               <div class="entity-meta">Lead: <a href="${window.PI_RESEARCH.profileHref(pr.lead_slug)}">${esc(pr.lead_name || pr.lead_slug)}</a>${context ? ' &middot; ' + context : ''}</div>
             </li>`;
       };
@@ -162,6 +179,7 @@
 
       document.getElementById('program-loading').style.display = 'none';
       document.getElementById('program-content').style.display = '';
+      if (location.hash === '#about') document.getElementById('about').scrollIntoView();
     })
     .catch(() => {
       document.getElementById('program-loading').style.display = 'none';

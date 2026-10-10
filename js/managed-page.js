@@ -1,16 +1,16 @@
 // managed-page.js — viewer for managed content pages (D1 managed_pages).
 //
-// Requires PAGE_KEY to be defined as a global, and /js/markdown.js loaded
-// first (window.PIMarkdown). Shell HTML must contain these elements by id:
-//   page-loading, page-content, page-body, edit-bar, edit-link
+// Requires PAGE_KEY to be defined as a global, and /js/main.js and
+// /js/markdown.js loaded first. Shell HTML must contain these elements by id:
+//   page-loading, page-content, page-body
 //
 // This module only displays. Editing happens in the program editor
 // (/programs/edit?slug=<slug>#about), which holds the markdown editor alongside
 // the program's blurb, byline, links and editions — one edit page per program
 // (Session 55; before that the About page had its own inline editor and the
-// two editors linked to each other). The edit-bar here is just a link there,
-// shown to admins and to hosts of the page's program (hosted_programs from
-// /api/members/me); the server re-checks on every write.
+// two editors linked to each other). Admins and hosts of the page's program
+// (hosted_programs from /api/members/me) get the site-wide Edit link
+// (PI.editLink) pointing there; the server re-checks on every write.
 (function () {
   if (typeof PAGE_KEY === 'undefined') {
     console.error('managed-page.js: PAGE_KEY not defined');
@@ -51,10 +51,7 @@
       el('page-body').innerHTML = html;
       el('page-loading').style.display = 'none';
       el('page-content').style.display = '';
-      if (canEdit && programSlug && el('edit-link')) {
-        el('edit-link').href = '/programs/edit?slug=' + encodeURIComponent(programSlug) + '#about';
-        el('edit-bar').style.display = '';
-      }
+      if (canEdit && programSlug) window.PI.editLink('/programs/edit?slug=' + encodeURIComponent(programSlug) + '#about');
     });
   });
 }());

@@ -121,6 +121,8 @@
 
 <script src="/js/main.js"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
 <script>
 (function () {
   const R = window.PI_RESEARCH;
@@ -199,7 +201,7 @@
           <h2 class="entity-title">${R.escHtml(c.title)}<a href="#challenge-${c.id}" class="entity-permalink" title="Permalink">#</a></h2>
           <span class="challenge-difficulty"><strong>${c.difficulty}</strong>${label}</span>
         </div>
-        <div class="entity-description">${c.description}</div>
+        <div class="entity-description md">${PIMarkdown.html(c.description)}</div>
         ${respondingRow}
         <div class="entity-footer">
           <div>
@@ -311,7 +313,6 @@
           <div class="challenge-field">
             <label for="cf-description">Description</label>
             <textarea id="cf-description" maxlength="3000" required></textarea>
-            <div class="field-hint">Inline links are supported: <code>&lt;a href="https://..."&gt;text&lt;/a&gt;</code></div>
           </div>
           <div class="challenge-field">
             <label for="cf-difficulty">Difficulty</label>
@@ -328,6 +329,7 @@
           <div class="challenge-form-msg" id="cf-msg"></div>
         </form>
       </div>`;
+    PIMdEditor.attach(document.getElementById('cf-description'));
 
     document.getElementById('cf-same-as-comm').addEventListener('change', function () {
       const field = document.getElementById('cf-posed-by');
@@ -386,7 +388,7 @@
 
   async function loadChallenges() {
     try {
-      const res = await fetch('/api/challenges');
+      const [res] = await Promise.all([fetch('/api/challenges'), PIMarkdown.load()]);
       const { challenges, is_admin } = await res.json();
       renderChallengeList(challenges || [], !!is_admin);
     } catch {
@@ -430,7 +432,7 @@
           ${versionTag}
           ${programTags}
         </div>
-        <div class="entity-description">${R.escHtml(p.description)}</div>
+        <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
         ${respondsRow}
         <div class="entity-footer">
           <div>
@@ -464,7 +466,7 @@
 
   async function loadProjects() {
     try {
-      const res = await fetch('/api/projects');
+      const [res] = await Promise.all([fetch('/api/projects'), PIMarkdown.load()]);
       const { projects } = await res.json();
       renderProjectList(projects || []);
     } catch {

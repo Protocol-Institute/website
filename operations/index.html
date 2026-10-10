@@ -39,6 +39,7 @@
 
 <script src="/js/main.js"></script>
 <script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
   const R = window.PI_RESEARCH;
@@ -48,6 +49,7 @@
     fetch('/api/programs').then(r => r.json()),
     fetch('/api/projects?realm=admin').then(r => r.json()),
     fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+    PIMarkdown.load(),
   ]).then(([prog, proj, me]) => {
     const areas = (prog.areas || []).filter(a => a.realm === 'admin');
     const projects = proj.projects || [];
@@ -55,7 +57,7 @@
 
     const card = p => `<li class="entity-card">
         <h2 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h2>
-        <div class="entity-description">${esc(p.description)}</div>
+        <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
         <div class="entity-meta">Lead: <a href="${R.profileHref(p.lead_slug)}">${esc(p.lead_name || p.lead_slug)}</a></div>
       </li>`;
 
@@ -66,7 +68,7 @@
         const mine = projects.filter(p => (p.programs || []).some(a => a.slug === pr.slug));
         mine.forEach(p => placed.add(p.slug));
         return `<h2 class="entity-title ops-program-title"><a href="${esc(pr.href)}">${esc(pr.title)}</a></h2>
-          ${pr.description ? `<p class="entity-meta">${esc(pr.description)}</p>` : ''}
+          ${pr.description ? `<div class="entity-meta md">${PIMarkdown.html(pr.description)}</div>` : ''}
           <ul class="entity-list">${mine.map(card).join('') || '<li class="entity-empty">No projects yet.</li>'}</ul>`;
       }).join('');
     }).join('');
