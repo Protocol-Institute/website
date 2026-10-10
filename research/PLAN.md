@@ -113,7 +113,7 @@ CREATE TABLE challenge_tags (
 
 ## Deferred / Under Consideration
 
-- **Slugs on challenges** — more readable URLs and easier linking. Derive from title at insert time (same algorithm as SIG session slugs in `sigs/CONVENTIONS.md`).
+- **Slugs on challenges** — more readable URLs and easier linking. Derive from title at insert time (same algorithm as SIG session slugs in `research-groups/CONVENTIONS.md`).
 - **Challenge status field** — `open` / `has_progress` / `resolved` (even if not "solved"). Admin-settable.
 - **Tagging** — link challenges to SIGs, programs, or research themes.
 - **Funding allocation** — the challenge value formula (`seed + A×anon² + B×member²`) was designed with future funding allocation in mind. When that becomes concrete, consider: weighting by member tenure/contribution, cap per challenge, decay factor for old votes.

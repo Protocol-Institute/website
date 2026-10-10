@@ -183,7 +183,7 @@ School and future courses; Book Writing Month sits in Events + Publishing.
 | PiBoWriMo (Protocol Institute Book Writing Month; was Book Writing Month, kind event, until migration 044) | workshop | Events, Publishing | November 2026 (open affiliation; always stand-alone, likely every November) |
 
 Event editions keep their existing `/events/<id>` pages as `page_url`; SIGs keep
-`/sigs/<slug>`. Programs with no page of their own get the generic renderer.
+`/research-groups/<slug>`. Programs with no page of their own get the generic renderer.
 
 **Project migration:**
 - The 6 existing `sig_slug` values → approved `project_programs` rows.

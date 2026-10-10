@@ -18,15 +18,15 @@ var NAV_HTML =
     '<button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>' +
     '<ul class="nav-links" id="nav-links" role="list">' +
       '<li><a href="/programs">Programs</a></li>' +
-      '<li><a href="/sigs">SIGs</a></li>' +
+      '<li><a href="/research-groups">Research Groups</a></li>' +
       '<li><a href="/events">Events</a></li>' +
       '<li><a href="/research">Research <span class="beta-badge">Beta</span></a></li>' +
-      '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
       '<li class="nav-more-menu" id="nav-more-menu">' +
         '<button class="nav-more-toggle" id="nav-more-toggle" aria-expanded="false" aria-haspopup="true">More <span class="nav-member-caret">&#9662;</span></button>' +
         '<ul class="nav-more-dropdown" id="nav-more-dropdown">' +
           '<li><a href="/about">About</a></li>' +
           '<li><a href="/network">Network</a></li>' +
+          '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
           '<li><a href="/events/protocol-symposium-2026">Symposium</a></li>' +
           '<li><a href="/contact">Contact</a></li>' +
           '<li><a href="/members">Members</a></li>' +
@@ -303,14 +303,14 @@ var FOOTER_HTML =
 }());
 
 // SIG page — blurb, byline, About link, website, links and projects, all from D1.
-// Runs only on a SIG home page (/sigs/<slug>), never on /sigs itself or on a
+// Runs only on a SIG home page (/research-groups/<slug>), never on /research-groups itself or on a
 // session page. Everything above the meeting archive is host-editable
 // (programs/edit) and lives in D1: programs.description (blurb), programs.byline
 // ("Led by … — schedule"), program_links (site + links), project_programs
 // (projects), managed_pages sigs/<slug>/about. The HTML holds fallbacks only.
 // The archive below is c3po's, regenerated in place — never touched from here.
 (function () {
-  var match = window.location.pathname.replace(/\/$/, '').match(/^\/sigs\/([a-z0-9-]+)$/);
+  var match = window.location.pathname.replace(/\/$/, '').match(/^\/research-groups\/([a-z0-9-]+)$/);
   if (!match) return;
   var slug = match[1];
 

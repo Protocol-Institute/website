@@ -6,7 +6,7 @@ and write data/sig-meetings.json.
 Run from repo root:
   python3 sync_sig_meetings.py
 
-The output JSON drives the client-side schedule display on /sigs and each SIG page.
+The output JSON drives the client-side schedule display on /research-groups and each SIG page.
 Each SIG entry stores pre-expanded UTC occurrence datetimes so the browser needs
 no arithmetic — it just finds the first future entry and uses toLocaleTimeString().
 """
@@ -59,12 +59,12 @@ BYDAY_MAP = {
 ALL_SLUGS = ["sigfpt", "mrg", "sigpfb", "protfisig", "drg", "sigpsy"]
 
 SIG_DISPLAY = {
-    "sigfpt":    ("SIGFPT — Formal Protocol Theory",        "https://protocol-institute.org/sigs/sigfpt/"),
-    "mrg":       ("Memory Research Group (MRG)",            "https://protocol-institute.org/sigs/mrg/"),
-    "sigpfb":    ("SIGPfB — Protocols for Business",        "https://protocol-institute.org/sigs/sigpfb/"),
-    "protfisig": ("ProtFiSIG — Protocol Fiction",           "https://protocol-institute.org/sigs/protfisig/"),
-    "drg":       ("DRG — Distributed Robotics Group",       "https://protocol-institute.org/sigs/drg/"),
-    "sigpsy":    ("SIGPSY — Psychohistory",                 "https://protocol-institute.org/sigs/sigpsy/"),
+    "sigfpt":    ("SIGFPT — Formal Protocol Theory",        "https://protocol-institute.org/research-groups/sigfpt/"),
+    "mrg":       ("Memory Research Group (MRG)",            "https://protocol-institute.org/research-groups/mrg/"),
+    "sigpfb":    ("SIGPfB — Protocols for Business",        "https://protocol-institute.org/research-groups/sigpfb/"),
+    "protfisig": ("ProtFiSIG — Protocol Fiction",           "https://protocol-institute.org/research-groups/protfisig/"),
+    "drg":       ("DRG — Distributed Robotics Group",       "https://protocol-institute.org/research-groups/drg/"),
+    "sigpsy":    ("SIGPSY — Psychohistory",                 "https://protocol-institute.org/research-groups/sigpsy/"),
     "stigmergy-workshop": (
         "Stigmergy Workshop — Code Coordination Call",
         "https://protocol-institute.org/events/protocol-symposium-2026/program/workshops/workshop-protocol-hackathon-securing-stigmergic",
@@ -299,7 +299,7 @@ def write_ics_files(sigs, synced_date):
     for slug, sig in sigs.items():
         if not sig.get("occurrences"):
             continue
-        name, url = SIG_DISPLAY.get(slug, (slug.upper(), f"https://protocol-institute.org/sigs/{slug}/"))
+        name, url = SIG_DISPLAY.get(slug, (slug.upper(), f"https://protocol-institute.org/research-groups/{slug}/"))
         dtstart = sig["occurrences"][0].replace("-", "").replace(":", "")  # → 20260626T170000Z
         byday = DAY_TO_BYDAY.get(sig["day"], "MO")
         interval = sig["interval_weeks"]

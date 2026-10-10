@@ -8,6 +8,7 @@
 
 ## Upcoming
 <!-- planned changes or features -->
+- **Research Roadmap 2027 follow-ups (Session 57).** Page live at `/programs/research-roadmap/2027` (migration 045). (a) Tell the 8 leads their stub projects exist and how to edit them — Patrick, Aneesh, Anuraj, Kei, Rafael, Sarah, Sachin, Timber; co-PIs on the team can't edit (lead-only). Could fold in the pending SIG-host note. (b) Host-facing approval queue for moderated roadmap tags (today only `/admin`). (c) PDF prospectus. (d) Intro still says "7 research groups … each 1-2 projects" — edit via the page's Edit link.
 - **Home page banner + notice are time-boxed.** Remove the PiBoWriMo `<a class="home-banner">` after Nov 30 (or swap in the next event) and drop the "New! Protocol Symposium videos" `.home-notice` once it's no longer new. Both are in `index.html`; styles can stay.
 - **Editing-model loose ends (Session 56):** admin panel bio fields (`admin/index.html`, `admin/members.html`) are still plain textareas and show raw markdown; `cogergo/` wasn't converted; the program editor's About "View →" link points at the generic program page even when a program's own page renders the About body (PiBoWriMo does).
 - **Programs track — next steps (from Session 54; plan in `programs/PLAN.md`, task board stub in `tasks/PLAN.md`):**

@@ -10,7 +10,7 @@ DTSTART:20260813T160000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
 SUMMARY:SIGPSY — Psychohistory
-DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/sigpsy/ for details.
-URL:https://protocol-institute.org/sigs/sigpsy/
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/research-groups/sigpsy/ for details.
+URL:https://protocol-institute.org/research-groups/sigpsy/
 END:VEVENT
 END:VCALENDAR

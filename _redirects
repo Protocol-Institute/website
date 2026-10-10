@@ -3,6 +3,12 @@
 /calendar/   /events    301
 /home        /           301
 
+# Special Interest Groups renamed Research Groups (Session 57) — every old
+# /sigs URL (index, group pages, About pages, meeting pages) keeps working.
+# The calendar feeds stay at /calendar/sigs/*.ics so subscriptions don't break.
+/sigs        /research-groups          301
+/sigs/*      /research-groups/:splat   301
+
 # Team and Consulting pages consolidated into filtered Members view
 /team        /members?filter=team        301
 /team/       /members?filter=team        301

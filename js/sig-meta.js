@@ -1,10 +1,10 @@
 // Protocol Institute — shared SIG metadata (Discord channels, full names) + calendar link helpers.
 // Canonical source for channel ids/names: ../c3po/config/discord_channels.json.
-// Consumed by main.js (SIG schedule blocks on /sigs) and events/index.html (Calendar tab).
+// Consumed by main.js (SIG schedule blocks on /research-groups) and events/index.html (Calendar tab).
 //
 // NOTE: despite the name, not every key here is a standing SIG — see stigmergy-workshop
 // below, a 5-week time-boxed coordination call. detailHref is an optional override for
-// non-SIG entries that don't have a real /sigs/<slug>/ page; when absent, consumers fall
+// non-SIG entries that don't have a real /research-groups/<slug>/ page; when absent, consumers fall
 // back to that default. TODO (noted 2026-08-10): this object and its consumers still
 // assume "calendar entry" == "SIG" more than they should — loosen this if more one-off
 // call types show up rather than keep bolting overrides on.
@@ -45,7 +45,7 @@ window.PI_sigGcalLink = function (slug, next, durationMinutes) {
     action: 'TEMPLATE',
     text: sig.full + ' meeting',
     dates: window.PI_gcalStamp(next) + '/' + window.PI_gcalStamp(end),
-    details: 'Protocol Institute SIG meeting. Join on Discord: ' + discordUrl,
+    details: 'Protocol Institute Research Group meeting. Join on Discord: ' + discordUrl,
     location: 'Discord — #' + sig.channelName
   });
   return 'https://calendar.google.com/calendar/render?' + params.toString();

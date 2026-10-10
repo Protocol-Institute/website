@@ -1,7 +1,7 @@
 # Opens the PR for c3po's automated SIG-page regeneration.
 #
 # c3po's ingest daemon (on c3po-vm.exe.xyz) force-pushes the branch below once a
-# week with freshly regenerated sigs/*/index.html and meeting detail pages. It
+# week with freshly regenerated research-groups/*/index.html and meeting detail pages. It
 # used to call `gh pr create` itself, which required a GitHub API token on that
 # VM; the token it had reached every repository on the account with admin rights
 # (Code/incidents/2026-09-09-c3po-vm-github-token-scope.md). Opening the PR here

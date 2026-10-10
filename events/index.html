@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Events — The Protocol Institute</title>
-  <meta name="description" content="Protocol Institute event calendar and history — SIG meetings, symposia, workshops, and residential gatherings.">
+  <meta name="description" content="Protocol Institute event calendar and history — research group meetings, symposia, workshops, and residential gatherings.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -47,7 +47,7 @@
 
       <div id="view-calendar" role="tabpanel" aria-labelledby="tab-calendar">
 
-        <p class="events-intro">SIG meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p>
+        <p class="events-intro">Research group meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p>
 
         <p class="cal-subscribe-links"><a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe to Community Calendar</a> &middot; <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe to Institute Calendar</a></p>
 
@@ -161,7 +161,7 @@
         var freq = sig.interval_weeks === 1 ? 'weekly' : 'biweekly';
         // detailHref/typeLabel are overrides for calendar entries that aren't one of the
         // 6 standing SIGs (e.g. a time-boxed workshop coordination call) and so don't have
-        // a real /sigs/<slug>/ page — see the note in js/sig-meta.js.
+        // a real /research-groups/<slug>/ page — see the note in js/sig-meta.js.
         items.push({
           id: 'sig-' + slug,
           sortDate: next,
@@ -169,8 +169,8 @@
           timeLine: next.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }),
           location: null,
           title: meta.full + (meta.detailHref ? '' : ' Meeting'),
-          href: meta.detailHref || ('/sigs/' + slug + '/'),
-          typeLabel: meta.typeLabel || 'SIG',
+          href: meta.detailHref || ('/research-groups/' + slug + '/'),
+          typeLabel: meta.typeLabel || 'Research Group',
           badgeClass: ' cal-badge-sig',
           description: 'Meets ' + freq + ' — #' + meta.channelName + ' on Discord.',
           calLink: window.PI_sigGcalLink(slug, next, sig.duration_minutes),

@@ -17,7 +17,7 @@ window.PI_TAGS = {
     tag_datus_nusas: 'Datus & Nusas',
     tag_khlongs_subaks: 'Khlongs & Subaks',
     tag_town_hall: 'Town Hall',
-    tag_sig: 'SIG Participant',
+    tag_sig: 'Research Group Participant',
     tag_protocol_kit: 'Protocol Kit',
     tag_protocolized_writer: 'Protocolized Writer',
     tag_symposium_25: 'Symposium \'25',

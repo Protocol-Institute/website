@@ -74,7 +74,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label" for="pe-pageurl">Own page URL <span class="optional">(blank = generic program page)</span></label>
-                <input class="form-input" id="pe-pageurl" maxlength="300" placeholder="/sigs/… or https://…">
+                <input class="form-input" id="pe-pageurl" maxlength="300" placeholder="/research-groups/… or https://…">
               </div>
               <div class="form-group">
                 <span class="form-label">Areas <span class="optional">(first checked is primary — it sets the realm)</span></span>
@@ -164,7 +164,7 @@
   const slug = new URLSearchParams(location.search).get('slug');
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-  const KIND_LABELS = { sig: 'Special Interest Group', event: 'Event', workshop: 'Workshop', course: 'Course', collaboration: 'Collaboration', initiative: 'Initiative' };
+  const KIND_LABELS = { sig: 'Research Group', event: 'Event', workshop: 'Workshop', course: 'Course', collaboration: 'Collaboration', initiative: 'Initiative' };
   let isAdmin = false;
   let program = null;
 
@@ -281,7 +281,7 @@
   }
 
   // Page content. The About body is markdown in managed_pages: SIGs keep
-  // their original key sigs/<slug>/about (what /sigs/<slug>/about/ reads);
+  // their original key sigs/<slug>/about (what /research-groups/<slug>/about/ reads);
   // every other program uses programs/<slug>/about, shown on its generic
   // program page (Session 56 — before that only SIGs had an About page).
   let contentLoaded = false;
@@ -293,7 +293,7 @@
     contentLoaded = true;
     const isSig = p.kind === 'sig';
     aboutKey = (isSig ? 'sigs/' : 'programs/') + p.slug + '/about';
-    const aboutHref = isSig ? '/sigs/' + encodeURIComponent(p.slug) + '/about/' : '/programs/program?slug=' + encodeURIComponent(p.slug) + '#about';
+    const aboutHref = isSig ? '/research-groups/' + encodeURIComponent(p.slug) + '/about/' : '/programs/program?slug=' + encodeURIComponent(p.slug) + '#about';
     $('pe-about-hint').innerHTML = (isSig
       ? 'A longer page, reached from the "More about …" link under the blurb.'
       : 'A longer section shown below the blurb on the program page.') +

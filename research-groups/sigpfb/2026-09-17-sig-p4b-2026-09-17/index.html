@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIG-P4B 2026-09-17 — Protocols for Business</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/research-groups/sigpfb" class="back-link">&#8592; Protocols for Business</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">September 17, 2026</p>
+        <h1>SIG-P4B 2026-09-17</h1>
+      </div>
+
+      <div class="meeting-detail">
+        <p class="meeting-participants">Participants: rafa (UTC+1), Sachin</p>
+        <p class="meeting-summary">rafa walked Sachin through the current state and flow of a four-session workshop built around AI-assisted collaboration, &quot;kits,&quot; and &quot;factories.&quot; He explained the conceptual arc of each session, flagged parts of the slide deck (and a &quot;two-by-two&quot;) that still need restructuring, and demonstrated how the workshop repo captures append-only logs of participants&#x27; and agents&#x27; work. Sachin gave feedback (notably to constrain the &quot;factory&quot; exercise) and reflected on how the workshop&#x27;s persistence in a shared code base makes it different from a typical workshop. The call ended abruptly as rafa had to jump to another meeting.</p>
+        <ul class="meeting-insights">
+<li>**rafa — Emergent collaboration via public practice:** Collaboration in AI is emerging from moving *private practice to public practice*, not from intentional workflow design (contrasted with agile/waterfall). rafa suggested this is &quot;the collaboration paradigm.&quot;</li>
+<li>**rafa — Stigmergy as the dominant collaboration mode:** Rather than handing off work, you broadcast the work itself — signals about the work, your logs, the production system, the infrastructure you use. He proposed illustrating this with images of a personal journal vs. a field notebook, using ethnographers/bird watchers who &quot;publish their field notes with no intention other than publishing.&quot; Sachin suggested plugging in the Humboldt &quot;nature of a mountain&quot; diagram as an example.</li>
+<li>**Session 1 (customization → traces):** Exercise flow — ask your own AI to surface the tools you&#x27;re using (some you&#x27;re unaware of), then examine others&#x27; inventories to find &quot;near or overlapping&quot; tools. Finding overlapping traces makes the collaboration signal stronger. Ends with joint troubleshooting / office hours.</li>
+<li>**Session 2 (running a kit without the author):** Central question — &quot;Can you run a kit without the author&#x27;s oversight?&quot; Moving a bespoke, on-your-machine tool toward something where you become interchangeable. Exercises: articulate what still requires *you*, then build hard protocols/standards to translate it — i.e., &quot;automate yourself out of the role of the kit.&quot;</li>
+<li>**rafa — Electrification reframing:** Rather than focusing on the reorganization of the production line, the more interesting lens is how *humans themselves were transformed* by electricity into &quot;different types of humans,&quot; which then allowed factories to reorganize. Acknowledged this deeper insight isn&#x27;t strictly needed for the workshop.</li>
+<li>**Factories:** A &quot;factory&quot; makes humans interchangeable in the production process; it need not be a single scale/file — it can be an app, a website, etc. Examples cited: a &quot;brand kit&quot; and a &quot;manuscript factory&quot; rafa put together (debatably &quot;true&quot; factories). Exercise: use your AI agent to help &quot;factorio&quot; (industrialize) a specific kit.</li>
+        </ul>
+        <div class="meeting-audio-summary">
+          <p class="section-label">Session Recording Summary · 19m 31s · <a href="https://pub-fb4a559f683a4e3b876823eb2bfe12a3.r2.dev/recordings/SIG-P4B/2026-09-17/1082444651946049567_1442956085215625446_1789672457475/summary.md" rel="noopener noreferrer" target="_blank">Full notes ↗</a></p>
+          <p class="meeting-abstract"><strong>Reading:</strong> Not clearly identified in the discussion. This session was not a reading discussion but a working/planning conversation between rafa and Sachin about the design of a multi-session AI-collaboration workshop and its accompanying slide deck.</p><p class="meeting-summary">rafa walked Sachin through the current state and flow of a four-session workshop built around AI-assisted collaboration, &quot;kits,&quot; and &quot;factories.&quot; He explained the conceptual arc of each session, flagged parts of the slide deck (and a &quot;two-by-two&quot;) that still need restructuring, and demonstrated how the workshop repo captures append-only logs of participants&#x27; and agents&#x27; work. Sachin gave feedback (notably to constrain the &quot;factory&quot; exercise) and reflected on how the workshop&#x27;s persistence in a shared code base makes it different from a typical workshop. The call ended abruptly as rafa had to jump to another meeting.</p><ul class="meeting-insights">
+<li>**rafa — Emergent collaboration via public practice:** Collaboration in AI is emerging from moving *private practice to public practice*, not from intentional workflow design (contrasted with agile/waterfall). rafa suggested this is &quot;the collaboration paradigm.&quot;</li>
+<li>**rafa — Stigmergy as the dominant collaboration mode:** Rather than handing off work, you broadcast the work itself — signals about the work, your logs, the production system, the infrastructure you use. He proposed illustrating this with images of a personal journal vs. a field notebook, using ethnographers/bird watchers who &quot;publish their field notes with no intention other than publishing.&quot; Sachin suggested plugging in the Humboldt &quot;nature of a mountain&quot; diagram as an example.</li>
+<li>**Session 1 (customization → traces):** Exercise flow — ask your own AI to surface the tools you&#x27;re using (some you&#x27;re unaware of), then examine others&#x27; inventories to find &quot;near or overlapping&quot; tools. Finding overlapping traces makes the collaboration signal stronger. Ends with joint troubleshooting / office hours.</li>
+<li>**Session 2 (running a kit without the author):** Central question — &quot;Can you run a kit without the author&#x27;s oversight?&quot; Moving a bespoke, on-your-machine tool toward something where you become interchangeable. Exercises: articulate what still requires *you*, then build hard protocols/standards to translate it — i.e., &quot;automate yourself out of the role of the kit.&quot;</li>
+<li>**rafa — Electrification reframing:** Rather than focusing on the reorganization of the production line, the more interesting lens is how *humans themselves were transformed* by electricity into &quot;different types of humans,&quot; which then allowed factories to reorganize. Acknowledged this deeper insight isn&#x27;t strictly needed for the workshop.</li>
+<li>**Factories:** A &quot;factory&quot; makes humans interchangeable in the production process; it need not be a single scale/file — it can be an app, a website, etc. Examples cited: a &quot;brand kit&quot; and a &quot;manuscript factory&quot; rafa put together (debatably &quot;true&quot; factories). Exercise: use your AI agent to help &quot;factorio&quot; (industrialize) a specific kit.</li>
+</ul><p class="meeting-abstract"><strong>Questions &amp; Disagreements:</strong> - **Fitting it into four sessions:** Most feedback rafa has received is skepticism that this can fit in four days/sessions. rafa&#x27;s response: we&#x27;re &quot;miscalibrating what it means to run a workshop&quot; when assistants automate exercise execution. Sachin agreed there&#x27;s &quot;no real limit — it just depends on how much compute people are willing to spend.&quot;
+- **The two-by-two is broken:** rafa flagged that a tw</p><p class="meeting-participants">Participants: rafa (UTC+1), Sachin</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

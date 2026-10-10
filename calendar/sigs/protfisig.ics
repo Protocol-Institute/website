@@ -10,7 +10,7 @@ DTSTART:20260820T150000Z
 DURATION:PT1H
 RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH;UNTIL=20270101T045959Z
 SUMMARY:ProtFiSIG — Protocol Fiction
-DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/sigs/protfisig/ for details.
-URL:https://protocol-institute.org/sigs/protfisig/
+DESCRIPTION:Protocol Institute — meets every 2 weeks. See https://protocol-institute.org/research-groups/protfisig/ for details.
+URL:https://protocol-institute.org/research-groups/protfisig/
 END:VEVENT
 END:VCALENDAR
