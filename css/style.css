@@ -2446,6 +2446,15 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   flex-wrap: wrap;
 }
 
+/* Optional project image (projects/project). Fixed 16:9 slot under the header;
+   the editor crops uploads to 16:9, and object-fit covers anything that isn't. */
+.project-image { margin: 0 0 1.75rem; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 4px; background: #EDEAE4; }
+.project-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.project-image--edit { margin: 0 0 0.75rem; }
+.project-image-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.project-image-actions label { cursor: pointer; }
+.form-hint--error { color: #A3361F; }
+
 .project-detail-description {
   font-size: 1.05rem;
   color: #3A3A3A;

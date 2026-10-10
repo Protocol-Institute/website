@@ -6,7 +6,7 @@
   <title>Project — The Protocol Institute</title>
   <meta name="description" content="Protocol Institute project detail.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=57">
 </head>
 <body>
 
@@ -28,6 +28,9 @@
           <h1 id="pd-title"></h1>
           <div class="project-meta project-detail-meta" id="pd-meta"></div>
         </div>
+
+        <!-- Optional project image (migration 048): a fixed 16:9 slot, rendered only when the lead has uploaded one. -->
+        <figure class="project-image" id="pd-image" hidden><img id="pd-image-img" alt=""></figure>
 
         <div class="project-detail-body">
           <div id="pd-description" class="project-detail-description md"></div>
@@ -132,6 +135,13 @@
         R.programTagsHtml(programs.filter(a => a.status === 'approved'));
       if (p.realm === 'admin') {
         document.getElementById('pd-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
+      }
+
+      if (p.image_url) {
+        const img = document.getElementById('pd-image-img');
+        img.src = p.image_url;
+        img.alt = p.title;
+        document.getElementById('pd-image').hidden = false;
       }
 
       PIMarkdown.render(p.description).then(html => { document.getElementById('pd-description').innerHTML = html; });

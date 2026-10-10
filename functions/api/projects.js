@@ -87,6 +87,7 @@ export async function onRequestGet({ request, env }) {
       SELECT p.id, p.slug, p.title, p.description, p.lead_slug, p.realm, p.state, p.type,
              p.artifact_type, p.artifact_type_other, p.url, p.current_version,
              p.anon_interesting, p.member_interesting, p.seed_interesting, p.created_at,
+             CASE WHEN p.image_key IS NULL THEN NULL ELSE '/assets/' || p.image_key END AS image_url,
              m.name AS lead_name
       FROM projects p
       LEFT JOIN members m ON m.slug = p.lead_slug
