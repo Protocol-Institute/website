@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research — The Protocol Institute</title>
-  <meta name="description" content="Open research challenges and the community projects that respond to them.">
+  <title>Projects — The Protocol Institute</title>
+  <meta name="description" content="Community research projects at the Protocol Institute, and the open challenges they respond to.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css">
   <style>
@@ -67,20 +67,20 @@
     <div class="container">
 
       <div class="page-header">
-        <h1>Research <span class="beta-badge">Beta</span></h1>
+        <h1>Projects</h1>
       </div>
 
       <div class="research-intro">
-        <p>Open research challenges in the spirit of Erdős problems and Grand Challenges — problems worth making progress on, not problems to be closed — alongside the community projects that respond to them, extend a SIG's work, or stand independently.</p>
+        <p>Community projects that extend a research group's work, respond to an open challenge, or stand independently — alongside open research challenges in the spirit of Erdős problems and Grand Challenges: problems worth making progress on, not problems to be closed.</p>
         <p>For the projects our research groups propose for 2027, see the <a href="/programs/research-roadmap/2027">Research Roadmap 2027</a>.</p>
       </div>
 
       <div class="view-tabs" role="tablist">
-        <button class="view-tab active" id="tab-challenges" role="tab" aria-selected="true" aria-controls="view-challenges">Challenges</button>
-        <button class="view-tab" id="tab-projects" role="tab" aria-selected="false" aria-controls="view-projects">Projects</button>
+        <button class="view-tab active" id="tab-projects" role="tab" aria-selected="true" aria-controls="view-projects">Projects</button>
+        <button class="view-tab" id="tab-challenges" role="tab" aria-selected="false" aria-controls="view-challenges">Open Challenges</button>
       </div>
 
-      <div id="view-challenges" role="tabpanel" aria-labelledby="tab-challenges">
+      <div id="view-challenges" role="tabpanel" aria-labelledby="tab-challenges" hidden>
         <p class="projects-intro">Logged in PI members can add problems. If you're not a member, you can <a href="mailto:team@protocol-institute.org">email a member</a> to suggest a problem.</p>
 
         <div id="challenge-form-region"></div>
@@ -90,7 +90,7 @@
         </ul>
       </div>
 
-      <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects" hidden>
+      <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects">
         <p class="projects-intro">Projects that produce specific artifacts — documents, tools, websites, or other outputs — led by an individual or a team, aligned with a research group or independent.</p>
 
         <div id="submit-cta" class="submit-cta" style="display:none;">
@@ -159,9 +159,11 @@
 
     if (onProjects && !projectsLoaded) { projectsLoaded = true; loadProjects(); }
 
+    // Projects is the default view (Session 57); ?view=projects links from
+    // before then still work, and ?view=challenges selects the second tab.
     const url = new URL(window.location.href);
-    if (onProjects) url.searchParams.set('view', 'projects');
-    else url.searchParams.delete('view');
+    if (onProjects) url.searchParams.delete('view');
+    else url.searchParams.set('view', 'challenges');
     history.replaceState(null, '', url.toString());
   }
   tabChallenges.addEventListener('click', () => showTab('challenges'));
@@ -494,9 +496,7 @@
     } catch {}
 
     const initialView = new URLSearchParams(window.location.search).get('view');
-    if (initialView === 'projects' || window.location.hash.startsWith('#project-')) {
-      showTab('projects');
-    }
+    showTab(initialView === 'challenges' || window.location.hash.startsWith('#challenge-') ? 'challenges' : 'projects');
   }
 
   init();

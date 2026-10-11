@@ -17,13 +17,13 @@ var NAV_HTML =
     '<a href="/members/join" class="nav-member-link" id="nav-member-link">' + PERSON_ICON + 'Member Login / Register</a>' +
     '<button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">&#8801;</button>' +
     '<ul class="nav-links" id="nav-links" role="list">' +
-      '<li><a href="/programs">Programs</a></li>' +
       '<li><a href="/research-groups">Research Groups</a></li>' +
       '<li><a href="/events">Events</a></li>' +
-      '<li><a href="/research">Research <span class="beta-badge">Beta</span></a></li>' +
+      '<li><a href="/research">Projects</a></li>' +
       '<li class="nav-more-menu" id="nav-more-menu">' +
         '<button class="nav-more-toggle" id="nav-more-toggle" aria-expanded="false" aria-haspopup="true">More <span class="nav-member-caret">&#9662;</span></button>' +
         '<ul class="nav-more-dropdown" id="nav-more-dropdown">' +
+          '<li><a href="/programs">Programs</a></li>' +
           '<li><a href="/about">About</a></li>' +
           '<li><a href="/network">Network</a></li>' +
           '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
