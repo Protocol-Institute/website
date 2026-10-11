@@ -20,13 +20,13 @@ var NAV_HTML =
       '<li><a href="/research-groups">Research Groups</a></li>' +
       '<li><a href="/events">Events</a></li>' +
       '<li><a href="/research">Projects</a></li>' +
+      '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
       '<li class="nav-more-menu" id="nav-more-menu">' +
         '<button class="nav-more-toggle" id="nav-more-toggle" aria-expanded="false" aria-haspopup="true">More <span class="nav-member-caret">&#9662;</span></button>' +
         '<ul class="nav-more-dropdown" id="nav-more-dropdown">' +
           '<li><a href="/programs">Programs</a></li>' +
           '<li><a href="/about">About</a></li>' +
           '<li><a href="/network">Network</a></li>' +
-          '<li><a href="https://protocolized.io" target="_blank" rel="noopener noreferrer">Protocolized</a></li>' +
           '<li><a href="/events/protocol-symposium-2026">Symposium</a></li>' +
           '<li><a href="/contact">Contact</a></li>' +
           '<li><a href="/members">Members</a></li>' +
