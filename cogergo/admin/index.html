@@ -42,6 +42,7 @@
 </div>
 
 <script src="/js/nav.js"></script>
+<script src="https://protocol-institute.org/js/markdown.js?v=56"></script>
 <script>
 (function () {
   var currentStatus = 'pending';
@@ -76,7 +77,7 @@
       btn.className = 'admin-tab' + (btn.dataset.status === status ? ' active' : '');
     });
     document.getElementById('admin-list').innerHTML = '<p class="loading-state">Loading…</p>';
-    fetch('/api/admin/items?status=' + status)
+    PIMarkdown.load().then(function(){ return fetch('/api/admin/items?status=' + status); })
       .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
       .then(function(data){ renderItems(data.items || [], status); })
       .catch(function(){ document.getElementById('admin-list').innerHTML = '<p class="empty-state">Error loading items.</p>'; });
@@ -92,8 +93,8 @@
         '<div class="admin-item-title">' + escHtml(item.title) + '</div>' +
         '<div class="admin-field"><strong>Type:</strong> ' + (item.type === 'good' ? '✓ Good habit' : '✗ Bad habit') + '</div>' +
         '<div class="admin-field"><strong>By:</strong> ' + escHtml(item.contributor_name || item.contributed_by_slug) + '</div>' +
-        (item.symptoms ? '<div class="admin-field"><strong>Symptoms:</strong> ' + escHtml(item.symptoms.slice(0,200)) + (item.symptoms.length>200?'…':'') + '</div>' : '') +
-        (item.prognosis ? '<div class="admin-field"><strong>Prognosis:</strong> ' + escHtml(item.prognosis.slice(0,200)) + (item.prognosis.length>200?'…':'') + '</div>' : '') +
+        (item.symptoms ? '<div class="admin-field"><strong>Symptoms:</strong> ' + escHtml(PIMarkdown.text(item.symptoms).slice(0,200)) + (PIMarkdown.text(item.symptoms).length>200?'…':'') + '</div>' : '') +
+        (item.prognosis ? '<div class="admin-field"><strong>Prognosis:</strong> ' + escHtml(PIMarkdown.text(item.prognosis).slice(0,200)) + (PIMarkdown.text(item.prognosis).length>200?'…':'') + '</div>' : '') +
         ((item.tags||[]).length ? '<div class="admin-field"><strong>Tags:</strong> ' + item.tags.map(function(t){return escHtml(t);}).join(', ') + '</div>' : '') +
         '<div class="admin-field"><strong>Votes:</strong> ✓ ' + (item.do_count||0) + ' &nbsp; ✗ ' + (item.dont_count||0) + '</div>' +
         '<div class="admin-field" style="display:flex;align-items:center;gap:0.5rem;">' +

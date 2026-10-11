@@ -164,6 +164,8 @@
 </div>
 
 <script src="/js/tags.js"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
 <script>
 (function () {
   const TAG_LABELS  = PI_TAGS.LABELS;
@@ -225,6 +227,7 @@
     const res = await fetch('/api/admin/members');
     if (!res.ok) { document.getElementById('requests-list').innerHTML = '<p style="color:#C44">Error loading.</p>'; return; }
     const data = await res.json();
+    await PIMarkdown.load();
     renderPendingMembers(data.requests || []);
   }
 
@@ -240,7 +243,7 @@
       return `<div class="request-item" id="req-${esc(r.email)}">
         <div class="request-name">${esc(r.name)}</div>
         <div class="request-email">${esc(r.email)}</div>
-        ${r.bio ? `<div class="request-field"><strong>Bio:</strong> ${esc(r.bio)}</div>` : ''}
+        ${r.bio ? `<div class="request-field"><strong>Bio:</strong><div class="md">${PIMarkdown.html(r.bio)}</div></div>` : ''}
         ${r.website ? `<div class="request-field"><strong>Website:</strong> <a href="${esc(r.website)}" target="_blank">${esc(r.website)}</a></div>` : ''}
         <div class="request-field"><strong>Events:</strong> ${esc(eventLabels)}</div>
         ${r.city ? `<div class="request-field"><strong>City:</strong> ${esc(r.city)}</div>` : ''}
@@ -382,6 +385,8 @@
     if (expandedSlug) {
       const btn = document.querySelector(`.save-btn[data-slug="${CSS.escape(slug)}"]`);
       if (btn) btn.addEventListener('click', () => saveEdit(slug));
+      const bio = document.querySelector(`#edit-${CSS.escape(slug)} textarea[data-field=\"bio\"]`);
+      if (bio) PIMdEditor.attach(bio, { onSave: () => saveEdit(slug) });
     }
   };
   window.cancelEdit = function() { expandedSlug = null; renderDirectory(); };

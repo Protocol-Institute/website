@@ -59,6 +59,7 @@
 </div>
 
 <script src="/js/nav.js"></script>
+<script src="https://protocol-institute.org/js/markdown.js?v=56"></script>
 <script>
 (function () {
   function escHtml(s) {
@@ -88,8 +89,8 @@
 
   var currentDoCount = 0, currentDontCount = 0;
 
-  fetch('/api/items/' + encodeURIComponent(slug))
-    .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+  Promise.all([fetch('/api/items/' + encodeURIComponent(slug)), PIMarkdown.load()])
+    .then(function(res){ var r = res[0]; return r.ok ? r.json() : Promise.reject(); })
     .then(function(data) {
       var item = data.item, comments = data.comments || [];
       currentDoCount   = item.do_count   || 0;
@@ -125,7 +126,7 @@
       var clinHtml = sections.filter(function(s){return s.val;}).map(function(s){
         return '<div class="clinical-section">' +
           '<span class="clinical-label">' + s.label + '</span>' +
-          '<div class="clinical-body">' + escHtml(s.val) + '</div>' +
+          '<div class="clinical-body md">' + PIMarkdown.html(s.val) + '</div>' +
         '</div>';
       }).join('');
       document.getElementById('d-clinical').innerHTML = clinHtml;
@@ -203,7 +204,7 @@
           return '<div class="comment-item">' +
             '<div class="comment-author"><a href="https://protocol-institute.org/members/' + escHtml(c.member_slug) + '">' + escHtml(c.member_name) + '</a>' +
             '<span class="comment-date">' + fmtDate(c.created_at) + '</span></div>' +
-            '<div class="comment-body">' + escHtml(c.body) + '</div>' +
+            '<div class="comment-body md">' + PIMarkdown.html(c.body) + '</div>' +
           '</div>';
         }).join('');
 

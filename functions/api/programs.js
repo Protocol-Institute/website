@@ -2,11 +2,14 @@
 // GET /api/programs — public: every area, program and edition, for the project
 // affiliation picker, the program pages and /operations. A program's realm
 // ('research' | 'admin') is its primary area's. See programs/PLAN.md.
+// ?detail=1 adds each program's links and approved projects (slug + title) —
+// what /programs renders; left off by default to keep the picker's payload small.
 
 import { getSession } from '../_shared/session.js';
 import { programHref, memberForSession, PROGRAM_KINDS, SLUG_RE } from '../_shared/programs.js';
 
-export async function onRequestGet({ env }) {
+export async function onRequestGet({ request, env }) {
+  const detail = new URL(request.url).searchParams.get('detail') === '1';
   try {
     const [areas, programs, links, editions, counts] = await Promise.all([
       env.DB.prepare('SELECT slug, realm, title, description FROM areas ORDER BY sort_order').all(),
@@ -27,6 +30,25 @@ export async function onRequestGet({ env }) {
         GROUP BY pp.program_slug
       `).all(),
     ]);
+
+    const linksByProgram = {}, projectsByProgram = {};
+    if (detail) {
+      const [plinks, projects] = await Promise.all([
+        env.DB.prepare('SELECT program_slug, kind, label, url, note FROM program_links ORDER BY sort_order, id').all(),
+        env.DB.prepare(`
+          SELECT pp.program_slug, p.slug, p.title
+          FROM project_programs pp JOIN projects p ON p.id = pp.project_id
+          WHERE pp.status = 'approved' AND p.status = 'approved'
+          ORDER BY p.title
+        `).all(),
+      ]);
+      for (const l of plinks.results || []) {
+        (linksByProgram[l.program_slug] ||= []).push({ kind: l.kind, label: l.label, url: l.url, note: l.note });
+      }
+      for (const p of projects.results || []) {
+        (projectsByProgram[p.program_slug] ||= []).push({ slug: p.slug, title: p.title });
+      }
+    }
 
     const areasByProgram = {};
     for (const l of links.results || []) {
@@ -56,6 +78,7 @@ export async function onRequestGet({ env }) {
         areas: areasByProgram[p.slug] || [],
         editions: editionsByProgram[p.slug] || [],
         project_count: countBy[p.slug] || 0,
+        ...(detail ? { links: linksByProgram[p.slug] || [], projects: projectsByProgram[p.slug] || [] } : {}),
       })),
     });
   } catch (err) {

@@ -83,6 +83,8 @@
 </div>
 
 <script src="/js/nav.js"></script>
+<script src="https://protocol-institute.org/js/markdown.js?v=56"></script>
+<script src="https://protocol-institute.org/js/md-editor.js?v=56"></script>
 <script>
 (function () {
   var slug = new URLSearchParams(window.location.search).get('slug');
@@ -111,9 +113,9 @@
     document.getElementById('f-title').value = item.title || '';
     var typeRadio = document.querySelector('input[name="type"][value="' + item.type + '"]');
     if (typeRadio) typeRadio.checked = true;
-    document.getElementById('f-symptoms').value = item.symptoms || '';
-    document.getElementById('f-prognosis').value = item.prognosis || '';
-    document.getElementById('f-improvement').value = item.improvement_ideas || '';
+    [['f-symptoms', item.symptoms], ['f-prognosis', item.prognosis], ['f-improvement', item.improvement_ideas]].forEach(function(f) {
+      PIMdEditor.attach(document.getElementById(f[0])).setValue(f[1] || '');
+    });
     document.getElementById('f-tags').value = (item.tags || []).join(', ');
 
     document.getElementById('edit-area').style.display = '';

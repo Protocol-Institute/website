@@ -27,9 +27,11 @@
       </div>
 
       <div id="view-hierarchical" role="tabpanel" aria-labelledby="tab-hierarchical">
-        <p class="programs-intro">Each program is organized around <strong>tracks</strong> (ongoing collaborative activity streams), <strong>projects</strong> (output-bearing activities), and <strong>infrastructure</strong> (shared support resources).</p>
+        <p class="programs-intro">The Institute's work is organized into <strong>areas</strong>, each holding <strong>programs</strong> — research groups, initiatives, events, workshops and courses. Each program has its own page listing its editions and the projects tagged to it.</p>
 
-        <ul class="project-list" role="list">
+        <!-- Rendered from /api/programs?detail=1 (areas > programs, programs/PLAN.md). The list
+             below is a fallback for when the API fails — edit programs in /programs/edit, not here. -->
+        <ul class="project-list" id="programs-list" role="list">
 
           <li class="project-item">
             <div class="project-meta">
@@ -164,9 +166,20 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
 <script>
 (function () {
-  var CAT_SINGULAR = { 'Tracks': 'Track', 'Infrastructure': 'Infrastructure', 'Projects': 'Project' };
+  var KINDS = [
+    ['sig', 'Research Groups', 'Research Group'],
+    ['initiative', 'Initiatives', 'Initiative'],
+    ['event', 'Events', 'Event'],
+    ['workshop', 'Workshops', 'Workshop'],
+    ['course', 'Courses', 'Course'],
+    ['collaboration', 'Collaborations', 'Collaboration'],
+  ];
+  var CAT_SINGULAR = {};
+  KINDS.forEach(function (k) { CAT_SINGULAR[k[1]] = k[2]; });
+  var MAX_PROJECTS = 6;
 
   function escHtml(s) {
     return String(s || '').replace(/[&<>"]/g, function (c) {
@@ -234,6 +247,76 @@
     }).join('');
   }
 
+  // ── Hierarchical view from the database ───────────────────────────
+  // Research-realm areas in order; each program listed once, under its primary
+  // area, grouped by kind. Admin-realm areas (Operations) stay off this page.
+  function linkHtml(href, text) {
+    var ext = /^https?:/.test(href);
+    return '<a href="' + escHtml(href) + '"' + (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + escHtml(text) + '</a>';
+  }
+
+  function firstSentence(md) {
+    var t = PIMarkdown.text(md);
+    var m = t.match(/^.*?[.!?](?=\s|$)/);
+    return (m ? m[0] : t).replace(/[.!?]$/, '');
+  }
+
+  function editionLabel(e, p) {
+    var t = e.title || e.slug;
+    if (t.indexOf(p.title + ' ') === 0) t = t.slice(p.title.length + 1);
+    return t + (e.location && e.location !== 'Online' ? ' (' + e.location + ')' : '');
+  }
+
+  function programItem(p) {
+    var eds = p.editions || [];
+    var upcoming = eds.some(function (e) { return e.status === 'planned' || e.status === 'active'; });
+    var desc = p.description ? firstSentence(p.description) : '';
+    var html = '<li>' + linkHtml(p.href, p.short_title || p.title) +
+      (desc ? ' <span class="track-sep">&mdash;</span> ' + escHtml(desc) : '') +
+      (p.status === 'past' ? ' <span class="track-soon">past</span>' : upcoming ? ' <span class="track-soon">upcoming</span>' : '');
+    var sub = [];
+    var channels = (p.links || []).filter(function (l) { return l.kind === 'channel'; });
+    if (channels.length) {
+      sub.push(channels.map(function (l) { return linkHtml(l.url, l.label); }).join(' &middot; '));
+    }
+    // An edition is worth its own line unless it is the program's only one and shares its page.
+    if (eds.length > 1 || (eds.length === 1 && eds[0].href && eds[0].href !== p.href)) {
+      sub.push('Editions: ' + eds.map(function (e) {
+        return e.href ? linkHtml(e.href, editionLabel(e, p)) : escHtml(editionLabel(e, p));
+      }).join(' &middot; '));
+    }
+    var projects = p.kind === 'sig' ? [] : (p.projects || []);
+    if (projects.length) {
+      sub.push('Projects: ' + projects.slice(0, MAX_PROJECTS).map(function (pr) {
+        return linkHtml('/projects/project?slug=' + encodeURIComponent(pr.slug), pr.title);
+      }).join(' &middot; ') +
+        (projects.length > MAX_PROJECTS ? ' &middot; ' + linkHtml(p.href, (projects.length - MAX_PROJECTS) + ' more') : ''));
+    }
+    if (sub.length) html += sub.map(function (x) { return '<div class="program-sub">' + x + '</div>'; }).join('');
+    return html + '</li>';
+  }
+
+  function renderAreas(data) {
+    var byPrimary = {};
+    (data.programs || []).forEach(function (p) {
+      var primary = (p.areas || []).filter(function (a) { return a.is_primary; })[0] || (p.areas || [])[0];
+      if (primary) (byPrimary[primary.slug] = byPrimary[primary.slug] || []).push(p);
+    });
+    return (data.areas || []).filter(function (a) { return a.realm === 'research' && byPrimary[a.slug]; }).map(function (a) {
+      var groups = KINDS.map(function (k) {
+        var ps = byPrimary[a.slug].filter(function (p) { return p.kind === k[0]; });
+        if (!ps.length) return '';
+        return '<div class="category-group"><span class="category-label">' + k[1] + '</span>' +
+          '<ul class="category-items">' + ps.map(programItem).join('') + '</ul></div>';
+      }).join('');
+      return '<li class="project-item">' +
+        '<div class="project-meta"><span class="project-name">' + escHtml(a.title) + '</span></div>' +
+        (a.description ? '<p class="project-description">' + escHtml(a.description) + '</p>' : '') +
+        '<div class="program-body">' + groups + '</div>' +
+      '</li>';
+    }).join('');
+  }
+
   var tabHierarchical = document.getElementById('tab-hierarchical');
   var tabFlattened = document.getElementById('tab-flattened');
   var panelHierarchical = document.getElementById('view-hierarchical');
@@ -269,12 +352,24 @@
   tabHierarchical.addEventListener('click', function () { showTab('hierarchical'); });
   tabFlattened.addEventListener('click', function () { showTab('flattened'); });
 
-  var initialView = new URLSearchParams(window.location.search).get('view');
-  if (initialView === 'flattened') {
-    showTab('flattened');
-  } else {
-    tabHierarchical.classList.add('active');
+  function start() {
+    var initialView = new URLSearchParams(window.location.search).get('view');
+    if (initialView === 'flattened') {
+      showTab('flattened');
+    } else {
+      tabHierarchical.classList.add('active');
+    }
   }
+
+  // The flattened view is built from the hierarchical DOM, so start once that is final.
+  // On any failure the hand-written fallback list stays and both views use it.
+  Promise.all([
+    fetch('/api/programs?detail=1').then(function (r) { return r.ok ? r.json() : null; }),
+    PIMarkdown.load(),
+  ]).then(function (res) {
+    var html = res[0] && renderAreas(res[0]);
+    if (html) document.getElementById('programs-list').innerHTML = html;
+  }).catch(function () {}).then(start);
 }());
 </script>
 </body>

@@ -82,8 +82,13 @@
 </div>
 
 <script src="/js/nav.js"></script>
+<script src="https://protocol-institute.org/js/markdown.js?v=56"></script>
+<script src="https://protocol-institute.org/js/md-editor.js?v=56"></script>
 <script>
 (function () {
+  ['f-symptoms', 'f-prognosis', 'f-improvement'].forEach(function(id) {
+    PIMdEditor.attach(document.getElementById(id));
+  });
   fetch('/api/me')
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(data) {

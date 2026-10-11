@@ -284,6 +284,9 @@
   // their original key sigs/<slug>/about (what /research-groups/<slug>/about/ reads);
   // every other program uses programs/<slug>/about, shown on its generic
   // program page (Session 56 — before that only SIGs had an About page).
+  // Programs whose own page renders the About body (events/pibowrimo-2026,
+  // programs/research-roadmap/2027); every other non-SIG shows it on the generic page.
+  const OWN_PAGE_ABOUT = new Set(['pibowrimo', 'research-roadmap']);
   let contentLoaded = false;
   let adminLoaded = false;
   let aboutKey = null;
@@ -293,7 +296,9 @@
     contentLoaded = true;
     const isSig = p.kind === 'sig';
     aboutKey = (isSig ? 'sigs/' : 'programs/') + p.slug + '/about';
-    const aboutHref = isSig ? '/research-groups/' + encodeURIComponent(p.slug) + '/about/' : '/programs/program?slug=' + encodeURIComponent(p.slug) + '#about';
+    const aboutHref = isSig ? '/research-groups/' + encodeURIComponent(p.slug) + '/about/'
+      : OWN_PAGE_ABOUT.has(p.slug) ? p.href
+      : '/programs/program?slug=' + encodeURIComponent(p.slug) + '#about';
     $('pe-about-hint').innerHTML = (isSig
       ? 'A longer page, reached from the "More about …" link under the blurb.'
       : 'A longer section shown below the blurb on the program page.') +

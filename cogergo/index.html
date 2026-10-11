@@ -68,6 +68,7 @@
 </div>
 
 <script src="/js/nav.js"></script>
+<script src="https://protocol-institute.org/js/markdown.js?v=56"></script>
 <script>
 (function () {
   var allItems = [], sevFilterActive = false, sevMin = -10, sevMax = 10;
@@ -118,7 +119,8 @@
       var tags = (item.tags || []).map(function(t){ return '<span class="tag-chip">' + escHtml(t) + '</span>'; }).join('');
       var doClass   = item.my_vote === 'do'   ? ' voted-do'   : '';
       var dontClass = item.my_vote === 'dont' ? ' voted-dont' : '';
-      var excerpt = item.symptoms ? item.symptoms.slice(0,200) + (item.symptoms.length > 200 ? '…' : '') : '';
+      var symptoms = PIMarkdown.text(item.symptoms);
+      var excerpt = symptoms ? symptoms.slice(0,200) + (symptoms.length > 200 ? '…' : '') : '';
 
       return '<li class="item-card" style="border-left-color:' + borderColor + '" data-slug="' + escHtml(item.slug) + '">' +
         '<div class="item-card-top">' +
@@ -161,8 +163,8 @@
     });
   }
 
-  fetch('/api/items')
-    .then(function(r){ return r.json(); })
+  Promise.all([fetch('/api/items'), PIMarkdown.load()])
+    .then(function(res){ return res[0].json(); })
     .then(function(data){ allItems = data.items || []; renderItems(); })
     .catch(function(){ document.getElementById('items-container').innerHTML = '<p class="empty-state">Could not load entries.</p>'; });
 
