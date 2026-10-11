@@ -86,3 +86,8 @@
 # Book Writing Month became PiBoWriMo (Session 56, migration 044).
 /events/book-writing-month-2026    /events/pibowrimo-2026/   301
 /events/book-writing-month-2026/   /events/pibowrimo-2026/   301
+
+# cogergo/ was a subfolder of this repo until 2026-10-11 and got published here as a
+# stray copy; it is now its own repo and Pages project.
+/cogergo    https://cogergo.protocol-institute.org/    301
+/cogergo/*  https://cogergo.protocol-institute.org/:splat    301
