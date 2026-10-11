@@ -6,7 +6,7 @@
   <title>Members — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute member directory — researchers, practitioners, and participants in the PI ecosystem.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=57">
+  <link rel="stylesheet" href="/css/style.css?v=59">
 </head>
 <body>
 
@@ -29,14 +29,19 @@
         <button class="filter-btn active" data-filter="">All</button>
         <button class="filter-btn" data-filter="team">Team</button>
         <button class="filter-btn" data-filter="community_lead">Research Leads</button>
-        <button class="filter-btn" data-filter="consultant">Consultants</button>
-        <button class="filter-btn" data-filter="tag_sop23">SoP '23</button>
-        <button class="filter-btn" data-filter="tag_sop24">SoP '24</button>
-        <button class="filter-btn" data-filter="tag_sop25">SoP '25</button>
-        <button class="filter-btn" data-filter="tag_ps25">Protocol School '25</button>
-        <button class="filter-btn" data-filter="tag_sig">Research Group</button>
-        <button class="filter-btn" data-filter="tag_symposium_25">Symposium '25</button>
-        <button class="filter-btn" data-filter="tag_guest_speaker">Guest Speakers</button>
+        <button class="filter-btn" data-filter="tag_sig">Researchers</button>
+        <button class="filter-btn" data-filter="extended_team">Extended Team</button>
+        <button type="button" class="filter-more-toggle" id="filter-more-toggle" aria-expanded="false" aria-controls="filter-more">More <span class="nav-member-caret">&#9662;</span></button>
+        <!-- Cohort and other secondary filters, revealed by More (opened automatically when one is active). -->
+        <div class="members-filter-more" id="filter-more" hidden>
+          <button class="filter-btn" data-filter="consultant">Consultants</button>
+          <button class="filter-btn" data-filter="tag_sop23">SoP '23</button>
+          <button class="filter-btn" data-filter="tag_sop24">SoP '24</button>
+          <button class="filter-btn" data-filter="tag_sop25">SoP '25</button>
+          <button class="filter-btn" data-filter="tag_ps25">Protocol School '25</button>
+          <button class="filter-btn" data-filter="tag_symposium_25">Symposium '25</button>
+          <button class="filter-btn" data-filter="tag_guest_speaker">Guest Speakers</button>
+        </div>
       </div>
 
       <div class="filter-blurb" id="filter-blurb"></div>
@@ -80,14 +85,15 @@
   }
 
   const FILTER_BLURBS = {
-    'team':          'The Protocol Institute\'s team — staff, advisors, and AI systems. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
+    'team':          'The Protocol Institute\'s core team. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
+    'extended_team': 'Editors, collaborators and AI systems who work alongside the core team on the Institute\'s programs.',
     'community_lead':'Members who lead PI research activities, currently as Research Group hosts.',
     'consultant':    'PI members available for consulting on protocol design, governance, organizational protocolization, and strategy. Enquire directly with individual consultants. <a href="/consulting/policies">Consulting network policies →</a>',
     'tag_sop23':     'Fellows from the Summer of Protocols 2023 cohort — PI\'s inaugural grant program in protocol research.',
     'tag_sop24':     'Fellows from the Summer of Protocols 2024 cohort, exploring protocolization across institutions, markets, and culture.',
     'tag_sop25':     'Fellows from the Summer of Protocols 2025 cohort, investigating protocols in new nature and infrastructure.',
     'tag_ps25':      'Graduates of Protocol School 2025 — PI\'s intensive program in protocol theory and practice.',
-    'tag_sig':          'Members active in Protocol Institute Research Groups — ongoing focused research and practice communities.',
+    'tag_sig':          'Members who take part in Protocol Institute Research Groups — ongoing focused research and practice communities.',
     'tag_symposium_25': 'Attendees of the 2025 Protocol Foundations Workshop — PI\'s annual symposium on protocol research.',
     'tag_guest_speaker':'Individuals who have appeared as guest speakers at Protocol Institute events.',
   };
@@ -216,20 +222,12 @@
       list.innerHTML = '<li class="member-item member-empty">No members found for this filter.</li>';
       return;
     }
-    const isRich = filter === 'team' || filter === 'consultant';
+    const isTeam = filter === 'team' || filter === 'extended_team';
+    const isRich = isTeam || filter === 'consultant';
     list.className = isRich ? 'member-list member-list--cards' : 'member-list';
-    if (filter === 'team') {
-      // Core Team, then Extended Team, each in the hand-set team_sort order
-      // (migration 051); a team member without one sorts last by name.
-      const bySort = (a, b) => (a.team_sort ?? 1e9) - (b.team_sort ?? 1e9) || a.name.localeCompare(b.name);
-      const section = (title, ms) => ms.length
-        ? `<li class="member-group-heading"><h2>${title}</h2></li>` + ms.map(renderMemberCard).join('')
-        : '';
-      const sorted = members.slice().sort(bySort);
-      list.innerHTML = section('Core Team', sorted.filter(m => m.team_core)) +
-                       section('Extended Team', sorted.filter(m => !m.team_core));
-      return;
-    }
+    // Team (core) and Extended Team follow the hand-set team_sort order
+    // (migration 051); everything else stays alphabetical as the API returns it.
+    if (isTeam) members = members.slice().sort((a, b) => (a.team_sort ?? 1e9) - (b.team_sort ?? 1e9) || a.name.localeCompare(b.name));
     list.innerHTML = members.map(isRich ? renderMemberCard : renderMemberList).join('');
   }
 
@@ -245,7 +243,8 @@
       filtered = allMembers;
     } else {
       filtered = allMembers.filter(m => {
-        if (filter === 'team') return m.tier === 'team';
+        if (filter === 'team') return m.tier === 'team' && !!m.team_core;
+        if (filter === 'extended_team') return m.tier === 'team' && !m.team_core;
         if (filter === 'community_lead') return m.tier === 'community_lead';
         // Consultants: require photo — members without one are not shown until they add one
         if (filter === 'consultant') return m.is_consultant && !!m.photo_r2_key;
@@ -254,6 +253,16 @@
     }
     render(filtered, filter);
   }
+
+  // More: reveals the secondary filters
+  const moreToggle = document.getElementById('filter-more-toggle');
+  const morePanel = document.getElementById('filter-more');
+  function setMoreOpen(open) {
+    morePanel.hidden = !open;
+    moreToggle.setAttribute('aria-expanded', String(open));
+    moreToggle.classList.toggle('open', open);
+  }
+  moreToggle.addEventListener('click', () => setMoreOpen(morePanel.hidden));
 
   // Filter buttons
   document.getElementById('filter-bar').addEventListener('click', function (e) {
@@ -274,6 +283,7 @@
         const btn = document.querySelector(`.filter-btn[data-filter="${CSS.escape(urlFilter)}"]`);
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
+        if (btn && morePanel.contains(btn)) setMoreOpen(true);
         applyFilter(urlFilter, false);
       } else {
         render(allMembers, '');
