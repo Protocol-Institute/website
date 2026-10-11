@@ -29,6 +29,7 @@
         </div>
 
         <div class="about-body md" id="pg-description"></div>
+        <p class="sig-meta" id="pg-byline" hidden></p>
         <p class="profile-links" id="pg-links"></p>
         <div class="about-body md" id="about" style="display:none;"></div>
 
@@ -64,7 +65,7 @@
 
 </div>
 
-<script src="/js/main.js?v=56"></script>
+<script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
 <script src="/js/markdown.js?v=56"></script>
 <script>
@@ -116,6 +117,13 @@
         [KIND_LABELS[p.kind] || p.kind, ...data.areas.map(a => a.title)].join(' · ');
       document.getElementById('pg-title').textContent = p.title + (p.short_title ? ` (${p.short_title})` : '');
       document.getElementById('pg-description').innerHTML = PIMarkdown.html(p.description);
+      // Byline ("Led by … — schedule"), with the program's hosts linked to their profiles.
+      if (p.byline) {
+        const byline = document.getElementById('pg-byline');
+        byline.innerHTML = PIMarkdown.inline(p.byline);
+        PI.linkPeople(byline, data.hosts);
+        byline.hidden = false;
+      }
       if (data.realm === 'admin') {
         document.getElementById('pg-breadcrumb').innerHTML = '<a href="/operations">← Operations</a>';
       }

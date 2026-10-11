@@ -298,9 +298,45 @@ var FOOTER_HTML =
     header.appendChild(a);
   }
 
+  // PI.linkPeople(el, people) turns each person's name in el's text into a link
+  // to their member profile. people is [{slug, name}] — a program's hosts from
+  // /api/programs/<slug>. Bylines are free text ("Led by A and B — schedule")
+  // written by hosts, so the names are matched rather than stored as links:
+  // a host change relinks itself. Text already inside a link is left alone.
+  function linkPeople(el, people) {
+    if (!el || !people || !people.length) return;
+    var byName = {};
+    people.forEach(function (p) { if (p && p.name && p.slug) byName[p.name] = p.slug; });
+    var names = Object.keys(byName).sort(function (a, b) { return b.length - a.length; });
+    if (!names.length) return;
+    var re = new RegExp('(' + names.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'g');
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    while (walker.nextNode()) {
+      if (!walker.currentNode.parentNode.closest('a')) nodes.push(walker.currentNode);
+    }
+    nodes.forEach(function (node) {
+      var parts = node.nodeValue.split(re);
+      if (parts.length < 2) return;
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (part, i) {
+        if (i % 2) {
+          var a = document.createElement('a');
+          a.href = '/members/profile?slug=' + encodeURIComponent(byName[part]);
+          a.textContent = part;
+          frag.appendChild(a);
+        } else if (part) {
+          frag.appendChild(document.createTextNode(part));
+        }
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
   window.PI = window.PI || {};
   window.PI.markdown = markdown;
   window.PI.editLink = editLink;
+  window.PI.linkPeople = linkPeople;
 }());
 
 // SIG page — blurb, byline, About link, website, links and projects, all from D1.
@@ -373,10 +409,15 @@ var FOOTER_HTML =
           blurbEl.parentNode.replaceChild(div, blurbEl);
         }
         if (bylineEl && program.byline) bylineEl.innerHTML = md.inline(program.byline);
+        window.PI.linkPeople(bylineEl, data.hosts);
       }).catch(function () {
         if (blurbEl && program.description) blurbEl.textContent = program.description;
         if (bylineEl && program.byline) bylineEl.textContent = program.byline;
+        window.PI.linkPeople(bylineEl, data.hosts);
       });
+    } else {
+      // No D1 byline: link the leads named in the HTML fallback byline.
+      window.PI.linkPeople(bylineEl, data.hosts);
     }
     if (aboutLinkEl && res[1] && String(res[1].content_md || '').trim()) aboutLinkEl.style.display = '';
 
