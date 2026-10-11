@@ -6,7 +6,7 @@
   <title>Research Groups — The Protocol Institute</title>
   <meta name="description" content="Focused study groups advancing the research and practice of protocols across memory, formal theory, business, and fiction.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -21,11 +21,13 @@
         <h1>Research Groups</h1>
       </div>
 
-      <div class="about-body">
+      <div class="about-body" data-page-key="static/research-groups">
         <p>Research Groups are professional-led cohorts that meet biweekly to discuss, design, and theorize on topics at the frontier of protocol research. Each group is focused on an area that has shown particular promise for advancing the study of protocols. New members are welcome — join the Discord and introduce yourself before attending a session.</p>
       </div>
 
-      <ul class="project-list" role="list">
+      <!-- Rendered from /api/programs?detail=1 (programs of kind 'sig'): name, blurb (first paragraph) and hosts are
+           what the hosts edit in /programs/edit. This list is the fallback if the API fails — don't hand-edit it. -->
+      <ul class="project-list" id="rg-list" role="list">
 
         <li class="project-item">
           <div class="project-meta">
@@ -139,5 +141,42 @@
 
 <script src="/js/sig-meta.js"></script>
 <script src="/js/main.js?v=58"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/page-blocks.js?v=58"></script>
+<script>
+(function () {
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  }
+  function hostsHtml(hosts) {
+    var links = hosts.map(function (h) {
+      return '<a href="/members/profile?slug=' + encodeURIComponent(h.slug) + '">' + esc(h.name) + '</a>';
+    });
+    if (!links.length) return '';
+    var last = links.pop();
+    return '<p class="sig-meta">Led by ' + (links.length ? links.join(', ') + ' and ' : '') + last + '</p>';
+  }
+  Promise.all([
+    fetch('/api/programs?detail=1').then(function (r) { return r.ok ? r.json() : null; }),
+    PIMarkdown.load(),
+  ]).then(function (res) {
+    var groups = ((res[0] && res[0].programs) || []).filter(function (p) { return p.kind === 'sig' && p.status === 'active'; });
+    if (!groups.length) return;
+    document.getElementById('rg-list').innerHTML = groups.map(function (p) {
+      return '<li class="project-item">' +
+        '<div class="project-meta">' +
+          '<a href="' + esc(p.href) + '" class="project-name-link"><span class="project-name">' + esc(p.title) + '</span></a>' +
+          '<span class="project-status status-active">Active</span>' +
+        '</div>' +
+        (p.description ? '<div class="project-description md">' + PIMarkdown.html(PIMarkdown.abstract(p.description)) + '</div>' : '') +
+        hostsHtml(p.hosts || []) +
+        '<p class="sig-schedule" data-sig="' + esc(p.slug) + '">No meetings scheduled yet</p>' +
+        '<p><a href="' + esc(p.href) + '" class="project-link">' + esc(p.title) + ' home &#8594;</a></p>' +
+      '</li>';
+    }).join('');
+    window.PISigSchedule();
+  }).catch(function () {});
+}());
+</script>
 </body>
 </html>

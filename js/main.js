@@ -200,10 +200,10 @@ var FOOTER_HTML =
   });
 }());
 
-// SIG meeting schedule — populates [data-sig] elements from /data/sig-meetings.json
+// SIG meeting schedule — populates [data-sig] elements from /data/sig-meetings.json.
+// Runs on load; pages that render [data-sig] elements later (the Research Groups
+// index, built from /api/programs) call window.PISigSchedule() again.
 (function () {
-  var els = document.querySelectorAll('[data-sig]');
-  if (!els.length) return;
 
   var MONTHS = ['January','February','March','April','May','June',
                 'July','August','September','October','November','December'];
@@ -248,16 +248,21 @@ var FOOTER_HTML =
            ' Next meeting on ' + nextStr + ', <a href="/events#sig-' + slug + '">view calendar entry</a>.';
   }
 
-  fetch('/data/sig-meetings.json')
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-    .then(function (data) {
+  var meetings = null;
+  function fill() {
+    var els = document.querySelectorAll('[data-sig]');
+    if (!els.length) return;
+    meetings = meetings || fetch('/data/sig-meetings.json').then(function (r) { return r.ok ? r.json() : Promise.reject(); });
+    meetings.then(function (data) {
       els.forEach(function (el) {
         var slug = el.getAttribute('data-sig');
         var sig = data.sigs && data.sigs[slug];
         if (sig) el.innerHTML = fmt(sig, slug);
       });
-    })
-    .catch(function () {});
+    }).catch(function () {});
+  }
+  window.PISigSchedule = fill;
+  fill();
 }());
 
 // Shared helpers for pages that show user-written content (Session 56).
@@ -271,7 +276,7 @@ var FOOTER_HTML =
 // the top right of the page's .page-header. Callers decide who sees it; the
 // server re-checks on every write.
 (function () {
-  var MD_SRC = '/js/markdown.js?v=56';
+  var MD_SRC = '/js/markdown.js?v=58';
   var mdPromise = null;
   function markdown() {
     if (!mdPromise) {
@@ -445,7 +450,7 @@ var FOOTER_HTML =
     });
     window.PI.markdown().catch(function () { return null; }).then(function (md) {
       var projectItems = projects.map(function (p) {
-        var desc = clamp(md ? md.text(p.description) : p.description, 150);
+        var desc = clamp(md ? md.text(md.abstract(p.description)) : p.description, 150);
         return '<li><a href="/projects/project?slug=' + encodeURIComponent(p.slug) + '">' + esc(p.title) + '</a>' +
           (desc ? ' &mdash; ' + esc(desc) : '') +
           (p.url ? ' <span class="sig-project-artifact">(' + extLink(p.url, 'artifact') + ')</span>' : '') + '</li>';

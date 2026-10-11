@@ -6,7 +6,7 @@
   <title>Research Roadmap 2027 — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute's 2027 research prospectus: projects proposed by its research groups on how AI and protocols are transforming each other.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=61">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -51,7 +51,7 @@
 
 <script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
 <script>
 // The prospectus is every project with an approved tag on the Research Roadmap's
 // 2027 edition (moderated: a member's tag waits for a roadmap host or admin),
@@ -67,7 +67,7 @@
 
   const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
   const person = (slug, name) => `<a href="${R.profileHref(slug)}">${esc(name || slug)}</a>`;
-  const abstractOf = md => String(md || '').trim().split(/\n\s*\n/)[0];
+  const abstractOf = PIMarkdown.abstract;
 
   Promise.all([
     fetch('/api/programs/' + PROGRAM).then(r => r.ok ? r.json() : Promise.reject(r.status)),

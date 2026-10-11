@@ -6,7 +6,7 @@
   <title>Protocol Institute Network — The Protocol Institute</title>
   <meta name="description" content="A network of organizations engaged in research, application, education, or scene-making related to protocols and protocolization.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -20,6 +20,9 @@
       <div class="page-header">
         <h1>Protocol Institute Network</h1>
       </div>
+      <!-- Body is managed_pages static/network (migration 057), edited by admins at
+           /pages/edit?key=static/network. This HTML is the fallback if the fetch fails. -->
+      <div data-page-key="static/network" data-edit="header">
 
       <div class="network-intro">
 
@@ -76,7 +79,7 @@
         </div>
 
       </div>
-
+      </div>
 
     </div>
   </main>
@@ -95,5 +98,42 @@
 </div>
 
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script>
+// The markdown (managed_pages static/network) is intro paragraphs, then one card per
+// "### Org name" heading: an optional logo image, *parent org* in italics, a
+// description, and a line starting "Contact:". Rebuild the intro + card grid from it.
+document.querySelector('[data-page-key="static/network"]').addEventListener('pageblock:render', function () {
+  var block = this;
+  var intro = document.createElement('div'); intro.className = 'network-intro';
+  var grid = document.createElement('div'); grid.className = 'network-grid';
+  var card = null;
+  Array.from(block.children).forEach(function (el) {
+    if (el.classList.contains('page-edit-link')) return;
+    if (el.tagName === 'H3') {
+      card = document.createElement('div'); card.className = 'network-card';
+      var org = document.createElement('div'); org.className = 'network-org';
+      org.innerHTML = el.innerHTML;
+      card.appendChild(org);
+      grid.appendChild(card);
+      return;
+    }
+    if (!card) { intro.appendChild(el); return; }
+    var text = el.textContent.trim();
+    var only = el.children.length === 1 && text === el.children[0].textContent.trim() ? el.children[0] : null;
+    if (only && only.tagName === 'IMG') {
+      el.className = 'network-logo';
+      card.insertBefore(el, card.firstChild);
+      return;
+    }
+    el.className = only && only.tagName === 'EM' ? 'network-parent'
+      : /^Contact:/.test(text) ? 'network-contact' : 'network-desc';
+    card.appendChild(el);
+  });
+  block.classList.remove('md');
+  block.replaceChildren(intro, grid);
+});
+</script>
+<script src="/js/page-blocks.js?v=58"></script>
 </body>
 </html>

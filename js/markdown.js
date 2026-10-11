@@ -10,6 +10,12 @@
 //   PIMarkdown.html(md)    -> html, sync     (call after load())
 //   PIMarkdown.inline(md)  -> html, sync     (no <p> wrapper — bylines, one-liners)
 //   PIMarkdown.text(md)    -> plain text     (for clamped excerpts and titles)
+//   PIMarkdown.abstract(md) -> markdown      (the first paragraph — see below)
+//
+// Abstract policy (Session 58): a project's, challenge's or program's summary in
+// any listing is the first paragraph of its description, so there is no separate
+// summary field to keep in step. Editors say so under the description box.
+// Headings and image-only lines at the top are skipped.
 //
 // marked parses, DOMPurify sanitizes: editors are ordinary members and the
 // site CSP allows inline script, so raw HTML in markdown must never reach the
@@ -88,9 +94,19 @@
     return (doc.body.textContent || '').replace(/\s+/g, ' ').trim();
   }
 
+  function abstract(md) {
+    var blocks = String(md || '').trim().split(/\n\s*\n/);
+    for (var i = 0; i < blocks.length; i++) {
+      var b = blocks[i].trim();
+      if (!b || /^#{1,6}\s/.test(b) || /^!\[[^\]]*\]\([^)]*\)$/.test(b)) continue;
+      return b;
+    }
+    return '';
+  }
+
   function render(md) {
     return load().then(function () { return html(md); });
   }
 
-  window.PIMarkdown = { load: load, render: render, html: html, inline: inline, text: text };
+  window.PIMarkdown = { load: load, render: render, html: html, inline: inline, text: text, abstract: abstract };
 }());

@@ -6,7 +6,7 @@
   <title>Projects — The Protocol Institute</title>
   <meta name="description" content="Community research projects at the Protocol Institute, and the open challenges they respond to.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
   <style>
     .research-intro { color: #3A3A3A; line-height: 1.7; margin-bottom: 1.75rem; }
     .research-intro a { color: #2A6B6B; }
@@ -70,7 +70,7 @@
         <h1>Projects</h1>
       </div>
 
-      <div class="research-intro">
+      <div class="research-intro" data-page-key="static/research">
         <p>Community projects that extend a research group's work, respond to an open challenge, or stand independently — alongside open research challenges in the spirit of Erdős problems and Grand Challenges: problems worth making progress on, not problems to be closed.</p>
         <p>For the projects our research groups propose for 2027, see the <a href="/programs/research-roadmap/2027">Research Roadmap 2027</a>.</p>
       </div>
@@ -81,7 +81,7 @@
       </div>
 
       <div id="view-challenges" role="tabpanel" aria-labelledby="tab-challenges" hidden>
-        <p class="projects-intro">Logged in PI members can add problems. If you're not a member, you can <a href="mailto:team@protocol-institute.org">email a member</a> to suggest a problem.</p>
+        <div class="projects-intro" data-page-key="static/research-challenges"><p>Logged in PI members can add problems. If you're not a member, you can <a href="mailto:team@protocol-institute.org">email a member</a> to suggest a problem.</p></div>
 
         <div id="challenge-form-region"></div>
 
@@ -91,7 +91,7 @@
       </div>
 
       <div id="view-projects" role="tabpanel" aria-labelledby="tab-projects">
-        <p class="projects-intro">Projects that produce specific artifacts — documents, tools, websites, or other outputs — led by an individual or a team, aligned with a research group or independent.</p>
+        <div class="projects-intro" data-page-key="static/research-projects"><p>Projects that produce specific artifacts — documents, tools, websites, or other outputs — led by an individual or a team, aligned with a research group or independent.</p></div>
 
         <div id="submit-cta" class="submit-cta" style="display:none;">
           <a href="/projects/submit" class="form-btn form-btn--inline">Submit a project</a>
@@ -122,7 +122,8 @@
 
 <script src="/js/main.js"></script>
 <script src="/js/research.js?v=54"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/page-blocks.js?v=58"></script>
 <script src="/js/md-editor.js?v=56"></script>
 <script>
 (function () {
@@ -177,6 +178,15 @@
     return `Posed by <strong>${posed}</strong> &middot; Communicated by <strong>${comm}</strong>`;
   }
 
+
+  // A challenge has no page of its own, so its card holds the whole description:
+  // the first paragraph (the abstract, as in every listing) with the rest folded.
+  function descriptionHtml(md) {
+    const abstract = PIMarkdown.abstract(md);
+    const rest = String(md || '').trim().replace(abstract, '').trim();
+    return `<div class="entity-description md">${PIMarkdown.html(abstract)}` +
+      (rest ? `<details class="entity-more"><summary>More</summary>${PIMarkdown.html(rest)}</details>` : '') + '</div>';
+  }
   function renderChallengeCard(c, isAdmin) {
     const votedByMe = c.voted_by_me || R.anonVotedSet('pi_chal_voted').has(c.id);
     const value = R.value(c.seed_interesting ?? 1, c.anon_interesting || 0, c.member_interesting || 0);
@@ -204,7 +214,7 @@
           <h2 class="entity-title">${R.escHtml(c.title)}<a href="#challenge-${c.id}" class="entity-permalink" title="Permalink">#</a></h2>
           <span class="challenge-difficulty"><strong>${c.difficulty}</strong>${label}</span>
         </div>
-        <div class="entity-description md">${PIMarkdown.html(c.description)}</div>
+        ${descriptionHtml(c.description)}
         ${respondingRow}
         <div class="entity-footer">
           <div>
@@ -315,6 +325,7 @@
           <div class="challenge-field"><label for="cf-title">Title</label><input type="text" id="cf-title" maxlength="200" required></div>
           <div class="challenge-field">
             <label for="cf-description">Description</label>
+            <p class="form-hint">The first paragraph is shown on the card; anything after it folds under "More".</p>
             <textarea id="cf-description" maxlength="3000" required></textarea>
           </div>
           <div class="challenge-field">
@@ -435,7 +446,7 @@
           ${versionTag}
           ${programTags}
         </div>
-        <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
+        <div class="entity-description md">${PIMarkdown.html(PIMarkdown.abstract(p.description))}</div>
         ${respondsRow}
         <div class="entity-footer">
           <div>

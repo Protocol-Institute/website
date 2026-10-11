@@ -6,7 +6,7 @@
   <title>Events — The Protocol Institute</title>
   <meta name="description" content="Protocol Institute event calendar and history — research group meetings, symposia, workshops, and residential gatherings.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
   <style>
     .cal-note {
       font-size: 0.82rem;
@@ -47,20 +47,20 @@
 
       <div id="view-calendar" role="tabpanel" aria-labelledby="tab-calendar">
 
-        <p class="events-intro">Research group meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p>
+        <div class="events-intro" data-page-key="static/events-calendar"><p>Research group meetings and Institute events coming up, soonest first. Use a listing's calendar link to add just that event.</p></div>
 
         <p class="cal-subscribe-links"><a href="https://calendar.google.com/calendar/u/0?cid=c2lnc0Bwcm90b2NvbC1pbnN0aXR1dGUub3Jn" target="_blank" rel="noopener">Subscribe to Community Calendar</a> &middot; <a href="https://calendar.google.com/calendar/u/0?cid=Y18zOTA2NGJkMzQ2OTU0YjczODM1NTQ1YzIxZGQxM2Y4MTI3MDBiNDRjMGZiYjA3MjNmMzkwMjExNDczZGRlZDVjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20" target="_blank" rel="noopener">Subscribe to Institute Calendar</a></p>
 
         <p class="events-loading" id="upcoming-loading">Loading&hellip;</p>
         <ul class="cal-list" id="upcoming-list"></ul>
 
-        <p class="cal-note">To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p>
+        <div class="cal-note" data-page-key="static/events-calendar-note"><p>To add an event to the community calendar, organize it on your personal calendar, invite <a href="mailto:sigs@protocol-institute.org">sigs@protocol-institute.org</a> to it, and make a Discord event for it if appropriate. Contact Timber for any issues.</p></div>
 
       </div><!-- #view-calendar -->
 
       <div id="view-history" role="tabpanel" aria-labelledby="tab-history" hidden>
 
-        <p class="events-intro">Symposia, workshops, and residential gatherings organized by the Protocol Institute and its predecessor program, the Summer of Protocols.</p>
+        <div class="events-intro" data-page-key="static/events-history"><p>Symposia, workshops, and residential gatherings organized by the Protocol Institute and its predecessor program, the Summer of Protocols.</p></div>
 
         <p class="events-loading" id="events-loading">Loading&hellip;</p>
         <ul class="event-list" id="event-list"></ul>
@@ -76,6 +76,8 @@
 
 <script src="/js/sig-meta.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/page-blocks.js?v=58"></script>
 <script>
 (function () {
   var tabCal   = document.getElementById('tab-calendar');

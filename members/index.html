@@ -6,7 +6,7 @@
   <title>Members — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute member directory — researchers, practitioners, and participants in the PI ecosystem.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=59">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
         <h1>Members</h1>
       </div>
 
-      <div class="members-intro">
+      <div class="members-intro" data-page-key="static/members">
         <p>Participants in the Protocol Institute ecosystem — researchers, practitioners, and collaborators who have taken part in PI programs and activities. Membership is available to individuals who have participated in qualifying PI events.</p>
       </div>
 
@@ -68,7 +68,8 @@
 
 <script src="/js/tags.js"></script>
 <script src="/js/main.js"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/page-blocks.js?v=58"></script>
 <script>
 (function () {
   const TAG_LABELS = PI_TAGS.LABELS;
@@ -208,11 +209,18 @@
     </li>`;
   }
 
+  // Each filter's blurb is admin-editable markdown, managed_pages
+  // static/members-<filter> (underscores as hyphens, migration 057); the text
+  // above is the fallback shown until it loads or if the fetch fails.
   function setBlurb(filter) {
     const blurb = document.getElementById('filter-blurb');
     const text = FILTER_BLURBS[filter] || '';
+    blurb.classList.remove('md', 'page-block--editable');
     blurb.innerHTML = text;
     blurb.classList.toggle('visible', !!text);
+    if (!text) { blurb.removeAttribute('data-page-key'); return; }
+    blurb.setAttribute('data-page-key', 'static/members-' + filter.replace(/_/g, '-'));
+    PIPageBlocks.render(blurb);
   }
 
   function render(members, filter) {

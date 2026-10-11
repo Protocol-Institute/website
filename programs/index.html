@@ -6,7 +6,7 @@
   <title>Programs — The Protocol Institute</title>
   <meta name="description" content="Programs and research activities of the Protocol Institute.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
       </div>
 
       <div id="view-hierarchical" role="tabpanel" aria-labelledby="tab-hierarchical">
-        <p class="programs-intro">The Institute's work is organized into <strong>areas</strong>, each holding <strong>programs</strong> — research groups, initiatives, events, workshops and courses. Each program has its own page listing its editions and the projects tagged to it.</p>
+        <div class="programs-intro" data-page-key="static/programs"><p>The Institute's work is organized into <strong>areas</strong>, each holding <strong>programs</strong> — research groups, initiatives, events, workshops and courses. Each program has its own page listing its editions and the projects tagged to it.</p></div>
 
         <!-- Rendered from /api/programs?detail=1 (areas > programs, programs/PLAN.md). The list
              below is a fallback for when the API fails — edit programs in /programs/edit, not here. -->
@@ -166,7 +166,8 @@
 </div>
 
 <script src="/js/main.js"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/page-blocks.js?v=58"></script>
 <script>
 (function () {
   var KINDS = [
@@ -255,11 +256,6 @@
     return '<a href="' + escHtml(href) + '"' + (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + escHtml(text) + '</a>';
   }
 
-  function firstSentence(md) {
-    var t = PIMarkdown.text(md);
-    var m = t.match(/^.*?[.!?](?=\s|$)/);
-    return (m ? m[0] : t).replace(/[.!?]$/, '');
-  }
 
   function editionLabel(e, p) {
     var t = e.title || e.slug;
@@ -270,7 +266,7 @@
   function programItem(p) {
     var eds = p.editions || [];
     var upcoming = eds.some(function (e) { return e.status === 'planned' || e.status === 'active'; });
-    var desc = p.description ? firstSentence(p.description) : '';
+    var desc = p.description ? PIMarkdown.text(PIMarkdown.abstract(p.description)).replace(/[.!?]$/, '') : '';
     var html = '<li>' + linkHtml(p.href, p.short_title || p.title) +
       (desc ? ' <span class="track-sep">&mdash;</span> ' + escHtml(desc) : '') +
       (p.status === 'past' ? ' <span class="track-soon">past</span>' : upcoming ? ' <span class="track-soon">upcoming</span>' : '');

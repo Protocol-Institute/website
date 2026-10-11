@@ -6,7 +6,7 @@
   <title>Edit Page — The Protocol Institute</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -47,13 +47,14 @@
 </div>
 
 <script src="/js/main.js"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
 <script src="/js/md-editor.js?v=56"></script>
 <script>
 // /pages/edit?key=<page_key> — admin editor for the site's standalone markdown
-// pages (managed_pages rows outside any program: static/about, static/support).
+// pages and page blocks (managed_pages rows outside any program, static/<name>).
 // Program About pages are edited in /programs/edit instead. Viewer side:
-// js/managed-page.js, which shows admins the Edit link that leads here.
+// js/managed-page.js (About, Support Us) and js/page-blocks.js (everything else,
+// migration 057), both of which show admins the Edit link that leads here.
 (function () {
   const $ = id => document.getElementById(id);
   const key = new URLSearchParams(location.search).get('key') || '';
@@ -61,6 +62,33 @@
   const PAGES = {
     'static/about':   { title: 'About',      href: '/about' },
     'static/support': { title: 'Support Us', href: '/support' },
+    "static/home": { title: "Home", href: "/" },
+    "static/contact": { title: "Contact", href: "/contact" },
+    "static/network": { title: "Network", href: "/network" },
+    "static/workshops": { title: "Corporate Workshops", href: "/workshops" },
+    "static/humboldt": { title: "Humboldt", href: "/humboldt" },
+    "static/license": { title: "CC+ License", href: "/license" },
+    "static/consulting-policies": { title: "Consulting Network Policies", href: "/consulting/policies" },
+    "static/events-calendar": { title: "Events — Calendar intro", href: "/events" },
+    "static/events-calendar-note": { title: "Events — Calendar note", href: "/events" },
+    "static/events-history": { title: "Events — History intro", href: "/events?view=history" },
+    "static/research": { title: "Projects — intro", href: "/research" },
+    "static/research-projects": { title: "Projects — Projects tab intro", href: "/research" },
+    "static/research-challenges": { title: "Projects — Challenges tab intro", href: "/research?view=challenges" },
+    "static/programs": { title: "Programs — intro", href: "/programs" },
+    "static/members": { title: "Members — intro", href: "/members" },
+    "static/research-groups": { title: "Research Groups — intro", href: "/research-groups" },
+    "static/members-team": { title: "Members — Team blurb", href: "/members?filter=team" },
+    "static/members-extended-team": { title: "Members — Extended Team blurb", href: "/members?filter=extended_team" },
+    "static/members-community-lead": { title: "Members — Research Leads blurb", href: "/members?filter=community_lead" },
+    "static/members-consultant": { title: "Members — Consultants blurb", href: "/members?filter=consultant" },
+    "static/members-tag-sop23": { title: "Members — SoP '23 blurb", href: "/members?filter=tag_sop23" },
+    "static/members-tag-sop24": { title: "Members — SoP '24 blurb", href: "/members?filter=tag_sop24" },
+    "static/members-tag-sop25": { title: "Members — SoP '25 blurb", href: "/members?filter=tag_sop25" },
+    "static/members-tag-ps25": { title: "Members — Protocol School 2025 blurb", href: "/members?filter=tag_ps25" },
+    "static/members-tag-sig": { title: "Members — Researchers blurb", href: "/members?filter=tag_sig" },
+    "static/members-tag-symposium-25": { title: "Members — Symposium 2025 blurb", href: "/members?filter=tag_symposium_25" },
+    "static/members-tag-guest-speaker": { title: "Members — Guest Speakers blurb", href: "/members?filter=tag_guest_speaker" },
   };
   const page = PAGES[key] || { title: key, href: '/' };
 

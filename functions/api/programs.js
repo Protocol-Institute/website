@@ -2,8 +2,8 @@
 // GET /api/programs — public: every area, program and edition, for the project
 // affiliation picker, the program pages and /operations. A program's realm
 // ('research' | 'admin') is its primary area's. See programs/PLAN.md.
-// ?detail=1 adds each program's links and approved projects (slug + title) —
-// what /programs renders; left off by default to keep the picker's payload small.
+// ?detail=1 adds each program's links, approved projects (slug + title) and hosts
+// (slug + name) — what /programs and /research-groups render; left off by default to keep the picker's payload small.
 
 import { getSession } from '../_shared/session.js';
 import { programHref, memberForSession, PROGRAM_KINDS, SLUG_RE } from '../_shared/programs.js';
@@ -31,9 +31,9 @@ export async function onRequestGet({ request, env }) {
       `).all(),
     ]);
 
-    const linksByProgram = {}, projectsByProgram = {};
+    const linksByProgram = {}, projectsByProgram = {}, hostsByProgram = {};
     if (detail) {
-      const [plinks, projects] = await Promise.all([
+      const [plinks, projects, hosts] = await Promise.all([
         env.DB.prepare('SELECT program_slug, kind, label, url, note FROM program_links ORDER BY sort_order, id').all(),
         env.DB.prepare(`
           SELECT pp.program_slug, p.slug, p.title
@@ -41,12 +41,20 @@ export async function onRequestGet({ request, env }) {
           WHERE pp.status = 'approved' AND p.status = 'approved'
           ORDER BY p.title
         `).all(),
+        env.DB.prepare(`
+          SELECT h.program_slug, h.member_slug AS slug, m.name
+          FROM program_hosts h LEFT JOIN members m ON m.slug = h.member_slug
+          ORDER BY h.rowid
+        `).all(),
       ]);
       for (const l of plinks.results || []) {
         (linksByProgram[l.program_slug] ||= []).push({ kind: l.kind, label: l.label, url: l.url, note: l.note });
       }
       for (const p of projects.results || []) {
         (projectsByProgram[p.program_slug] ||= []).push({ slug: p.slug, title: p.title });
+      }
+      for (const h of hosts.results || []) {
+        (hostsByProgram[h.program_slug] ||= []).push({ slug: h.slug, name: h.name || h.slug });
       }
     }
 
@@ -78,7 +86,8 @@ export async function onRequestGet({ request, env }) {
         areas: areasByProgram[p.slug] || [],
         editions: editionsByProgram[p.slug] || [],
         project_count: countBy[p.slug] || 0,
-        ...(detail ? { links: linksByProgram[p.slug] || [], projects: projectsByProgram[p.slug] || [] } : {}),
+        ...(detail ? { links: linksByProgram[p.slug] || [], projects: projectsByProgram[p.slug] || [],
+                    hosts: hostsByProgram[p.slug] || [] } : {}),
       })),
     });
   } catch (err) {

@@ -6,7 +6,7 @@
   <title>Program — The Protocol Institute</title>
   <meta name="description" content="A Protocol Institute program, its editions and its projects.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=58">
 </head>
 <body>
 
@@ -67,7 +67,7 @@
 
 <script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
-<script src="/js/markdown.js?v=56"></script>
+<script src="/js/markdown.js?v=58"></script>
 <script>
 (function () {
   const esc = window.PI_RESEARCH.escHtml;
@@ -165,7 +165,7 @@
                           : edition ? esc(edition.title) : '';
             return `<li class="entity-card">
               <h2 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(pr.slug)}">${esc(pr.title)}</a></h2>
-              <div class="entity-description md">${PIMarkdown.html(pr.description)}</div>
+              <div class="entity-description md">${PIMarkdown.html(PIMarkdown.abstract(pr.description))}</div>
               <div class="entity-meta">Lead: <a href="${window.PI_RESEARCH.profileHref(pr.lead_slug)}">${esc(pr.lead_name || pr.lead_slug)}</a>${context ? ' &middot; ' + context : ''}</div>
             </li>`;
       };
