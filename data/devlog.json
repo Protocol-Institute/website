@@ -2204,6 +2204,56 @@
           "html": "All applied to prod by hand, each after a <code>wrangler d1 export</code> backup in <code>backups/</code>, and each tested first against a local prod clone (sqlite3 into the miniflare file). 045 roadmap seed; 046 /research-groups page_urls; 047 Blygger; 048 project image; 049 Protocolized/Monstrous Times; 050 ProtFiSIG; 051 team order + PIBot; 052 Research Leads; 053 About/Support pages; 054 bylines; 055 Mathematical Science on the roadmap."
         }
       ]
+    },
+    {
+      "id": 58,
+      "sort_key": 58.0,
+      "label": "Session 58",
+      "title": "Everything editable; first-paragraph abstracts; Book type; cogergo split out",
+      "date": "2026-10-11",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "content",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Every hand-written page is admin-editable (page blocks, migration 057)",
+          "html": "New <code>js/page-blocks.js</code> generalises the Session 57 About/Support mechanism to any element carrying <code>data-page-key=\"static/&lt;name&gt;\"</code>: it fills the block from <code>managed_pages</code>, leaves the HTML as the fallback when there is no row or the fetch fails, and gives admins an Edit link (in the page header for whole pages, on the block otherwise) to <code>/pages/edit</code>. 27 keys were seeded mechanically from the live HTML (markdownify; classed elements such as the home banner and contact email kept as raw HTML so they keep their styling): whole pages home, contact, network, workshops, humboldt, license, consulting-policies; intro blocks on research groups, events, projects, programs and members, and one blurb per members filter. Program About pages stay on <code>managed-page.js</code> because they are host-editable through the program editor; <code>static/*</code> is admin-only. Network is the one structured page: each <code>### Org</code> section is a card and the page rebuilds the grid on <code>pageblock:render</code> — a convention, not a schema, chosen over a network_orgs table to keep one editing model."
+        },
+        {
+          "title": "Abstract policy: the first paragraph is the summary",
+          "html": "Listings disagreed (roadmap: first paragraph; /research: whole description; group pages: 150-char clip; /programs: first sentence). Now one rule, <code>PIMarkdown.abstract(md)</code> (first block that is not a heading or a lone image), used by /research, the roadmap, program pages, /operations, /programs and research group pages. No separate summary column — it would drift from the description and needs D1 work on <code>projects</code>. Challenges have no page of their own, so their cards fold the remainder under a <code>&lt;details&gt;</code> \"More\". Editors carry a hint. markdown.js moved to <code>?v=58</code> site-wide (4h JS cache)."
+        },
+        {
+          "title": "/programs and /research-groups render from D1",
+          "html": "<code>GET /api/programs?detail=1</code> (opt-in, so the tag picker's payload is unchanged) adds each program's links, approved projects and hosts. /programs groups research-realm areas &gt; programs by kind with channels, editions and up to 6 projects; the Flattened view still derives from the rendered DOM. /research-groups lists kind-'sig' programs with the blurb abstract and \"Led by\" from <code>program_hosts</code>, retiring hard-coded profile links; <code>main.js</code>'s meeting-schedule filler became re-runnable (<code>window.PISigSchedule</code>). Both pages keep the old hand-written list as the API-failure fallback."
+        },
+        {
+          "title": "Book artifact type without touching the CHECK (migration 058)",
+          "html": "<code>projects.artifact_type</code>'s CHECK can't be widened on D1 (projects is an FK parent; see the Session 57 programs.kind attempts). New column <code>artifact_kind</code> holds the full list (<code>functions/_shared/artifacts.js</code>, now incl. <code>book</code>); <code>artifact_type</code> keeps a CHECK-valid fallback (book&rarr;text). The API reads artifact_kind first and returns it <em>as</em> artifact_type, so no page changed its field. PiBoWriMo's project New Nature became a Book."
+        },
+        {
+          "title": "Tag picker limited to programs taking new projects (migration 058)",
+          "html": "The picker listed all 29 programs; its \"— open\" suffix described the tagging policy but read as \"open event\". New <code>programs.accepts_tags</code>; the picker offers programs with status 'active' AND accepts_tags (17), plus any closed program the project already carries, and <code>validateAffiliations</code> refuses new tags to the rest while keeping existing ones (it now takes the project's current slugs). The Edge City and Traditional Protocols series and the five 2026 symposium workshops were set past; Research Index (the /research page itself) closed to tags; Summer of Protocols was already past. The program editor's Tagging select gained \"Closed — no new tags\". Moderated programs show \"— needs approval\"."
+        },
+        {
+          "title": "Pre-programs schema dropped (migration 056)",
+          "html": "The cleanup planned as 041 in Session 54: <code>projects.sig_slug/program/sub_program/themes</code>, <code>members.is_sig_host/sig_host_slugs</code> and the <code>sig_links</code> table. Verified first that every old value had a project_programs/program_links/program_hosts equivalent; none was indexed or constrained, so plain DROP COLUMN worked (no rebuild). The temporary <code>/api/sigs/links</code> alias went with it."
+        },
+        {
+          "title": "cogergo split out of this repo",
+          "html": "<code>cogergo/</code> was a subfolder deployed by a separate Pages project — which turned out to be upload-only (never Git-connected, last deploy June) — while the main site's own deploy published a stray copy at <code>/cogergo/</code>, functions source included (no secrets). It is now <code>Protocol-Institute/cogergo</code> (git subtree split, history kept; peer folder <code>../cogergo</code>) for handover to its own maintainer, deploying through a new Git-connected Pages project <code>cogergo-site</code>; this repo 301s <code>/cogergo/*</code> to the subdomain. It still shares <code>pi-members</code> (its three tables, migration 012) and the Institute login cookie. The custom-domain move needs a DNS change the API tokens can't make; the site was 522 at session end pending it. Also: admin-panel bio fields and cogergo's text fields moved to the markdown editor/renderer, and the program editor's About \"View\" link goes to PiBoWriMo's and the Roadmap's own pages."
+        },
+        {
+          "title": "c3po PR #19 — first under the new paths",
+          "html": "Reviewed against the post-rename checklist (only <code>research-groups/</code>, <code>/research-groups/</code> links, patched not recreated, counts, 7-day grace) and merged. c3po#8/#9 remain open in pibot; PR #19 rendered only new meetings, so confirming them needs a pibot fix plus a deliberate re-render of the affected past pages."
+        }
+      ]
     }
   ]
 }
