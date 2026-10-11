@@ -83,7 +83,7 @@
     },
     "some-candidate-laws-of-new-nature": {
       "resource_url": "https://protocolized.io/resources/some-candidate-laws-of-new-nature",
-      "slides": 0,
+      "slides": 1,
       "transcript": true
     },
     "southeast-asia-discussion": {
@@ -208,8 +208,13 @@
     },
     "talk-venkatesh-blygger-ai-native-decentralized": {
       "resource_url": "https://protocolized.io/resources/blygger-ai-native-decentralized-mutable-publishing",
-      "slides": 0,
+      "slides": 1,
       "transcript": true
+    },
+    "talk-venkatesh-building-archival-selves": {
+      "resource_url": "https://protocolized.io/resources/artisanal-bots-with-protocolized-rag",
+      "slides": 1,
+      "transcript": false
     },
     "talk-william-the-role-of-identity-in-decent": {
       "resource_url": "https://protocolized.io/resources/the-role-of-identity-in-decentralized-dispute-resolution-protocols",
