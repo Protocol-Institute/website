@@ -2153,6 +2153,57 @@
           "html": "A text banner (<code>.home-banner</code>) for PiBoWriMo 2026 linking to its page, and a \"New! Protocol Symposium videos\" notice (<code>.home-notice</code>) linking to the archive. Both are time-boxed hand edits in <code>index.html</code>."
         }
       ]
+    },
+    {
+      "id": 57,
+      "sort_key": 57.0,
+      "label": "Session 57",
+      "title": "Research Roadmap 2027, SIGs renamed Research Groups, project images, nav and members restructure",
+      "date": "2026-10-10",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "content",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Research Roadmap 2027 — built as an initiative, not a new kind",
+          "html": "Phase 4 of <code>programs/PLAN.md</code>. Program <code>research-roadmap</code> with year editions (2027), moderated inclusion, Venkat as host; prospectus at <code>/programs/research-roadmap/2027</code>, intro = the program's About page. Seeded from the 2027 prospectus Google Doc (migration 045): 7 stub projects, each led by its first-named PI with co-PIs as approved team members; Cognitive Ergonomics moved MRG &rarr; SIGPfB; Blygger (047) and Toward a Mathematical Science of Protocols (055) added later — 10 projects. <strong>The planned <code>roadmap</code> kind was dropped:</strong> widening <code>programs.kind</code>'s CHECK needs a table rebuild, and with five tables holding FKs to <code>programs(slug)</code> D1 rejected every recipe — copy/drop/rename trips deferred FK counters at COMMIT, and rename-first rewrites the children's REFERENCES even with <code>legacy_alter_table</code> (D1 runs with foreign keys always on). A copy-aside/drop/rename-empty/reinsert recipe passed plain sqlite3 but still failed on D1 (rolled back cleanly). An indefinitely extended program is what <code>initiative</code> already means. Also learned: D1 caps compound-SELECT terms — an 8-way <code>UNION ALL</code> failed; use <code>CASE</code>. Open calls resolved: no per-inclusion note (the description's first paragraph is the blurb), no money in D1. Known limit, accepted: <code>project_programs</code> is keyed (project, program), so a project holds one roadmap year."
+        },
+        {
+          "title": "Prospectus page: flat title index, draft notice",
+          "html": "First built grouped by research group (SIG sort order); Venkat found that clunky, so it is now one alphabetical list. Each card: title, principal investigator(s) (lead + approved team, linked), research group line, first paragraph of the description, project-page link. A hand-written amber <code>.draft-banner</code> notice — &ldquo;Draft: Will be finalized by January 1, 2027&rdquo; — sits under the &ldquo;Hosted by&rdquo; byline; status.md tracks removing it."
+        },
+        {
+          "title": "Special Interest Groups renamed Research Groups; /sigs moved to /research-groups",
+          "html": "The class name changes in every UI string; individual group names (SIGFPT, SIGPfB, ProtFiSIG, SIGPSY's full name) and c3po-generated meeting text are untouched; internal identifiers keep <code>sig</code> (<code>programs.kind</code>, slugs, <code>PI_SIGS</code>, <code>tag_sig</code>, managed-page keys <code>sigs/&lt;slug&gt;/about</code>). The rule is in CLAUDE.md. Pages moved with <code>git mv</code> and <code>/sigs</code>, <code>/sigs/*</code> 301 to the new paths; the subscribed <code>/calendar/sigs/*.ics</code> feeds deliberately stayed put. Migration 046 repointed D1 page_urls. Cross-repo: c3po (now <code>Protocol-Institute/pibot</code>) writes into this tree, so pibot#11 moved its output paths and <strong>pinned Pinecone vector ids to the pre-rename URL via <code>legacy_key()</code></strong> so the move upserts in place instead of duplicating every meeting vector. Order mattered: website first, then pibot — otherwise the generator can't find the index pages and rebuilds them from its fallback template. Gotchas: the link rewrite normalised CRLF in the .ics files (caught, redone byte-preserving); <code>git mv</code> of a directory carried gitignored legacy flat pages into the new dir, where the ignore patterns no longer matched."
+        },
+        {
+          "title": "Optional project image",
+          "html": "<code>projects.image_key</code> (048). The editor centre-crops to 16:9 in a canvas and re-encodes JPEG (max 1600&times;900, min 640 wide) so the preview is exactly what's stored; it uploads after the project saves, which lets new projects have one, and a retry after a failed upload edits the saved project rather than creating a second. <code>POST /api/projects/&lt;slug&gt;/image</code>: lead/admin, JPEG/PNG/WebP &le; 3 MB, no SVG; R2 key changes per upload (no asset-cache staleness) and the old object is deleted; <code>{remove:true}</code> clears. APIs expose <code>image_url</code>, never the key. Shown in a fixed 16:9 slot under the project header; nothing rendered without one."
+        },
+        {
+          "title": "Navigation and members directory",
+          "html": "Bar: Research Groups &middot; Events &middot; Projects &middot; Protocolized &middot; More (Programs, About, Team, Network, Symposium, Contact, Members, Support). <code>/research</code> is titled Projects (URL kept) and opens on Projects; Open Challenges is <code>?view=challenges</code>. Members: <code>team_core</code> + <code>team_sort</code> (051) give Team (Timber, Venkat, Tim) and Extended Team (James, Jenna, Josh, Humboldt, PIBot) in a hand-set order — applied only in those views, after a first attempt that sorted in the API pushed the team to the top of All. C3PO member profile renamed PIBot. Community Leads &rarr; Research Leads (display only; tier stays <code>community_lead</code>), titles &ldquo;SIG Host&rdquo; &rarr; &ldquo;Research Group Host&rdquo;, Sarah Friend added (052). &ldquo;Research Group&rdquo; filter relabelled Researchers — note it is the self-reported <code>tag_sig</code> checkbox, not derived membership; no member&harr;group roster exists. Cohort filters and Consultants sit behind a More toggle that opens itself for deep links."
+        },
+        {
+          "title": "Leads linked everywhere: PI.linkPeople",
+          "html": "Bylines stay free text, but <code>PI.linkPeople(el, hosts)</code> (main.js) links each <code>program_hosts</code> member's name where it appears, walking text nodes and skipping existing links — a host change relinks itself. Used on research-group pages, the generic program page (which now shows bylines at all — Intelligence Media had no visible lead), PiBoWriMo and the roadmap (both given &ldquo;Hosted by&rdquo; bylines, 054). The hand-written Research Groups index links every lead to <code>/members/profile?slug=</code> (was a mix of <code>/team#</code>, <code>/members#</code> and plain text). Matching is by exact member name, so DRG's &ldquo;Anuraj R.&rdquo; was normalised to &ldquo;Anuraj R&rdquo;."
+        },
+        {
+          "title": "Content: Monstrous Times, ProtFiSIG, About and Support",
+          "html": "Monstrous Times (Protocolized's fiction, spun out; ed. Sachin Benny) gets a partner card on <code>/network</code>; Protocolized's blurbs say so (049). ProtFiSIG's mission becomes the theory of protocol fiction as a research methodology for futurism, aligned with its 2027 project; About rewritten, Monstrous Times linked (050). About (refreshed for all of the above) and Support Us are now <code>managed_pages</code> <code>static/about</code> / <code>static/support</code> (053), edited by admins at the new <code>/pages/edit?key=</code>; <code>managed-page.js</code> keeps the page's HTML fallback when no text is stored and routes non-program keys to that editor. PiBoWriMo: artwork banner on the home page and as the event page's header."
+        },
+        {
+          "title": "Migrations 045–055",
+          "html": "All applied to prod by hand, each after a <code>wrangler d1 export</code> backup in <code>backups/</code>, and each tested first against a local prod clone (sqlite3 into the miniflare file). 045 roadmap seed; 046 /research-groups page_urls; 047 Blygger; 048 project image; 049 Protocolized/Monstrous Times; 050 ProtFiSIG; 051 team order + PIBot; 052 Research Leads; 053 About/Support pages; 054 bylines; 055 Mathematical Science on the roadmap."
+        }
+      ]
     }
   ]
 }

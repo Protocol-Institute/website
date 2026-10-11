@@ -38,6 +38,10 @@ programs/           /programs — still hand-written (generating it from D1 is p
                     sigs/<slug>/about for SIGs, programs/<slug>/about for every other kind — shown on the generic program page), links,
                     editions, tags, hosts. Blurb, byline and About save together under one sticky Save bar; lists apply at once
   protocol-school/  /programs/protocol-school — biennial Protocol School program
+  research-roadmap/2027/  /programs/research-roadmap/2027 — Research Roadmap prospectus (program research-roadmap, kind initiative,
+                    editions = years, moderated; migrations 045/047/055). Flat title index of the edition's approved projects:
+                    PIs (lead + team), research group(s), first paragraph of the description as blurb. Intro = program About page;
+                    hand-written "Draft: Will be finalized by January 1, 2027" notice to remove after that date
 operations/         /operations — admin-realm projects (websites etc.). Deliberately low-profile: not in nav, noindex
 tasks/PLAN.md       Stub plan for a volunteer task board + hour logging (not designed/built)
 events/             /events — Calendar tab (upcoming SIG meetings + Institute events, JS-rendered) and Events History tab (data/events.json)
@@ -61,13 +65,17 @@ research/           /research — Challenges + Projects, unified (2 tab views, s
 projects/
   edit/             /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
                     Program/edition tag picker; ?program=&edition=&artifact= deep-link presets. "Add a project" links use /projects/submit
-  project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button)
+  project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button).
+                    Optional 16:9 image under the header (projects.image_key, migration 048) — set from the editor, which crops in the
+                    browser and uploads via functions/api/projects/[slug]/image.js (lead/admin, R2 projects/<slug>/<ts>.jpg)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
 support/            /support — body is managed_pages static/support (admin-editable markdown, Session 57)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)
 license/            /license — CC+ license for SoP23 outputs
-members/            /members — member directory (D1-backed, PIN auth)
+members/            /members — member directory (D1-backed, PIN auth). Filters: All · Team (team_core) · Research Leads (tier community_lead) ·
+                    Researchers (tag_sig, self-reported) · Extended Team (tier team, not core) + More (Consultants, cohorts). Team views
+                    sort by members.team_sort (migration 051); everything else alphabetical
   join/             /members/join — login + registration flow
   edit/             /members/edit?slug= — profile editor (no slug = your own); reached from the Edit link on /members/profile
   profile/          /members/profile?slug= — public member page: bio + projects (research, then Operations). Query-param URL on
@@ -394,7 +402,7 @@ Propagation to the custom domain can lag several minutes behind a deployment sho
 
 ### JS is browser-cached for 4 hours; HTML is not
 
-`/js/*` is served `max-age=14400` while HTML revalidates on every load. So a deploy where **new HTML calls a new function in a shared script**, or **old cached JS calls an endpoint you removed**, breaks for anyone who visited in the last 4h. Session 54 hit both. Rules: bump a `?v=` token on the `<script>` tag of every page that depends on new shared-JS behaviour (research.js carries `?v=54`; main.js on SIG/About/profile/project/program pages, markdown.js, md-editor.js and managed-page.js carry `?v=56`); and keep a removed endpoint alive as an alias for at least 4h after the JS that called it is gone.
+`/js/*` is served `max-age=14400` while HTML revalidates on every load. So a deploy where **new HTML calls a new function in a shared script**, or **old cached JS calls an endpoint you removed**, breaks for anyone who visited in the last 4h. Session 54 hit both. Rules: bump a `?v=` token on the `<script>` tag of every page that depends on new shared-JS behaviour (research.js carries `?v=54`; markdown.js and md-editor.js `?v=56`; managed-page.js `?v=57`; main.js `?v=58` on research-group, program, PiBoWriMo and roadmap pages — those need `PI.linkPeople`. Most other pages load main.js unversioned, so nav changes reach returning visitors within 4h); and keep a removed endpoint alive as an alias for at least 4h after the JS that called it is gone.
 
 ### Manual deploy — use `./deploy.sh`, never `wrangler pages deploy .`
 
