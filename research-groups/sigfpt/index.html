@@ -58,9 +58,33 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 45 sessions, 42 dated</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 46 sessions, 43 dated</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">October 2, 2026</div>
+  <div class="meeting-title"><a href="/research-groups/sigfpt/2026-10-02-workshop-debrief-and-formal-modeling-deep-dive-with-shi">SIGFPT Workshop Debrief and Formal Modeling Deep Dive with Shingai</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Workshop and symposium debrief</span><span class="meeting-topic">Shingai's formal modeling research and systems theory</span><span class="meeting-topic">Protocol case studies (Blygger protocol)</span><span class="meeting-topic">Category theory applications to formal protocol theory</span><span class="meeting-topic">Symmetric monoidal categories and polynomial functors</span><span class="meeting-topic">Formalizing systems definitions in Lean</span></div>
+  <p class="meeting-participants">Participants: _vgr, _shingai, anurajenp, ediblebadger, _ergod, heterotic, hitecsimp</p>
+  <p class="meeting-summary">After a round of feedback, Shingai described his academic context (PhD in Systems Science at Binghamton, advised by Cliff Joslyn) and his goal of building rigorous, diagrammatic modeling tools accessible to non-mathematicians. The bulk of the session was a probing Q&amp;A: Patrick questioned whether a protocol is really a &quot;system&quot; or just the <em>rules/relations</em>, and whether &quot;dependency&quot; is a richer (directed) notion than a bare relation; Ergod pushed on where <em>dynamics</em> and <em>emergence</em> live in these static formalisms. The group closed with planning for next sessions, converging on category theory as the likely tool for the compositional ambitions.</p>
+  <ul class="meeting-insights">
+    <li><strong>The synthesis approach.</strong> Shingai took several systems-theory definitions and tried to extract a common core. The one invariant he found across Klir, Bunge, and Mobus is some notion of <strong>dependency</strong> — things related such that they depend on each other. Ergod characterized this as a &quot;synthesis relationship,&quot; looking for a common denominator.</li>
+    <li><strong>Protocol = rules, not the whole system.</strong> Patrick argued a protocol is better understood as the <em>rules</em> (closer to relations/edges) that mediate a system, not the system itself. Shingai agreed, noting Mobus is explicit that &quot;a protocol is a set of rules... for how things cross boundaries,&quot; and that his own `S = (T, R)` framing was an artifact of how he and Claude attacked the challenge.</li>
+    <li><strong>Constructivism vs. realism.</strong> Shingai described Klir as an adamant <em>constructivist</em> — systems don&#x27;t exist &quot;out there&quot;; humans impose systemness by choosing things and relations. Shingai leans <em>realist</em>: systems have independent existence, and he finds &quot;things + relations&quot; unnatural as a complete account.</li>
+    <li><strong>Relation vs. dependency (directedness).</strong> Patrick pressed: isn&#x27;t a plain relation an undirected tuple/edge, whereas dependency implies a <em>directed</em> arrow (&quot;a depends on b&quot;)? Why isn&#x27;t Klir&#x27;s minimal, undirected version the more fundamental one? Shingai clarified Klir makes <em>no</em> assertion about direction — arbitrary relations, no directed graphs, no baked-in dependency. Bunge and Mobus, by contrast, do assert flows and directed graphs in their core math.</li>
+    <li><strong>Where dynamics live.</strong> Ergod distinguished three &quot;powers&quot; of a model: <em>descriptive</em>, <em>computational</em>, and <em>prescriptive</em> (e.g., prescriptive = telling you things about protocol design). He argued `S = (T, R)` only gives a static snapshot. Shingai agreed dynamics are <em>added later</em> in Klir (via a &quot;mechanism&quot; component, history, and a time interval Δt), whereas he personally believes dynamics should be <em>baked in</em> — which is why he&#x27;s biased toward the more complex Mobus/Bunge definitions.</li>
+    <li><strong>Dependency doesn&#x27;t explain <em>why</em>.</strong> Ergod drew on his own experience building a code-base dependency graph (to compute &quot;blast radius&quot; of a change): a dependency graph shows <em>how far</em> a change can propagate but &quot;doesn&#x27;t tell you why anything changes.&quot; He wants models that let dynamics flow and let structure (e.g., a protocol, a technology) <em>emerge</em>, rather than models where the sought-for thing is smuggled in as a seed (&quot;when they find it, it was already there&quot;).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://halcyonic.systems/protocols-are-systems-talk/" target="_blank" rel="noopener noreferrer">halcyonic.systems</a></li>
+      <li><a href="https://blygger.org" target="_blank" rel="noopener noreferrer">blygger.org</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1555325565668561036" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">September 18, 2026</div>
   <div class="meeting-title"><a href="/research-groups/sigfpt/2026-09-18-sig-fpt-2026-09-18">SIG-FPT 2026-09-18</a></div>
