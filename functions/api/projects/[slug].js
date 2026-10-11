@@ -74,8 +74,6 @@ export async function onRequestGet({ params, request, env }) {
     const publicProject = { ...project, voted_by_me: votedByMe,
       image_url: project.image_key ? '/assets/' + project.image_key : null };
     delete publicProject.image_key;
-    // Pre-037 columns, superseded by project_programs; dropped by migration 041.
-    for (const k of ['sig_slug', 'program', 'sub_program', 'themes']) delete publicProject[k];
     if (!viewerIsLeadOrAdmin) {
       delete publicProject.submitted_by;
       delete publicProject.admin_notes;
