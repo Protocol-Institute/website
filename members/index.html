@@ -6,7 +6,7 @@
   <title>Members — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute member directory — researchers, practitioners, and participants in the PI ecosystem.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=57">
 </head>
 <body>
 
@@ -80,7 +80,7 @@
   }
 
   const FILTER_BLURBS = {
-    'team':          'The Protocol Institute\'s core team — staff, advisors, and AI systems. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
+    'team':          'The Protocol Institute\'s team — staff, advisors, and AI systems. For general inquiries, email <a href="mailto:team@protocol-institute.org">team@protocol-institute.org</a>.',
     'community_lead':'Members who lead PI community activities, currently as Research Group hosts.',
     'consultant':    'PI members available for consulting on protocol design, governance, organizational protocolization, and strategy. Enquire directly with individual consultants. <a href="/consulting/policies">Consulting network policies →</a>',
     'tag_sop23':     'Fellows from the Summer of Protocols 2023 cohort — PI\'s inaugural grant program in protocol research.',
@@ -218,6 +218,18 @@
     }
     const isRich = filter === 'team' || filter === 'consultant';
     list.className = isRich ? 'member-list member-list--cards' : 'member-list';
+    if (filter === 'team') {
+      // Core Team, then Extended Team, each in the hand-set team_sort order
+      // (migration 051); a team member without one sorts last by name.
+      const bySort = (a, b) => (a.team_sort ?? 1e9) - (b.team_sort ?? 1e9) || a.name.localeCompare(b.name);
+      const section = (title, ms) => ms.length
+        ? `<li class="member-group-heading"><h2>${title}</h2></li>` + ms.map(renderMemberCard).join('')
+        : '';
+      const sorted = members.slice().sort(bySort);
+      list.innerHTML = section('Core Team', sorted.filter(m => m.team_core)) +
+                       section('Extended Team', sorted.filter(m => !m.team_core));
+      return;
+    }
     list.innerHTML = members.map(isRich ? renderMemberCard : renderMemberList).join('');
   }
 
