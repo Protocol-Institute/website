@@ -793,6 +793,14 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   background: rgba(24,29,76,0.35); transition: background 0.2s ease, color 0.2s ease;
 }
 .home-banner:hover .home-banner-cta { background: #FAFAF7; color: #1F2559; }
+/* The same banner as an event page's header (events/pibowrimo-2026): not a link,
+   no button, and the h1 keeps the banner's type rather than .page-header h1's. */
+.page-header--banner { padding-top: 0.5rem; border-bottom: none; }
+.page-header--banner.page-header--editable { padding-right: 0; }
+.page-header--banner .page-edit-link { top: 1.25rem; right: 0.75rem; }
+.home-banner--static { margin-bottom: 0; }
+.page-header .home-banner-title { font-size: 2.6rem; margin: 0; color: #FAFAF7; }
+@media (max-width: 560px) { .page-header .home-banner-title { font-size: 2.1rem; } }
 @media (max-width: 560px) {
   .home-banner { min-height: 17rem; justify-content: flex-start; padding: 1.3rem 1.25rem; background-position: 58% 100%; }
   .home-banner::before {
@@ -2713,6 +2721,10 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 .md pre { background: #F0EDE8; padding: 0.7em 0.9em; overflow-x: auto; margin: 0 0 0.75em; }
 .md pre code { background: none; padding: 0; }
 .md img { max-width: 100%; height: auto; }
+/* About page (managed_pages static/about): the centred logo and the licence footnote are raw HTML in its markdown. */
+.about-logo { text-align: center; margin: 2rem 0; }
+.about-logo img { width: 180px; height: 180px; object-fit: contain; border: 1px solid #E0DDD8; padding: 1.5rem; background: #FAFAF7; }
+.about-footnote { margin-top: 2.5rem; font-size: 0.9rem; color: #8A8A8A; }
 .md a { color: #2A6B6B; }
 .md hr { border: none; border-top: 1px solid #E0DDD8; margin: 1.25em 0; }
 .md table { border-collapse: collapse; margin: 0 0 0.75em; font-size: 0.92em; }

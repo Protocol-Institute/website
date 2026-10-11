@@ -1,16 +1,20 @@
 // managed-page.js — viewer for managed content pages (D1 managed_pages).
 //
 // Requires PAGE_KEY to be defined as a global, and /js/main.js and
-// /js/markdown.js loaded first. Shell HTML must contain these elements by id:
-//   page-loading, page-content, page-body
+// /js/markdown.js loaded first. Shell HTML must contain #page-body; #page-loading
+// and #page-content are optional (SIG About pages use them to hide the body
+// until the fetch returns).
 //
-// This module only displays. Editing happens in the program editor
-// (/programs/edit?slug=<slug>#about), which holds the markdown editor alongside
-// the program's blurb, byline, links and editions — one edit page per program
-// (Session 55; before that the About page had its own inline editor and the
-// two editors linked to each other). Admins and hosts of the page's program
-// (hosted_programs from /api/members/me) get the site-wide Edit link
-// (PI.editLink) pointing there; the server re-checks on every write.
+// If the page has stored markdown it replaces #page-body; if not, whatever HTML
+// #page-body already holds stays as the fallback (static/about and
+// static/support ship their text in the HTML, so they read fine even if the
+// fetch fails).
+//
+// This module only displays. Program About pages (sigs/<slug>/…, programs/<slug>/…)
+// are edited in the program editor (/programs/edit?slug=<slug>#about), so admins
+// and that program's hosts get the site-wide Edit link (PI.editLink) pointing
+// there. Every other page key — static/about, static/support — is admin-only and
+// edited at /pages/edit?key=<key> (Session 57). The server re-checks every write.
 (function () {
   if (typeof PAGE_KEY === 'undefined') {
     console.error('managed-page.js: PAGE_KEY not defined');
@@ -47,11 +51,14 @@
   Promise.all([fetchContent(), checkEditPermission()]).then(function (res) {
     var md = (res[0] && res[0].content_md) || '';
     var canEdit = res[1];
-    return window.PIMarkdown.render(md).then(function (html) {
-      el('page-body').innerHTML = html;
-      el('page-loading').style.display = 'none';
-      el('page-content').style.display = '';
-      if (canEdit && programSlug) window.PI.editLink('/programs/edit?slug=' + encodeURIComponent(programSlug) + '#about');
+    return (md.trim() ? window.PIMarkdown.render(md) : Promise.resolve(null)).then(function (html) {
+      if (html !== null) el('page-body').innerHTML = html;
+      if (el('page-loading')) el('page-loading').style.display = 'none';
+      if (el('page-content')) el('page-content').style.display = '';
+      if (!canEdit) return;
+      window.PI.editLink(programSlug
+        ? '/programs/edit?slug=' + encodeURIComponent(programSlug) + '#about'
+        : '/pages/edit?key=' + encodeURIComponent(PAGE_KEY));
     });
   });
 }());

@@ -27,7 +27,9 @@ All pages use clean URLs: `about/index.html` is served at `/about`, etc.
 ```
 index.html          Landing page. Carries hand-edited, time-boxed callouts: .home-banner (current event, e.g. PiBoWriMo) and
                     .home-notice ("New!" line) — remove them when stale
-about/              /about
+about/              /about — body is managed_pages static/about (admin-editable markdown, Session 57); HTML holds the same text as fallback
+pages/edit/         /pages/edit?key=static/<name> — admin editor for standalone markdown pages (static/about, static/support).
+                    Program About pages are edited in /programs/edit instead
 contact/            /contact
 programs/           /programs — still hand-written (generating it from D1 is pending; see programs/PLAN.md)
   PLAN.md           **Areas > programs > editions > projects data model** — semantics, realms, authority. Read before touching projects/programs
@@ -62,7 +64,7 @@ projects/
   project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
-support/            /support (embeds pitchdeck iframe)
+support/            /support — body is managed_pages static/support (admin-editable markdown, Session 57)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)
 license/            /license — CC+ license for SoP23 outputs
 members/            /members — member directory (D1-backed, PIN auth)

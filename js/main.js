@@ -26,6 +26,7 @@ var NAV_HTML =
         '<ul class="nav-more-dropdown" id="nav-more-dropdown">' +
           '<li><a href="/programs">Programs</a></li>' +
           '<li><a href="/about">About</a></li>' +
+          '<li><a href="/members?filter=team">Team</a></li>' +
           '<li><a href="/network">Network</a></li>' +
           '<li><a href="/events/protocol-symposium-2026">Symposium</a></li>' +
           '<li><a href="/contact">Contact</a></li>' +

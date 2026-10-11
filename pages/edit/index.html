@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Page — The Protocol Institute</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div id="pg-loading"><p class="section-loading">Loading…</p></div>
+      <div id="pg-denied" style="display:none;"><p class="projects-intro" id="pg-denied-msg"></p></div>
+
+      <div id="pg-content" style="display:none;">
+        <div class="project-detail-breadcrumb"><a id="pg-view" href="/">View page →</a></div>
+        <div class="page-header">
+          <h1 id="pg-title">Edit page</h1>
+        </div>
+
+        <form id="pg-form" class="member-form">
+          <div class="form-group">
+            <label class="form-label" for="pg-md">Page text</label>
+            <p class="form-hint">Markdown. The page's heading comes from the page itself, so don't start with a <code># Title</code> line. Raw HTML works for the odd thing markdown can't do (the About page's logo uses it).</p>
+            <textarea class="form-textarea" id="pg-md"></textarea>
+          </div>
+          <div class="form-save-bar">
+            <button type="submit" class="form-btn" id="pg-save">Save page</button>
+            <div class="form-msg" id="pg-msg" style="display:none;"></div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script src="/js/markdown.js?v=56"></script>
+<script src="/js/md-editor.js?v=56"></script>
+<script>
+// /pages/edit?key=<page_key> — admin editor for the site's standalone markdown
+// pages (managed_pages rows outside any program: static/about, static/support).
+// Program About pages are edited in /programs/edit instead. Viewer side:
+// js/managed-page.js, which shows admins the Edit link that leads here.
+(function () {
+  const $ = id => document.getElementById(id);
+  const key = new URLSearchParams(location.search).get('key') || '';
+  // Where each page lives, for the View link and the redirect after saving.
+  const PAGES = {
+    'static/about':   { title: 'About',      href: '/about' },
+    'static/support': { title: 'Support Us', href: '/support' },
+  };
+  const page = PAGES[key] || { title: key, href: '/' };
+
+  function deny(msg) {
+    $('pg-loading').style.display = 'none';
+    $('pg-denied-msg').innerHTML = msg;
+    $('pg-denied').style.display = '';
+  }
+  if (!/^static\/[a-z0-9-]+$/.test(key)) { deny('No page to edit.'); return; }
+
+  const editor = PIMdEditor.attach($('pg-md'), { wide: true, pageKey: key, onSave: () => $('pg-form').requestSubmit() });
+  let guard = null;
+
+  Promise.all([
+    fetch('/api/members/me').then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch('/api/pages/' + key).then(r => r.ok ? r.json() : null).catch(() => null),
+  ]).then(([me, existing]) => {
+    if (!me || !me.member) {
+      deny('<a href="/members/join?return=' + encodeURIComponent(location.pathname + location.search) + '">Sign in</a> to edit this page.');
+      return;
+    }
+    if (!me.member.is_admin) { deny('Only admins can edit this page.'); return; }
+    document.title = 'Edit ' + page.title + ' — The Protocol Institute';
+    $('pg-title').textContent = 'Edit ' + page.title;
+    $('pg-view').href = page.href;
+    editor.setValue((existing && existing.content_md) || '');
+    $('pg-loading').style.display = 'none';
+    $('pg-content').style.display = '';
+    guard = PIMdEditor.guard($('pg-form'), $('pg-save'));
+    guard.snapshot();
+  });
+
+  $('pg-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('pg-save'), msg = $('pg-msg');
+    btn.disabled = true; btn.textContent = 'Saving…'; msg.style.display = 'none';
+    try {
+      const res = await fetch('/api/pages/' + key, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content_md: $('pg-md').value, title: page.title }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Save failed.');
+      if (guard) guard.snapshot();
+      msg.className = 'form-msg form-msg--success';
+      msg.innerHTML = 'Saved. <a href="' + page.href + '">View page →</a>';
+    } catch (err) {
+      msg.className = 'form-msg form-msg--error';
+      msg.textContent = err.message;
+    }
+    msg.style.display = '';
+    btn.disabled = false; btn.textContent = 'Save page';
+  });
+}());
+</script>
+</body>
+</html>
