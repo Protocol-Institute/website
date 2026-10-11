@@ -1,0 +1,255 @@
+{
+  "_about": "Where each Protocol Symposium 2026 item lives in the protocolized.io archive. Written by c3po (ingest/archive_symposium.py --website); do not hand-edit.",
+  "talks": {
+    "closing-session": {
+      "resource_url": "https://protocolized.io/resources/closing-session",
+      "slides": 0,
+      "transcript": true
+    },
+    "creating-new-genres-for-new-nature": {
+      "resource_url": "https://protocolized.io/resources/creating-new-genres-for-new-nature",
+      "slides": 1,
+      "transcript": false
+    },
+    "de-dramatizing-the-digital-how-ai-descends-into-new-nature": {
+      "resource_url": "https://protocolized.io/resources/de-dramatizing-the-digital-how-ai-descends-into-new-nature",
+      "slides": 1,
+      "transcript": true
+    },
+    "envisioning-alternative-futures-for-delivery-work-toward-a-decentralized-network": {
+      "resource_url": "https://protocolized.io/resources/opencourier-protocol",
+      "slides": 0,
+      "transcript": true
+    },
+    "group-brains-minds-made-of-people": {
+      "resource_url": "https://protocolized.io/resources/group-brains-minds-made-of-people",
+      "slides": 1,
+      "transcript": true
+    },
+    "interior-computing": {
+      "resource_url": "https://protocolized.io/resources/interior-computing",
+      "slides": 1,
+      "transcript": false
+    },
+    "life-serving-protocols-a-framework-for-evaluating-cooperative-emergence-in-livin": {
+      "resource_url": "https://protocolized.io/resources/life-serving-protocols-a-framework-for-evaluating-cooperative",
+      "slides": 2,
+      "transcript": true
+    },
+    "marking-to-reality": {
+      "resource_url": "https://protocolized.io/resources/ethereum-a-microcosm-for-protocol-studies",
+      "slides": 0,
+      "transcript": true
+    },
+    "my-mind-is-a-markdown-file": {
+      "resource_url": "https://protocolized.io/resources/photo-realism",
+      "slides": 1,
+      "transcript": false
+    },
+    "oil-uni-and-tv-post-soviet-infrastructures-shaping-protocols-for-web": {
+      "resource_url": "https://protocolized.io/resources/oil-uni-and-tv-post-soviet-infrastructures-shaping-protocols-for-web",
+      "slides": 1,
+      "transcript": true
+    },
+    "open-mic-frontier-pacing-protocols": {
+      "resource_url": "https://protocolized.io/resources/open-mic-frontier-pacing-protocols",
+      "slides": 0,
+      "transcript": true
+    },
+    "open-social-protocols-a-commons-based-protocol-layer-for-human-coordination": {
+      "resource_url": "https://protocolized.io/resources/open-social-protocols-a-commons-based-protocol-layer",
+      "slides": 4,
+      "transcript": true
+    },
+    "opening-session": {
+      "resource_url": "https://protocolized.io/resources/opening-talk-2026-protocol-symposium",
+      "slides": 0,
+      "transcript": true
+    },
+    "proliferation-of-intelligence-into-business-and-converting-it-to-hyper-learning-": {
+      "resource_url": "https://protocolized.io/resources/proliferation-of-intelligence-business-and-hyper-learning-machines",
+      "slides": 2,
+      "transcript": true
+    },
+    "psychohistory-discussion": {
+      "resource_url": "https://protocolized.io/resources/inventing-psychohistory-discussion",
+      "slides": 0,
+      "transcript": true
+    },
+    "seapunk-worlds": {
+      "resource_url": "https://protocolized.io/resources/seapunk-world-protocolizations-on-reverse-imagineering-as-method",
+      "slides": 1,
+      "transcript": true
+    },
+    "some-candidate-laws-of-new-nature": {
+      "resource_url": "https://protocolized.io/resources/some-candidate-laws-of-new-nature",
+      "slides": 0,
+      "transcript": true
+    },
+    "southeast-asia-discussion": {
+      "resource_url": "https://protocolized.io/resources/southeast-asia-discussion",
+      "slides": 0,
+      "transcript": true
+    },
+    "story-shaping-in-new-nature": {
+      "resource_url": "https://protocolized.io/resources/story-shaping-in-new-nature",
+      "slides": 1,
+      "transcript": false
+    },
+    "talk-amber-attention-as-natural-law": {
+      "resource_url": "https://protocolized.io/resources/attention-as-natural-law",
+      "slides": 1,
+      "transcript": false
+    },
+    "talk-aneesh-building-psychohistory-an-inf": {
+      "resource_url": "https://protocolized.io/resources/building-psychohistory-an-infrastructure-field-report",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-anuraj-robots-as-protocol-citizens-s": {
+      "resource_url": "https://protocolized.io/resources/robots-as-protocol-citizens",
+      "slides": 2,
+      "transcript": true
+    },
+    "talk-botao-protocoling-hci-hardening-int": {
+      "resource_url": "https://protocolized.io/resources/protocoling-hci-hardening-interaction-into-infrastructure",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-daniel-chores-as-complex-coordination": {
+      "resource_url": "https://protocolized.io/resources/chores-as-complex-coordination",
+      "slides": 2,
+      "transcript": true
+    },
+    "talk-daniel-dont-cross-the-lines-mazes-a": {
+      "resource_url": "https://protocolized.io/resources/dont-cross-the-lines-mazes-as-minimal-protocols",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-david-field-building-protocols-how": {
+      "resource_url": "https://protocolized.io/resources/opening-talk-2026-protocol-symposium",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-eric-governance-axioms": {
+      "resource_url": "https://protocolized.io/resources/governance-axioms",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-helena-trust-experience-glitches-ai": {
+      "resource_url": "https://protocolized.io/resources/trust-experience-glitches-ai-agents-delegated-autonomy-and-legitimacy",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-jesse-entrenching-privacy-through-sp": {
+      "resource_url": "https://protocolized.io/resources/entrenching-privacy-through-speech",
+      "slides": 2,
+      "transcript": true
+    },
+    "talk-jim-the-point-of-inflection-in-tim": {
+      "resource_url": "https://protocolized.io/resources/the-point-of-inflection-in-time",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-mike-jubilee-meta-protocols-agains": {
+      "resource_url": "https://protocolized.io/resources/jubilee-meta-protocols-against-entrenchment",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-nathan-virtues-for-a-protocol-society": {
+      "resource_url": "https://protocolized.io/resources/virtues-for-a-protocol-society",
+      "slides": 2,
+      "transcript": true
+    },
+    "talk-nicholas-the-inevitable-capture-of-prot": {
+      "resource_url": "https://protocolized.io/resources/markets-and-the-journey-to-neutrality",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-nicols-divergent-protocols-a-specula": {
+      "resource_url": "https://protocolized.io/resources/divergent-protocols-a-speculative-protocol-for-cultural-convergence-zones",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-patrick-the-indelible-importance-of-il": {
+      "resource_url": "https://protocolized.io/resources/the-indelible-importance-of-illegibility",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-protocol-studies-panel": {
+      "resource_url": "https://protocolized.io/resources/opening-talk-2026-protocol-symposium",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-robert-protocols-for-co-cognition": {
+      "resource_url": "https://protocolized.io/resources/protocols-for-co-cognition-the-new-nature-of-collaboration-in-the-ai-era",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-sachin-archival-time-as-a-new-natural": {
+      "resource_url": "https://protocolized.io/resources/archival-time-as-a-new-natural-resource",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-shingai-hand-washing-and-bitcoin-share": {
+      "resource_url": "https://protocolized.io/resources/hand-washing-and-bitcoin-share-a-skeleton",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-simone-a-common-protocol-for-composab": {
+      "resource_url": "https://protocolized.io/resources/a-common-protocol-for-composable-modular-organizations",
+      "slides": 1,
+      "transcript": true
+    },
+    "talk-timber-psychological-safety-i-ii": {
+      "resource_url": "https://protocolized.io/resources/psychological-safety-i-ii",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-venkatesh-blygger-ai-native-decentralized": {
+      "resource_url": "https://protocolized.io/resources/blygger-ai-native-decentralized-mutable-publishing",
+      "slides": 0,
+      "transcript": true
+    },
+    "talk-william-the-role-of-identity-in-decent": {
+      "resource_url": "https://protocolized.io/resources/the-role-of-identity-in-decentralized-dispute-resolution-protocols",
+      "slides": 1,
+      "transcript": true
+    },
+    "the-book-as-a-protocol-stack-lessons-from-building-a-protocolized-book-productio": {
+      "resource_url": "https://protocolized.io/resources/book-as-protocol-stack-building-a-protocolized-book-production-factory",
+      "slides": 1,
+      "transcript": true
+    },
+    "the-nature-of-trust-weaving-identity-relationship-and-place": {
+      "resource_url": "https://protocolized.io/resources/the-nature-of-trust-weaving-identity-relationship-and-place",
+      "slides": 1,
+      "transcript": true
+    },
+    "the-political-economy-of-protocol-funding-alt-origins-and-implications-of-protoc": {
+      "resource_url": "https://protocolized.io/resources/the-political-economy-of-protocols",
+      "slides": 1,
+      "transcript": true
+    },
+    "time-moves-down-the-stack": {
+      "resource_url": "https://protocolized.io/resources/time-moves-down-the-stack",
+      "slides": 1,
+      "transcript": true
+    },
+    "tools-for-recollection-and-understanding": {
+      "resource_url": "https://protocolized.io/resources/continuity-infrastructure",
+      "slides": 1,
+      "transcript": false
+    },
+    "visualizing-memory-states-in-transformers": {
+      "resource_url": "https://protocolized.io/resources/visualizing-memory-states-in-transformers",
+      "slides": 1,
+      "transcript": false
+    },
+    "workshop-ai-kitcraft-a-hands-on-ai-tooling-works": {
+      "resource_url": "https://protocolized.io/resources/ai-kitcraft-a-hands-on-ai-tooling-workshop",
+      "slides": 1,
+      "transcript": false
+    }
+  }
+}

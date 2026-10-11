@@ -165,7 +165,7 @@
         </div>
 
         <p style="color:#3A3A3A;margin-bottom:1rem;">Protocol Symposium 2026 was held online from September 21 to 25, 2026, on the theme <em>New Nature</em>: two days of workshops followed by three days of talks, panels and special sessions.</p>
-        <p style="color:#3A3A3A;margin-bottom:1.25rem;">Recordings are embedded below. Each recorded item also links to its own page with a full transcript. Not every session has been posted yet; the rest will appear here as they are added to the <a href="https://www.youtube.com/@protocol-institute">Protocol Institute YouTube channel</a>.</p>
+        <p style="color:#3A3A3A;margin-bottom:1.25rem;">Recordings are embedded below. The archive of each talk, with its transcript and the speaker&rsquo;s slides and papers, is in the <a href="https://protocolized.io/resources?q=symposium-2026">Protocolized resource library</a>; every item links to its page there. Not every session has been posted yet; the rest will appear here as they are added to the <a href="https://www.youtube.com/@protocol-institute">Protocol Institute YouTube channel</a>.</p>
 
         <div class="archive-actions">
           <a class="program-pdf-btn" href="https://www.youtube.com/@protocol-institute/videos"
@@ -231,9 +231,12 @@
   let TRACK2_BY_SESSION = {}; // special session name -> [proposals running in parallel]
   const store = {};
   // proposal id -> { video_id, start, end }. Hand-maintained in
-  // /data/symposium-2026-recordings.json; make_recordings.py builds the
-  // per-item transcript pages from the same file.
+  // /data/symposium-2026-recordings.json.
   const RECORDINGS = {};
+  // proposal slug -> { resource_url, slides, transcript }: the item's canonical
+  // archive page on protocolized.io. Written by c3po
+  // (ingest/archive_symposium.py) into /data/symposium-2026-archive.json.
+  const ARCHIVE = {};
 
   // Load proposals (public) + optional auth for edit identity
   Promise.all([
@@ -242,8 +245,10 @@
     fetch('/api/members/me').then(r => r.ok ? r.json() : { member: null }).catch(() => ({ member: null })),
     // A missing or broken mapping file must not take the program down with it.
     fetch('/data/symposium-2026-recordings.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
-  ]).then(function ([proposalsData, sessionsData, meData, recData]) {
+    fetch('/data/symposium-2026-archive.json').then(r => r.ok ? r.json() : {}).catch(() => ({})),
+  ]).then(function ([proposalsData, sessionsData, meData, recData, archiveData]) {
     (recData.recordings || []).forEach(function (r) { RECORDINGS[r.proposal_id] = r; });
+    Object.assign(ARCHIVE, archiveData.talks || {});
     proposals = proposalsData.proposals || [];
     isAdmin = !!(proposalsData.is_admin || (meData.member && meData.member.is_admin));
     const me = meData.member || null;
@@ -671,16 +676,26 @@
   // ── Recordings ────────────────────────────────────────────────
   // Thumbnail first, iframe on click: ~40 eager YouTube players would cost
   // several MB and a youtube.com connection per card before anyone presses play.
+  // The video plays here; transcript and slides live on the item's archive
+  // page on protocolized.io, which is the canonical copy.
+  function archiveLink(p) {
+    const a = p.slug && ARCHIVE[p.slug];
+    if (!a || !/^https:\/\/protocolized\.io\//.test(a.resource_url)) return '';
+    const what = a.transcript && a.slides ? 'Transcript &amp; slides'
+      : a.transcript ? 'Transcript' : a.slides ? 'Slides' : 'Archive page';
+    return `<a href="${esc(a.resource_url)}">${what} on Protocolized →</a>`;
+  }
+
   function renderRecording(p) {
     const r = RECORDINGS[p.id];
-    if (!r) return '';
+    const archive = archiveLink(p);
+    if (!r) return archive ? `<div class="rec-links">${archive}</div>` : '';
     const vid = encodeURIComponent(r.video_id);
     const thumb = `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`;
-    const page = p.slug ? `/events/protocol-symposium-2026/recordings/${encodeURIComponent(p.slug)}/` : '';
     const watch = `https://www.youtube.com/watch?v=${vid}${r.start ? '&t=' + (r.start | 0) + 's' : ''}`;
     return `<button type="button" class="rec-facade" data-rec="${p.id}" style="background-image:url('${thumb}')"
         aria-label="Play recording: ${esc(p.title)}"></button>
-      <div class="rec-links">${page ? `<a href="${page}">Transcript &amp; recording page →</a> &ensp;·&ensp; ` : ''}<a href="${watch}" target="_blank" rel="noopener noreferrer">YouTube</a></div>`;
+      <div class="rec-links">${archive ? `${archive} &ensp;·&ensp; ` : ''}<a href="${watch}" target="_blank" rel="noopener noreferrer">YouTube</a></div>`;
   }
 
   document.addEventListener('click', function (e) {

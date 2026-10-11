@@ -104,8 +104,7 @@ functions/          Cloudflare Pages Functions (API endpoints)
 events/protocol-symposium-2026/  /events/protocol-symposium-2026 — symposium **archive** (Session 53): program + embedded
                     recordings. Landing + program merged into one page in Session 43; /program redirects here.
                     Countdown, registration and livestream CTA were removed when the event ended
-  recordings/<slug>/  One generated page per recorded item (video + transcript) — see Symposium recordings.
-                    Never hand-edit; regenerate with make_recordings.py
+  (recordings/<slug>/ retired 2026-10-11 — 301s to protocolized.io; see Symposium recordings)
   program/          No index.html — listing merged into the parent page above. Still holds edit-proposal.html (admin) and workshops/ (detail pages)
   program/workshops/  Detail pages for each shortlisted workshop
 db/                 D1 schema and migrations
@@ -140,7 +139,6 @@ js/
 deploy.sh           Manual deploy from a clean `git archive` export — see Deployment.
                     Never `wrangler pages deploy .`; Pages ignores .gitignore
 fetch_form_data.py  Fetch and display current Google Form responses (network + consulting)
-make_recordings.py  Generates recordings/<slug>/ pages from data/symposium-2026-recordings.json + D1 + YouTube captions
 make_brochure.py    Generates the symposium PDF programme from D1 via WeasyPrint — see PDF programme
 SHEETS.md           Documents the Google Sheets update workflow and field mappings
 _redirects          Legacy URL redirects (CF Pages native support)
@@ -258,39 +256,33 @@ truth. Each row is `{proposal_id, video_id}`, plus `start`/`end` seconds when on
 upload covers several items (the "Opening Talk" video holds the Welcome Session,
 David Lang's talk and the panel, split at 1176s and 2147s).
 
-Two consumers read it:
-- **The program page** fetches it at load and gives each matched card a thumbnail
-  facade that turns into the YouTube iframe on click (no eager players — ~40 of
-  them would cost several MB before anyone presses play). A failed fetch just
-  means no videos; the program still renders.
-- **`make_recordings.py`** writes `events/protocol-symposium-2026/recordings/<slug>/`
-  — the video, the abstract and a transcript — and the pages are committed.
+The program page fetches it at load and gives each matched card a thumbnail
+facade that turns into the YouTube iframe on click (no eager players — ~40 of
+them would cost several MB before anyone presses play). A failed fetch just
+means no videos; the program still renders.
 
-```bash
-/opt/homebrew/bin/python3 make_recordings.py          # all rows
-/opt/homebrew/bin/python3 make_recordings.py 93 101   # just these proposal ids
-```
+**Transcripts, slides and papers live on protocolized.io, not here** (VGR,
+2026-10-11). Each talk's canonical archive page is its resource page in the
+Protocolized library. c3po owns the pipeline: it ingests the recordings and the
+deck folder, redacts email addresses from the decks, and writes
+**`data/symposium-2026-archive.json`** — per proposal slug, the `resource_url`
+and whether that page has a transcript and slides. The program page reads it for
+the "Transcript & slides on Protocolized →" link on each card (cards with slides
+but no recording get the link too). Do not hand-edit that file; it is regenerated
+by `ingest/archive_symposium.py --website` in c3po.
 
-**To add a recording:** append a row to the JSON, run the script for that id, and
-commit both. Matching videos to proposals is by hand: the channel's upload titles
-are `NN - Speaker - Title` in schedule order, but titles drift from D1 (Nicholas
-Fett's talk was retitled), so check each match.
+The per-item pages this site used to generate (`recordings/<slug>/`, from
+`make_recordings.py` and its own yt-dlp caption cache) were retired the same day;
+`_redirects` sends each one to its resource page.
 
-Transcripts are YouTube's **auto-generated** `en-orig` captions fetched with
-`yt-dlp`, cleaned mechanically only — words joined, paragraphs broken at speaker
-changes (`>>`) or about once a minute at a sentence end. The wording is not edited,
-and the page says so; do not "fix" the text by hand in a generated page, because
-the next run will overwrite it. Captions are cached in `.recordings-cache/`
-(gitignored). YouTube rate-limits caption downloads (HTTP 429); the script retries,
-and if it still fails it writes the page without a transcript — re-run that id later.
+**To add a recording:** append a row to the JSON and commit; then tell c3po
+(`ingest/sync_symposium_videos.py`, then `ingest/archive_symposium.py`) so the
+transcript reaches protocolized.io and this site's archive links. Matching videos
+to proposals is by hand: the channel's upload titles are `NN - Speaker - Title` in
+schedule order, but titles drift from D1 (Nicholas Fett's talk was retitled), so
+check each match.
 
-Timestamps re-point the iframe at `?start=` rather than using the IFrame API,
-which would need youtube.com in `script-src`. Thumbnails come from `i.ytimg.com`,
-which is in `img-src` for that reason.
-
-As of Session 53, 42 items are recorded. Not yet on the channel: the Worldbuilding
-in New Nature and Art of Memory special sessions, the Track I talks that ran
-alongside them, and the workshops.
+Thumbnails come from `i.ytimg.com`, which is in `img-src` for that reason.
 
 ## Livestream player
 
