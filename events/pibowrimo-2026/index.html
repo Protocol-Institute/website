@@ -32,6 +32,9 @@
         <!-- Body copy is the program's About page (managed_pages programs/pibowrimo/about),
              edited by the hosts at /programs/edit?slug=pibowrimo#about. This HTML is the
              fallback shown until it loads, or if it can't. -->
+        <!-- programs.byline ("Hosted by …"), hosts linked to their profiles; filled from D1 -->
+        <p class="sig-meta" id="pbwm-byline" hidden></p>
+
         <div class="md" id="pbwm-about">
         <p>In November 2026, the Protocol Institute will host its first book-writing month, inspired by the old NaNoWriMo. This will be a mostly asynchronous event on our Discord, with just enough structure to keep you motivated and moving.</p>
 
@@ -61,7 +64,7 @@
 
 </div>
 
-<script src="/js/main.js?v=56"></script>
+<script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
 <script src="/js/markdown.js?v=56"></script>
 <script>
@@ -87,6 +90,12 @@
     .then(([data, , about, me]) => {
       if (about && String(about.content_md || '').trim()) {
         document.getElementById('pbwm-about').innerHTML = PIMarkdown.html(about.content_md);
+      }
+      if (data.program.byline) {
+        const byline = document.getElementById('pbwm-byline');
+        byline.innerHTML = PIMarkdown.inline(data.program.byline);
+        PI.linkPeople(byline, data.hosts);
+        byline.hidden = false;
       }
       if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === 'pibowrimo'))) {
         PI.editLink('/programs/edit?slug=pibowrimo#about');

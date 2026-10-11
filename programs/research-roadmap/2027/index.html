@@ -28,6 +28,9 @@
              programs/research-roadmap/about), edited by the roadmap's hosts at
              /programs/edit?slug=research-roadmap#about. This HTML is the
              fallback shown until it loads, or if it can't. -->
+        <!-- programs.byline ("Hosted by …"), hosts linked to their profiles; filled from D1 -->
+        <p class="sig-meta" id="rm-byline" hidden></p>
+
         <div class="md" id="rm-intro">
         <p>Protocol Institute operates as a set of focused, renewably chartered research groups that develop capabilities and expertise related to specific protocol themes. These groups also undertake time-bound research projects with specific goals.</p>
         <p>In 2027, our projects have a shared focus on how AI and protocols are transforming each other. If you&rsquo;re interested in funding one or more of these projects, please reach out to Venkatesh Rao, <a href="mailto:venkat@protocol-institute.org">venkat@protocol-institute.org</a>, Director of Research.</p>
@@ -44,7 +47,7 @@
 
 </div>
 
-<script src="/js/main.js?v=56"></script>
+<script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
 <script src="/js/markdown.js?v=56"></script>
 <script>
@@ -76,6 +79,12 @@
     .then(([roadmap, all, , intro, me]) => {
       if (intro && String(intro.content_md || '').trim()) {
         document.getElementById('rm-intro').innerHTML = PIMarkdown.html(intro.content_md);
+      }
+      if (roadmap.program.byline) {
+        const byline = document.getElementById('rm-byline');
+        byline.innerHTML = PIMarkdown.inline(roadmap.program.byline);
+        PI.linkPeople(byline, roadmap.hosts);
+        byline.hidden = false;
       }
       if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === PROGRAM))) {
         PI.editLink('/programs/edit?slug=' + PROGRAM + '#about');
