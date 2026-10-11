@@ -105,7 +105,7 @@
 
   const STATE_LABELS    = { stub: 'Stub', beta: 'Beta', production: 'Production' };
   const TYPE_LABELS     = { 'one-off': 'One-off', versioned: 'Versioned', accretive: 'Accretive' };
-  const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', other: 'Other' };
+  const ARTIFACT_LABELS = { text: 'Text', code: 'Code', website: 'Website', rich_media: 'Rich media', book: 'Book', other: 'Other' };
 
   const slug = new URLSearchParams(window.location.search).get('slug');
   if (!slug) { window.location.replace('/research?view=projects'); return; }

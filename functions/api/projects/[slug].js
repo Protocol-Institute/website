@@ -7,12 +7,12 @@
 //      the CF WAF blocks PUT on Pages.
 
 import { getSession } from '../../_shared/session.js';
+import { isArtifactKind, storedArtifactType } from '../../_shared/artifacts.js';
 import { sessionVaryingJson } from '../../_shared/response.js';
 import { loadProjectPrograms, validateAffiliations, syncAffiliations, approvablePrograms } from '../../_shared/programs.js';
 
 const VALID_STATES         = new Set(['stub', 'beta', 'production']);
 const VALID_TYPES          = new Set(['one-off', 'versioned', 'accretive']);
-const VALID_ARTIFACT_TYPES = new Set(['text', 'code', 'website', 'rich_media', 'other']);
 
 export async function onRequestGet({ params, request, env }) {
   const { slug } = params;
@@ -74,6 +74,8 @@ export async function onRequestGet({ params, request, env }) {
     const publicProject = { ...project, voted_by_me: votedByMe,
       image_url: project.image_key ? '/assets/' + project.image_key : null };
     delete publicProject.image_key;
+    publicProject.artifact_type = project.artifact_kind || project.artifact_type;
+    delete publicProject.artifact_kind;
     if (!viewerIsLeadOrAdmin) {
       delete publicProject.submitted_by;
       delete publicProject.admin_notes;
@@ -126,24 +128,25 @@ export async function onRequestPost({ params, request, env }) {
   if (!description) return Response.json({ error: 'Description required' }, { status: 400 });
   if (!VALID_STATES.has(state))        return Response.json({ error: 'Invalid state' }, { status: 400 });
   if (!VALID_TYPES.has(type))          return Response.json({ error: 'Invalid type' }, { status: 400 });
-  if (!VALID_ARTIFACT_TYPES.has(artifact_type)) return Response.json({ error: 'Invalid artifact type' }, { status: 400 });
+  if (!isArtifactKind(artifact_type)) return Response.json({ error: 'Invalid artifact type' }, { status: 400 });
   if (artifact_type === 'other' && !artifact_type_other) return Response.json({ error: 'Specify artifact type' }, { status: 400 });
   if (!url) return Response.json({ error: 'URL required' }, { status: 400 });
 
   // Moving a project between realms is an admin decision; leads keep the current one.
   const realm = member.is_admin && ['research', 'admin'].includes(body.realm) ? body.realm : project.realm;
 
-  const aff = await validateAffiliations(env, body.affiliations);
+  const current = await env.DB.prepare('SELECT program_slug FROM project_programs WHERE project_id = ?').bind(project.id).all();
+  const aff = await validateAffiliations(env, body.affiliations, new Set((current.results || []).map(r => r.program_slug)));
   if (!aff.ok) return Response.json({ error: aff.error }, { status: 400 });
 
   try {
     // The slug is the project's permanent URL, so a retitle does not change it.
     await env.DB.prepare(`
       UPDATE projects
-      SET title = ?, description = ?, state = ?, type = ?, artifact_type = ?, artifact_type_other = ?,
+      SET title = ?, description = ?, state = ?, type = ?, artifact_type = ?, artifact_kind = ?, artifact_type_other = ?,
           url = ?, current_version = ?, realm = ?, updated_at = datetime('now')
       WHERE id = ?
-    `).bind(title, description, state, type, artifact_type, artifact_type_other, url, current_version, realm, project.id).run();
+    `).bind(title, description, state, type, storedArtifactType(artifact_type), artifact_type, artifact_type_other, url, current_version, realm, project.id).run();
 
     if (Array.isArray(body.affiliations)) {
       await syncAffiliations(env, project.id, aff.rows, email, await approvablePrograms(env, member));

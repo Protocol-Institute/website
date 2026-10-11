@@ -94,6 +94,7 @@
             <select class="form-select" id="f-artifact-type" required>
               <option value="">Select…</option>
               <option value="text">Text</option>
+              <option value="book">Book</option>
               <option value="code">Code</option>
               <option value="website">Website</option>
               <option value="rich_media">Rich media (video, audio, interactive)</option>
@@ -125,7 +126,7 @@
             <div id="f-affiliations"></div>
             <div id="f-removed" class="form-hint" style="display:none;"></div>
             <button type="button" class="form-btn form-btn--secondary form-btn--inline" id="f-add-affiliation">+ Tag a program</button>
-            <p class="form-hint">A program can be a research group, an event, a workshop, a course or a collaboration. Pick a specific edition if the project came out of one run of it. Tags apply at once; a program's hosts can remove a tag that doesn't fit.</p>
+            <p class="form-hint">Tag one or more programs. Hosts of managed programs may remove tags deemed inappropriate.</p>
           </div>
 
           <div class="form-group">
@@ -176,11 +177,14 @@
   // ── Program picker ────────────────────────────────────────────
   // One row per affiliation: a program select grouped by the program's primary
   // area, and an edition select when the program has dated runs.
+  // Only programs taking new tags (active, accepts_tags — migration 058) are offered;
+  // a closed program this project is already tagged to stays selectable in its own row.
   function programOptionsHtml(selected, areas) {
     const groups = areas.map(area => {
       const opts = programs
         .filter(p => (p.areas.find(a => a.is_primary) || p.areas[0] || {}).slug === area.slug)
-        .map(p => `<option value="${esc(p.slug)}"${p.slug === selected ? ' selected' : ''}${blocked.has(p.slug) && !viewerIsAdmin ? ' disabled' : ''}>${esc(p.title)}${p.short_title ? ' (' + esc(p.short_title) + ')' : ''}${p.affiliation_policy === 'open' ? ' — open' : ''}</option>`)
+        .filter(p => (p.status === 'active' && p.accepts_tags) || p.slug === selected)
+        .map(p => `<option value="${esc(p.slug)}"${p.slug === selected ? ' selected' : ''}${blocked.has(p.slug) && !viewerIsAdmin ? ' disabled' : ''}>${esc(p.title)}${p.short_title ? ' (' + esc(p.short_title) + ')' : ''}${p.affiliation_policy === 'moderated' ? ' — needs approval' : ''}</option>`)
         .join('');
       return opts ? `<optgroup label="${esc(area.title)}">${opts}</optgroup>` : '';
     }).join('');

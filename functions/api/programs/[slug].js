@@ -10,7 +10,7 @@ import { programHref, memberForSession, canEditProgram } from '../../_shared/pro
 export async function onRequestGet({ params, env }) {
   try {
     const program = await env.DB.prepare(`
-      SELECT slug, kind, title, short_title, description, byline, page_url, status, affiliation_policy
+      SELECT slug, kind, title, short_title, description, byline, page_url, status, affiliation_policy, accepts_tags
       FROM programs WHERE slug = ?
     `).bind(params.slug).first();
     if (!program) return Response.json({ error: 'Not found' }, { status: 404 });
@@ -81,7 +81,7 @@ export async function onRequestGet({ params, env }) {
         description: program.description, byline: program.byline,
         href: programHref(program.slug, program.page_url), page_url: program.page_url,
         has_own_page: !!program.page_url, status: program.status,
-        affiliation_policy: program.affiliation_policy,
+        affiliation_policy: program.affiliation_policy, accepts_tags: !!program.accepts_tags,
       },
       realm: ((areas.results || [])[0] || {}).realm || 'research',
       areas: (areas.results || []).map(a => ({ slug: a.slug, title: a.title, is_primary: !!a.is_primary })),
@@ -108,7 +108,7 @@ export async function onRequestGet({ params, env }) {
 
 // POST /api/programs/:slug — edit a program. Hosts may change the content they
 // own (description, byline); admins may also change identity and placement
-// (title, short_title, status, affiliation_policy, page_url, areas).
+// (title, short_title, status, affiliation_policy, accepts_tags, page_url, areas).
 export async function onRequestPost({ params, request, env }) {
   const member = await memberForSession(env, await getSession(request, env));
   if (!member) return Response.json({ error: 'Not authenticated' }, { status: 401 });
@@ -144,6 +144,9 @@ export async function onRequestPost({ params, request, env }) {
     if ('affiliation_policy' in body) {
       if (!['open', 'moderated'].includes(body.affiliation_policy)) return Response.json({ error: 'Invalid policy' }, { status: 400 });
       sets.push('affiliation_policy = ?'); binds.push(body.affiliation_policy);
+    }
+    if ('accepts_tags' in body) {
+      sets.push('accepts_tags = ?'); binds.push(body.accepts_tags ? 1 : 0);
     }
   }
 

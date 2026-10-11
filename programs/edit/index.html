@@ -69,6 +69,7 @@
                   <select class="form-select" id="pe-policy">
                     <option value="open">Open — tags apply at once</option>
                     <option value="moderated">Moderated — tags need approval</option>
+                    <option value="closed">Closed — no new tags</option>
                   </select>
                 </div>
               </div>
@@ -221,7 +222,8 @@
       $('pe-ftitle').value = p.title;
       $('pe-short').value = p.short_title || '';
       $('pe-status').value = p.status;
-      $('pe-policy').value = p.affiliation_policy;
+      // Closed is accepts_tags = 0 (migration 058); the stored policy is kept for reopening.
+      $('pe-policy').value = p.accepts_tags ? p.affiliation_policy : 'closed';
       $('pe-pageurl').value = p.page_url || '';
       const mine = data.areas.map(a => a.slug);
       $('pe-areas').innerHTML = areas.map(a =>
@@ -326,7 +328,7 @@
     if (isAdmin) {
       Object.assign(body, {
         title: $('pe-ftitle').value, short_title: $('pe-short').value, status: $('pe-status').value,
-        affiliation_policy: $('pe-policy').value, page_url: $('pe-pageurl').value,
+        ...($('pe-policy').value === 'closed' ? { accepts_tags: false } : { affiliation_policy: $('pe-policy').value, accepts_tags: true }), page_url: $('pe-pageurl').value,
         areas: Array.from(document.querySelectorAll('#pe-areas input:checked')).map(i => i.value),
       });
     }

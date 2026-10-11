@@ -14,7 +14,7 @@ export async function onRequestGet({ request, env }) {
     const [areas, programs, links, editions, counts] = await Promise.all([
       env.DB.prepare('SELECT slug, realm, title, description FROM areas ORDER BY sort_order').all(),
       env.DB.prepare(`
-        SELECT slug, kind, title, short_title, description, page_url, status, affiliation_policy
+        SELECT slug, kind, title, short_title, description, page_url, status, affiliation_policy, accepts_tags
         FROM programs ORDER BY sort_order, title
       `).all(),
       env.DB.prepare('SELECT program_slug, area_slug, is_primary FROM program_areas').all(),
@@ -82,7 +82,7 @@ export async function onRequestGet({ request, env }) {
       programs: (programs.results || []).map(p => ({
         slug: p.slug, kind: p.kind, realm: realmOf(p.slug), title: p.title, short_title: p.short_title,
         description: p.description, href: programHref(p.slug, p.page_url),
-        status: p.status, affiliation_policy: p.affiliation_policy,
+        status: p.status, affiliation_policy: p.affiliation_policy, accepts_tags: !!p.accepts_tags,
         areas: areasByProgram[p.slug] || [],
         editions: editionsByProgram[p.slug] || [],
         project_count: countBy[p.slug] || 0,

@@ -66,7 +66,9 @@ export function canApprove(approvable, programSlug) {
 // Validate a requested affiliation list against the database. Input is
 // [{program_slug, edition_id?}]; returns {ok, error?, rows} where each row has
 // the program's affiliation_policy so the caller can decide the initial status.
-export async function validateAffiliations(env, list) {
+// A program that is past or doesn't accept tags (migration 058) can't be newly
+// tagged; `existing` (the project's current program slugs) keeps old tags valid.
+export async function validateAffiliations(env, list, existing = new Set()) {
   if (list == null) return { ok: true, rows: [] };
   if (!Array.isArray(list)) return { ok: false, error: 'affiliations must be a list' };
   if (list.length > 20) return { ok: false, error: 'Too many affiliations' };
@@ -80,9 +82,12 @@ export async function validateAffiliations(env, list) {
     seen.add(programSlug);
 
     const program = await env.DB.prepare(
-      'SELECT slug, affiliation_policy FROM programs WHERE slug = ?'
+      'SELECT slug, affiliation_policy, status, accepts_tags FROM programs WHERE slug = ?'
     ).bind(programSlug).first();
     if (!program) return { ok: false, error: `Unknown program: ${programSlug}` };
+    if ((program.status !== 'active' || !program.accepts_tags) && !existing.has(programSlug)) {
+      return { ok: false, error: `${programSlug} isn't taking new projects` };
+    }
 
     let editionId = null;
     if (a.edition_id != null && a.edition_id !== '') {
