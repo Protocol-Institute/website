@@ -6,7 +6,7 @@
   <title>Research Roadmap 2027 — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute's 2027 research prospectus: projects proposed by its research groups on how AI and protocols are transforming each other.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=60">
 </head>
 <body>
 
@@ -53,11 +53,9 @@
 <script>
 // The prospectus is every project with an approved tag on the Research Roadmap's
 // 2027 edition (moderated: a member's tag waits for a roadmap host or admin),
-// grouped by the project's research-group (kind='sig') tag in SIG order, then
-// by title. A project with no SIG tag goes under "Institute-wide"; one with two
-// is listed under the first, with the other named. Each card shows the first
-// paragraph of the project's description as its abstract; the project page
-// shows the whole description. See programs/PLAN.md, Phase 4, and migration 045.
+// listed flat by title with each project's research group(s) named on the card.
+// Each card shows the first paragraph of the project's description as its
+// abstract; the project page shows the whole description. See programs/PLAN.md, Phase 4, and migration 045.
 (function () {
   const R = window.PI_RESEARCH;
   const esc = R.escHtml;
@@ -101,41 +99,33 @@
     });
 
   function render(projects, sigOrder) {
+    // One flat index, alphabetical by title (Session 57 — was grouped under
+    // research-group headings). Each project's research group(s) are a line
+    // under the investigators, in site SIG order; none → "Institute-wide".
     const rank = slug => { const i = sigOrder.indexOf(slug); return i < 0 ? 999 : i; };
-    const groups = new Map();
-    for (const p of projects) {
-      const sigs = (p.programs || []).filter(a => a.kind === 'sig').sort((a, b) => rank(a.slug) - rank(b.slug));
-      const key = sigs[0] ? sigs[0].slug : '';
-      if (!groups.has(key)) groups.set(key, { sig: sigs[0] || null, projects: [] });
-      groups.get(key).projects.push({ p, alsoIn: sigs.slice(1) });
-    }
-    const ordered = [...groups.entries()].sort(([a], [b]) => (a ? rank(a) : 1000) - (b ? rank(b) : 1000));
-    if (!ordered.length) {
+    if (!projects.length) {
       box.innerHTML = '<p class="entity-empty">No projects are listed for ' + YEAR + ' yet.</p>';
       return;
     }
-    box.innerHTML = ordered.map(([, g]) => `
-      <section class="rm-group">
-        <h2 class="rm-group-heading">${g.sig
-          ? `<a href="${esc(g.sig.href)}">${esc(g.sig.title)}</a>`
-          : 'Institute-wide'}</h2>
-        <ul class="entity-list">
-          ${g.projects.sort((a, b) => a.p.title.localeCompare(b.p.title)).map(({ p, alsoIn }) => {
-            const href = '/projects/project?slug=' + encodeURIComponent(p.slug);
-            const people = [person(p.lead_slug, p.lead_name), ...(p.team || []).map(t => person(t.slug, t.name))];
-            const also = alsoIn.length
-              ? ' &middot; also ' + alsoIn.map(s => `<a href="${esc(s.href)}">${esc(s.short_title || s.title)}</a>`).join(', ')
-              : '';
-            return `
-            <li class="entity-card">
-              <h3 class="entity-title"><a href="${href}">${esc(p.title)}</a></h3>
-              <div class="entity-meta">${people.length > 1 ? 'Principal investigators' : 'Principal investigator'}: ${people.join(', ')}${also}</div>
-              <div class="entity-description md">${PIMarkdown.html(abstractOf(p.description))}</div>
-              <a class="rm-more" href="${href}">Project page &rarr;</a>
-            </li>`;
-          }).join('')}
-        </ul>
-      </section>`).join('');
+    box.innerHTML = '<ul class="entity-list rm-list">' + projects.slice()
+      .sort((a, b) => a.title.localeCompare(b.title))
+      .map(p => {
+        const href = '/projects/project?slug=' + encodeURIComponent(p.slug);
+        const people = [person(p.lead_slug, p.lead_name), ...(p.team || []).map(t => person(t.slug, t.name))];
+        const groups = (p.programs || []).filter(a => a.kind === 'sig').sort((a, b) => rank(a.slug) - rank(b.slug));
+        const groupLine = groups.length
+          ? (groups.length > 1 ? 'Research groups' : 'Research group') + ': ' +
+            groups.map(g => `<a href="${esc(g.href)}">${esc(g.title)}</a>`).join(', ')
+          : 'Institute-wide';
+        return `
+        <li class="entity-card">
+          <h3 class="entity-title"><a href="${href}">${esc(p.title)}</a></h3>
+          <div class="entity-meta">${people.length > 1 ? 'Principal investigators' : 'Principal investigator'}: ${people.join(', ')}</div>
+          <div class="entity-meta">${groupLine}</div>
+          <div class="entity-description md">${PIMarkdown.html(abstractOf(p.description))}</div>
+          <a class="rm-more" href="${href}">Project page &rarr;</a>
+        </li>`;
+      }).join('') + '</ul>';
   }
 }());
 </script>
