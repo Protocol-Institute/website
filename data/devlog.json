@@ -2254,6 +2254,31 @@
           "html": "Reviewed against the post-rename checklist (only <code>research-groups/</code>, <code>/research-groups/</code> links, patched not recreated, counts, 7-day grace) and merged. c3po#8/#9 remain open in pibot; PR #19 rendered only new meetings, so confirming them needs a pibot fix plus a deliberate re-render of the affected past pages."
         }
       ]
+    },
+    {
+      "id": 59,
+      "sort_key": 59.0,
+      "label": "Session 59",
+      "title": "Image-upload bug triage; three projects onto the 2027 roadmap",
+      "date": "2026-10-12",
+      "time_pt": "",
+      "tracks": [
+        "operations",
+        "content"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Project image upload bug — triaged, not reproduced",
+          "html": "Abderraouf Belalia reported an error re-uploading his project image. D1 shows <code>image_key</code> NULL and an <code>updated_at</code> (2026-10-10 01:08 UTC) older than the image feature itself, so no attempt of his was ever stored. Server-side everything checks out: he is the lead, his two program tags pass <code>validateAffiliations</code>, and three other leads uploaded successfully the same day. Against a local prod clone with a test session as him, both a direct multipart POST to <code>/api/projects/&lt;slug&gt;/image</code> and a full replace through <code>/projects/edit</code> in a real browser succeeded. The failure is therefore input- or environment-specific; the leading suspect is the client-side 640&nbsp;px minimum, whose error appears only as a red hint under the field. Logged under Upcoming with the four candidate causes and the details needed from him. No code changed."
+        },
+        {
+          "title": "Research Roadmap 2027 — three more projects",
+          "html": "Tagged AI Agent Protocol Observatory and The Swarm Company (Rafael Fernandez) and Protocolized Book Production (Jenna Dixon) to <code>research-roadmap</code>, edition 22, by direct D1 insert as approved (the program is moderated and the host-facing approval queue still doesn't exist, so admin tagging is a DB write). Existing tags left in place. The flat title index now has 13 projects, verified on the live API."
+        }
+      ]
     }
   ]
 }

@@ -1083,3 +1083,15 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Reviewed against the post-rename checklist (only `research-groups/`, `/research-groups/` links, patched not recreated, counts, 7-day grace) and merged. c3po#8/#9 remain open in pibot; PR #19 rendered only new meetings, so confirming them needs a pibot fix plus a deliberate re-render of the affected past pages.
 
 ---
+
+## Session 59: Image-upload bug triage; three projects onto the 2027 roadmap
+
+*2026-10-12*
+
+**Tracks:** operations, content
+
+- Abderraouf Belalia reported an error re-uploading his project image. D1 shows `image_key` NULL and an `updated_at` (2026-10-10 01:08 UTC) older than the image feature itself, so no attempt of his was ever stored. Server-side everything checks out: he is the lead, his two program tags pass `validateAffiliations`, and three other leads uploaded successfully the same day. Against a local prod clone with a test session as him, both a direct multipart POST to `/api/projects/&lt;slug&gt;/image` and a full replace through `/projects/edit` in a real browser succeeded. The failure is therefore input- or environment-specific; the leading suspect is the client-side 640&nbsp;px minimum, whose error appears only as a red hint under the field. Logged under Upcoming with the four candidate causes and the details needed from him. No code changed.
+
+- Tagged AI Agent Protocol Observatory and The Swarm Company (Rafael Fernandez) and Protocolized Book Production (Jenna Dixon) to `research-roadmap`, edition 22, by direct D1 insert as approved (the program is moderated and the host-facing approval queue still doesn't exist, so admin tagging is a DB write). Existing tags left in place. The flat title index now has 13 projects, verified on the live API.
+
+---
