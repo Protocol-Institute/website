@@ -1,9 +1,9 @@
 {
   "_about": [
     "Which YouTube video holds the recording of each Protocol Symposium 2026 item.",
-    "Hand-maintained; this file is the source of truth. The program page reads it directly, and make_recordings.py reads it to generate the per-talk transcript pages.",
+    "Hand-maintained; this file is the source of truth. The program page reads it directly, and c3po reads it to split multi-talk videos in the protocolized.io archive.",
     "start/end are seconds into the video, for one upload that covers several program items (the Opening Talk video holds the Welcome Session, David Lang's talk and the panel). Omit both for a whole-video recording.",
-    "To add a recording: append a row, run make_recordings.py, commit both."
+    "To add a recording: append a row and commit; c3po carries it to the protocolized.io archive."
   ],
   "channel": "https://www.youtube.com/@protocol-institute",
   "recordings": [
