@@ -44,7 +44,7 @@
     "my-mind-is-a-markdown-file": {
       "resource_url": "https://protocolized.io/resources/photo-realism",
       "slides": 1,
-      "transcript": false
+      "transcript": true
     },
     "oil-uni-and-tv-post-soviet-infrastructures-shaping-protocols-for-web": {
       "resource_url": "https://protocolized.io/resources/oil-uni-and-tv-post-soviet-infrastructures-shaping-protocols-for-web",
@@ -99,7 +99,7 @@
     "talk-amber-attention-as-natural-law": {
       "resource_url": "https://protocolized.io/resources/attention-as-natural-law",
       "slides": 1,
-      "transcript": false
+      "transcript": true
     },
     "talk-aneesh-building-psychohistory-an-inf": {
       "resource_url": "https://protocolized.io/resources/building-psychohistory-an-infrastructure-field-report",
@@ -214,7 +214,7 @@
     "talk-venkatesh-building-archival-selves": {
       "resource_url": "https://protocolized.io/resources/artisanal-bots-with-protocolized-rag",
       "slides": 1,
-      "transcript": false
+      "transcript": true
     },
     "talk-william-the-role-of-identity-in-decent": {
       "resource_url": "https://protocolized.io/resources/the-role-of-identity-in-decentralized-dispute-resolution-protocols",
