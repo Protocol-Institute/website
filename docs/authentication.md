@@ -16,7 +16,7 @@ A user session can resolve to one of three states, checked via `GET /api/members
 | **Approved member** | Valid session, row in `members` table | `200 { member: {...}, owned: [...] }` | Member name (+ Edit Profile, Log out) |
 
 There is no "rejected" nav state — a rejected applicant has no session cookie
-(sessions expire after 24 h) and can re-attempt with a different email or contact
+(sessions expire after 90 days; admins 24 h) and can re-attempt with a different email or contact
 the team.
 
 ---
@@ -47,7 +47,7 @@ The endpoint:
 - Checks expiry and hash match
 - Deletes the PIN row (single-use)
 - Generates a 32-byte random session token, stores its SHA-256 hash in `auth_pins`
-  under the key `session:<email>` with a 24-hour TTL
+  under the key `session:<email>` with a 90-day TTL (24 h for admins)
 - Sets `pi_session=<token>:<email>` cookie: `HttpOnly; Secure; SameSite=Lax;
   Domain=.protocol-institute.org`
 
@@ -103,7 +103,7 @@ CREATE TABLE auth_pins (
 ```
 
 PINs expire in 15 minutes and are deleted on first use.
-Sessions expire in 24 hours and are deleted on logout.
+Sessions expire in 90 days (24 hours for admins) and are deleted on logout.
 
 ### `members`
 One row per approved member. `email` is the primary key and the identity used
@@ -197,12 +197,14 @@ sessions. The `auth_pins` table could support multiple sessions per user (change
 the key from `session:<email>` to `session:<email>:<token-id>`) to enable a
 "log out of all devices" feature.
 
-**24-hour session TTL is fixed** — There is no "remember me" option. A longer-
-lived session (e.g. 30 days) with a rolling renewal on each `/api/members/me`
-call would improve UX for frequent visitors without changing the security model.
+**Session TTL (changed Session 60)** — Ordinary members get a 90-day session;
+admins (`members.is_admin`) keep 24 hours, since an admin session unlocks admin
+APIs (`verify-pin.js`). The change applies to logins made after it deploys;
+existing 24-hour sessions run out as before. No rolling renewal yet — a rolling
+renewal on each `/api/members/me` call would extend active users indefinitely.
 
 **Pending state is invisible after session expires** — If a pending applicant's
-24-hour session expires before they are approved, they must re-authenticate (enter
+session expires before they are approved, they must re-authenticate (enter
 email + PIN again) to see the Pending Approval screen. This is correct but could
 be confusing; the welcome email sent on approval includes a login link which
 naturally handles the re-auth.

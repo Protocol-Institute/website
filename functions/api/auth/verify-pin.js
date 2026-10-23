@@ -1,8 +1,10 @@
 // POST /api/auth/verify-pin
 // Body: { email: string, pin: string }
-// Validates PIN, sets 24h session cookie
+// Validates PIN, sets the session cookie: 90 days for ordinary members (friction of
+// re-login outweighs the risk), 24h for admins, whose session unlocks admin APIs.
 
 const SESSION_TTL_HOURS = 24;
+const MEMBER_SESSION_TTL_HOURS = 24 * 90;
 
 async function hashPin(pin) {
   const encoder = new TextEncoder();
@@ -56,14 +58,16 @@ export async function onRequestPost({ request, env }) {
 
   const token = await generateSessionToken();
   const tokenHash = await hashPin(token); // reuse same SHA-256 helper
-  const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toISOString();
+  const member = await env.DB.prepare('SELECT is_admin FROM members WHERE email = ?').bind(email).first();
+  const ttlHours = member && member.is_admin ? SESSION_TTL_HOURS : MEMBER_SESSION_TTL_HOURS;
+  const expiresAt = new Date(Date.now() + ttlHours * 3600 * 1000).toISOString();
 
   // Store session in D1 (reuse auth_pins table with long TTL)
   await env.DB.prepare(
     'INSERT OR REPLACE INTO auth_pins (email, pin_hash, expires_at) VALUES (?, ?, ?)'
   ).bind(`session:${email}`, tokenHash, expiresAt).run();
 
-  const cookieExpires = new Date(Date.now() + SESSION_TTL_HOURS * 3600 * 1000).toUTCString();
+  const cookieExpires = new Date(Date.now() + ttlHours * 3600 * 1000).toUTCString();
 
   return new Response(JSON.stringify({ ok: true, email }), {
     headers: {

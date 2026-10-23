@@ -1095,3 +1095,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - Tagged AI Agent Protocol Observatory and The Swarm Company (Rafael Fernandez) and Protocolized Book Production (Jenna Dixon) to `research-roadmap`, edition 22, by direct D1 insert as approved (the program is moderated and the host-facing approval queue still doesn't exist, so admin tagging is a DB write). Existing tags left in place. The flat title index now has 13 projects, verified on the live API.
 
 ---
+
+## Session 60: Core team page, PiBoWriMo word-count leaderboard, 90-day member logins
+
+*2026-10-23*
+
+**Tracks:** member-directory, content, operations
+
+- Rafael Fernandez joined the core team while remaining a research leader. `members.tier` is a single value, so putting him in `team` would have dropped him from Research Leads. The Team filter (client-side in `members/index.html` and the `?tag=team` API path) now selects on `team_core = 1` alone; Extended Team is still tier `team` and not core. Migration 059 sets core order (Venkat, Rafael, Timber, Tim) and adds `team_cofounder`, a display-only flag rendered as an outlined teal badge (`.cofounder-badge`) before the title on cards and as plain text on the profile page. Titles and bios were already edited by Venkat in D1 beforehand; the page hadn't changed only because Rafael lacked `team_core`/`team_sort`. Shipped (`2c16657`) with a D1 backup first. Locks in: core-team membership is a flag independent of tier.
+
+- Migration 060 adds `pibowrimo_wordcounts` (one row per project per day, `UNIQUE(project_id, entry_date)` as the upsert target, so re-logging a date replaces it) and `pibowrimo_starts` (one baseline per project). Daily `words` is a *signed net change*, not a running total and not constrained non-negative: a net cut is progress. The score is `SUM(ABS(words))`, so cutting 1,000 earns what adding 1,000 does; `SUM(words)` is shown as Net. The starting count exists for books already in progress; it is required with a project's first entry (server-enforced, the form only asks when none exists), is never scored, and is write-once through the API. The open window is not stored here: it is the dates of the `pibowrimo` edition `2026-11`, so moving the event means editing that edition, not code. `logged_by` is kept for audit and never returned.
+
+- A project is loggable when it is approved, tagged to `pibowrimo` with an approved tag (no edition or edition 2026-11 — the same set the landing page indexes), and the caller is its lead or an approved `project_team` member. The dropdown is built from that set, but the POST re-checks it, so a forged project id returns 403. Dates are limited to the window plus one day of slack for participants west of UTC; the GET is public and returns the caller's own projects and entries only when a session exists (`sessionVaryingJson`). API: `functions/api/pibowrimo/wordcounts.js`; page: `events/pibowrimo-2026/leaderboard/`.
+
+- `verify-pin.js` now looks up `members.is_admin` and issues a 90-day session (D1 row and cookie `Expires`) to ordinary members, keeping 24 hours for admins because an admin session unlocks the admin APIs. Every session reader checks `auth_pins.expires_at`, so nothing else needed changing. Applies only to logins after deploy. No rolling renewal. `docs/authentication.md` updated, including its old 'fixed 24-hour TTL' limitation note.
+
+- The leaderboard is committed locally but **not applied to prod and not pushed**: migration 060 must run first or the new endpoint would error. Tested against a local clone of the production D1 (loaded from the pre-059 backup via sqlite3) with a test session: ownership, window, replace-on-resubmit, negative and out-of-range input, first-log start requirement, and the UI flow in a browser. Not verified: phone-width layout and the signed-in-without-a-project message (browser extension dropped on an unreliable connection). See status.md Upcoming.
+
+---

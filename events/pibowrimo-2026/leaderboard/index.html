@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PiBoWriMo Leaderboard — The Protocol Institute</title>
+  <meta name="description" content="The PiBoWriMo 2026 word-count leaderboard: participants log the words they write each day in November, and book projects are ranked by total.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css?v=59">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>PiBoWriMo Leaderboard</h1>
+      </div>
+
+      <div class="event-body">
+
+        <p class="sig-meta" id="lb-window">&nbsp;</p>
+
+        <section id="lb-form-section" hidden>
+          <h2 class="bwm-index-heading">Log your words</h2>
+          <form id="lb-form" class="lb-form">
+            <div class="form-group">
+              <label class="form-label" for="lb-project">Project</label>
+              <select class="form-input" id="lb-project" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lb-date">Date</label>
+              <input class="form-input" type="date" id="lb-date" required>
+            </div>
+            <div class="form-group" id="lb-start-group" hidden>
+              <label class="form-label" for="lb-start">Starting word count</label>
+              <input class="form-input" type="number" id="lb-start" min="0" step="1" inputmode="numeric">
+              <p class="form-hint">How long the manuscript was before the month began (0 for a new book). Asked once per project, the first time you log; it is a baseline and earns no credit.</p>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lb-words">Net words that day</label>
+              <input class="form-input" type="number" id="lb-words" min="-200000" max="200000" step="1" inputmode="numeric" required>
+            </div>
+            <button type="submit" class="form-btn" id="lb-submit">Log words</button>
+          </form>
+          <p class="form-hint">Enter the net change in your manuscript <em>that day</em>, not a running total: positive if you added words, negative if you cut. Cutting counts as progress. Credit is the size of the change, so cutting 1,000 words earns the same as adding 1,000. Logging a date again replaces the earlier figure.</p>
+          <p id="lb-msg" class="lb-msg" role="status"></p>
+        </section>
+
+        <p id="lb-gate" class="form-hint" hidden></p>
+
+        <h2 class="bwm-index-heading">Standings</h2>
+        <div class="lb-table-wrap">
+          <table class="lb-table">
+            <thead><tr><th>#</th><th>Project</th><th class="lb-num">Credit</th><th class="lb-num lb-hide-sm">Net</th><th class="lb-num">Days</th><th class="lb-num lb-hide-sm">Last logged</th></tr></thead>
+            <tbody id="lb-body"><tr><td colspan="6" class="entity-empty">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="event-back">
+        <a href="/events/pibowrimo-2026">&larr; PiBoWriMo 2026</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js?v=58"></script>
+<script src="/js/research.js?v=54"></script>
+<script>
+// Data and rules live in functions/api/pibowrimo/wordcounts.js: the open window is the
+// pibowrimo 2026-11 edition's dates, and a project is loggable by its lead or approved
+// team members. This page only renders what the API returns.
+(function () {
+  const R = window.PI_RESEARCH;
+  const esc = R.escHtml;
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n).toLocaleString('en-US');
+  const longDate = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
+  let state = null;
+
+  function render() {
+    const { window: w, leaderboard, mine } = state;
+    $('lb-window').textContent = w.open
+      ? `The counter is open ${longDate(w.start)}–${longDate(w.end)}.`
+      : (w.today < w.start ? `The counter opens ${longDate(w.start)}.` : `The counter closed ${longDate(w.end)}. Final standings below.`);
+
+    $('lb-body').innerHTML = leaderboard.length
+      ? leaderboard.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td><a href="/projects/project?slug=${encodeURIComponent(r.slug)}">${esc(r.title)}</a>
+                <div class="entity-meta">by <a href="${R.profileHref(r.lead_slug)}">${esc(r.lead_name || r.lead_slug)}</a></div></td>
+            <td class="lb-num">${fmt(r.total)}</td>
+            <td class="lb-num lb-hide-sm">${r.net > 0 ? '+' : ''}${fmt(r.net)}</td>
+            <td class="lb-num">${r.days}</td>
+            <td class="lb-num lb-hide-sm">${r.last_date ? longDate(r.last_date) : '&mdash;'}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="6" class="entity-empty">No books registered yet.</td></tr>';
+
+    const gate = $('lb-gate'), section = $('lb-form-section');
+    section.hidden = true; gate.hidden = false;
+    if (!mine) {
+      gate.innerHTML = `<a href="/members/join?return=${encodeURIComponent(location.pathname)}">Log in</a> to log your words.`;
+    } else if (!mine.projects.length) {
+      gate.innerHTML = 'You have no PiBoWriMo project to log for. <a href="/projects/submit?program=pibowrimo&amp;artifact=text">Add your book project</a>, tagged to PiBoWriMo, to join the leaderboard.';
+    } else if (!w.open) {
+      gate.textContent = w.today < w.start ? `Logging opens ${longDate(w.start)}.` : 'Logging is closed.';
+    } else {
+      gate.hidden = true; section.hidden = false;
+      const sel = $('lb-project'), keep = sel.value;
+      sel.innerHTML = mine.projects.map(p => `<option value="${p.id}">${esc(p.title)}</option>`).join('');
+      if (keep) sel.value = keep;
+      syncStart();
+      const d = $('lb-date');
+      d.min = w.start; d.max = w.end;
+      if (!d.value) d.value = w.today < w.start ? w.start : (w.today > w.end ? w.end : w.today);
+    }
+  }
+
+  function load() {
+    return fetch('/api/pibowrimo/wordcounts').then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => { state = data; render(); })
+      .catch(() => { $('lb-body').innerHTML = '<tr><td colspan="6" class="entity-empty">The leaderboard could not be loaded. Please try again later.</td></tr>'; });
+  }
+
+  // The starting-count field appears only for a project that has no baseline yet.
+  function syncStart() {
+    const p = state && state.mine && state.mine.projects.find(x => String(x.id) === $('lb-project').value);
+    const need = !!p && !p.has_start;
+    $('lb-start-group').hidden = !need;
+    $('lb-start').required = need;
+    if (!need) $('lb-start').value = '';
+  }
+
+  // Fill the words box with the figure already logged for the chosen project and date.
+  function prefill() {
+    if (!state || !state.mine) return;
+    const hit = state.mine.entries.find(e => String(e.project_id) === $('lb-project').value && e.entry_date === $('lb-date').value);
+    $('lb-words').value = hit ? hit.words : '';
+  }
+  $('lb-project').addEventListener('change', () => { syncStart(); prefill(); });
+  $('lb-date').addEventListener('change', prefill);
+
+  $('lb-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const msg = $('lb-msg'), btn = $('lb-submit');
+    btn.disabled = true; msg.textContent = ''; msg.classList.remove('lb-msg--err');
+    try {
+      const res = await fetch('/api/pibowrimo/wordcounts', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: Number($('lb-project').value), date: $('lb-date').value, words: Number($('lb-words').value),
+          start_words: $('lb-start-group').hidden ? undefined : Number($('lb-start').value) }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(res.status === 401 ? 'Your session has expired. Please log in again.' : (out.error || 'Could not save'));
+      msg.textContent = `Logged ${Number($('lb-words').value) > 0 ? '+' : ''}${fmt($('lb-words').value)} words for ${longDate($('lb-date').value)}.`;
+      await load();
+      prefill();
+    } catch (e) {
+      msg.textContent = e.message; msg.classList.add('lb-msg--err');
+    } finally { btn.disabled = false; }
+  });
+
+  load().then(prefill);
+}());
+</script>
+</body>
+</html>

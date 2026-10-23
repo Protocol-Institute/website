@@ -2279,6 +2279,44 @@
           "html": "Tagged AI Agent Protocol Observatory and The Swarm Company (Rafael Fernandez) and Protocolized Book Production (Jenna Dixon) to <code>research-roadmap</code>, edition 22, by direct D1 insert as approved (the program is moderated and the host-facing approval queue still doesn't exist, so admin tagging is a DB write). Existing tags left in place. The flat title index now has 13 projects, verified on the live API."
         }
       ]
+    },
+    {
+      "id": 60,
+      "sort_key": 60.0,
+      "label": "Session 60",
+      "title": "Core team page, PiBoWriMo word-count leaderboard, 90-day member logins",
+      "date": "2026-10-23",
+      "time_pt": "",
+      "tracks": [
+        "member-directory",
+        "content",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Team view keys on team_core, not tier",
+          "html": "Rafael Fernandez joined the core team while remaining a research leader. <code>members.tier</code> is a single value, so putting him in <code>team</code> would have dropped him from Research Leads. The Team filter (client-side in <code>members/index.html</code> and the <code>?tag=team</code> API path) now selects on <code>team_core = 1</code> alone; Extended Team is still tier <code>team</code> and not core. Migration 059 sets core order (Venkat, Rafael, Timber, Tim) and adds <code>team_cofounder</code>, a display-only flag rendered as an outlined teal badge (<code>.cofounder-badge</code>) before the title on cards and as plain text on the profile page. Titles and bios were already edited by Venkat in D1 beforehand; the page hadn't changed only because Rafael lacked <code>team_core</code>/<code>team_sort</code>. Shipped (<code>2c16657</code>) with a D1 backup first. Locks in: core-team membership is a flag independent of tier."
+        },
+        {
+          "title": "PiBoWriMo leaderboard — data model",
+          "html": "Migration 060 adds <code>pibowrimo_wordcounts</code> (one row per project per day, <code>UNIQUE(project_id, entry_date)</code> as the upsert target, so re-logging a date replaces it) and <code>pibowrimo_starts</code> (one baseline per project). Daily <code>words</code> is a <em>signed net change</em>, not a running total and not constrained non-negative: a net cut is progress. The score is <code>SUM(ABS(words))</code>, so cutting 1,000 earns what adding 1,000 does; <code>SUM(words)</code> is shown as Net. The starting count exists for books already in progress; it is required with a project's first entry (server-enforced, the form only asks when none exists), is never scored, and is write-once through the API. The open window is not stored here: it is the dates of the <code>pibowrimo</code> edition <code>2026-11</code>, so moving the event means editing that edition, not code. <code>logged_by</code> is kept for audit and never returned."
+        },
+        {
+          "title": "Authorization: own projects only, enforced server-side",
+          "html": "A project is loggable when it is approved, tagged to <code>pibowrimo</code> with an approved tag (no edition or edition 2026-11 — the same set the landing page indexes), and the caller is its lead or an approved <code>project_team</code> member. The dropdown is built from that set, but the POST re-checks it, so a forged project id returns 403. Dates are limited to the window plus one day of slack for participants west of UTC; the GET is public and returns the caller's own projects and entries only when a session exists (<code>sessionVaryingJson</code>). API: <code>functions/api/pibowrimo/wordcounts.js</code>; page: <code>events/pibowrimo-2026/leaderboard/</code>."
+        },
+        {
+          "title": "Session length: 90 days for members, 24 h for admins",
+          "html": "<code>verify-pin.js</code> now looks up <code>members.is_admin</code> and issues a 90-day session (D1 row and cookie <code>Expires</code>) to ordinary members, keeping 24 hours for admins because an admin session unlocks the admin APIs. Every session reader checks <code>auth_pins.expires_at</code>, so nothing else needed changing. Applies only to logins after deploy. No rolling renewal. <code>docs/authentication.md</code> updated, including its old 'fixed 24-hour TTL' limitation note."
+        },
+        {
+          "title": "State at end of session — leaderboard not deployed",
+          "html": "The leaderboard is committed locally but <strong>not applied to prod and not pushed</strong>: migration 060 must run first or the new endpoint would error. Tested against a local clone of the production D1 (loaded from the pre-059 backup via sqlite3) with a test session: ownership, window, replace-on-resubmit, negative and out-of-range input, first-log start requirement, and the UI flow in a browser. Not verified: phone-width layout and the signed-in-without-a-project message (browser extension dropped on an unreliable connection). See status.md Upcoming."
+        }
+      ]
     }
   ]
 }
