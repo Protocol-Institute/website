@@ -16,7 +16,7 @@ export async function onRequestGet({ request, env }) {
   let query = `
     SELECT slug, name, bio, website, type, photo_r2_key,
            tier, community_lead_title,
-           is_team, is_consultant, team_title, team_sort, team_core,
+           is_team, is_consultant, team_title, team_sort, team_core, team_cofounder,
            city, discord_handle,
            tag_sop23, tag_sop24, tag_sop25, tag_ps25,
            tag_datus_nusas, tag_khlongs_subaks, tag_town_hall,
@@ -28,7 +28,7 @@ export async function onRequestGet({ request, env }) {
   const bindings = [];
 
   if (tagParam === 'team') {
-    query += ` AND tier = 'team'`;
+    query += ` AND (tier = 'team' OR team_core = 1)`;
   } else if (tagParam === 'community_lead') {
     query += ` AND tier = 'community_lead'`;
   } else if (tagParam === 'consultant') {

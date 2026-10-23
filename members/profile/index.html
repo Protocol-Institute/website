@@ -6,7 +6,7 @@
   <title>Member — The Protocol Institute</title>
   <meta name="description" content="Protocol Institute member profile.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=58">
+  <link rel="stylesheet" href="/css/style.css?v=59">
 </head>
 <body>
 
@@ -90,7 +90,7 @@
       ? `<img class="profile-photo" src="${esc(src)}" alt="">`
       : `<div class="profile-photo">${esc(initials)}</div>`;
 
-    const role = [m.team_title, m.tier === 'community_lead' ? m.community_lead_title : '', m.type === 'ai' ? 'AI' : '', m.city]
+    const role = [m.team_cofounder ? 'Co-founder' : '', m.team_title, m.tier === 'community_lead' ? m.community_lead_title : '', m.type === 'ai' ? 'AI' : '', m.city]
       .filter(Boolean).map(esc).join(' · ');
     document.getElementById('pf-role').innerHTML = role;
     document.getElementById('pf-bio').innerHTML = PIMarkdown.html(m.bio);

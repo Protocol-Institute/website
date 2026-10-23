@@ -6,7 +6,7 @@
   <title>Members — The Protocol Institute</title>
   <meta name="description" content="The Protocol Institute member directory — researchers, practitioners, and participants in the PI ecosystem.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=58">
+  <link rel="stylesheet" href="/css/style.css?v=59">
 </head>
 <body>
 
@@ -162,7 +162,7 @@
     return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"
         ${EVENT_TAGS.map(k => `data-${k}="${m[k]}"`).join(' ')}>
       <h2 class="member-name">${nameLink(m)}</h2>
-      ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
+      ${m.team_title || m.team_cofounder ? `<p class="member-role-label">${m.team_cofounder ? '<span class="cofounder-badge">Co-founder</span>' : ''}${escHtml(m.team_title || '')}</p>` : ''}
       ${m.bio ? `<div class="member-bio md">${PIMarkdown.html(m.bio)}</div>` : ''}
       ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
       ${tagsHtml(tags)}
@@ -198,7 +198,7 @@
         ${photoThumb(m)}
         <div class="member-content">
           <h2 class="member-name">${nameLink(m)}</h2>
-          ${m.team_title ? `<p class="member-role-label">${escHtml(m.team_title)}</p>` : ''}
+          ${m.team_title || m.team_cofounder ? `<p class="member-role-label">${m.team_cofounder ? '<span class="cofounder-badge">Co-founder</span>' : ''}${escHtml(m.team_title || '')}</p>` : ''}
           ${expertiseChips}
           ${m.bio ? `<div class="member-bio md">${PIMarkdown.html(m.bio)}</div>` : ''}
           ${metaParts.length ? `<p class="member-meta">${metaParts.join(' · ')}</p>` : ''}
@@ -251,7 +251,7 @@
       filtered = allMembers;
     } else {
       filtered = allMembers.filter(m => {
-        if (filter === 'team') return m.tier === 'team' && !!m.team_core;
+        if (filter === 'team') return !!m.team_core;
         if (filter === 'extended_team') return m.tier === 'team' && !m.team_core;
         if (filter === 'community_lead') return m.tier === 'community_lead';
         // Consultants: require photo — members without one are not shown until they add one
