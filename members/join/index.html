@@ -21,9 +21,9 @@
         <h1>Member Login / Register</h1>
       </div>
 
-      <p style="margin-bottom:0.5rem;color:#5A5A5A;">Enter your email address to either log in or apply for membership. You will receive a login pin. If you don't see it in a few minutes, check your spam folder. Existing members will be logged in, and potential applicants will be directed to the application form. Membership is open to individuals who have participated in a qualifying event.<sup><a href="#fn-eligibility" id="fnref-eligibility" style="color:#2A6B6B;text-decoration:none;">*</a></sup> Prequalified members will be approved immediately, otherwise approval decisions will be sent within a few days.</p>
+      <p style="margin-bottom:0.5rem;color:#5A5A5A;">Enter your email address to either log in or apply for membership. You will receive a login pin. If you don't see it in a few minutes, check your spam folder. Existing members will be logged in, and potential applicants will be directed to the application form. Membership is open to individuals who have participated in a qualifying event.<sup><a href="#fn-eligibility" id="fnref-eligibility" style="color:#2A6B6B;text-decoration:none;">*</a></sup> Prequalified members, and anyone joining to take part in PiBoWriMo, will be approved immediately, otherwise approval decisions will be sent within a few days.</p>
 
-      <p id="fn-eligibility" style="font-size:0.8rem;color:#8A8A8A;margin:0 0 1.75rem;padding:0.6rem 0 0;border-top:1px solid #E0DDD8;">* Qualifying participation includes: Summer of Protocols grant cohort (2023–2025), Protocol School, a PI symposium event, active Research Group participation, Protocol Kit recipient, or published writing in Protocolized. Once approved, your details will appear on the <a href="/members" style="color:#2A6B6B;">Members</a> page. <a href="#fnref-eligibility" style="color:#2A6B6B;" aria-label="Back to text">&#8617;</a></p>
+      <p id="fn-eligibility" style="font-size:0.8rem;color:#8A8A8A;margin:0 0 1.75rem;padding:0.6rem 0 0;border-top:1px solid #E0DDD8;">* Qualifying participation includes: Summer of Protocols grant cohort (2023–2025), Protocol School, a PI symposium event, active Research Group participation, Protocol Kit recipient, published writing in Protocolized, or taking part in PiBoWriMo. Once approved, your details will appear on the <a href="/members" style="color:#2A6B6B;">Members</a> page. <a href="#fnref-eligibility" style="color:#2A6B6B;" aria-label="Back to text">&#8617;</a></p>
 
       <div class="auth-steps">
         <span class="auth-step-label active" id="step-label-1">1. Email</span>
@@ -109,6 +109,7 @@
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_symposium_25"> Protocol Symposium 2025 (Foundations Workshop) attendee</label>
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_symposium_26"> Protocol Symposium 2026 proposer or participant</label>
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_guest_speaker"> Guest speaker at a PI event</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_pibowrimo"> PiBoWriMo 2026 participant (approved immediately)</label>
           </div>
         </div>
 
@@ -166,8 +167,9 @@
 
       <!-- Auto-approved success state -->
       <div id="step-approved" style="display:none;padding:2rem 0;">
-        <p style="font-size:1.05rem;color:#1A5A3A;margin-bottom:1rem;">Your email was on the pre-approved list, and your application has been approved.</p>
+        <p style="font-size:1.05rem;color:#1A5A3A;margin-bottom:1rem;">Your application has been approved.</p>
         <p style="color:#5A5A5A;margin-bottom:1rem;">You're now logged in and can view members-only parts of the site. You can edit your profile further and add a profile picture under <strong>Edit Profile</strong> — accessible from the profile menu in the navigation.</p>
+        <p id="approved-pibowrimo" style="display:none;margin-top:1.25rem;"><a class="form-btn" href="/projects/submit?program=pibowrimo">Create your PiBoWriMo project →</a></p>
         <p style="margin-top:1.25rem;"><a href="/members">View the member directory →</a></p>
       </div>
 
@@ -376,6 +378,7 @@ PIMdEditor.attach(document.getElementById('bio-input'));
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
       if (data.auto_approved) {
+        if (tags.includes('tag_pibowrimo')) document.getElementById('approved-pibowrimo').style.display = '';
         showApproved();
       } else {
         showPending(userEmail);

@@ -1,6 +1,7 @@
 // POST /api/membership/request
 // Handles new member registration form submission.
-// If the email matches a CRM contact, auto-approves without admin review.
+// Auto-approves without admin review if the email matches a CRM contact
+// or the applicant lists PiBoWriMo as a qualifying event.
 
 import { EVENT_TAGS } from '../../_shared/tags.js';
 import { sendWelcomeEmail } from '../../_shared/welcome.js';
@@ -74,14 +75,16 @@ export async function onRequestPost({ request, env }) {
     applicant_notes || null
   ).run();
 
-  // CRM check — auto-approve if email is a known contact
+  // Auto-approve if the email is a known CRM contact, or the applicant claims PiBoWriMo
+  // (self-attested, open-tag program — see migration 061)
   try {
     const crm = await env.DB.prepare(
       'SELECT affiliations FROM crm_contacts WHERE email = ?'
     ).bind(email).first();
+    const viaPibowrimo = validEvents.includes('tag_pibowrimo');
 
-    if (crm) {
-      const aff = crm.affiliations || '';
+    if (crm || viaPibowrimo) {
+      const aff = crm ? (crm.affiliations || '') : '';
       const tagSet = new Set(validEvents);
       for (const [label, col] of Object.entries(CRM_TAG_MAP)) {
         if (aff.includes(label)) tagSet.add(col);
@@ -122,8 +125,8 @@ export async function onRequestPost({ request, env }) {
       ).run();
 
       await env.DB.prepare(
-        `UPDATE membership_requests SET status = 'approved', reviewed_at = ?, admin_notes = 'Auto-approved: matched CRM' WHERE email = ?`
-      ).bind(new Date().toISOString(), email).run();
+        `UPDATE membership_requests SET status = 'approved', reviewed_at = ?, admin_notes = ? WHERE email = ?`
+      ).bind(new Date().toISOString(), crm ? 'Auto-approved: matched CRM' : 'Auto-approved: PiBoWriMo', email).run();
 
       await sendWelcomeEmail(env, email, name.split(' ')[0]);
       return Response.json({ ok: true, auto_approved: true });
