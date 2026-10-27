@@ -2317,6 +2317,35 @@
           "html": "The leaderboard is committed locally but <strong>not applied to prod and not pushed</strong>: migration 060 must run first or the new endpoint would error. Tested against a local clone of the production D1 (loaded from the pre-059 backup via sqlite3) with a test session: ownership, window, replace-on-resubmit, negative and out-of-range input, first-log start requirement, and the UI flow in a browser. Not verified: phone-width layout and the signed-in-without-a-project message (browser extension dropped on an unreliable connection). See status.md Upcoming."
         }
       ]
+    },
+    {
+      "id": 61,
+      "sort_key": 61.0,
+      "label": "Session 61",
+      "title": "PiBoWriMo auto-approved registration, kickoff link, leaderboard shipped",
+      "date": "2026-10-26",
+      "time_pt": "",
+      "tracks": [
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "PiBoWriMo as a self-attested qualifying event (migration 061)",
+          "html": "Added <code>tag_pibowrimo</code> to <code>EVENT_TAGS</code> (worker and client copies) and to <code>members</code> and <code>membership_requests</code>. <code>/api/membership/request</code> now takes its existing auto-approve path when the email is a CRM contact <em>or</em> the applicant ticks PiBoWriMo; the request row records which ('Auto-approved: PiBoWriMo'). The join page shows a 'Create your PiBoWriMo project' button on approval, linking to <code>/projects/submit?program=pibowrimo</code>; the program's tag policy is already <code>open</code>, so the project tag needs no review. <strong>Trade-off:</strong> the claim is unverified, so anyone can obtain full membership (and a public directory listing) by ticking the box. Accepted deliberately for a low-friction November event; revisit with a date window or rate limit if abused. The deep link does not preselect edition 2026-11 (editions are keyed by numeric id)."
+        },
+        {
+          "title": "Home page: kickoff notice, D1-first",
+          "html": "The live home body is <code>managed_pages</code> <code>static/home</code>, not <code>index.html</code>. Added a 'Kickoff' <code>.home-notice</code> linking the Luma event to both: D1 updated directly (pre-change row kept in the session scratchpad), fallback HTML kept in sync. Remove with the other time-boxed items after Nov 30."
+        },
+        {
+          "title": "Shipped the Session 60 leaderboard",
+          "html": "After a D1 export (<code>backups/pi-members-2026-10-26-pre060.sql</code>), migrations 060 and 061 were applied to prod before pushing <code>188ddaa</code> (which also carried the Session 60 leaderboard commit). Order matters for any push that depends on a new column: migrate first, then push. Phone-width check of the leaderboard still outstanding."
+        }
+      ]
     }
   ]
 }

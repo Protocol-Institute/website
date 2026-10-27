@@ -91,7 +91,8 @@ members/            /members — member directory (D1-backed, PIN auth). Filters
                     sort by members.team_sort (migration 051); everything else alphabetical. **Session 60 (migration 059):** the Team view keys on
                     team_core alone (not tier), so a Research Lead can also be core team (Rafael Fernandez); members.team_cofounder drives the
                     "Co-founder" badge (.cofounder-badge) beside the title on cards and profiles. Core order: Venkat, Rafael, Timber, Tim
-  join/             /members/join — login + registration flow
+  join/             /members/join — login + registration flow. Auto-approves CRM contacts and anyone ticking the PiBoWriMo qualifying
+                    event (`tag_pibowrimo`, self-attested, migration 061); the latter get a create-project button
   edit/             /members/edit?slug= — profile editor (no slug = your own); reached from the Edit link on /members/profile
   profile/          /members/profile?slug= — public member page: bio + projects (research, then Operations). Query-param URL on
                     purpose: a /members/<slug> rewrite would collide with join/edit/dashboard

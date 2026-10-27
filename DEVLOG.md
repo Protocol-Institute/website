@@ -1113,3 +1113,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - The leaderboard is committed locally but **not applied to prod and not pushed**: migration 060 must run first or the new endpoint would error. Tested against a local clone of the production D1 (loaded from the pre-059 backup via sqlite3) with a test session: ownership, window, replace-on-resubmit, negative and out-of-range input, first-log start requirement, and the UI flow in a browser. Not verified: phone-width layout and the signed-in-without-a-project message (browser extension dropped on an unreliable connection). See status.md Upcoming.
 
 ---
+
+## Session 61: PiBoWriMo auto-approved registration, kickoff link, leaderboard shipped
+
+*2026-10-26*
+
+**Tracks:** member-directory, operations
+
+- Added `tag_pibowrimo` to `EVENT_TAGS` (worker and client copies) and to `members` and `membership_requests`. `/api/membership/request` now takes its existing auto-approve path when the email is a CRM contact *or* the applicant ticks PiBoWriMo; the request row records which ('Auto-approved: PiBoWriMo'). The join page shows a 'Create your PiBoWriMo project' button on approval, linking to `/projects/submit?program=pibowrimo`; the program's tag policy is already `open`, so the project tag needs no review. **Trade-off:** the claim is unverified, so anyone can obtain full membership (and a public directory listing) by ticking the box. Accepted deliberately for a low-friction November event; revisit with a date window or rate limit if abused. The deep link does not preselect edition 2026-11 (editions are keyed by numeric id).
+
+- The live home body is `managed_pages` `static/home`, not `index.html`. Added a 'Kickoff' `.home-notice` linking the Luma event to both: D1 updated directly (pre-change row kept in the session scratchpad), fallback HTML kept in sync. Remove with the other time-boxed items after Nov 30.
+
+- After a D1 export (`backups/pi-members-2026-10-26-pre060.sql`), migrations 060 and 061 were applied to prod before pushing `188ddaa` (which also carried the Session 60 leaderboard commit). Order matters for any push that depends on a new column: migrate first, then push. Phone-width check of the leaderboard still outstanding.
+
+---
