@@ -11,7 +11,7 @@ INSERT OR IGNORE INTO managed_pages (page_key, title, content_md, updated_at, up
 As a result, over its four-year history, a unique set of governing values has emerged in the PI community:
 
 1. **Commons orientation**: All our output to date has been freely published as contributions to a knowledge commons, and this will continue to be our default. Our work has also benefited from commons-based programs such as the Optimism RPGF, and GCC
-2. **Obliquity**: We believe strongly in cultivating obliquity and seeking serendipity, a research philosophy based on the classic paper by Art Lindblom, *The Art of Muddling Through*.
+2. **Obliquity**: We believe strongly in cultivating obliquity and seeking serendipity, a research philosophy based on the classic paper by Charles Lindblom, *The Art of Muddling Through*.
 3. **Scene-Making**: We believe in going beyond basic research to applications, teaching, cultivating literacy, and broad evangelism aimed at establishing protocols as first-class objects of study, analysis, and synthesis
 4. **Openness and Collaboration**: Over the years we have conducted a significant fraction of our work in collaboration with varied partner organizations. We believe in influencing and being influenced.
 5. **Plurality**: We believe our approach to protocol studies is not the only possible one, and that protocols are not the only aspect of the problems we study that are worthy of attention. We strive to cultivate a pluralist ecology of ideas and practices in everything we do.
