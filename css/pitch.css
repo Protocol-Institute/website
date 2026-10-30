@@ -20,3 +20,5 @@
 
 /* Page chrome (not part of the PDF document) */
 .pitch-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0 0 2rem; padding-bottom: 1rem; border-bottom: 1px solid #E0DDD8; font-size: .9rem; color: #8A8A8A; }
+.pitch-doc .appref { font-size: .92em; color: #8A8A8A; margin: -.2rem 0 1rem; }
+.pitch-doc .appendices { margin-top: 3rem; }

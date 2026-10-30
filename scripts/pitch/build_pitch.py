@@ -112,6 +112,9 @@ def roadmap(d):
 
 
 BLOCKS = {"team": team, "research-leads": leads, "research-groups": groups, "roadmap-projects": roadmap}
+# Name lists go to appendices so the main text reads cleanly; the directive leaves a reference in place.
+# The research-group list stays inline. Lettered in order of first appearance.
+APPENDIX_TITLES = {"team": "The core team", "research-leads": "Research leads", "roadmap-projects": "Research Roadmap projects"}
 
 
 def live_data():
@@ -128,7 +131,7 @@ def live_data():
 def assemble(source: str) -> str:
     d = live_data()
     source = source.replace("{{group-count}}", str(len(d["groups"]))).replace("{{roadmap-count}}", str(len(d["roadmap"])))
-    out = []
+    out, appendices = [], []
     parts = re.split(r"^\{\{([\w:/.-]+)\}\}[ \t]*$", source, flags=re.M)  # text, name, text, name, ...
     for i, seg in enumerate(parts):
         if i % 2 == 0:
@@ -139,12 +142,24 @@ def assemble(source: str) -> str:
             if not key.startswith("static/"):
                 raise SystemExit(f"{{{{page:{key}}}}}: only public static/* pages can be inlined")
             out.append(get_json(f"/api/pages/{key}")["content_md"])
+        elif seg in APPENDIX_TITLES:
+            if seg not in (a[0] for a in appendices):
+                appendices.append((seg, BLOCKS[seg](d)))
+            letter, title = chr(64 + [a[0] for a in appendices].index(seg) + 1), APPENDIX_TITLES[seg]
+            out.append(f'\n<p class="appref">See <a href="#appendix-{seg}">Appendix {letter}: {title}</a>.</p>\n')
         elif seg in BLOCKS:
             out.append(f"\n{BLOCKS[seg](d)}\n")  # raw HTML block; python-markdown passes it through
         else:
             raise SystemExit(f"unknown directive {{{{{seg}}}}}")
     # Footnote definitions must sit in one markdown run, so render once, not per segment.
-    return md("\n".join(out))
+    body = md("\n".join(out))
+    if not appendices:
+        return body
+    app = '<section class="appendices">' + "".join(
+        f'<section class="appendix" id="appendix-{key}"><h2>Appendix {chr(65 + i)}: {APPENDIX_TITLES[key]}</h2>{block}</section>'
+        for i, (key, block) in enumerate(appendices)) + "</section>"
+    i = body.find('<div class="footnote">')
+    return body + app if i < 0 else body[:i] + app + body[i:]
 
 
 # ── Print document ─────────────────────────────────────────────────────────
@@ -161,6 +176,11 @@ body{background:#fff;margin:0}
 .masthead .org{font:500 8.5pt 'DM Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase}
 .masthead .stamp{font:7.5pt 'DM Sans',sans-serif;letter-spacing:.06em;color:#9a9a94}
 .pitch-doc h1{font-size:34pt;margin:0 0 3mm}
+.appendices{break-before:page}
+.appendix h2{break-after:avoid}
+.appendices .appendix:first-child h2{border-top:0;margin-top:0;padding-top:0}
+a.appref{border-bottom:0}
+.appref a::after{content:" (p. " target-counter(attr(href),page) ")";color:#77776f}
 .pitch-doc h1 + p{font-size:9.5pt;color:#77776f;margin:0 0 9mm}
 .pitch-doc h2{font-size:19pt;margin:11mm 0 3mm;padding-top:5mm;break-after:avoid}
 .pitch-doc h3{break-after:avoid}
