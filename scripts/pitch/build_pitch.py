@@ -30,6 +30,7 @@ SOURCE_KEY = "pitch/overview"
 ROADMAP_PROGRAM, ROADMAP_YEAR = "research-roadmap", "2027"
 # Hosts who are not "leads" for funding purposes: left out of the leads list and of group lead credit.
 NOT_FUNDING_LEADS = {"spencernitkeywriting"}
+ROADMAP_NOTICE = "Draft: Roadmap will be finalized by January 31, 2027."  # remove after that date
 
 esc = html.escape
 
@@ -109,7 +110,7 @@ def roadmap(d):
         meta = [x for x in (esc(names(gs)) if gs else "", f'lead: {esc(p["lead_name"])}' if p.get("lead_name") else "") if x]
         items.append(f'<li><strong><a href="{SITE}/projects/project/?slug={p["slug"]}">{esc(p["title"])}</a></strong>'
                      f'{" <span class=meta>(" + "; ".join(meta) + ")</span>" if meta else ""}<br>{esc(abstract(p["description"], 2000))}</li>')
-    return f'<ul class="roadmap">{"".join(items)}</ul>'
+    return f'<p class="note">{ROADMAP_NOTICE}</p><ul class="roadmap">{"".join(items)}</ul>'
 
 
 BLOCKS = {"team": team, "research-leads": leads, "research-groups": groups, "roadmap-projects": roadmap}
