@@ -108,7 +108,7 @@ def roadmap(d):
         gs = [a["title"] for a in p["programs"] if a["kind"] == "sig" and a["status"] == "approved"]
         meta = [x for x in (esc(names(gs)) if gs else "", f'lead: {esc(p["lead_name"])}' if p.get("lead_name") else "") if x]
         items.append(f'<li><strong><a href="{SITE}/projects/project/?slug={p["slug"]}">{esc(p["title"])}</a></strong>'
-                     f'{" <span class=meta>(" + "; ".join(meta) + ")</span>" if meta else ""}<br>{esc(abstract(p["description"], 300))}</li>')
+                     f'{" <span class=meta>(" + "; ".join(meta) + ")</span>" if meta else ""}<br>{esc(abstract(p["description"], 2000))}</li>')
     return f'<ul class="roadmap">{"".join(items)}</ul>'
 
 
