@@ -10,7 +10,7 @@ The PDF inlines all of it so it stands alone. Output is skipped when the content
 the last build, so the scheduled run (.github/workflows/pitch-build.yml) is cheap.
 
 Directives (alone on a line): {{team}} {{research-leads}} {{research-groups}} {{roadmap-projects}}
-{{page:static/<key>}}. Inline: {{group-count}} {{roadmap-count}}.
+{{page:static/<key>}}. Inline: {{group-count}} {{roadmap-count}} {{date}} (date of the build; unchanged documents keep theirs).
 
   python3 scripts/pitch/build_pitch.py                     # build + upload if changed
   python3 scripts/pitch/build_pitch.py --force
@@ -18,6 +18,7 @@ Directives (alone on a line): {{team}} {{research-leads}} {{research-groups}} {{
 
 Requires: markdown, weasyprint; wrangler + CLOUDFLARE_API_TOKEN (D1 read, R2 write) unless --source-file/--no-upload.
 """
+from zoneinfo import ZoneInfo
 import argparse, datetime, hashlib, html, json, os, re, subprocess, sys, tempfile, urllib.request
 from pathlib import Path
 
@@ -30,6 +31,7 @@ SOURCE_KEY = "pitch/overview"
 ROADMAP_PROGRAM, ROADMAP_YEAR = "research-roadmap", "2027"
 # Hosts who are not "leads" for funding purposes: left out of the leads list and of group lead credit.
 NOT_FUNDING_LEADS = {"spencernitkeywriting"}
+DATE_TOKEN = "@@BUILD_DATE@@"  # {{date}}: replaced after hashing with the (Pacific) date of the build
 ROADMAP_NOTICE = "Draft: Roadmap will be finalized by January 31, 2027."  # remove after that date
 
 esc = html.escape
@@ -136,8 +138,8 @@ def live_data():
 
 def assemble(source: str) -> str:
     d = live_data()
-    source = source.replace("{{group-count}}", str(len(d["groups"]))).replace("{{roadmap-count}}", str(len(d["roadmap"])))
-    out, appendices = [], []
+    source = source.replace("{{date}}", DATE_TOKEN).replace("{{group-count}}", str(len(d["groups"]))).replace("{{roadmap-count}}", str(len(d["roadmap"])))
+    out = []
     # Appendices are numbered in order of first mention, inline ({{appendix:key}}) or as a bare {{key}} line.
     order = []
     for m in re.finditer(r"\{\{(?:appendix:)?(team|research-leads|roadmap-projects)\}\}", source):
@@ -226,7 +228,9 @@ def main() -> int:
         source = rows[0]["content_md"]
 
     fragment = assemble(source)
-    digest = hashlib.sha256(fragment.encode()).hexdigest()[:24]
+    digest = hashlib.sha256(fragment.encode()).hexdigest()[:24]  # taken before {{date}} so an unchanged document keeps its date
+    today = datetime.datetime.now(ZoneInfo("America/Los_Angeles")).date()
+    fragment = fragment.replace(DATE_TOKEN, f"{today:%B} {today.day}, {today.year}")
 
     out = ROOT / "pitch-private" / "build"
     out.mkdir(parents=True, exist_ok=True)
