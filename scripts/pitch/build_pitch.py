@@ -88,7 +88,8 @@ def leads(d):
         if m["tier"] != "community_lead" or m["slug"] in NOT_FUNDING_LEADS:
             continue
         gs = [g["title"] for g in d["groups"] if any(h["slug"] == m["slug"] for h in g["hosts"])]
-        items.append(f'<li>{who(m)}{" — " + esc(names(gs)) if gs else ""}</li>')
+        bio = abstract(m["bio"], 320)
+        items.append(f'<li>{who(m)}{" — " + esc(names(gs)) if gs else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
 
@@ -117,7 +118,7 @@ BLOCKS = {"team": team, "research-leads": leads, "research-groups": groups, "roa
 APPENDIX_TITLES = {"team": "The core team", "research-leads": "Research leads", "roadmap-projects": "Research Roadmap projects"}
 # Used when the source gives a bare {{key}} line; prose in the source can instead say {{appendix:key}} inline.
 APPENDIX_SENTENCES = {"team": "Biographies of the core team can be found in {ref}.",
-                      "research-leads": "The research leads, with the groups they lead, are listed in {ref}.",
+                      "research-leads": "Biographies of the research leads, with the groups they lead, can be found in {ref}.",
                       "roadmap-projects": "The proposed Research Roadmap projects are listed in {ref}."}
 
 
