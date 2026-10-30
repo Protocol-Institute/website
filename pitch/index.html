@@ -18,7 +18,7 @@
   <main class="interior-main">
     <div class="container">
 
-      <!-- Unlisted: not in nav, sitemap or search. Visible to admins and team members.
+      <!-- Unlisted: not in nav, sitemap or search. Visible to researchers and above (tag_sig, research leads, team, admins); editing is admin-only.
            The document is assembled by scripts/pitch/build_pitch.py (see CLAUDE.md, Institute overview)
            and served by /api/pitch/*; this page only displays it. -->
       <div class="page-header">
@@ -56,7 +56,7 @@
 
   fetch('/api/pitch/meta').then(async res => {
     if (res.status === 401) { status.innerHTML = signIn; return; }
-    if (res.status === 403) { status.textContent = 'The Institute overview is limited to the Institute team.'; return; }
+    if (res.status === 403) { status.textContent = 'The Institute overview is limited to Institute researchers and team.'; return; }
     if (res.status === 404) { status.textContent = 'The overview has not been built yet.'; return; }
     if (!res.ok) { status.textContent = 'Could not load the overview.'; return; }
     const meta = await res.json();

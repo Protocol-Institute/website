@@ -82,7 +82,7 @@ projects/
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
 support/            /support — body is managed_pages static/support (admin-editable markdown, Session 57)
-pitch/              /pitch — Institute overview (unlisted, noindex; admins + team members only, `members.is_admin`/`is_team` via the pi_session cookie). The page only
+pitch/              /pitch — Institute overview (unlisted, noindex; read = researcher or above (`tag_sig`, tier `community_lead`/`team`, `is_team`, `is_admin`), edit = admin only; via the pi_session cookie). The page only
                     displays what scripts/pitch/build_pitch.py assembled: HTML fragment + PDF in R2 `pi-assets/private/pitch/` (the /assets proxy refuses `private/`),
                     served by functions/api/pitch/[[path]].js. Text sources: the overview's own private prose = D1 managed_pages `pitch/overview` (admin-edited
                     at /pages/edit?key=pitch/overview; GET is gated in functions/api/pages); public text = managed pages inlined with `{{page:static/values}}`;
