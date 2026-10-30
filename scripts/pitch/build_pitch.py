@@ -115,6 +115,10 @@ BLOCKS = {"team": team, "research-leads": leads, "research-groups": groups, "roa
 # Name lists go to appendices so the main text reads cleanly; the directive leaves a reference in place.
 # The research-group list stays inline. Lettered in order of first appearance.
 APPENDIX_TITLES = {"team": "The core team", "research-leads": "Research leads", "roadmap-projects": "Research Roadmap projects"}
+# Used when the source gives a bare {{key}} line; prose in the source can instead say {{appendix:key}} inline.
+APPENDIX_SENTENCES = {"team": "Biographies of the core team can be found in {ref}.",
+                      "research-leads": "The research leads, with the groups they lead, are listed in {ref}.",
+                      "roadmap-projects": "The proposed Research Roadmap projects are listed in {ref}."}
 
 
 def live_data():
@@ -132,6 +136,13 @@ def assemble(source: str) -> str:
     d = live_data()
     source = source.replace("{{group-count}}", str(len(d["groups"]))).replace("{{roadmap-count}}", str(len(d["roadmap"])))
     out, appendices = [], []
+    # Appendices are numbered in order of first mention, inline ({{appendix:key}}) or as a bare {{key}} line.
+    order = []
+    for m in re.finditer(r"\{\{(?:appendix:)?(team|research-leads|roadmap-projects)\}\}", source):
+        if m.group(1) not in order:
+            order.append(m.group(1))
+    ref = lambda k: f'<a class="appx" href="#appendix-{k}">Appendix {order.index(k) + 1}</a>'
+    source = re.sub(r"\{\{appendix:([\w-]+)\}\}", lambda m: ref(m.group(1)) if m.group(1) in order else m.group(0), source)
     parts = re.split(r"^\{\{([\w:/.-]+)\}\}[ \t]*$", source, flags=re.M)  # text, name, text, name, ...
     for i, seg in enumerate(parts):
         if i % 2 == 0:
@@ -143,21 +154,18 @@ def assemble(source: str) -> str:
                 raise SystemExit(f"{{{{page:{key}}}}}: only public static/* pages can be inlined")
             out.append(get_json(f"/api/pages/{key}")["content_md"])
         elif seg in APPENDIX_TITLES:
-            if seg not in (a[0] for a in appendices):
-                appendices.append((seg, BLOCKS[seg](d)))
-            letter, title = chr(64 + [a[0] for a in appendices].index(seg) + 1), APPENDIX_TITLES[seg]
-            out.append(f'\n<p class="appref">See <a href="#appendix-{seg}">Appendix {letter}: {title}</a>.</p>\n')
+            out.append("\n" + APPENDIX_SENTENCES[seg].format(ref=ref(seg)) + "\n")
         elif seg in BLOCKS:
             out.append(f"\n{BLOCKS[seg](d)}\n")  # raw HTML block; python-markdown passes it through
         else:
             raise SystemExit(f"unknown directive {{{{{seg}}}}}")
     # Footnote definitions must sit in one markdown run, so render once, not per segment.
     body = md("\n".join(out))
-    if not appendices:
+    if not order:
         return body
     app = '<section class="appendices">' + "".join(
-        f'<section class="appendix" id="appendix-{key}"><h2>Appendix {chr(65 + i)}: {APPENDIX_TITLES[key]}</h2>{block}</section>'
-        for i, (key, block) in enumerate(appendices)) + "</section>"
+        f'<section class="appendix" id="appendix-{key}"><h2>Appendix {i + 1}: {APPENDIX_TITLES[key]}</h2>{BLOCKS[key](d)}</section>'
+        for i, key in enumerate(order)) + "</section>"
     i = body.find('<div class="footnote">')
     return body + app if i < 0 else body[:i] + app + body[i:]
 
@@ -179,8 +187,7 @@ body{background:#fff;margin:0}
 .appendices{break-before:page}
 .appendix h2{break-after:avoid}
 .appendices .appendix:first-child h2{border-top:0;margin-top:0;padding-top:0}
-a.appref{border-bottom:0}
-.appref a::after{content:" (p. " target-counter(attr(href),page) ")";color:#77776f}
+a.appx::after{content:" (p. " target-counter(attr(href),page) ")";color:#77776f}
 .pitch-doc h1 + p{font-size:9.5pt;color:#77776f;margin:0 0 9mm}
 .pitch-doc h2{font-size:19pt;margin:11mm 0 3mm;padding-top:5mm;break-after:avoid}
 .pitch-doc h3{break-after:avoid}
