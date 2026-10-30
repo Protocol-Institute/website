@@ -87,7 +87,7 @@ pitch/              /pitch — Institute overview (unlisted, noindex; admins + t
                     served by functions/api/pitch/[[path]].js. Text sources: the overview's own private prose = D1 managed_pages `pitch/overview` (admin-edited
                     at /pages/edit?key=pitch/overview; GET is gated in functions/api/pages); public text = managed pages inlined with `{{page:static/values}}`;
                     lists = the site's own public APIs (`{{team}}` `{{research-leads}}` `{{research-groups}}` `{{roadmap-projects}}`, counts `{{group-count}}`
-                    `{{roadmap-count}}`). Rebuilt every 15 min by .github/workflows/pitch-build.yml (hash-gated; needs repo secret CLOUDFLARE_API_TOKEN).
+                    `{{roadmap-count}}`). Rebuilt weekly (Mondays) and on demand (`gh workflow run pitch-build.yml -f force=true`) by .github/workflows/pitch-build.yml (hash-gated; needs repo secret CLOUDFLARE_API_TOKEN).
                     **The repo is public: the private text is never committed** — local copy lives in gitignored `pitch-private/`; seed D1 with
                     scripts/pitch/seed_source.py only after the pitch/* guard in functions/api/pages is deployed. Styles: css/pitch.css (page + PDF)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)

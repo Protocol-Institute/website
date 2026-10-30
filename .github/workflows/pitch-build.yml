@@ -1,13 +1,13 @@
 name: Build Institute overview
 
-# Reassembles the /pitch document (HTML + PDF) when any source changes: the private text
+# Reassembles the /pitch document (HTML + PDF) weekly and on demand (workflow_dispatch): the private text
 # (D1 pitch/overview), the Core Values page, or the live team / research-group / roadmap
 # lists. A content-hash check makes unchanged runs a no-op.
 # Needs repo secret CLOUDFLARE_API_TOKEN with D1 read (pi-members) and R2 write (pi-assets).
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 14 * * 1"   # Mondays, 14:00 UTC
   push:
     branches: [main]
     paths:
