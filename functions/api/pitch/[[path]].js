@@ -26,11 +26,10 @@ export async function onRequestGet({ request, env, params }) {
 
   const headers = {
     'Content-Type': file.type,
+    'Vary': 'Cookie',
     'Cache-Control': 'private, no-store',
     'X-Robots-Tag': 'noindex',
   };
   if (file.disposition) headers['Content-Disposition'] = file.disposition;
-  // The page also needs to know who is looking (to show the Edit link).
-  if (name === 'meta') headers['X-Pitch-Role'] = access.role;
   return new Response(object.body, { headers });
 }

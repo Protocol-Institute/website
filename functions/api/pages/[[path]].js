@@ -10,6 +10,7 @@
 import { getSession } from '../../_shared/session.js';
 import { memberForSession, canEditProgram } from '../../_shared/programs.js';
 import { pitchAccess, denied } from '../../_shared/pitch.js';
+import { sessionVaryingJson } from '../../_shared/response.js';
 
 async function canEdit(email, pageKey, env) {
   const member = await memberForSession(env, email);
@@ -32,7 +33,7 @@ export async function onRequestGet({ request, params, env }) {
      FROM managed_pages WHERE page_key = ? AND is_published = 1`
   ).bind(pageKey).first();
   if (!row) return Response.json({ error: 'Not found' }, { status: 404 });
-  return Response.json(row, pageKey.startsWith('pitch/') ? { headers: { 'Cache-Control': 'private, no-store' } } : undefined);
+  return pageKey.startsWith('pitch/') ? sessionVaryingJson(row) : Response.json(row);
 }
 
 async function handleSave({ request, params, env }) {

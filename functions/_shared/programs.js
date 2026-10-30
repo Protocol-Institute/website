@@ -161,7 +161,7 @@ export async function syncAffiliations(env, projectId, rows, actor, approvable) 
 
 export async function memberForSession(env, email) {
   if (!email) return null;
-  return env.DB.prepare('SELECT slug, name, is_admin FROM members WHERE email = ?').bind(email).first();
+  return env.DB.prepare('SELECT slug, name, is_admin, is_team FROM members WHERE email = ?').bind(email).first();
 }
 
 export async function canEditProgram(env, member, programSlug) {
