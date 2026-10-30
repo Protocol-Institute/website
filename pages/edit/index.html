@@ -69,6 +69,7 @@
     "static/humboldt": { title: "Humboldt", href: "/humboldt" },
     "static/license": { title: "CC+ License", href: "/license" },
     "static/values": { title: "Core Values", href: "/values" },
+    "pitch/overview": { title: "Institute Overview (private)", href: "/pitch" },
     "static/consulting-policies": { title: "Consulting Network Policies", href: "/consulting/policies" },
     "static/events-calendar": { title: "Events — Calendar intro", href: "/events" },
     "static/events-calendar-note": { title: "Events — Calendar note", href: "/events" },
@@ -98,7 +99,7 @@
     $('pg-denied-msg').innerHTML = msg;
     $('pg-denied').style.display = '';
   }
-  if (!/^static\/[a-z0-9-]+$/.test(key)) { deny('No page to edit.'); return; }
+  if (!/^(static|pitch)\/[a-z0-9-]+$/.test(key)) { deny('No page to edit.'); return; }
 
   const editor = PIMdEditor.attach($('pg-md'), { wide: true, pageKey: key, onSave: () => $('pg-form').requestSubmit() });
   let guard = null;

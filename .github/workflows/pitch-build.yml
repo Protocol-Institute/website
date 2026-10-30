@@ -1,0 +1,36 @@
+name: Build Institute overview
+
+# Reassembles the /pitch document (HTML + PDF) when any source changes: the private text
+# (D1 pitch/overview), the Core Values page, or the live team / research-group / roadmap
+# lists. A content-hash check makes unchanged runs a no-op.
+# Needs repo secret CLOUDFLARE_API_TOKEN with D1 read (pi-members) and R2 write (pi-assets).
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - scripts/pitch/**
+      - css/pitch.css
+      - .github/workflows/pitch-build.yml
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even if nothing changed
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: pip install weasyprint markdown
+      - name: Build and upload
+        run: python3 scripts/pitch/build_pitch.py ${{ inputs.force && '--force' || '' }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

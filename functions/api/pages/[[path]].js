@@ -9,6 +9,8 @@
 
 import { getSession } from '../../_shared/session.js';
 import { memberForSession, canEditProgram } from '../../_shared/programs.js';
+import { pitchAccess, denied } from '../../_shared/pitch.js';
+import { sessionVaryingJson } from '../../_shared/response.js';
 
 async function canEdit(email, pageKey, env) {
   const member = await memberForSession(env, email);
@@ -19,14 +21,19 @@ async function canEdit(email, pageKey, env) {
   return false;
 }
 
-export async function onRequestGet({ params, env }) {
+export async function onRequestGet({ request, params, env }) {
   const pageKey = Array.isArray(params.path) ? params.path.join('/') : params.path;
+  // pitch/* pages are private (the overview's own text): admin or team only.
+  if (pageKey.startsWith('pitch/')) {
+    const access = await pitchAccess(request, env);
+    if (!access.role) return denied(access);
+  }
   const row = await env.DB.prepare(
     `SELECT page_key, title, content_md, updated_at, updated_by
      FROM managed_pages WHERE page_key = ? AND is_published = 1`
   ).bind(pageKey).first();
   if (!row) return Response.json({ error: 'Not found' }, { status: 404 });
-  return Response.json(row);
+  return pageKey.startsWith('pitch/') ? sessionVaryingJson(row) : Response.json(row);
 }
 
 async function handleSave({ request, params, env }) {

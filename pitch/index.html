@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Institute Overview — The Protocol Institute</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css?v=58">
+  <link rel="stylesheet" href="/css/pitch.css?v=2">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <!-- Unlisted: not in nav, sitemap or search. Visible to admins and team members.
+           The document is assembled by scripts/pitch/build_pitch.py (see CLAUDE.md, Institute overview)
+           and served by /api/pitch/*; this page only displays it. -->
+      <div class="page-header">
+        <h1 id="pitch-title">Institute Overview</h1>
+      </div>
+
+      <p id="pitch-status" class="projects-intro">Loading…</p>
+
+      <div id="pitch-bar" class="pitch-bar" style="display:none;">
+        <span id="pitch-built"></span>
+        <a id="pitch-pdf" class="form-btn" href="/api/pitch/pdf">Download PDF</a>
+      </div>
+
+      <article id="pitch-doc" class="pitch-doc"></article>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2026 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js?v=58"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const status = $('pitch-status');
+  const signIn = '<a href="/members/join?return=' + encodeURIComponent('/pitch') + '">Log in</a> to view the Institute overview.';
+
+  fetch('/api/pitch/meta').then(async res => {
+    if (res.status === 401) { status.innerHTML = signIn; return; }
+    if (res.status === 403) { status.textContent = 'The Institute overview is limited to the Institute team.'; return; }
+    if (res.status === 404) { status.textContent = 'The overview has not been built yet.'; return; }
+    if (!res.ok) { status.textContent = 'Could not load the overview.'; return; }
+    const meta = await res.json();
+    const html = await fetch('/api/pitch/html').then(r => r.ok ? r.text() : Promise.reject());
+    // Trusted: assembled server-side from our own sources, API text HTML-escaped.
+    const doc = $('pitch-doc');
+    doc.innerHTML = html;
+    status.style.display = 'none';
+    $('pitch-bar').style.display = '';
+    $('pitch-built').textContent = 'Assembled ' + new Date(meta.built_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) +
+      ' · refreshes automatically when sources change';
+    // The page header carries the title, so the document's own h1 would repeat it.
+    const h1 = doc.querySelector('h1');
+    if (h1) { $('pitch-title').textContent = h1.textContent; h1.remove(); }
+    // Edit link for admins, the site-wide way (cf. programs/edit): the server re-checks on save.
+    fetch('/api/members/me').then(r => r.ok ? r.json() : null).then(me => {
+      if (me && me.member && me.member.is_admin) PI.editLink('/pages/edit?key=pitch/overview');
+    }).catch(() => {});
+  }).catch(() => { status.textContent = 'Could not load the overview.'; });
+})();
+</script>
+</body>
+</html>
