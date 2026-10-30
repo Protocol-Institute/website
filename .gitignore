@@ -37,3 +37,6 @@ symposium-2026-program.html
 
 # Recording-page generator: YouTube caption cache.
 .recordings-cache/
+
+# Institute overview: private text + local build output (this repo is public)
+/pitch-private/

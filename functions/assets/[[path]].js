@@ -1,5 +1,7 @@
 export async function onRequestGet({ env, params }) {
   const key = params.path.join('/');
+  // private/ holds files served only through gated endpoints (e.g. /api/pitch).
+  if (key.startsWith('private/')) return new Response('Not found', { status: 404 });
   const object = await env.ASSETS_BUCKET.get(key);
 
   if (!object) {

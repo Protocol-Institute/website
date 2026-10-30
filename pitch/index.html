@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Institute Overview — The Protocol Institute</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css?v=58">
+  <link rel="stylesheet" href="/css/pitch.css?v=1">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <!-- Unlisted: not in nav, sitemap or search. Visible to admins and team members.
+           The document is assembled by scripts/pitch/build_pitch.py (see CLAUDE.md, Institute overview)
+           and served by /api/pitch/*; this page only displays it. -->
+      <p id="pitch-status" class="members-intro">Loading…</p>
+
+      <div id="pitch-bar" style="display:none;margin:0 0 2rem;padding-bottom:1rem;border-bottom:1px solid #E0DDD8;font-size:.9rem;color:#8A8A8A;">
+        <span id="pitch-built"></span>
+        <a id="pitch-pdf" class="btn" href="/api/pitch/pdf" style="margin-left:1rem;">Download PDF</a>
+        <a id="pitch-edit" href="/pages/edit?key=pitch/overview" style="display:none;margin-left:1rem;">Edit text</a>
+      </div>
+
+      <article id="pitch-doc" class="pitch-doc"></article>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p>&copy; 2026 The Protocol Institute</p>
+  </footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const status = $('pitch-status');
+  const signIn = '<a href="/members/join?return=' + encodeURIComponent('/pitch') + '">Sign in</a>';
+
+  fetch('/api/pitch/meta').then(async res => {
+    if (res.status === 401) { status.innerHTML = signIn + ' to view the Institute overview.'; return; }
+    if (res.status === 403) { status.textContent = 'The Institute overview is limited to the Institute team.'; return; }
+    if (res.status === 404) { status.textContent = 'The overview has not been built yet.'; return; }
+    if (!res.ok) { status.textContent = 'Could not load the overview.'; return; }
+    const meta = await res.json();
+    const html = await fetch('/api/pitch/html').then(r => r.ok ? r.text() : Promise.reject());
+    // Trusted: assembled server-side from our own sources, API text HTML-escaped.
+    $('pitch-doc').innerHTML = html;
+    status.style.display = 'none';
+    $('pitch-bar').style.display = '';
+    $('pitch-built').textContent = 'Assembled ' + new Date(meta.built_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) +
+      ' · refreshes automatically when sources change';
+    if (res.headers.get('X-Pitch-Role') === 'admin') $('pitch-edit').style.display = '';
+  }).catch(() => { status.textContent = 'Could not load the overview.'; });
+})();
+</script>
+</body>
+</html>
