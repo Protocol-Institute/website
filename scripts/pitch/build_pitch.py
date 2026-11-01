@@ -15,6 +15,7 @@ Directives (alone on a line): {{team}} {{research-leads}} {{research-groups}} {{
   python3 scripts/pitch/build_pitch.py                     # build + upload if changed
   python3 scripts/pitch/build_pitch.py --force
   python3 scripts/pitch/build_pitch.py --source-file pitch-private/source.md --no-upload   # local preview
+  python3 scripts/pitch/build_pitch.py --skip-checks       # build although entries break the 50-75 word rule
 
 Requires: markdown, weasyprint; wrangler + CLOUDFLARE_API_TOKEN (D1 read, R2 write) unless --source-file/--no-upload.
 """
@@ -87,6 +88,19 @@ def bio_excerpt(text, limit=700) -> str:
     return cut + "."
 
 
+# Length rule for the short entries the overview is built from: roadmap project abstracts and the
+# biographies of the people listed. Violations are collected while rendering and stop the build
+# (see main), so a bad edit never publishes; the previous good document stays up.
+WORDS_MIN, WORDS_MAX = 50, 75
+PROBLEMS: list[str] = []
+
+
+def check_words(text: str, what: str, edit_path: str):
+    n = len(text.split())
+    if not WORDS_MIN <= n <= WORDS_MAX:
+        PROBLEMS.append(f"{what}: {'missing' if not n else f'{n} words'} (need {WORDS_MIN}-{WORDS_MAX}) — edit at {SITE}{edit_path}")
+
+
 def names(xs):
     return xs[0] if len(xs) == 1 else " and ".join(xs) if len(xs) == 2 else ", ".join(xs[:-1]) + ", and " + xs[-1]
 
@@ -100,6 +114,7 @@ def team(d):
     items = []
     for m in core:
         bio = bio_excerpt(m["bio"])
+        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}")
         items.append(f'<li>{who(m)}{" — " + esc(m["team_title"]) if m["team_title"] else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
@@ -112,6 +127,7 @@ def leads(d):
             continue
         gs = [g["title"] for g in d["groups"] if any(h["slug"] == m["slug"] for h in g["hosts"])]
         bio = bio_excerpt(m["bio"])
+        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}")
         items.append(f'<li>{who(m)}{" — " + esc(names(gs)) if gs else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
@@ -130,6 +146,7 @@ def roadmap(d):
     for p in d["roadmap"]:
         gs = [a["title"] for a in p["programs"] if a["kind"] == "sig" and a["status"] == "approved"]
         meta = [x for x in (esc(names(gs)) if gs else "", f'lead: {esc(p["lead_name"])}' if p.get("lead_name") else "") if x]
+        check_words(p.get("short_abstract") or "", f"Short abstract of project '{p['title']}'", f"/projects/edit?slug={p['slug']}")
         items.append(f'<li><strong><a href="{SITE}/projects/project/?slug={p["slug"]}">{esc(p["title"])}</a></strong>'
                      f'{" <span class=meta>(" + "; ".join(meta) + ")</span>" if meta else ""}<br>{esc(p.get("short_abstract") or abstract(p["description"], 2000))}</li>')
     return f'<p class="note">{ROADMAP_NOTICE}</p><ul class="roadmap">{"".join(items)}</ul>'
@@ -234,6 +251,7 @@ def print_document(fragment: str) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--skip-checks", action="store_true", help="build even if entries break the word-count rule")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--no-upload", action="store_true")
     ap.add_argument("--source-file", help="read the overview text from a local file instead of D1")
@@ -248,6 +266,11 @@ def main() -> int:
         source = rows[0]["content_md"]
 
     fragment = assemble(source)
+    if PROBLEMS and not args.skip_checks:
+        print(f"Not building: {len(PROBLEMS)} entr{'y' if len(PROBLEMS) == 1 else 'ies'} outside the {WORDS_MIN}-{WORDS_MAX} word rule.\n", file=sys.stderr)
+        print("\n".join(" - " + x for x in PROBLEMS), file=sys.stderr)
+        print("\nThe previous overview stays live. Fix the entries above (or run with --skip-checks).", file=sys.stderr)
+        sys.exit(1)
     digest = hashlib.sha256(fragment.encode()).hexdigest()[:24]  # taken before {{date}} so an unchanged document keeps its date
     today = datetime.datetime.now(ZoneInfo("America/Los_Angeles")).date()
     fragment = fragment.replace(DATE_TOKEN, f"{today:%B} {today.day}, {today.year}")
