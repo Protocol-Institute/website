@@ -2346,6 +2346,48 @@
           "html": "After a D1 export (<code>backups/pi-members-2026-10-26-pre060.sql</code>), migrations 060 and 061 were applied to prod before pushing <code>188ddaa</code> (which also carried the Session 60 leaderboard commit). Order matters for any push that depends on a new column: migrate first, then push. Phone-width check of the leaderboard still outstanding."
         }
       ]
+    },
+    {
+      "id": 62,
+      "sort_key": 62.0,
+      "label": "Session 62",
+      "title": "Protocol Institute 2027 Prospectus: appendices, access, rebuild-on-write, short abstracts",
+      "date": "2026-10-31",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Prospectus assembly: appendices, directives, typography",
+          "html": "The overview was renamed <em>Protocol Institute 2027 Prospectus</em> (the <code>/pitch</code> URL and the R2 keys are unchanged). <code>build_pitch.py</code> now renders <code>{{team}}</code>, <code>{{research-leads}}</code> and <code>{{roadmap-projects}}</code> as numbered appendices, in order of first mention, and leaves <code>{{research-groups}}</code> inline; prose references them with <code>{{appendix:key}}</code>, which becomes an anchor link (plus <code>target-counter</code> page numbers in the PDF). <code>{{date}}</code> is substituted <em>after</em> the content hash, so an unchanged document keeps its date and the hash gate still means \"nothing changed\". A text-node typography pass makes quotes and apostrophes curly everywhere, including the generated appendices. The web page gets a sticky left contents list built client-side from the headings, so it needs no rebuild."
+        },
+        {
+          "title": "Access model: researcher-or-above reads, admins edit",
+          "html": "<code>pitchAccess</code> grants read to admins, <code>is_team</code>, tier <code>team</code>/<code>community_lead</code> and anyone with <code>tag_sig</code> (50 of 105 members at the time). Edit stays admin-only because <code>api/pages</code> <code>canEdit</code> already was. The rule reuses <code>memberForSession</code> (extended with <code>is_team</code>, <code>tier</code>, <code>tag_sig</code>) and <code>sessionVaryingJson</code>; the files live under the <code>private/</code> R2 prefix that <code>/assets</code> refuses. <code>tag_sig</code> is a self-reported checkbox, so this is only as strict as that checkbox. No sponsor role exists yet: deliberately deferred until there is a confirmed sponsor."
+        },
+        {
+          "title": "Rebuild triggering: middleware dispatch, serialized and hash-gated",
+          "html": "A rebuild is dispatched on every successful write to something the prospectus is assembled from. Page saves do it in <code>api/pages</code> (so the editor can report it); member, program, project and affiliation writes do it from <code>functions/api/_middleware.js</code> via <code>requestPitchRebuild</code>, authenticated by the Pages secret <code>GITHUB_DISPATCH_TOKEN</code> (fine-grained PAT, this repo only, Actions read/write, expires 2027-11-01, registered in <code>admin/keys.md</code>). The workflow runs one at a time (<code>concurrency</code>, no cancel), so a burst of edits becomes one real rebuild, and it is hash-gated. Weekly cron and path-filtered pushes remain. The 15-minute cron was removed. <strong>Direct D1 writes by wrangler bypass the middleware</strong>, so they need a manual <code>gh workflow run</code>. I deliberately did not use the laptop's broad GitHub CLI login token: it reaches every repo and is the failure mode of incident 2026-09-09."
+        },
+        {
+          "title": "projects.short_abstract and the length gate (migration 063)",
+          "html": "Project descriptions ranged from 7 to 421 words, so no consumer could rely on length. Added nullable <code>short_abstract</code>; <code>shortAbstractError</code> in <code>_shared/artifacts.js</code> enforces 50-75 words on create and edit when non-empty, and the editor shows a live count. 24 of 42 projects were populated with edited excerpts (all 12 roadmap ones); the 18 whose descriptions are under 50 words were left empty rather than padded. Five long descriptions got paragraph breaks at sentence boundaries (verified word-for-word identical). The prospectus uses the short abstract, and the build <em>fails</em> if a roadmap project lacks one or a listed bio is outside 30-75 words, naming the offenders and leaving the previous version live. That makes a bad edit visible (a red run) instead of silently publishing it. <code>--skip-checks</code> overrides."
+        },
+        {
+          "title": "Source-of-truth fixes, not build-side patches",
+          "html": "Typos and inconsistencies were fixed where they originate: member bios (SIG wording, Anuraj's merged paragraph so the DRG sentence is in the first paragraph the document shows, Tim Beiko's forming-board wording), program blurbs for three groups, the Values page, and the overview text itself. Decisions made with Venkat: Symposium 2025 was the Protocol School (branding drift, text now says so), 'over 70' alumni to match alumni.json, PIBot is 'continuously updated' not 'trained', Blygger described as a successor that builds on RSS, efficiency claim softened, 'background outputs' for the AI inventory. The review also found and fixed two build bugs: the PDF header used UTC while the version line used Pacific time, and footnote return arrows printed in the PDF."
+        },
+        {
+          "title": "Gotchas worth keeping",
+          "html": "D1 rejects <code>LIKE</code> on a long text pattern ('LIKE or GLOB pattern too complex'): match on slug instead. The local <code>pitch-private/source.md</code> goes stale as soon as the editor is used, and re-seeding from it would overwrite edits: always re-fetch from D1 first (the guarded edit script compares <code>updated_at</code>). Pages secrets only reach functions after a new deployment, so setting one needs a redeploy (an empty commit does it)."
+        }
+      ]
     }
   ]
 }

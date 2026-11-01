@@ -82,14 +82,24 @@ projects/
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
 support/            /support — body is managed_pages static/support (admin-editable markdown, Session 57)
-pitch/              /pitch — Institute overview (unlisted, noindex; read = researcher or above (`tag_sig`, tier `community_lead`/`team`, `is_team`, `is_admin`), edit = admin only; via the pi_session cookie). The page only
-                    displays what scripts/pitch/build_pitch.py assembled: HTML fragment + PDF in R2 `pi-assets/private/pitch/` (the /assets proxy refuses `private/`),
-                    served by functions/api/pitch/[[path]].js. Text sources: the overview's own private prose = D1 managed_pages `pitch/overview` (admin-edited
-                    at /pages/edit?key=pitch/overview; GET is gated in functions/api/pages); public text = managed pages inlined with `{{page:static/values}}`;
-                    lists = the site's own public APIs (`{{team}}` `{{research-leads}}` `{{research-groups}}` `{{roadmap-projects}}`, counts `{{group-count}}`
-                    `{{roadmap-count}}`). Rebuilt on every write to its inputs — page saves (functions/api/pages) and member/program/project/affiliation writes (functions/api/_middleware.js) dispatch the workflow via `requestPitchRebuild` in _shared/pitch.js, using Pages secret GITHUB_DISPATCH_TOKEN (repo-only Actions PAT, expires 2027-11-01); runs are serialized and hash-gated so a burst of edits is one rebuild — plus weekly (Mondays) and on demand. **Length check:** every roadmap project's `short_abstract` must be 50–75 words and every bio listed (core team, research leads) 30–75; a build with any outside that range fails and names them (`--skip-checks` overrides), leaving the previous document live (`gh workflow run pitch-build.yml -f force=true`) by .github/workflows/pitch-build.yml (hash-gated; needs repo secret CLOUDFLARE_API_TOKEN).
-                    **The repo is public: the private text is never committed** — local copy lives in gitignored `pitch-private/`; seed D1 with
-                    scripts/pitch/seed_source.py only after the pitch/* guard in functions/api/pages is deployed. Styles: css/pitch.css (page + PDF)
+pitch/              /pitch — **Protocol Institute 2027 Prospectus** (was "Institute overview"; renamed Session 62, URL unchanged). Unlisted, noindex.
+                    Read = researcher or above (`tag_sig`, tier `community_lead`/`team`, `is_team`, `is_admin`, via pi_session; functions/_shared/pitch.js),
+                    edit = admin only. The page only displays what scripts/pitch/build_pitch.py assembled — HTML fragment + PDF in R2
+                    `pi-assets/private/pitch/` (the /assets proxy refuses `private/`), served by functions/api/pitch/[[path]].js — plus a sticky left
+                    contents list built in the browser from the h2/h3s (inline below 1100px). Sources: the private prose = D1 managed_pages `pitch/overview`
+                    (admin-edited at /pages/edit?key=pitch/overview; GET gated in functions/api/pages); public text inlined with `{{page:static/values}}`;
+                    lists from the site's own public APIs. **Directives:** `{{team}}` `{{research-leads}}` `{{roadmap-projects}}` render as *appendices*
+                    (numbered 1-3 by first mention; write `{{appendix:team}}` etc. inside a sentence for the link — the PDF adds page numbers), while
+                    `{{research-groups}}` stays inline; `{{group-count}}` `{{roadmap-count}}`; `{{date}}` = Pacific build date, applied *after* hashing so an
+                    unchanged document keeps its date. Team appendix = `team_core`; leads appendix excludes team_core and NOT_FUNDING_LEADS; a curly-quote
+                    pass runs over the result. **Length gate:** every roadmap project's `short_abstract` must be 50-75 words and every listed bio 30-75, or
+                    the build fails naming them and the previous version stays live (`--skip-checks` overrides). **Rebuilds:** on any write to an input — page
+                    saves (functions/api/pages) and member/program/project/affiliation writes (functions/api/_middleware.js -> requestPitchRebuild in
+                    _shared/pitch.js, Pages secret GITHUB_DISPATCH_TOKEN, a repo-only Actions PAT expiring 2027-11-01, registered in admin/keys.md) — plus
+                    Mondays and pushes touching scripts/pitch or css/pitch.css; runs are serialized and hash-gated. **Direct D1 writes (wrangler) do not
+                    trigger it:** run `gh workflow run pitch-build.yml --repo Protocol-Institute/website`. **The repo is public: the private text is never
+                    committed** — `pitch-private/source.md` (gitignored) goes stale the moment anyone edits in the editor, so refresh it from D1 before any
+                    re-seed with scripts/pitch/seed_source.py. Styles: css/pitch.css (page + PDF)
 pitchdeck/          Support deck (deck.html, deck.js, deck.css, marked.min.js)
 license/            /license — CC+ license for SoP23 outputs (body is static/license)
                     cogergo/ moved out Session 58 to its own repo (../cogergo, Protocol-Institute/cogergo, Pages project cogergo-site);
@@ -118,6 +128,8 @@ functions/          Cloudflare Pages Functions (API endpoints)
   api/program-links.js  Program links (kind website|channel|link) — GET public, POST host/admin. Replaced api/sigs/links.js
   api/affiliations.js  Pending project↔program tags (admin queue) + approve/reject; hosts use reject to remove a tag
   api/members/profile.js  Public single-member profile (same field projection as /api/members)
+  _shared/pitch.js  Prospectus access rule (pitchAccess/denied) and requestPitchRebuild (GitHub workflow dispatch; never throws)
+  api/_middleware.js  After any successful write to prospectus inputs (members, programs, projects, affiliations) requests a rebuild
   _shared/welcome.js  Shared welcome email sender (PIN generation, Resend, welcome_sent flag)
   _shared/session.js  Shared pi_session cookie validator
   _shared/response.js sessionVaryingJson() — Vary: Cookie + Cache-Control: private, no-store
