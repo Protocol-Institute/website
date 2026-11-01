@@ -137,6 +137,10 @@
       if (guard) guard.snapshot();
       msg.className = 'form-msg form-msg--success';
       msg.innerHTML = 'Saved. <a href="' + page.href + '">View page →</a>';
+      // The Institute overview is assembled offline; saving it (or the Values page it inlines) queues a rebuild.
+      if (data.rebuild === 'started') msg.innerHTML += ' The overview is rebuilding — give it a minute or two.';
+      else if (data.rebuild === 'failed') msg.innerHTML += ' The overview rebuild could not be started; it will refresh at the next weekly run, or ask for a manual rebuild.';
+      else if (data.rebuild === 'not-configured') msg.innerHTML += ' The overview will not update until it is rebuilt manually (on-save rebuild is not set up).';
     } catch (err) {
       msg.className = 'form-msg form-msg--error';
       msg.textContent = err.message;

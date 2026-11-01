@@ -7,7 +7,7 @@
   <title>Institute Overview — The Protocol Institute</title>
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
   <link rel="stylesheet" href="/css/style.css?v=58">
-  <link rel="stylesheet" href="/css/pitch.css?v=2">
+  <link rel="stylesheet" href="/css/pitch.css?v=3">
 </head>
 <body>
 
@@ -27,12 +27,16 @@
 
       <p id="pitch-status" class="projects-intro">Loading…</p>
 
+      <div class="pitch-layout">
+      <nav id="pitch-toc" class="pitch-toc" aria-label="Contents" style="display:none;"></nav>
+
       <div id="pitch-bar" class="pitch-bar" style="display:none;">
         <span id="pitch-built"></span>
         <a id="pitch-pdf" class="form-btn" href="/api/pitch/pdf">Download PDF</a>
       </div>
 
       <article id="pitch-doc" class="pitch-doc"></article>
+      </div>
 
     </div>
   </main>
@@ -54,6 +58,36 @@
   const status = $('pitch-status');
   const signIn = '<a href="/members/join?return=' + encodeURIComponent('/pitch') + '">Log in</a> to view the Institute overview.';
 
+  // Contents: one link per h2 (h3s indented under it), with the section in view highlighted.
+  function buildToc(doc) {
+    const heads = [...doc.querySelectorAll('h2, h3')];
+    if (heads.length < 3) return;
+    const used = new Set();
+    const links = heads.map(h => {
+      let id = h.id || h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'section';
+      while (used.has(id) || (document.getElementById(id) && document.getElementById(id) !== h)) id += '-2';
+      used.add(id); h.id = id;
+      const a = document.createElement('a');
+      a.href = '#' + id; a.textContent = h.textContent;
+      if (h.tagName === 'H3') a.className = 'sub';
+      return a;
+    });
+    const toc = $('pitch-toc');
+    const title = document.createElement('p'); title.className = 'pitch-toc-title'; title.textContent = 'Contents';
+    const inner = document.createElement('div'); inner.className = 'pitch-toc-inner';
+    inner.append(title, ...links); toc.append(inner);
+    toc.style.display = '';
+    if (!('IntersectionObserver' in window)) return;
+    const byId = new Map(links.map(a => [a.hash.slice(1), a]));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        byId.get(e.target.id).classList.add('active');
+      } });
+    }, { rootMargin: '0px 0px -75% 0px' });
+    heads.forEach(h => io.observe(h));
+  }
+
   fetch('/api/pitch/meta').then(async res => {
     if (res.status === 401) { status.innerHTML = signIn; return; }
     if (res.status === 403) { status.textContent = 'The Institute overview is limited to Institute researchers and team.'; return; }
@@ -67,10 +101,11 @@
     status.style.display = 'none';
     $('pitch-bar').style.display = '';
     $('pitch-built').textContent = 'Assembled ' + new Date(meta.built_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) +
-      ' · rebuilt weekly, or on request';
+      ' · rebuilt when the text is saved, and weekly';
     // The page header carries the title, so the document's own h1 would repeat it.
     const h1 = doc.querySelector('h1');
     if (h1) { $('pitch-title').textContent = h1.textContent; h1.remove(); }
+    buildToc(doc);
     // Edit link for admins, the site-wide way (cf. programs/edit): the server re-checks on save.
     fetch('/api/members/me').then(r => r.ok ? r.json() : null).then(me => {
       if (me && me.member && me.member.is_admin) PI.editLink('/pages/edit?key=pitch/overview');
