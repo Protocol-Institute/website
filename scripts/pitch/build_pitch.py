@@ -241,7 +241,9 @@ a.appx::after{content:" (p. " target-counter(attr(href),page) ")";color:#77776f}
 
 
 def print_document(fragment: str) -> str:
-    stamp = f"Live lists as of {datetime.date.today().isoformat()}"
+    today = datetime.datetime.now(ZoneInfo("America/Los_Angeles")).date()  # same clock as the {{date}} version line
+    stamp = f"Current as of {today:%B} {today.day}, {today.year}"
+    fragment = re.sub(r'\s*<a class="footnote-backref"[^>]*>.*?</a>', "", fragment)  # the "↩" return arrows mean nothing on paper
     css = (ROOT / "css" / "pitch.css").read_text() + PRINT_CSS
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Protocol Institute Overview</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
