@@ -68,6 +68,25 @@ def abstract(text, limit=420) -> str:
     return cut[: max(cut.rfind(" "), 0)] + "…"
 
 
+def bio_excerpt(text, limit=700) -> str:
+    """A member's first paragraph, whole. Only if it exceeds `limit` is it shortened, and then at a
+    sentence end (or, failing that, a clause break closed with a period) — never mid-phrase."""
+    plain = abstract(text, 10**6)
+    if len(plain) <= limit:
+        return plain
+    sentences = re.findall(r".+?(?:[.!?]+[\"”’)]*(?:\s+|$))", plain + " ")
+    out = ""
+    for sen in sentences:
+        if len((out + sen).strip()) > limit:
+            break
+        out += sen
+    if out.strip():
+        return out.strip()
+    cut = plain[:limit]
+    cut = cut[: max(cut.rfind(", "), cut.rfind("; "), cut.rfind(" — "))].rstrip(" ,;—")
+    return cut + "."
+
+
 def names(xs):
     return xs[0] if len(xs) == 1 else " and ".join(xs) if len(xs) == 2 else ", ".join(xs[:-1]) + ", and " + xs[-1]
 
@@ -80,7 +99,7 @@ def team(d):
     core = sorted((m for m in d["members"] if m["team_core"]), key=lambda m: m["team_sort"] or 99)
     items = []
     for m in core:
-        bio = abstract(m["bio"], 320)
+        bio = bio_excerpt(m["bio"])
         items.append(f'<li>{who(m)}{" — " + esc(m["team_title"]) if m["team_title"] else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
@@ -88,10 +107,11 @@ def team(d):
 def leads(d):
     items = []
     for m in d["members"]:
-        if m["tier"] != "community_lead" or m["slug"] in NOT_FUNDING_LEADS:
+        # Core team members are listed with the team, not again here.
+        if m["tier"] != "community_lead" or m["team_core"] or m["slug"] in NOT_FUNDING_LEADS:
             continue
         gs = [g["title"] for g in d["groups"] if any(h["slug"] == m["slug"] for h in g["hosts"])]
-        bio = abstract(m["bio"], 320)
+        bio = bio_excerpt(m["bio"])
         items.append(f'<li>{who(m)}{" — " + esc(names(gs)) if gs else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
