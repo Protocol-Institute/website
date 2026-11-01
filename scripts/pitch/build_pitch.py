@@ -15,7 +15,7 @@ Directives (alone on a line): {{team}} {{research-leads}} {{research-groups}} {{
   python3 scripts/pitch/build_pitch.py                     # build + upload if changed
   python3 scripts/pitch/build_pitch.py --force
   python3 scripts/pitch/build_pitch.py --source-file pitch-private/source.md --no-upload   # local preview
-  python3 scripts/pitch/build_pitch.py --skip-checks       # build although entries break the 50-75 word rule
+  python3 scripts/pitch/build_pitch.py --skip-checks       # build although entries break the word-count limits
 
 Requires: markdown, weasyprint; wrangler + CLOUDFLARE_API_TOKEN (D1 read, R2 write) unless --source-file/--no-upload.
 """
@@ -91,14 +91,15 @@ def bio_excerpt(text, limit=700) -> str:
 # Length rule for the short entries the overview is built from: roadmap project abstracts and the
 # biographies of the people listed. Violations are collected while rendering and stop the build
 # (see main), so a bad edit never publishes; the previous good document stays up.
-WORDS_MIN, WORDS_MAX = 50, 75
+WORDS_MIN, WORDS_MAX = 50, 75      # project short abstracts
+BIO_WORDS_MIN = 30                 # biographies: same ceiling, lower floor
 PROBLEMS: list[str] = []
 
 
-def check_words(text: str, what: str, edit_path: str):
+def check_words(text: str, what: str, edit_path: str, lo: int = WORDS_MIN, hi: int = WORDS_MAX):
     n = len(text.split())
-    if not WORDS_MIN <= n <= WORDS_MAX:
-        PROBLEMS.append(f"{what}: {'missing' if not n else f'{n} words'} (need {WORDS_MIN}-{WORDS_MAX}) — edit at {SITE}{edit_path}")
+    if not lo <= n <= hi:
+        PROBLEMS.append(f"{what}: {'missing' if not n else f'{n} words'} (need {lo}-{hi}) — edit at {SITE}{edit_path}")
 
 
 def names(xs):
@@ -114,7 +115,7 @@ def team(d):
     items = []
     for m in core:
         bio = bio_excerpt(m["bio"])
-        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}")
+        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}", lo=BIO_WORDS_MIN)
         items.append(f'<li>{who(m)}{" — " + esc(m["team_title"]) if m["team_title"] else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
@@ -127,7 +128,7 @@ def leads(d):
             continue
         gs = [g["title"] for g in d["groups"] if any(h["slug"] == m["slug"] for h in g["hosts"])]
         bio = bio_excerpt(m["bio"])
-        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}")
+        check_words(bio, f"Biography of {m['name']}", f"/members/edit?slug={m['slug']}", lo=BIO_WORDS_MIN)
         items.append(f'<li>{who(m)}{" — " + esc(names(gs)) if gs else ""}{"<br>" + esc(bio) if bio else ""}</li>')
     return f'<ul class="people">{"".join(items)}</ul>'
 
@@ -267,7 +268,7 @@ def main() -> int:
 
     fragment = assemble(source)
     if PROBLEMS and not args.skip_checks:
-        print(f"Not building: {len(PROBLEMS)} entr{'y' if len(PROBLEMS) == 1 else 'ies'} outside the {WORDS_MIN}-{WORDS_MAX} word rule.\n", file=sys.stderr)
+        print(f"Not building: {len(PROBLEMS)} entr{'y' if len(PROBLEMS) == 1 else 'ies'} outside the word-count limits.\n", file=sys.stderr)
         print("\n".join(" - " + x for x in PROBLEMS), file=sys.stderr)
         print("\nThe previous overview stays live. Fix the entries above (or run with --skip-checks).", file=sys.stderr)
         sys.exit(1)
