@@ -9,7 +9,7 @@ const FILES = {
   pdf: {
     key: 'private/pitch/overview.pdf',
     type: 'application/pdf',
-    disposition: 'attachment; filename="Protocol-Institute-Overview.pdf"',
+    disposition: 'attachment; filename="Protocol-Institute-2027-Prospectus.pdf"',
   },
 };
 

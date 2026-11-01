@@ -69,7 +69,7 @@
     "static/humboldt": { title: "Humboldt", href: "/humboldt" },
     "static/license": { title: "CC+ License", href: "/license" },
     "static/values": { title: "Core Values", href: "/values" },
-    "pitch/overview": { title: "Institute Overview (private)", href: "/pitch" },
+    "pitch/overview": { title: "Protocol Institute 2027 Prospectus (private text)", href: "/pitch" },
     "static/consulting-policies": { title: "Consulting Network Policies", href: "/consulting/policies" },
     "static/events-calendar": { title: "Events — Calendar intro", href: "/events" },
     "static/events-calendar-note": { title: "Events — Calendar note", href: "/events" },
@@ -138,9 +138,9 @@
       msg.className = 'form-msg form-msg--success';
       msg.innerHTML = 'Saved. <a href="' + page.href + '">View page →</a>';
       // The Institute overview is assembled offline; saving it (or the Values page it inlines) queues a rebuild.
-      if (data.rebuild === 'started') msg.innerHTML += ' The overview is rebuilding — give it a minute or two.';
-      else if (data.rebuild === 'failed') msg.innerHTML += ' The overview rebuild could not be started; it will refresh at the next weekly run, or ask for a manual rebuild.';
-      else if (data.rebuild === 'not-configured') msg.innerHTML += ' The overview will not update until it is rebuilt manually (on-save rebuild is not set up).';
+      if (data.rebuild === 'started') msg.innerHTML += ' The prospectus is rebuilding — give it a minute or two.';
+      else if (data.rebuild === 'failed') msg.innerHTML += ' The prospectus rebuild could not be started; it will refresh at the next weekly run, or ask for a manual rebuild.';
+      else if (data.rebuild === 'not-configured') msg.innerHTML += ' The prospectus will not update until it is rebuilt manually (on-save rebuild is not set up).';
     } catch (err) {
       msg.className = 'form-msg form-msg--error';
       msg.textContent = err.message;

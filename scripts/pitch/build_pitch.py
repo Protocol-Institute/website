@@ -174,6 +174,17 @@ def live_data():
     }
 
 
+def typography(fragment: str) -> str:
+    """Curly apostrophes and double quotes in the text between tags, so sources typed with straight ones
+    (bios, project abstracts, hand-written text) match the rest of the document."""
+    def fix(text: str) -> str:
+        text = text.replace("&#x27;", "'").replace("&quot;", '"')
+        text = re.sub(r"(?<=\w)'(?=\w)", "\u2019", text)
+        return re.sub(r'"([^"<>]+)"', "\u201c\\1\u201d", text)
+    parts = re.split(r"(<[^>]+>)", fragment)
+    return "".join(p if p.startswith("<") else fix(p) for p in parts)
+
+
 def assemble(source: str) -> str:
     d = live_data()
     source = source.replace("{{date}}", DATE_TOKEN).replace("{{group-count}}", str(len(d["groups"]))).replace("{{roadmap-count}}", str(len(d["roadmap"])))
@@ -204,12 +215,12 @@ def assemble(source: str) -> str:
     # Footnote definitions must sit in one markdown run, so render once, not per segment.
     body = md("\n".join(out))
     if not order:
-        return body
+        return typography(body)
     app = '<section class="appendices">' + "".join(
         f'<section class="appendix" id="appendix-{key}"><h2>Appendix {i + 1}: {APPENDIX_TITLES[key]}</h2>{BLOCKS[key](d)}</section>'
         for i, key in enumerate(order)) + "</section>"
     i = body.find('<div class="footnote">')
-    return body + app if i < 0 else body[:i] + app + body[i:]
+    return typography(body + app if i < 0 else body[:i] + app + body[i:])
 
 
 # ── Print document ─────────────────────────────────────────────────────────
@@ -245,7 +256,7 @@ def print_document(fragment: str) -> str:
     stamp = f"Current as of {today:%B} {today.day}, {today.year}"
     fragment = re.sub(r'\s*<a class="footnote-backref"[^>]*>.*?</a>', "", fragment)  # the "↩" return arrows mean nothing on paper
     css = (ROOT / "css" / "pitch.css").read_text() + PRINT_CSS
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Protocol Institute Overview</title>
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Protocol Institute 2027 Prospectus</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>{css}</style></head><body><article class="pitch-doc">
 <header class="masthead"><div class="brand"><img src="{SITE}/assets/logo-static.png" alt=""><span class="org">Protocol Institute</span></div><span class="stamp">{stamp}</span></header>
