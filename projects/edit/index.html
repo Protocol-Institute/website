@@ -43,6 +43,12 @@
           </div>
 
           <div class="form-group">
+            <label class="form-label" for="f-short-abstract">Short abstract</label>
+            <p class="form-hint">A stand-alone summary of 50–75 words — it must make sense without the description. Used where a project appears in a short entry, such as the Institute overview. <span id="f-short-count"></span></p>
+            <textarea class="form-textarea" id="f-short-abstract" rows="4" maxlength="700"></textarea>
+          </div>
+
+          <div class="form-group">
             <label class="form-label">Image</label>
             <figure class="project-image project-image--edit" id="f-image-preview" hidden><img id="f-image-img" alt=""></figure>
             <div class="project-image-actions">
@@ -171,6 +177,14 @@
     return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   }
   const $ = id => document.getElementById(id);
+  // Short abstract: 50-75 words (enforced again by the API); the count is a guide, empty is allowed.
+  function updateShortCount() {
+    const n = $('f-short-abstract').value.trim().split(/\s+/).filter(Boolean).length;
+    const el = $('f-short-count');
+    el.textContent = n ? n + ' words' : '';
+    el.style.color = !n || (n >= 50 && n <= 75) ? '#2A6B6B' : '#b4432a';
+  }
+  $('f-short-abstract').addEventListener('input', updateShortCount);
   const description = PIMdEditor.attach($('f-description'), { onSave: () => save() });
   let guard = null;
 
@@ -383,6 +397,8 @@
       $('page-title').textContent = 'Edit Project';
       $('f-title').value = p.title;
       description.setValue(p.description);
+      $('f-short-abstract').value = p.short_abstract || '';
+      updateShortCount();
       $('f-lead').value = p.lead_slug;
       $('f-lead-display').value = p.lead_name || p.lead_slug;
       $('f-lead-hint').style.display = 'none';
@@ -439,6 +455,7 @@
     const body = {
       title:               $('f-title').value.trim(),
       description:         $('f-description').value.trim(),
+      short_abstract:      $('f-short-abstract').value.trim(),
       lead_slug:           $('f-lead').value,
       url:                 $('f-url').value.trim(),
       state:               $('f-state').value,

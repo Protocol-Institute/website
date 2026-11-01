@@ -7,7 +7,7 @@
 //      the CF WAF blocks PUT on Pages.
 
 import { getSession } from '../../_shared/session.js';
-import { isArtifactKind, storedArtifactType } from '../../_shared/artifacts.js';
+import { isArtifactKind, storedArtifactType, shortAbstractError } from '../../_shared/artifacts.js';
 import { sessionVaryingJson } from '../../_shared/response.js';
 import { loadProjectPrograms, validateAffiliations, syncAffiliations, approvablePrograms } from '../../_shared/programs.js';
 
@@ -117,6 +117,7 @@ export async function onRequestPost({ params, request, env }) {
 
   const title         = (body.title || '').trim();
   const description   = (body.description || '').trim();
+  const short_abstract = (body.short_abstract || '').trim() || null;
   const state         = (body.state || '').trim();
   const type          = (body.type || '').trim();
   const artifact_type = (body.artifact_type || '').trim();
@@ -126,6 +127,8 @@ export async function onRequestPost({ params, request, env }) {
 
   if (!title)       return Response.json({ error: 'Title required' }, { status: 400 });
   if (!description) return Response.json({ error: 'Description required' }, { status: 400 });
+  const abstractError = shortAbstractError(short_abstract);
+  if (abstractError) return Response.json({ error: abstractError }, { status: 400 });
   if (!VALID_STATES.has(state))        return Response.json({ error: 'Invalid state' }, { status: 400 });
   if (!VALID_TYPES.has(type))          return Response.json({ error: 'Invalid type' }, { status: 400 });
   if (!isArtifactKind(artifact_type)) return Response.json({ error: 'Invalid artifact type' }, { status: 400 });
@@ -143,10 +146,10 @@ export async function onRequestPost({ params, request, env }) {
     // The slug is the project's permanent URL, so a retitle does not change it.
     await env.DB.prepare(`
       UPDATE projects
-      SET title = ?, description = ?, state = ?, type = ?, artifact_type = ?, artifact_kind = ?, artifact_type_other = ?,
+      SET title = ?, description = ?, short_abstract = ?, state = ?, type = ?, artifact_type = ?, artifact_kind = ?, artifact_type_other = ?,
           url = ?, current_version = ?, realm = ?, updated_at = datetime('now')
       WHERE id = ?
-    `).bind(title, description, state, type, storedArtifactType(artifact_type), artifact_type, artifact_type_other, url, current_version, realm, project.id).run();
+    `).bind(title, description, short_abstract, state, type, storedArtifactType(artifact_type), artifact_type, artifact_type_other, url, current_version, realm, project.id).run();
 
     if (Array.isArray(body.affiliations)) {
       await syncAffiliations(env, project.id, aff.rows, email, await approvablePrograms(env, member));

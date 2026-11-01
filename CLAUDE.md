@@ -74,7 +74,7 @@ network/            /network — PIN partner orgs. Body is static/network: one `
 consulting/         /consulting — consultant directory (data from Google Form)
 research/           /research — Challenges + Projects, unified (2 tab views, shared watching mechanism + value formula in js/research.js); see research/PLAN.md
 projects/
-  edit/             /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
+  edit/             **Short abstract (Session 62, migration 063):** `projects.short_abstract`, a stand-alone 50–75 word summary (API enforces the range when non-empty; empty allowed), used by the /pitch roadmap appendix with the description's first paragraph as fallback. /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
                     Program/edition tag picker; ?program=&edition=&artifact= deep-link presets. "Add a project" links use /projects/submit
   project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button).
                     Optional 16:9 image under the header (projects.image_key, migration 048) — set from the editor, which crops in the

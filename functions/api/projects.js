@@ -11,7 +11,7 @@
 // Project value formula (same as challenges): seed + 1*anon^2 + 3*member^2
 
 import { getSession } from '../_shared/session.js';
-import { isArtifactKind, storedArtifactType } from '../_shared/artifacts.js';
+import { isArtifactKind, storedArtifactType, shortAbstractError } from '../_shared/artifacts.js';
 import { loadProjectPrograms, validateAffiliations, syncAffiliations, approvablePrograms } from '../_shared/programs.js';
 
 const VALID_STATES        = new Set(['stub', 'beta', 'production']);
@@ -84,7 +84,7 @@ export async function onRequestGet({ request, env }) {
 
   try {
     const baseSelect = `
-      SELECT p.id, p.slug, p.title, p.description, p.lead_slug, p.realm, p.state, p.type,
+      SELECT p.id, p.slug, p.title, p.description, p.short_abstract, p.lead_slug, p.realm, p.state, p.type,
              COALESCE(p.artifact_kind, p.artifact_type) AS artifact_type, p.artifact_type_other, p.url, p.current_version,
              p.anon_interesting, p.member_interesting, p.seed_interesting, p.created_at,
              CASE WHEN p.image_key IS NULL THEN NULL ELSE '/assets/' || p.image_key END AS image_url,
@@ -141,6 +141,7 @@ export async function onRequestPost({ request, env }) {
 
   const title         = (body.title || '').trim();
   const description   = (body.description || '').trim();
+  const short_abstract = (body.short_abstract || '').trim() || null;
   const lead_slug     = (body.lead_slug || '').trim();
   const state         = (body.state || '').trim();
   const type          = (body.type || '').trim();
@@ -151,6 +152,8 @@ export async function onRequestPost({ request, env }) {
 
   if (!title)       return Response.json({ error: 'Title required' }, { status: 400 });
   if (!description) return Response.json({ error: 'Description required' }, { status: 400 });
+  const abstractError = shortAbstractError(short_abstract);
+  if (abstractError) return Response.json({ error: abstractError }, { status: 400 });
   if (!lead_slug)   return Response.json({ error: 'Lead required' }, { status: 400 });
   if (!VALID_STATES.has(state))        return Response.json({ error: 'Invalid state' }, { status: 400 });
   if (!VALID_TYPES.has(type))          return Response.json({ error: 'Invalid type' }, { status: 400 });
@@ -183,9 +186,9 @@ export async function onRequestPost({ request, env }) {
   try {
     const result = await env.DB.prepare(`
       INSERT INTO projects
-        (slug, title, description, lead_slug, state, type, artifact_type, artifact_kind, artifact_type_other, url, current_version, submitted_by, status, realm)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
-    `).bind(slug, title, description, lead_slug, state, type, storedArtifactType(artifact_type), artifact_type, artifact_type_other, url, current_version, email, realm).run();
+        (slug, title, description, short_abstract, lead_slug, state, type, artifact_type, artifact_kind, artifact_type_other, url, current_version, submitted_by, status, realm)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'approved', ?)
+    `).bind(slug, title, description, short_abstract, lead_slug, state, type, storedArtifactType(artifact_type), artifact_type, artifact_type_other, url, current_version, email, realm).run();
     const projectId = result.meta.last_row_id;
 
     // A creator who names someone else as lead still belongs on the project.
