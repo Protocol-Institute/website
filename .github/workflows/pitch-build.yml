@@ -21,6 +21,11 @@ on:
         type: boolean
         default: false
 
+# One build at a time; a burst of saves leaves a single queued run that sees the latest data.
+concurrency:
+  group: pitch-build
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -9,7 +9,7 @@
 
 import { getSession } from '../../_shared/session.js';
 import { memberForSession, canEditProgram } from '../../_shared/programs.js';
-import { pitchAccess, denied } from '../../_shared/pitch.js';
+import { pitchAccess, denied, requestPitchRebuild } from '../../_shared/pitch.js';
 import { sessionVaryingJson } from '../../_shared/response.js';
 
 async function canEdit(email, pageKey, env) {
@@ -72,30 +72,8 @@ async function handleSave({ request, params, env }) {
   }
 }
 
-// The Institute overview inlines these pages; saving one rebuilds the assembled document
-// (GitHub Actions: .github/workflows/pitch-build.yml). The token is a fine-grained PAT with
-// Actions read/write on this repo only, stored as the Pages secret GITHUB_DISPATCH_TOKEN.
-// Returns 'started' | 'not-configured' | 'failed' — never throws, a save must not fail on it.
+// The Institute overview inlines these pages; saving one rebuilds it (see requestPitchRebuild).
 const REBUILD_ON_SAVE = new Set(['pitch/overview', 'static/values']);
-
-async function requestPitchRebuild(env) {
-  if (!env.GITHUB_DISPATCH_TOKEN) return 'not-configured';
-  try {
-    const res = await fetch('https://api.github.com/repos/Protocol-Institute/website/actions/workflows/pitch-build.yml/dispatches', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'pi-website',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ ref: 'main', inputs: { force: 'true' } }),
-    });
-    return res.status === 204 ? 'started' : 'failed';
-  } catch (e) {
-    return 'failed';
-  }
-}
 
 export const onRequestPut = handleSave;
 export const onRequestPost = handleSave;

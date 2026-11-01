@@ -22,3 +22,26 @@ export function denied(access) {
     { status: access.signedIn ? 403 : 401 }
   );
 }
+
+// Rebuild the assembled overview (GitHub Actions: .github/workflows/pitch-build.yml). The token is a
+// fine-grained PAT with Actions read/write on this repo only: Pages secret GITHUB_DISPATCH_TOKEN.
+// The workflow is hash-gated and runs one at a time, so a burst of edits costs one real rebuild.
+// Returns 'started' | 'not-configured' | 'failed' — never throws; a save must not fail on it.
+export async function requestPitchRebuild(env) {
+  if (!env.GITHUB_DISPATCH_TOKEN) return 'not-configured';
+  try {
+    const res = await fetch('https://api.github.com/repos/Protocol-Institute/website/actions/workflows/pitch-build.yml/dispatches', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'pi-website',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    });
+    return res.status === 204 ? 'started' : 'failed';
+  } catch (e) {
+    return 'failed';
+  }
+}
