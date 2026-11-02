@@ -2388,6 +2388,35 @@
           "html": "D1 rejects <code>LIKE</code> on a long text pattern ('LIKE or GLOB pattern too complex'): match on slug instead. The local <code>pitch-private/source.md</code> goes stale as soon as the editor is used, and re-seeding from it would overwrite edits: always re-fetch from D1 first (the guarded edit script compares <code>updated_at</code>). Pages secrets only reach functions after a new deployment, so setting one needs a redeploy (an empty commit does it)."
         }
       ]
+    },
+    {
+      "id": 63,
+      "sort_key": 63.0,
+      "label": "Session 63",
+      "title": "PiBoWriMo page touch-ups",
+      "date": "2026-11-01",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Live book count on the PiBoWriMo page",
+          "html": "The &ldquo;Books in progress&rdquo; heading carries a count computed client-side from the same <code>books</code> array that renders the list (non-admin realm, current edition or edition-less), so the number can never disagree with the list. No new API or field."
+        },
+        {
+          "title": "Leaderboard honor-system notes",
+          "html": "Two <code>.form-hint</code> paragraphs sit under the date window, outside the signed-in-only form section so anonymous visitors see them: an image-to-word exchange rate for visual books, and a statement that counts are self-reported and unaudited. This is policy text only; nothing in the logging API validates or weights images, and credit is still the sum of |net change|."
+        },
+        {
+          "title": "Signup list lesson",
+          "html": "<code>members.tag_pibowrimo</code> is only the join-form checkbox and undercounts participation (6 vs. 19 project leads), because CRM auto-approved members and existing members never tick it. The authoritative roster is <code>project_programs</code> rows for <code>pibowrimo</code> (status approved) joined to the project lead. Project co-authors are not captured by either."
+        }
+      ]
     }
   ]
 }

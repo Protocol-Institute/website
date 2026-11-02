@@ -49,7 +49,7 @@
           <a href="https://discord.gg/Aj5FbGsNYV" class="form-btn form-btn--secondary" target="_blank" rel="noopener noreferrer">Join us on Discord &rarr;</a>
         </div>
 
-        <h2 class="bwm-index-heading">Books in progress</h2>
+        <h2 class="bwm-index-heading">Books in progress <span id="bwm-count"></span></h2>
         <ul class="entity-list" id="bwm-books"><li class="entity-empty">Loading&hellip;</li></ul>
 
       </div>
@@ -107,6 +107,7 @@
           '/projects/submit?program=pibowrimo&edition=' + edition.id + '&artifact=text';
       }
       const books = data.projects.filter(p => !p.via && (!edition || p.edition_id == null || p.edition_id === edition.id) && p.realm !== 'admin');
+      document.getElementById('bwm-count').textContent = '(' + books.length + ')';
       list.innerHTML = books.length
         ? books.map(p => `
             <li class="entity-card">

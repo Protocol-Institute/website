@@ -1147,3 +1147,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - D1 rejects `LIKE` on a long text pattern ('LIKE or GLOB pattern too complex'): match on slug instead. The local `pitch-private/source.md` goes stale as soon as the editor is used, and re-seeding from it would overwrite edits: always re-fetch from D1 first (the guarded edit script compares `updated_at`). Pages secrets only reach functions after a new deployment, so setting one needs a redeploy (an empty commit does it).
 
 ---
+
+## Session 63: PiBoWriMo page touch-ups
+
+*2026-11-01*
+
+**Tracks:** static-site, operations
+
+- The &ldquo;Books in progress&rdquo; heading carries a count computed client-side from the same `books` array that renders the list (non-admin realm, current edition or edition-less), so the number can never disagree with the list. No new API or field.
+
+- Two `.form-hint` paragraphs sit under the date window, outside the signed-in-only form section so anonymous visitors see them: an image-to-word exchange rate for visual books, and a statement that counts are self-reported and unaudited. This is policy text only; nothing in the logging API validates or weights images, and credit is still the sum of |net change|.
+
+- `members.tag_pibowrimo` is only the join-form checkbox and undercounts participation (6 vs. 19 project leads), because CRM auto-approved members and existing members never tick it. The authoritative roster is `project_programs` rows for `pibowrimo` (status approved) joined to the project lead. Project co-authors are not captured by either.
+
+---
