@@ -2803,3 +2803,5 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 .lb-step-note { font-size: 0.95rem; color: #2A6B6B; margin: 0 0 0.75rem; }
 #lb-flash:empty { display: none; }
 #lb-flash { margin: -1.5rem 0 2rem; }
+.lb-ai-use { border: none; padding: 0; margin: 0 0 1rem; }
+.lb-ai-use label { display: inline-flex; align-items: center; gap: 0.35rem; margin-right: 1.1rem; font-size: 0.95rem; cursor: pointer; }

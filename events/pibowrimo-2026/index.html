@@ -136,6 +136,13 @@
         <input class="form-input" type="number" id="lb-words" min="-200000" max="200000" step="1" inputmode="numeric">
         <p class="form-hint">The change in your manuscript <em>that day</em>, not its total length: positive if you added words, negative if you cut. Logging a date again replaces the earlier figure.</p>
       </div>
+      <fieldset class="form-group lb-ai-use">
+        <legend class="form-label">AI use for this log</legend>
+        <label><input type="radio" name="lb-ai" value="none"> None</label>
+        <label><input type="radio" name="lb-ai" value="low"> Low</label>
+        <label><input type="radio" name="lb-ai" value="medium"> Medium</label>
+        <label><input type="radio" name="lb-ai" value="high"> High</label>
+      </fieldset>
     </div>
     <div class="lb-modal-actions">
       <button type="submit" class="form-btn" id="lb-submit">Log words</button>
@@ -300,6 +307,7 @@
     $('lb-day-step').hidden = needStart;
     $('lb-words').required = !needStart;
     $('lb-date').required = !needStart;
+    document.querySelector('input[name="lb-ai"]').required = !needStart;
     $('lb-submit').textContent = needStart ? 'Save starting count' : 'Log words';
     $('lb-skip').hidden = !afterStart;
     $('lb-day-note').hidden = !afterStart;
@@ -312,6 +320,7 @@
     if (!state || !state.mine) return;
     const hit = state.mine.entries.find(e => String(e.project_id) === $('lb-project').value && e.entry_date === $('lb-date').value);
     $('lb-words').value = hit ? hit.words : '';
+    document.querySelectorAll('input[name="lb-ai"]').forEach(r => { r.checked = !!hit && r.value === hit.ai_use; });
   }
 
   $('bwm-log').addEventListener('click', () => {
@@ -347,7 +356,10 @@
     const startOnly = !!p && !p.has_start;
     const body = { project_id: Number($('lb-project').value) };
     if (startOnly) body.start_words = Number($('lb-start').value);
-    else { body.date = $('lb-date').value; body.words = Number($('lb-words').value); }
+    else {
+      body.date = $('lb-date').value; body.words = Number($('lb-words').value);
+      body.ai_use = (document.querySelector('input[name="lb-ai"]:checked') || {}).value;
+    }
     btn.disabled = true; setMsg($('lb-msg'), '');
     try {
       const res = await fetch('/api/pibowrimo/wordcounts', {

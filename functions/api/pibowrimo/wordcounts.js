@@ -1,11 +1,13 @@
 // GET  /api/pibowrimo/wordcounts — public leaderboard of PiBoWriMo books, ranked by the plain
 //      sum of their daily net changes (Session 64; was sum of |change| until then), each with
 //      its starting count; when signed in, also the caller's own loggable projects and entries.
-// POST /api/pibowrimo/wordcounts — { project_id, start_words?, date?, words? }: record a
+// POST /api/pibowrimo/wordcounts — { project_id, start_words?, date?, words?, ai_use? }: record a
 //      project's starting count (its length before the month; a baseline, never scored), and/or
 //      log (or replace) one day's net change (negative = net cut). Callable by the project's
 //      lead or approved team members. The starting count must exist before any daily entry,
 //      so the page asks for it alone first and offers the day's figure as a separate step.
+//      A daily entry also carries ai_use (none|low|medium|high, migration 064), self-reported
+//      and not yet scored.
 //
 // "Registered" = the project is approved, published and tagged to the pibowrimo program
 // (approved tag, no edition or the 2026-11 edition) — the same set the landing page's
@@ -16,6 +18,7 @@ import { sessionVaryingJson } from '../../_shared/response.js';
 
 const MAX_WORDS_PER_DAY = 200000;
 const MAX_START_WORDS = 2000000;
+const AI_USE = new Set(['none', 'low', 'medium', 'high']);
 
 async function loadEdition(env) {
   return env.DB.prepare(
@@ -87,7 +90,7 @@ export async function onRequestGet({ request, env }) {
     let entries = [];
     if (ids.length) {
       const { results } = await env.DB.prepare(`
-        SELECT project_id, entry_date, words FROM pibowrimo_wordcounts
+        SELECT project_id, entry_date, words, ai_use FROM pibowrimo_wordcounts
         WHERE project_id IN (${ids.map(() => '?').join(',')}) ORDER BY entry_date DESC
       `).bind(...ids).all();
       entries = results || [];
@@ -117,6 +120,10 @@ export async function onRequestPost({ request, env }) {
   }
   if (hasWords && (!Number.isInteger(words) || Math.abs(words) > MAX_WORDS_PER_DAY)) {
     return Response.json({ error: `Word change must be a whole number between -${MAX_WORDS_PER_DAY} and ${MAX_WORDS_PER_DAY}` }, { status: 400 });
+  }
+  const aiUse = String(body.ai_use || '');
+  if (hasWords && !AI_USE.has(aiUse)) {
+    return Response.json({ error: 'Choose how much AI you used for this log' }, { status: 400 });
   }
   const hasStart = body.start_words !== undefined && body.start_words !== null && body.start_words !== '';
   const startWords = hasStart ? Number(body.start_words) : null;
@@ -155,11 +162,11 @@ export async function onRequestPost({ request, env }) {
   if (!hasWords) return Response.json({ ok: true });
 
   await env.DB.prepare(`
-    INSERT INTO pibowrimo_wordcounts (project_id, entry_date, words, logged_by)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO pibowrimo_wordcounts (project_id, entry_date, words, ai_use, logged_by)
+    VALUES (?, ?, ?, ?, ?)
     ON CONFLICT (project_id, entry_date)
-    DO UPDATE SET words = excluded.words, logged_by = excluded.logged_by, updated_at = datetime('now')
-  `).bind(projectId, date, words, email).run();
+    DO UPDATE SET words = excluded.words, ai_use = excluded.ai_use, logged_by = excluded.logged_by, updated_at = datetime('now')
+  `).bind(projectId, date, words, aiUse, email).run();
 
   return Response.json({ ok: true });
 }
