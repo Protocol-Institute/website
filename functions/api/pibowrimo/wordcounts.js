@@ -1,9 +1,11 @@
-// GET  /api/pibowrimo/wordcounts — public leaderboard of PiBoWriMo books, ranked by words of
-//      credit (sum of |daily net change|: cutting 1000 earns what adding 1000 does); when signed in, also the caller's own loggable projects and entries.
-// POST /api/pibowrimo/wordcounts — { project_id, date, words, start_words? }: log (or replace)
-//      one day's net change (negative = net cut) for a project the caller leads or is an
-//      approved team member of. A project's first entry must carry start_words, its length
-//      before the month (books already in progress); the baseline is never scored.
+// GET  /api/pibowrimo/wordcounts — public leaderboard of PiBoWriMo books, ranked by the plain
+//      sum of their daily net changes (Session 64; was sum of |change| until then), each with
+//      its starting count; when signed in, also the caller's own loggable projects and entries.
+// POST /api/pibowrimo/wordcounts — { project_id, start_words?, date?, words? }: record a
+//      project's starting count (its length before the month; a baseline, never scored), and/or
+//      log (or replace) one day's net change (negative = net cut). Callable by the project's
+//      lead or approved team members. The starting count must exist before any daily entry,
+//      so the page asks for it alone first and offers the day's figure as a separate step.
 //
 // "Registered" = the project is approved, published and tagged to the pibowrimo program
 // (approved tag, no edition or the 2026-11 edition) — the same set the landing page's
@@ -58,19 +60,22 @@ export async function onRequestGet({ request, env }) {
   const edition = await loadEdition(env);
   if (!edition) return Response.json({ error: 'No PiBoWriMo edition' }, { status: 404 });
 
-  const [projects, totals] = await Promise.all([
+  const [projects, totals, starts] = await Promise.all([
     registeredProjects(env, edition),
     env.DB.prepare(`
-      SELECT project_id, SUM(ABS(words)) AS total, SUM(words) AS net, COUNT(*) AS days, MAX(entry_date) AS last_date
+      SELECT project_id, SUM(words) AS total, COUNT(*) AS days, MAX(entry_date) AS last_date
       FROM pibowrimo_wordcounts WHERE entry_date BETWEEN ? AND ? GROUP BY project_id
     `).bind(edition.start_date, edition.end_date).all(),
+    env.DB.prepare('SELECT project_id, words FROM pibowrimo_starts').all(),
   ]);
   const byProject = new Map((totals.results || []).map(t => [t.project_id, t]));
+  const startOf = new Map((starts.results || []).map(s => [s.project_id, s.words]));
 
   const leaderboard = projects.map(p => {
     const t = byProject.get(p.id) || {};
     return { project_id: p.id, slug: p.slug, title: p.title, lead_slug: p.lead_slug,
-             lead_name: p.lead_name, total: t.total || 0, net: t.net || 0, days: t.days || 0, last_date: t.last_date || null };
+             lead_name: p.lead_name, start_words: startOf.has(p.id) ? startOf.get(p.id) : null,
+             total: t.total || 0, days: t.days || 0, last_date: t.last_date || null };
   }).sort((a, b) => b.total - a.total || b.days - a.days || a.title.localeCompare(b.title));
 
   const out = { window: windowState(edition), leaderboard, mine: null };
@@ -87,15 +92,8 @@ export async function onRequestGet({ request, env }) {
       `).bind(...ids).all();
       entries = results || [];
     }
-    let started = new Set();
-    if (ids.length) {
-      const { results } = await env.DB.prepare(
-        `SELECT project_id FROM pibowrimo_starts WHERE project_id IN (${ids.map(() => '?').join(',')})`
-      ).bind(...ids).all();
-      started = new Set((results || []).map(r => r.project_id));
-    }
     out.mine = {
-      projects: projects.filter(p => mine.has(p.id)).map(p => ({ id: p.id, title: p.title, has_start: started.has(p.id) })),
+      projects: projects.filter(p => mine.has(p.id)).map(p => ({ id: p.id, title: p.title, has_start: startOf.has(p.id) })),
       entries,
     };
   }
@@ -111,12 +109,13 @@ export async function onRequestPost({ request, env }) {
   const projectId = Number(body.project_id);
   const date = String(body.date || '');
   const words = Number(body.words);
+  const hasWords = body.words !== undefined && body.words !== null && body.words !== '';
 
   if (!Number.isInteger(projectId)) return Response.json({ error: 'Choose a project' }, { status: 400 });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
+  if (hasWords && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)))) {
     return Response.json({ error: 'Invalid date' }, { status: 400 });
   }
-  if (!Number.isInteger(words) || Math.abs(words) > MAX_WORDS_PER_DAY) {
+  if (hasWords && (!Number.isInteger(words) || Math.abs(words) > MAX_WORDS_PER_DAY)) {
     return Response.json({ error: `Word change must be a whole number between -${MAX_WORDS_PER_DAY} and ${MAX_WORDS_PER_DAY}` }, { status: 400 });
   }
   const hasStart = body.start_words !== undefined && body.start_words !== null && body.start_words !== '';
@@ -124,6 +123,7 @@ export async function onRequestPost({ request, env }) {
   if (hasStart && (!Number.isInteger(startWords) || startWords < 0 || startWords > MAX_START_WORDS)) {
     return Response.json({ error: 'Starting word count must be a whole number, 0 or more' }, { status: 400 });
   }
+  if (!hasWords && !hasStart) return Response.json({ error: 'Nothing to log' }, { status: 400 });
 
   const edition = await loadEdition(env);
   if (!edition) return Response.json({ error: 'No PiBoWriMo edition' }, { status: 404 });
@@ -131,12 +131,12 @@ export async function onRequestPost({ request, env }) {
   if (!win.open) {
     return Response.json({ error: `The word counter is open ${win.start} to ${win.end}` }, { status: 403 });
   }
-  if (date < win.start || date > win.end) {
+  if (hasWords && (date < win.start || date > win.end)) {
     return Response.json({ error: `Date must be between ${win.start} and ${win.end}` }, { status: 400 });
   }
   // One day of slack so a participant west of UTC can log their evening.
   const latest = new Date(Date.parse(win.today) + 86400000).toISOString().slice(0, 10);
-  if (date > latest) return Response.json({ error: 'That date is in the future' }, { status: 400 });
+  if (hasWords && date > latest) return Response.json({ error: 'That date is in the future' }, { status: 400 });
 
   const projects = await registeredProjects(env, edition);
   const mine = await mySlugsFor(env, await memberSlug(env, email), projects);
@@ -152,6 +152,7 @@ export async function onRequestPost({ request, env }) {
     await env.DB.prepare('INSERT INTO pibowrimo_starts (project_id, words, logged_by) VALUES (?, ?, ?)')
       .bind(projectId, startWords, email).run();
   }
+  if (!hasWords) return Response.json({ ok: true });
 
   await env.DB.prepare(`
     INSERT INTO pibowrimo_wordcounts (project_id, entry_date, words, logged_by)

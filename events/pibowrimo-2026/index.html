@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PiBoWriMo 2026 — The Protocol Institute</title>
-  <meta name="description" content="PiBoWriMo, the Protocol Institute Book Writing Month: in November 2026 the Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind.">
+  <meta name="description" content="PiBoWriMo, the Protocol Institute Book Writing Month: in November 2026 the Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind. Participants log their words each day.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=59">
+  <link rel="stylesheet" href="/css/style.css?v=64">
 </head>
 <body>
 
@@ -44,13 +44,21 @@
         </div>
 
         <div class="bwm-actions">
-          <a id="bwm-add" href="/projects/submit?program=pibowrimo&amp;artifact=text" class="form-btn">Add your book project &rarr;</a>
-          <a href="/events/pibowrimo-2026/leaderboard" class="form-btn form-btn--secondary">Word-count leaderboard &rarr;</a>
+          <button type="button" id="bwm-add" class="form-btn">Add a project (by Nov 9)</button>
+          <button type="button" id="bwm-log" class="form-btn">Log words</button>
           <a href="https://discord.gg/Aj5FbGsNYV" class="form-btn form-btn--secondary" target="_blank" rel="noopener noreferrer">Join us on Discord &rarr;</a>
         </div>
+        <p id="lb-flash" class="lb-msg" role="status"></p>
 
         <h2 class="bwm-index-heading">Books in progress <span id="bwm-count"></span></h2>
-        <ul class="entity-list" id="bwm-books"><li class="entity-empty">Loading&hellip;</li></ul>
+        <p class="sig-meta" id="lb-window">&nbsp;</p>
+        <p class="form-hint">Words are the sum of each day&rsquo;s net change, not counting where the book started. If your book is highly visual, count 1 image = 1000 words, or whatever exchange rate makes sense for the complexity of your imagery. The counts are self-reported and unaudited: PiBoWriMo runs on the honor system.</p>
+        <div class="lb-table-wrap">
+          <table class="lb-table">
+            <thead><tr><th>#</th><th>Book</th><th class="lb-num">Words</th><th class="lb-num">Days</th><th class="lb-num lb-hide-sm">Last logged</th></tr></thead>
+            <tbody id="lb-body"><tr><td colspan="5" class="entity-empty">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
 
       </div>
 
@@ -65,61 +73,306 @@
 
 </div>
 
+<!-- Add a project: the minimum the projects API needs, preset as a book tagged to this
+     edition. Image, team and everything else are in the full editor afterwards. -->
+<dialog class="pi-modal" id="add-modal" aria-labelledby="add-title">
+  <button type="button" class="pi-modal-close" data-close aria-label="Close">&times;</button>
+  <h2 class="pi-modal-title" id="add-title">Add your book project</h2>
+  <p class="form-hint" id="add-gate" hidden></p>
+  <form id="add-form" class="lb-form" hidden>
+    <div class="form-group">
+      <label class="form-label" for="add-name">Title</label>
+      <input class="form-input" type="text" id="add-name" maxlength="200" required>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="add-desc">Description</label>
+      <textarea class="form-input" id="add-desc" rows="5" required></textarea>
+      <p class="form-hint">Markdown is fine. The first paragraph is used as the summary in listings.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="add-url">Link</label>
+      <input class="form-input" type="url" id="add-url" placeholder="https://" required>
+      <p class="form-hint">Where the book or its notes live &mdash; a doc, a newsletter, a repo. You can change it later.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="add-state">Stage</label>
+      <select class="form-input" id="add-state">
+        <option value="stub">Idea</option>
+        <option value="beta">In progress</option>
+      </select>
+    </div>
+    <button type="submit" class="form-btn" id="add-submit">Add project</button>
+    <p class="form-hint">Already listed your book on the site? Open its page, choose Edit, and add PiBoWriMo under Programs.</p>
+    <p id="add-msg" class="lb-msg" role="status"></p>
+  </form>
+</dialog>
+
+<!-- Log words. A project with no starting count gets that question alone first; the day's
+     figure is then offered as a separate step the participant can skip. -->
+<dialog class="pi-modal" id="log-modal" aria-labelledby="log-title">
+  <button type="button" class="pi-modal-close" data-close aria-label="Close">&times;</button>
+  <h2 class="pi-modal-title" id="log-title">Log words</h2>
+  <p class="form-hint" id="log-gate" hidden></p>
+  <form id="log-form" class="lb-form" hidden>
+    <div class="form-group">
+      <label class="form-label" for="lb-project">Project</label>
+      <select class="form-input" id="lb-project" required></select>
+    </div>
+    <div id="lb-start-step" hidden>
+      <div class="form-group">
+        <label class="form-label" for="lb-start">Starting word count</label>
+        <input class="form-input" type="number" id="lb-start" min="0" step="1" inputmode="numeric">
+        <p class="form-hint">How long the manuscript was before you began logging (0 for a new book). Asked once per project. It is shown under the book&rsquo;s title and is not counted in its words.</p>
+      </div>
+    </div>
+    <div id="lb-day-step" hidden>
+      <p class="lb-step-note" id="lb-day-note" hidden></p>
+      <div class="form-group">
+        <label class="form-label" for="lb-date">Date</label>
+        <input class="form-input" type="date" id="lb-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="lb-words">Net words that day</label>
+        <input class="form-input" type="number" id="lb-words" min="-200000" max="200000" step="1" inputmode="numeric">
+        <p class="form-hint">The change in your manuscript <em>that day</em>, not its total length: positive if you added words, negative if you cut. Logging a date again replaces the earlier figure.</p>
+      </div>
+    </div>
+    <div class="lb-modal-actions">
+      <button type="submit" class="form-btn" id="lb-submit">Log words</button>
+      <button type="button" class="form-btn form-btn--secondary" id="lb-skip" hidden>Skip</button>
+    </div>
+    <p id="lb-msg" class="lb-msg" role="status"></p>
+  </form>
+</dialog>
+
 <script src="/js/main.js?v=58"></script>
 <script src="/js/research.js?v=54"></script>
 <script src="/js/markdown.js?v=58"></script>
 <script>
-// The book index is every project linked to this program's November 2026
-// edition (or to the program with no edition), from the programs model —
-// see programs/PLAN.md. PiBoWriMo is an open program, so a member's link
-// appears here as soon as they save it; nothing is curated by hand. A host or
-// admin can remove a tag from /programs/edit?slug=pibowrimo, and it stays
-// removed. Program slug was book-writing-month until migration 044.
+// One page for PiBoWriMo 2026 (Session 64 merged the old /leaderboard page into it; that
+// URL now 301s here). Standings data and logging rules live in
+// functions/api/pibowrimo/wordcounts.js: the open window is the pibowrimo 2026-11 edition's
+// dates, a book is any approved project tagged to that edition (or to the program with no
+// edition), and it is loggable by its lead or approved team members. This page only
+// renders what the API returns. New projects go through the ordinary /api/projects create.
 (function () {
   const R = window.PI_RESEARCH;
   const esc = R.escHtml;
-  const STATE_LABELS = { stub: 'Idea', beta: 'In progress', production: 'Complete' };
-  const list = document.getElementById('bwm-books');
-
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n).toLocaleString('en-US');
+  const signed = n => (n < 0 ? '−' : '') + fmt(Math.abs(n));
+  const shortDate = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  const longDate = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
+  // Last day to add a project, on the Pacific clock. Not stored anywhere else; the API
+  // does not enforce it, so hosts can still tag a late book by hand.
+  const ADD_DEADLINE = '2026-11-09';
+  const pacificToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date());
+  const loginHref = () => '/members/join?return=' + encodeURIComponent(location.pathname);
   const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
+
+  let state = null, me = null, edition = null;
+
+  // ── Header copy: About page + byline from the programs model ──────────────
   Promise.all([
-    fetch('/api/programs/pibowrimo').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    json('/api/programs/pibowrimo'),
     PIMarkdown.load(),
     json('/api/pages/programs/pibowrimo/about'),
     json('/api/members/me'),
-  ])
-    .then(([data, , about, me]) => {
-      if (about && String(about.content_md || '').trim()) {
-        document.getElementById('pbwm-about').innerHTML = PIMarkdown.html(about.content_md);
+  ]).then(([data, , about, who]) => {
+    me = who;
+    if (about && String(about.content_md || '').trim()) {
+      $('pbwm-about').innerHTML = PIMarkdown.html(about.content_md);
+    }
+    if (!data) return;
+    edition = data.editions.find(e => e.slug === '2026-11') || null;
+    if (data.program.byline) {
+      const byline = $('pbwm-byline');
+      byline.innerHTML = PIMarkdown.inline(data.program.byline);
+      PI.linkPeople(byline, data.hosts);
+      byline.hidden = false;
+    }
+    if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === 'pibowrimo'))) {
+      PI.editLink('/programs/edit?slug=pibowrimo#about');
+    }
+  });
+
+  if (pacificToday() > ADD_DEADLINE) {
+    $('bwm-add').disabled = true;
+    $('bwm-add').textContent = 'Deadline has passed';
+  }
+
+  // ── Standings ─────────────────────────────────────────────────────────────
+  function render() {
+    const { window: w, leaderboard } = state;
+    $('lb-window').textContent = w.open
+      ? `The counter is open ${longDate(w.start)}–${longDate(w.end)}.`
+      : (w.today < w.start ? `The counter opens ${longDate(w.start)}.` : `The counter closed ${longDate(w.end)}. Final standings below.`);
+    $('bwm-count').textContent = '(' + leaderboard.length + ')';
+    $('lb-body').innerHTML = leaderboard.length
+      ? leaderboard.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td><a href="/projects/project?slug=${encodeURIComponent(r.slug)}">${esc(r.title)}</a>
+                <div class="entity-meta">by <a href="${R.profileHref(r.lead_slug)}">${esc(r.lead_name || r.lead_slug)}</a>${r.start_words != null ? ` &middot; starting count: ${fmt(r.start_words)}` : ''}</div></td>
+            <td class="lb-num">${signed(r.total)}</td>
+            <td class="lb-num">${r.days}</td>
+            <td class="lb-num lb-hide-sm">${r.last_date ? shortDate(r.last_date) : '&mdash;'}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="5" class="entity-empty">No books registered yet. Yours could be the first.</td></tr>';
+  }
+
+  function load() {
+    return fetch('/api/pibowrimo/wordcounts').then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => { state = data; render(); })
+      .catch(() => { $('lb-body').innerHTML = '<tr><td colspan="5" class="entity-empty">The standings could not be loaded. Please try again later.</td></tr>'; });
+  }
+
+  // ── Modals ────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.pi-modal').forEach(d => {
+    d.querySelector('[data-close]').addEventListener('click', () => d.close());
+    // A click on the backdrop lands on the dialog element itself.
+    d.addEventListener('click', ev => { if (ev.target === d) d.close(); });
+  });
+  function setMsg(el, text, err) { el.textContent = text; el.classList.toggle('lb-msg--err', !!err); }
+
+  // Who can do what, as a sentence for the gate line, or null if they may go ahead.
+  function gateFor(action) {
+    if (!me) return `<a href="${loginHref()}">Log in or join</a> to ${action}.`;
+    if (me.pending) return 'Your membership request is still awaiting approval.';
+    if (!me.member) return `<a href="${loginHref()}">Log in or join</a> to ${action}.`;
+    return null;
+  }
+
+  // Add a project
+  $('bwm-add').addEventListener('click', () => {
+    const gate = gateFor('add your book');
+    $('add-gate').hidden = !gate; $('add-form').hidden = !!gate;
+    if (gate) $('add-gate').innerHTML = gate;
+    setMsg($('add-msg'), '');
+    $('add-modal').showModal();
+  });
+
+  $('add-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const btn = $('add-submit');
+    btn.disabled = true; setMsg($('add-msg'), '');
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: $('add-name').value.trim(),
+          description: $('add-desc').value.trim(),
+          url: $('add-url').value.trim(),
+          state: $('add-state').value,
+          lead_slug: me.member.slug,
+          type: 'accretive',
+          artifact_type: 'book',
+          affiliations: [{ program_slug: 'pibowrimo', edition_id: edition ? edition.id : null }],
+        }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(res.status === 401 ? 'Your session has expired. Please log in again.' : (out.error || 'Could not save'));
+      const title = $('add-name').value.trim();
+      $('add-form').reset();
+      $('add-modal').close();
+      $('lb-flash').innerHTML = `Added <a href="/projects/project?slug=${encodeURIComponent(out.slug)}">${esc(title)}</a>. You can add an image and team members from its Edit page.`;
+      await load();
+    } catch (e) {
+      setMsg($('add-msg'), e.message, true);
+    } finally { btn.disabled = false; }
+  });
+
+  // Log words
+  const current = () => state && state.mine && state.mine.projects.find(x => String(x.id) === $('lb-project').value);
+  let afterStart = false;   // true on the optional day step that follows a new starting count
+
+  function clampDate() {
+    const w = state.window, d = $('lb-date');
+    d.min = w.start; d.max = w.end;
+    if (!d.value) d.value = w.today < w.start ? w.start : (w.today > w.end ? w.end : w.today);
+  }
+
+  function showStep() {
+    const p = current();
+    const needStart = !!p && !p.has_start;
+    $('lb-start-step').hidden = !needStart;
+    $('lb-start').required = needStart;
+    $('lb-day-step').hidden = needStart;
+    $('lb-words').required = !needStart;
+    $('lb-date').required = !needStart;
+    $('lb-submit').textContent = needStart ? 'Save starting count' : 'Log words';
+    $('lb-skip').hidden = !afterStart;
+    $('lb-day-note').hidden = !afterStart;
+    $('lb-project').disabled = afterStart;
+    if (!needStart) prefill();
+  }
+
+  // Fill the words box with the figure already logged for the chosen project and date.
+  function prefill() {
+    if (!state || !state.mine) return;
+    const hit = state.mine.entries.find(e => String(e.project_id) === $('lb-project').value && e.entry_date === $('lb-date').value);
+    $('lb-words').value = hit ? hit.words : '';
+  }
+
+  $('bwm-log').addEventListener('click', () => {
+    const w = state && state.window;
+    let gate = gateFor('log your words');
+    if (!gate && state && !state.mine) gate = `<a href="${loginHref()}">Log in</a> to log your words.`;
+    if (!gate && state && !state.mine.projects.length) gate = 'You have no PiBoWriMo project to log for yet. Add your book project first.';
+    if (!gate && w && !w.open) gate = w.today < w.start ? `Logging opens ${longDate(w.start)}.` : 'Logging is closed.';
+    if (!gate && !state) gate = 'The word counter could not be loaded. Please try again later.';
+    $('log-gate').hidden = !gate; $('log-form').hidden = !!gate;
+    setMsg($('lb-msg'), '');
+    if (gate) {
+      $('log-gate').innerHTML = gate;
+    } else {
+      afterStart = false;
+      const sel = $('lb-project'), keep = sel.value;
+      sel.innerHTML = state.mine.projects.map(p => `<option value="${p.id}">${esc(p.title)}</option>`).join('');
+      if (keep && state.mine.projects.some(p => String(p.id) === keep)) sel.value = keep;
+      clampDate();
+      showStep();
+    }
+    $('log-modal').showModal();
+  });
+
+  $('lb-project').addEventListener('change', showStep);
+  $('lb-date').addEventListener('change', prefill);
+  $('lb-skip').addEventListener('click', () => $('log-modal').close());
+  $('log-modal').addEventListener('close', () => { afterStart = false; $('lb-project').disabled = false; });
+
+  $('log-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const p = current(), btn = $('lb-submit');
+    const startOnly = !!p && !p.has_start;
+    const body = { project_id: Number($('lb-project').value) };
+    if (startOnly) body.start_words = Number($('lb-start').value);
+    else { body.date = $('lb-date').value; body.words = Number($('lb-words').value); }
+    btn.disabled = true; setMsg($('lb-msg'), '');
+    try {
+      const res = await fetch('/api/pibowrimo/wordcounts', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(res.status === 401 ? 'Your session has expired. Please log in again.' : (out.error || 'Could not save'));
+      await load();
+      if (startOnly) {
+        // Offer the day's figure next; Skip closes the modal.
+        afterStart = true;
+        $('lb-start').value = '';
+        $('lb-day-note').textContent = `Starting count saved (${fmt(body.start_words)}). Did you write anything on ${longDate($('lb-date').value)}? Log it below, or skip.`;
+        showStep();
+        $('lb-words').focus();
+      } else {
+        $('log-modal').close();
+        setMsg($('lb-flash'), `Logged ${body.words > 0 ? '+' : ''}${signed(body.words)} words on ${p.title} for ${longDate(body.date)}.`);
       }
-      if (data.program.byline) {
-        const byline = document.getElementById('pbwm-byline');
-        byline.innerHTML = PIMarkdown.inline(data.program.byline);
-        PI.linkPeople(byline, data.hosts);
-        byline.hidden = false;
-      }
-      if (me && me.member && (me.member.is_admin || (me.hosted_programs || []).some(h => h.slug === 'pibowrimo'))) {
-        PI.editLink('/programs/edit?slug=pibowrimo#about');
-      }
-      const edition = data.editions.find(e => e.slug === '2026-11');
-      if (edition) {
-        document.getElementById('bwm-add').href =
-          '/projects/submit?program=pibowrimo&edition=' + edition.id + '&artifact=text';
-      }
-      const books = data.projects.filter(p => !p.via && (!edition || p.edition_id == null || p.edition_id === edition.id) && p.realm !== 'admin');
-      document.getElementById('bwm-count').textContent = '(' + books.length + ')';
-      list.innerHTML = books.length
-        ? books.map(p => `
-            <li class="entity-card">
-              <h3 class="entity-title"><a href="/projects/project?slug=${encodeURIComponent(p.slug)}">${esc(p.title)}</a></h3>
-              <div class="entity-meta">${esc(STATE_LABELS[p.state] || p.state)} &middot; by <a href="${R.profileHref(p.lead_slug)}">${esc(p.lead_name || p.lead_slug)}</a></div>
-              <div class="entity-description md">${PIMarkdown.html(p.description)}</div>
-            </li>`).join('')
-        : '<li class="entity-empty">No books listed yet. Yours could be the first.</li>';
-    })
-    .catch(() => {
-      list.innerHTML = '<li class="entity-empty">The book index could not be loaded. Please try again later.</li>';
-    });
+    } catch (e) {
+      setMsg($('lb-msg'), e.message, true);
+    } finally { btn.disabled = false; }
+  });
+
+  load();
 }());
 </script>
 </body>
