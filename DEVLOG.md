@@ -1161,3 +1161,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `members.tag_pibowrimo` is only the join-form checkbox and undercounts participation (6 vs. 19 project leads), because CRM auto-approved members and existing members never tick it. The authoritative roster is `project_programs` rows for `pibowrimo` (status approved) joined to the project lead. Project co-authors are not captured by either.
 
 ---
+
+## Session 64: PiBoWriMo page + leaderboard merged; modal logging; AI-use field
+
+*2026-11-03*
+
+**Tracks:** static-site, operations
+
+- `/events/pibowrimo-2026` now renders the standings table from `/api/pibowrimo/wordcounts`, replacing both the old book-description index (fed by `/api/programs`) and the separate `/leaderboard` page, which is deleted and 301s here via `_redirects`. Header copy (About page, byline) still comes from the programs model. The book list is now the API's registered set (approved tag, approved project, 2026-11 or edition-less), so the page count and table can't disagree.
+
+- Native `&lt;dialog&gt;` elements (`.pi-modal` in style.css). The site's global margin reset strips dialog centring, so `.pi-modal` restores `margin:auto`, and `.pi-modal [hidden]` forces `display:none` because `.form-btn`'s display rule beat the hidden attribute. Add-project is a minimal create through the ordinary `POST /api/projects` (title, description, URL, stage; preset `artifact_type` book, type accretive, affiliation pibowrimo + edition) — image and team stay in the full editor. The Nov 9 deadline is a page constant on the Pacific clock; it's UI only so hosts can still tag late books.
+
+- The old form asked for a starting count and a daily figure together, and several participants put their manuscript length in the daily box. Now a project with no baseline gets only the starting-count question; the API accepts `start_words` with no `words`, and the modal then offers that day's figure as an optional step with Skip. The starting count is shown publicly under each title, which makes mistakes visible — there is still no self-service correction.
+
+- Ranking is now `SUM(words)` (signed net change), replacing `SUM(ABS(words))` credit; the Net and Credit columns collapsed into one Words column and the 'cutting counts as progress' rule was dropped at Venkat's call. Two oversized first-day entries were moved into starting counts by hand with a nominal 10-word entry left in their place (backups in `backups/`).
+
+- `pibowrimo_wordcounts.ai_use` TEXT CHECK none|low|medium|high, nullable for pre-existing rows. Required on every daily POST and replaced along with the words on re-log; returned in the caller's own entries (prefills the radios) but not in the public leaderboard. Collected for a future weighted sort; nothing reads it yet. Migration applied to prod before the push, as the code writes the column.
+
+---

@@ -2417,6 +2417,43 @@
           "html": "<code>members.tag_pibowrimo</code> is only the join-form checkbox and undercounts participation (6 vs. 19 project leads), because CRM auto-approved members and existing members never tick it. The authoritative roster is <code>project_programs</code> rows for <code>pibowrimo</code> (status approved) joined to the project lead. Project co-authors are not captured by either."
         }
       ]
+    },
+    {
+      "id": 64,
+      "sort_key": 64.0,
+      "label": "Session 64",
+      "title": "PiBoWriMo page + leaderboard merged; modal logging; AI-use field",
+      "date": "2026-11-03",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "One PiBoWriMo page",
+          "html": "<code>/events/pibowrimo-2026</code> now renders the standings table from <code>/api/pibowrimo/wordcounts</code>, replacing both the old book-description index (fed by <code>/api/programs</code>) and the separate <code>/leaderboard</code> page, which is deleted and 301s here via <code>_redirects</code>. Header copy (About page, byline) still comes from the programs model. The book list is now the API's registered set (approved tag, approved project, 2026-11 or edition-less), so the page count and table can't disagree."
+        },
+        {
+          "title": "Modals instead of inline forms",
+          "html": "Native <code>&lt;dialog&gt;</code> elements (<code>.pi-modal</code> in style.css). The site's global margin reset strips dialog centring, so <code>.pi-modal</code> restores <code>margin:auto</code>, and <code>.pi-modal [hidden]</code> forces <code>display:none</code> because <code>.form-btn</code>'s display rule beat the hidden attribute. Add-project is a minimal create through the ordinary <code>POST /api/projects</code> (title, description, URL, stage; preset <code>artifact_type</code> book, type accretive, affiliation pibowrimo + edition) — image and team stay in the full editor. The Nov 9 deadline is a page constant on the Pacific clock; it's UI only so hosts can still tag late books."
+        },
+        {
+          "title": "Starting count separated from the daily log",
+          "html": "The old form asked for a starting count and a daily figure together, and several participants put their manuscript length in the daily box. Now a project with no baseline gets only the starting-count question; the API accepts <code>start_words</code> with no <code>words</code>, and the modal then offers that day's figure as an optional step with Skip. The starting count is shown publicly under each title, which makes mistakes visible — there is still no self-service correction."
+        },
+        {
+          "title": "Scoring changed to net sum",
+          "html": "Ranking is now <code>SUM(words)</code> (signed net change), replacing <code>SUM(ABS(words))</code> credit; the Net and Credit columns collapsed into one Words column and the 'cutting counts as progress' rule was dropped at Venkat's call. Two oversized first-day entries were moved into starting counts by hand with a nominal 10-word entry left in their place (backups in <code>backups/</code>)."
+        },
+        {
+          "title": "AI use per log (migration 064)",
+          "html": "<code>pibowrimo_wordcounts.ai_use</code> TEXT CHECK none|low|medium|high, nullable for pre-existing rows. Required on every daily POST and replaced along with the words on re-log; returned in the caller's own entries (prefills the radios) but not in the public leaderboard. Collected for a future weighted sort; nothing reads it yet. Migration applied to prod before the push, as the code writes the column."
+        }
+      ]
     }
   ]
 }
