@@ -2454,6 +2454,48 @@
           "html": "<code>pibowrimo_wordcounts.ai_use</code> TEXT CHECK none|low|medium|high, nullable for pre-existing rows. Required on every daily POST and replaced along with the words on re-log; returned in the caller's own entries (prefills the radios) but not in the public leaderboard. Collected for a future weighted sort; nothing reads it yet. Migration applied to prod before the push, as the code writes the column."
         }
       ]
+    },
+    {
+      "id": 65,
+      "sort_key": 65.0,
+      "label": "Session 65",
+      "title": "PiBoWriMo date fix and progress strip; sprints as a class, Blygger hackathon staged",
+      "date": "2026-11-05",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "PiBoWriMo log dates (deployed, 31b479f)",
+          "html": "The form defaulted its date from <code>toISOString()</code>, the UTC day, so an evening entry in the Americas was saved as tomorrow, and the next day's log overwrote it through the upsert on <code>(project_id, entry_date)</code>. <code>localToday()</code> now sets the default, the date resets on each open and caps at today, and a note warns before replacing an entry. The API window stays open a day either side of UTC, which is what lets a participant west of UTC log their evening. No data was changed: a missing row already counts as zero, so affected participants re-enter the lost day."
+        },
+        {
+          "title": "Daily progress strip (deployed, 31b479f)",
+          "html": "Each row expands in place to one square per day: green at 500+ net words, yellow below, red for a net cut, empty for no entry. The API adds <code>daily</code> (date and words only; <code>ai_use</code> and <code>logged_by</code> stay private). Its main job is showing people which days they have missed, which is why it shipped ahead of any data repair."
+        },
+        {
+          "title": "Sprints as a class (staged, not deployed)",
+          "html": "A sprint is a dated edition of a program whose tagged projects are ranked by a daily figure; instances differ in where the figure comes from. Declaring reuses <code>project_programs</code>, so there is no new program kind or project field. Settings live in a new <code>edition_sprints</code> table because D1 can't rebuild <code>editions</code>, an FK parent. Shared code is <code>functions/_shared/sprints.js</code>, <code>functions/api/sprints/[program]/[edition].js</code> and <code>js/sprint.js</code>; a metric is an adapter (<code>functions/_shared/github-commits.js</code>). PiBoWriMo deliberately stays on its own tables until its month ends, because it has live participants; it moves in December. See <code>programs/SPRINTS-PLAN.md</code>."
+        },
+        {
+          "title": "Blygger hackathon on commits (staged, not deployed)",
+          "html": "<code>/events/blygger-hackathon-2026</code> ranks by commits, with active days as the tiebreak, from Nov 20 17:00 UTC to the end of Nov 27 Pacific. Pages has no cron, so sync runs on page view in <code>waitUntil</code>: 10-minute stale window, at most 20 repos and 40 requests per run, ETags to save quota. A sync replaces a project's rows outright, so force-pushes and retries can't double-count. Merges and bots are excluded. Forks count commits ahead of the parent or authored by the fork's owner, so upstream work isn't credited and merged work stays credited. Unauthenticated GitHub allows only 60 requests an hour, so production needs a read-only <code>GITHUB_READ_TOKEN</code>, not yet created."
+        },
+        {
+          "title": "One repo per participant",
+          "html": "<code>resolveClaims</code> takes projects earliest tag first and the first claim stands, per repo and per lead, because tags can also arrive through the project editor and a form check alone wouldn't hold. Repos owned by anyone in <code>edition_sprints.excluded_owners</code> (<code>blygger</code> here) claim nothing: the form refuses them and the row shows 0 with a note, so declaring an upstream can't collect everyone's commits and doesn't use up the lead's one project. This means maintainers competing must also work from forks. Only the project lead counts as the participant; approved team members can lead their own."
+        },
+        {
+          "title": "Join flow",
+          "html": "<code>tag_blygger_hackathon</code> on <code>members</code> and <code>membership_requests</code> auto-approves, as <code>tag_pibowrimo</code> does, so newcomers don't wait on approval during the event (staged, with migration 065)."
+        }
+      ]
     }
   ]
 }

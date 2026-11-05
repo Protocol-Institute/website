@@ -1179,3 +1179,23 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `pibowrimo_wordcounts.ai_use` TEXT CHECK none|low|medium|high, nullable for pre-existing rows. Required on every daily POST and replaced along with the words on re-log; returned in the caller's own entries (prefills the radios) but not in the public leaderboard. Collected for a future weighted sort; nothing reads it yet. Migration applied to prod before the push, as the code writes the column.
 
 ---
+
+## Session 65: PiBoWriMo date fix and progress strip; sprints as a class, Blygger hackathon staged
+
+*2026-11-05*
+
+**Tracks:** static-site, member-directory, operations
+
+- The form defaulted its date from `toISOString()`, the UTC day, so an evening entry in the Americas was saved as tomorrow, and the next day's log overwrote it through the upsert on `(project_id, entry_date)`. `localToday()` now sets the default, the date resets on each open and caps at today, and a note warns before replacing an entry. The API window stays open a day either side of UTC, which is what lets a participant west of UTC log their evening. No data was changed: a missing row already counts as zero, so affected participants re-enter the lost day.
+
+- Each row expands in place to one square per day: green at 500+ net words, yellow below, red for a net cut, empty for no entry. The API adds `daily` (date and words only; `ai_use` and `logged_by` stay private). Its main job is showing people which days they have missed, which is why it shipped ahead of any data repair.
+
+- A sprint is a dated edition of a program whose tagged projects are ranked by a daily figure; instances differ in where the figure comes from. Declaring reuses `project_programs`, so there is no new program kind or project field. Settings live in a new `edition_sprints` table because D1 can't rebuild `editions`, an FK parent. Shared code is `functions/_shared/sprints.js`, `functions/api/sprints/[program]/[edition].js` and `js/sprint.js`; a metric is an adapter (`functions/_shared/github-commits.js`). PiBoWriMo deliberately stays on its own tables until its month ends, because it has live participants; it moves in December. See `programs/SPRINTS-PLAN.md`.
+
+- `/events/blygger-hackathon-2026` ranks by commits, with active days as the tiebreak, from Nov 20 17:00 UTC to the end of Nov 27 Pacific. Pages has no cron, so sync runs on page view in `waitUntil`: 10-minute stale window, at most 20 repos and 40 requests per run, ETags to save quota. A sync replaces a project's rows outright, so force-pushes and retries can't double-count. Merges and bots are excluded. Forks count commits ahead of the parent or authored by the fork's owner, so upstream work isn't credited and merged work stays credited. Unauthenticated GitHub allows only 60 requests an hour, so production needs a read-only `GITHUB_READ_TOKEN`, not yet created.
+
+- `resolveClaims` takes projects earliest tag first and the first claim stands, per repo and per lead, because tags can also arrive through the project editor and a form check alone wouldn't hold. Repos owned by anyone in `edition_sprints.excluded_owners` (`blygger` here) claim nothing: the form refuses them and the row shows 0 with a note, so declaring an upstream can't collect everyone's commits and doesn't use up the lead's one project. This means maintainers competing must also work from forks. Only the project lead counts as the participant; approved team members can lead their own.
+
+- `tag_blygger_hackathon` on `members` and `membership_requests` auto-approves, as `tag_pibowrimo` does, so newcomers don't wait on approval during the event (staged, with migration 065).
+
+---
