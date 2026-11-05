@@ -1,6 +1,7 @@
 // GET  /api/pibowrimo/wordcounts — public leaderboard of PiBoWriMo books, ranked by the plain
 //      sum of their daily net changes (Session 64; was sum of |change| until then), each with
-//      its starting count; when signed in, also the caller's own loggable projects and entries.
+//      its starting count and daily figures (date + words only; ai_use and logged_by stay
+//      private); when signed in, also the caller's own loggable projects and entries.
 // POST /api/pibowrimo/wordcounts — { project_id, start_words?, date?, words?, ai_use? }: record a
 //      project's starting count (its length before the month; a baseline, never scored), and/or
 //      log (or replace) one day's net change (negative = net cut). Callable by the project's
@@ -53,24 +54,39 @@ async function mySlugsFor(env, slug, projects) {
   return new Set(projects.filter(p => p.lead_slug === slug || team.has(p.id)).map(p => p.id));
 }
 
+// today is the UTC date. Somewhere it is still a day either side of that, so the window stays
+// open a day longer at each end: the last evening of the month runs past midnight UTC in the
+// Americas. Which dates can be logged is checked separately against start/end.
 function windowState(edition) {
-  const today = new Date().toISOString().slice(0, 10);
+  const now = Date.now();
+  const today = new Date(now).toISOString().slice(0, 10);
+  const tomorrow = new Date(now + 86400000).toISOString().slice(0, 10);
+  const yesterday = new Date(now - 86400000).toISOString().slice(0, 10);
   return { start: edition.start_date, end: edition.end_date, today,
-           open: today >= edition.start_date && today <= edition.end_date };
+           open: tomorrow >= edition.start_date && yesterday <= edition.end_date };
 }
 
 export async function onRequestGet({ request, env }) {
   const edition = await loadEdition(env);
   if (!edition) return Response.json({ error: 'No PiBoWriMo edition' }, { status: 404 });
 
-  const [projects, totals, starts] = await Promise.all([
+  const [projects, totals, starts, daily] = await Promise.all([
     registeredProjects(env, edition),
     env.DB.prepare(`
       SELECT project_id, SUM(words) AS total, COUNT(*) AS days, MAX(entry_date) AS last_date
       FROM pibowrimo_wordcounts WHERE entry_date BETWEEN ? AND ? GROUP BY project_id
     `).bind(edition.start_date, edition.end_date).all(),
     env.DB.prepare('SELECT project_id, words FROM pibowrimo_starts').all(),
+    env.DB.prepare(`
+      SELECT project_id, entry_date, words FROM pibowrimo_wordcounts
+      WHERE entry_date BETWEEN ? AND ? ORDER BY entry_date
+    `).bind(edition.start_date, edition.end_date).all(),
   ]);
+  const dailyOf = new Map();
+  for (const d of daily.results || []) {
+    if (!dailyOf.has(d.project_id)) dailyOf.set(d.project_id, []);
+    dailyOf.get(d.project_id).push({ date: d.entry_date, words: d.words });
+  }
   const byProject = new Map((totals.results || []).map(t => [t.project_id, t]));
   const startOf = new Map((starts.results || []).map(s => [s.project_id, s.words]));
 
@@ -78,7 +94,8 @@ export async function onRequestGet({ request, env }) {
     const t = byProject.get(p.id) || {};
     return { project_id: p.id, slug: p.slug, title: p.title, lead_slug: p.lead_slug,
              lead_name: p.lead_name, start_words: startOf.has(p.id) ? startOf.get(p.id) : null,
-             total: t.total || 0, days: t.days || 0, last_date: t.last_date || null };
+             total: t.total || 0, days: t.days || 0, last_date: t.last_date || null,
+             daily: dailyOf.get(p.id) || [] };
   }).sort((a, b) => b.total - a.total || b.days - a.days || a.title.localeCompare(b.title));
 
   const out = { window: windowState(edition), leaderboard, mine: null };

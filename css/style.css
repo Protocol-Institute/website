@@ -2778,6 +2778,25 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 .lb-table .lb-num { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; padding-left: 0.5rem; }
 .lb-table tbody tr:first-child td:first-child { color: #2A6B6B; font-weight: 500; }
 @media (max-width: 560px) { .lb-hide-sm { display: none; } }
+.lb-row--expandable { cursor: pointer; }
+.lb-toggle { background: none; border: none; padding: 0; font: inherit; color: #2A6B6B; cursor: pointer; }
+.lb-toggle::after { content: ' \25B8'; }
+.lb-toggle[aria-expanded="true"]::after { content: ' \25BE'; }
+.lb-toggle:hover { text-decoration: underline; }
+.lb-table .lb-detail td { padding: 0.25rem 0 1rem; }
+.lb-strip, .lb-strip-labels { display: grid; grid-template-columns: repeat(30, minmax(0, 1fr)); gap: 2px; }
+.lb-strip .lb-day { width: auto; height: auto; aspect-ratio: 1; margin: 0; }
+.lb-day { display: block; box-sizing: border-box; width: 0.8rem; height: 0.8rem; border: 1px solid transparent; }
+.lb-day--strong { background: #3C9D5B; }
+.lb-day--weak { background: #F0CB45; }
+.lb-day--cut { background: #C8453B; }
+.lb-day--empty { border-color: #C9C5BE; }
+.lb-day--future { border-color: #ECE9E4; }
+.lb-strip-labels { margin-top: 0.25rem; font-size: 0.7rem; color: #8A8A8A; }
+.lb-strip-labels span { grid-column: span 7; white-space: nowrap; }
+.lb-table p.lb-strip-readout { font-size: 0.85rem; line-height: 1.4; min-height: 1.4em; margin: 0.25rem 0; }
+.lb-strip-legend { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; list-style: none; margin: 0; padding: 0; font-size: 0.75rem; color: #6A6A6A; }
+.lb-strip-legend li { display: flex; align-items: center; gap: 0.35rem; margin: 0; }
 
 /* ── PiBoWriMo modals (events/pibowrimo-2026, Session 64) — native <dialog> ── */
 .pi-modal {

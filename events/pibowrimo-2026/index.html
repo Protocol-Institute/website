@@ -6,7 +6,7 @@
   <title>PiBoWriMo 2026 — The Protocol Institute</title>
   <meta name="description" content="PiBoWriMo, the Protocol Institute Book Writing Month: in November 2026 the Institute hosts its first book-writing month — a mostly asynchronous event on Discord for anyone with a protocol-themed book project underway or in mind. Participants log their words each day.">
   <link rel="icon" href="/assets/logo-static.png" type="image/png">
-  <link rel="stylesheet" href="/css/style.css?v=64">
+  <link rel="stylesheet" href="/css/style.css?v=65">
 </head>
 <body>
 
@@ -130,6 +130,7 @@
       <div class="form-group">
         <label class="form-label" for="lb-date">Date</label>
         <input class="form-input" type="date" id="lb-date">
+        <p class="lb-step-note" id="lb-replace-note" hidden></p>
       </div>
       <div class="form-group">
         <label class="form-label" for="lb-words">Net words that day</label>
@@ -174,10 +175,19 @@
   // does not enforce it, so hosts can still tag a late book by hand.
   const ADD_DEADLINE = '2026-11-09';
   const pacificToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles' }).format(new Date());
+  // The viewer's own calendar day, never the API's window.today: that is the UTC date,
+  // already tomorrow for the Americas by late afternoon.
+  const localToday = () => {
+    const now = new Date();
+    return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+  };
+  // A day of at least this many net words counts as strong in the progress strip.
+  const STRONG_DAY = 500;
   const loginHref = () => '/members/join?return=' + encodeURIComponent(location.pathname);
   const json = url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
 
   let state = null, me = null, edition = null;
+  const expanded = new Set();   // project ids with their progress strip open; survives a reload of the standings
 
   // ── Header copy: About page + byline from the programs model ──────────────
   Promise.all([
@@ -209,6 +219,40 @@
   }
 
   // ── Standings ─────────────────────────────────────────────────────────────
+  // One day's words as text, used by the cell tooltip and the readout under the strip.
+  function dayText(date, words) {
+    if (words === undefined) return `${shortDate(date)}: nothing logged`;
+    return `${shortDate(date)}: ${words > 0 ? '+' : ''}${signed(words)} ${Math.abs(words) === 1 ? 'word' : 'words'}`;
+  }
+
+  // One cell per day of the window. A logged zero stays empty, like a day with no entry;
+  // its tooltip tells them apart.
+  function progressStrip(r, w) {
+    const byDate = new Map(r.daily.map(d => [d.date, d.words]));
+    const today = localToday();
+    const cells = [], labels = [];
+    for (let t = Date.parse(w.start), i = 0; t <= Date.parse(w.end); t += 86400000, i++) {
+      const date = new Date(t).toISOString().slice(0, 10);
+      const words = byDate.get(date);
+      const kind = !words ? (words === undefined && date > today ? 'future' : 'empty')
+        : (words < 0 ? 'cut' : (words >= STRONG_DAY ? 'strong' : 'weak'));
+      const text = date > today && words === undefined ? shortDate(date) : dayText(date, words);
+      cells.push(`<span class="lb-day lb-day--${kind}" role="img" title="${esc(text)}" aria-label="${esc(text)}" data-text="${esc(text)}"></span>`);
+      // A label spans a week of cells, so the short last week goes unlabelled rather than wrap.
+      if (i % 7 === 0 && t + 6 * 86400000 <= Date.parse(w.end)) labels.push(`<span>${shortDate(date)}</span>`);
+    }
+    return `
+      <div class="lb-strip">${cells.join('')}</div>
+      <div class="lb-strip-labels">${labels.join('')}</div>
+      <p class="lb-strip-readout" aria-hidden="true">&nbsp;</p>
+      <ul class="lb-strip-legend">
+        <li><span class="lb-day lb-day--strong"></span>${fmt(STRONG_DAY)}+ words</li>
+        <li><span class="lb-day lb-day--weak"></span>Under ${fmt(STRONG_DAY)}</li>
+        <li><span class="lb-day lb-day--cut"></span>Net cut</li>
+        <li><span class="lb-day lb-day--empty"></span>No words logged</li>
+      </ul>`;
+  }
+
   function render() {
     const { window: w, leaderboard } = state;
     $('lb-window').textContent = w.open
@@ -217,16 +261,37 @@
     $('bwm-count').textContent = '(' + leaderboard.length + ')';
     $('lb-body').innerHTML = leaderboard.length
       ? leaderboard.map((r, i) => `
-          <tr>
+          <tr class="${r.days ? 'lb-row--expandable' : ''}" data-project="${r.project_id}">
             <td>${i + 1}</td>
             <td><a href="/projects/project?slug=${encodeURIComponent(r.slug)}">${esc(r.title)}</a>
-                <div class="entity-meta">by <a href="${R.profileHref(r.lead_slug)}">${esc(r.lead_name || r.lead_slug)}</a>${r.start_words != null ? ` &middot; starting count: ${fmt(r.start_words)}` : ''}</div></td>
+                <div class="entity-meta">by <a href="${R.profileHref(r.lead_slug)}">${esc(r.lead_name || r.lead_slug)}</a>${r.start_words != null ? ` &middot; starting count: ${fmt(r.start_words)}` : ''}${r.days ? ` &middot; <button type="button" class="lb-toggle" aria-expanded="${expanded.has(r.project_id)}" aria-controls="lb-detail-${r.project_id}">Daily progress</button>` : ''}</div></td>
             <td class="lb-num">${signed(r.total)}</td>
             <td class="lb-num">${r.days}</td>
             <td class="lb-num lb-hide-sm">${r.last_date ? shortDate(r.last_date) : '&mdash;'}</td>
-          </tr>`).join('')
+          </tr>${r.days ? `
+          <tr class="lb-detail" id="lb-detail-${r.project_id}"${expanded.has(r.project_id) ? '' : ' hidden'}>
+            <td colspan="5">${progressStrip(r, w)}</td>
+          </tr>` : ''}`).join('')
       : '<tr><td colspan="5" class="entity-empty">No books registered yet. Yours could be the first.</td></tr>';
   }
+
+  // A click anywhere on an expandable row opens its strip, except on the links in it.
+  $('lb-body').addEventListener('click', ev => {
+    const row = ev.target.closest('.lb-row--expandable');
+    if (!row || (ev.target.closest('a') && !ev.target.closest('.lb-toggle'))) return;
+    const id = Number(row.dataset.project);
+    const open = !expanded.has(id);
+    if (open) expanded.add(id); else expanded.delete(id);
+    $('lb-detail-' + id).hidden = !open;
+    row.querySelector('.lb-toggle').setAttribute('aria-expanded', open);
+  });
+  // Hover, or tap on a phone where there is no tooltip, names the day under the strip.
+  const showDay = ev => {
+    const cell = ev.target.closest('.lb-strip .lb-day');
+    if (cell) cell.closest('td').querySelector('.lb-strip-readout').textContent = cell.dataset.text;
+  };
+  $('lb-body').addEventListener('mouseover', showDay);
+  $('lb-body').addEventListener('click', showDay);
 
   function load() {
     return fetch('/api/pibowrimo/wordcounts').then(r => r.ok ? r.json() : Promise.reject(r.status))
@@ -293,10 +358,12 @@
   const current = () => state && state.mine && state.mine.projects.find(x => String(x.id) === $('lb-project').value);
   let afterStart = false;   // true on the optional day step that follows a new starting count
 
+  // Reset on every open, so a page left open overnight can't offer a stale day, and capped at
+  // today so no future date is on offer.
   function clampDate() {
-    const w = state.window, d = $('lb-date');
-    d.min = w.start; d.max = w.end;
-    if (!d.value) d.value = w.today < w.start ? w.start : (w.today > w.end ? w.end : w.today);
+    const w = state.window, d = $('lb-date'), today = localToday();
+    const day = today < w.start ? w.start : (today > w.end ? w.end : today);
+    d.min = w.start; d.max = day; d.value = day;
   }
 
   function showStep() {
@@ -321,6 +388,8 @@
     const hit = state.mine.entries.find(e => String(e.project_id) === $('lb-project').value && e.entry_date === $('lb-date').value);
     $('lb-words').value = hit ? hit.words : '';
     document.querySelectorAll('input[name="lb-ai"]').forEach(r => { r.checked = !!hit && r.value === hit.ai_use; });
+    $('lb-replace-note').hidden = !hit;
+    if (hit) $('lb-replace-note').textContent = `You already logged ${hit.words > 0 ? '+' : ''}${signed(hit.words)} for ${longDate(hit.entry_date)}. Saving replaces that figure; it does not add to it.`;
   }
 
   $('bwm-log').addEventListener('click', () => {
