@@ -2501,7 +2501,7 @@
       "id": 66,
       "sort_key": 66.0,
       "label": "Session 66",
-      "title": "Memory Research Group calendar fix and full resync",
+      "title": "Memory Research Group calendar fix, full resync, PRs #20 and #21 merged",
       "date": "2026-11-06",
       "time_pt": "",
       "tracks": [
@@ -2531,6 +2531,10 @@
         {
           "title": "Accidental push (incident 2026-11-06-01)",
           "html": "A zsh quoting mistake made <code>git commit</code> fail, and the unchained <code>git push</code> on the next line still ran, publishing the unpushed Session 65 wrap-up (<code>8754689</code>). Docs only, so site behaviour did not change, and it was left in place. The Blygger hackathon files stayed staged and undeployed. In this checkout, chain commit and push with <code>&amp;&amp;</code> and check <code>git log origin/main..HEAD</code> first."
+        },
+        {
+          "title": "PRs #21 and #20 merged (99e8cb9, 977459b)",
+          "html": "#21 brought c3po's research group pages up to Oct 22 and passed the checklist: links resolve, nothing under <code>sigs/</code>, counts match, every meeting older than 7 days, no website-side edits to those files since its base. #20 makes protocolized.io the canonical home for symposium transcripts and slides. The programme page keeps the video embeds and links out, and the 42 generated <code>recordings/&lt;slug&gt;/</code> pages and <code>make_recordings.py</code> are gone, with 301s in <code>_redirects</code>. <code>data/symposium-2026-archive.json</code> is written by c3po. Every target returned 200 before the merge. The PR's <code>057_symposium_no_shows.sql</code> was <strong>not</strong> applied, so the three no-show talks stay on the programme until it runs."
         }
       ]
     }

@@ -1200,7 +1200,7 @@ A build log for protocol-institute.org — how the static site was built, what i
 
 ---
 
-## Session 66: Memory Research Group calendar fix and full resync
+## Session 66: Memory Research Group calendar fix, full resync, PRs #20 and #21 merged
 
 *2026-11-06*
 
@@ -1215,5 +1215,7 @@ A build log for protocol-institute.org — how the static site was built, what i
 - The first sync since 2026-08-10 also moved DRG to 8:30am Pacific and SIGPfB to 7:30am Pacific, both taken from the calendar. The site reads saved files rather than the calendar and nothing schedules the sync, so calendar edits stay invisible until someone runs it. Automating it is proposed in status.md, not built.
 
 - A zsh quoting mistake made `git commit` fail, and the unchained `git push` on the next line still ran, publishing the unpushed Session 65 wrap-up (`8754689`). Docs only, so site behaviour did not change, and it was left in place. The Blygger hackathon files stayed staged and undeployed. In this checkout, chain commit and push with `&amp;&amp;` and check `git log origin/main..HEAD` first.
+
+- #21 brought c3po's research group pages up to Oct 22 and passed the checklist: links resolve, nothing under `sigs/`, counts match, every meeting older than 7 days, no website-side edits to those files since its base. #20 makes protocolized.io the canonical home for symposium transcripts and slides. The programme page keeps the video embeds and links out, and the 42 generated `recordings/&lt;slug&gt;/` pages and `make_recordings.py` are gone, with 301s in `_redirects`. `data/symposium-2026-archive.json` is written by c3po. Every target returned 200 before the merge. The PR's `057_symposium_no_shows.sql` was **not** applied, so the three no-show talks stay on the programme until it runs.
 
 ---
