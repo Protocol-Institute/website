@@ -1199,3 +1199,21 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `tag_blygger_hackathon` on `members` and `membership_requests` auto-approves, as `tag_pibowrimo` does, so newcomers don't wait on approval during the event (staged, with migration 065).
 
 ---
+
+## Session 66: Memory Research Group calendar fix and full resync
+
+*2026-11-06*
+
+**Tracks:** static-site, operations
+
+- The Memory Research Group appeared on Fridays because its event on the community calendar was never read. Google omits `BYDAY` when an event repeats on its start day, and `parse_rrule` returned `None` for that without saying so. The sync then used `MANUAL_SIGS`, seeded on 2026-06-05 (a Friday) despite its Thursday label, at a stale time. The parser now takes the weekday from `DTSTART` in the event's own timezone, following RFC 5545. Rules it still can't read are printed rather than dropped.
+
+- `MANUAL_SIGS` is now empty, with its shape kept in a comment. It only ever hid the parsing failure by looking plausible. A group missing from the calendar now triggers the existing warning at the end of the run, and it no longer gets invented dates.
+
+- The SIGPfB event now has a `DTSTART` ending in `Z`, which would have crashed `expand_occurrences`, so any resync would have failed. `Z` is stripped from `DTSTART` and `DTEND`, because a missing TZID already means UTC.
+
+- The first sync since 2026-08-10 also moved DRG to 8:30am Pacific and SIGPfB to 7:30am Pacific, both taken from the calendar. The site reads saved files rather than the calendar and nothing schedules the sync, so calendar edits stay invisible until someone runs it. Automating it is proposed in status.md, not built.
+
+- A zsh quoting mistake made `git commit` fail, and the unchained `git push` on the next line still ran, publishing the unpushed Session 65 wrap-up (`8754689`). Docs only, so site behaviour did not change, and it was left in place. The Blygger hackathon files stayed staged and undeployed. In this checkout, chain commit and push with `&amp;&amp;` and check `git log origin/main..HEAD` first.
+
+---

@@ -2496,6 +2496,43 @@
           "html": "<code>tag_blygger_hackathon</code> on <code>members</code> and <code>membership_requests</code> auto-approves, as <code>tag_pibowrimo</code> does, so newcomers don't wait on approval during the event (staged, with migration 065)."
         }
       ]
+    },
+    {
+      "id": 66,
+      "sort_key": 66.0,
+      "label": "Session 66",
+      "title": "Memory Research Group calendar fix and full resync",
+      "date": "2026-11-06",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Calendar events without BYDAY (deployed, 9592c6b)",
+          "html": "The Memory Research Group appeared on Fridays because its event on the community calendar was never read. Google omits <code>BYDAY</code> when an event repeats on its start day, and <code>parse_rrule</code> returned <code>None</code> for that without saying so. The sync then used <code>MANUAL_SIGS</code>, seeded on 2026-06-05 (a Friday) despite its Thursday label, at a stale time. The parser now takes the weekday from <code>DTSTART</code> in the event's own timezone, following RFC 5545. Rules it still can't read are printed rather than dropped."
+        },
+        {
+          "title": "Manual fallback removed",
+          "html": "<code>MANUAL_SIGS</code> is now empty, with its shape kept in a comment. It only ever hid the parsing failure by looking plausible. A group missing from the calendar now triggers the existing warning at the end of the run, and it no longer gets invented dates."
+        },
+        {
+          "title": "DTSTART in UTC",
+          "html": "The SIGPfB event now has a <code>DTSTART</code> ending in <code>Z</code>, which would have crashed <code>expand_occurrences</code>, so any resync would have failed. <code>Z</code> is stripped from <code>DTSTART</code> and <code>DTEND</code>, because a missing TZID already means UTC."
+        },
+        {
+          "title": "Resync after three months",
+          "html": "The first sync since 2026-08-10 also moved DRG to 8:30am Pacific and SIGPfB to 7:30am Pacific, both taken from the calendar. The site reads saved files rather than the calendar and nothing schedules the sync, so calendar edits stay invisible until someone runs it. Automating it is proposed in status.md, not built."
+        },
+        {
+          "title": "Accidental push (incident 2026-11-06-01)",
+          "html": "A zsh quoting mistake made <code>git commit</code> fail, and the unchained <code>git push</code> on the next line still ran, publishing the unpushed Session 65 wrap-up (<code>8754689</code>). Docs only, so site behaviour did not change, and it was left in place. The Blygger hackathon files stayed staged and undeployed. In this checkout, chain commit and push with <code>&amp;&amp;</code> and check <code>git log origin/main..HEAD</code> first."
+        }
+      ]
     }
   ]
 }
