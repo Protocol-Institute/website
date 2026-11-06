@@ -76,17 +76,10 @@ DAY_TO_BYDAY = {
     "Friday": "FR", "Saturday": "SA", "Sunday": "SU",
 }
 
-# Manual entries for SIGs not yet on the calendar.
+# Manual entries for SIGs not yet on the calendar. Empty: all 6 are on it now.
+# Shape: slug -> {"day", "interval_weeks", "DTSTART_RAW", "TZID", "_calendar_summary"}
 # DTSTART_RAW: YYYYMMDDTHHMMSS in the given TZID (or UTC if TZID is None).
-MANUAL_SIGS = {
-    "mrg": {
-        "day": "Thursday",
-        "interval_weeks": 2,
-        "DTSTART_RAW": "20260605T143000",
-        "TZID": None,  # UTC
-        "_calendar_summary": "manually set — not yet on SIGs calendar",
-    },
-}
+MANUAL_SIGS = {}
 
 
 def slug_for(summary):
@@ -128,8 +121,12 @@ def parse_ical_blocks(text):
     return events
 
 
-def parse_rrule(rrule_str):
+def parse_rrule(rrule_str, dtstart_raw):
     """Return (interval_weeks, day_name, until_utc_or_None) or None.
+
+    BYDAY is optional: Google omits it when the event simply repeats on its
+    start day (RFC 5545 — the weekday then comes from DTSTART, as written in
+    the event's own timezone).
 
     UNTIL support matters for time-boxed series (e.g. a 5-week workshop
     coordination call) — without it every RRULE is treated as indefinite,
@@ -141,7 +138,10 @@ def parse_rrule(rrule_str):
         return None
     interval = int(parts.get('INTERVAL', 1))
     byday = re.sub(r'^[+-]?\d+', '', parts.get('BYDAY', ''))
-    day = BYDAY_MAP.get(byday)
+    if byday:
+        day = BYDAY_MAP.get(byday)
+    else:
+        day = datetime.strptime(dtstart_raw, "%Y%m%dT%H%M%S").strftime("%A")
     if not day:
         return None
     until = None
@@ -207,9 +207,10 @@ def main():
     for ev in events:
         summary = ev.get('SUMMARY', '')
         rrule = ev.get('RRULE', '')
-        dtstart_raw = ev.get('DTSTART_RAW')
+        # A trailing Z just means UTC, which is what a missing TZID already means
+        dtstart_raw = (ev.get('DTSTART_RAW') or '').rstrip('Z')
         dtstart_tzid = ev.get('DTSTART_TZID')
-        dtend_raw = ev.get('DTEND')
+        dtend_raw = (ev.get('DTEND') or '').rstrip('Z')
 
         duration_minutes = 60
         if dtend_raw:
@@ -230,8 +231,9 @@ def main():
             print(f"  No slug match for: {summary!r}")
             continue
 
-        rr = parse_rrule(rrule)
+        rr = parse_rrule(rrule, dtstart_raw)
         if not rr:
+            print(f"  Unsupported RRULE for {summary!r}: {rrule} — skipping")
             continue
 
         if slug in sigs:
