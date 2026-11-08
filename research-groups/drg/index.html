@@ -58,9 +58,35 @@
 
       <div id="sig-resources"></div>
 
-      <h2 class="section-label">Meeting Archive &mdash; 11 sessions</h2>
+      <h2 class="section-label">Meeting Archive &mdash; 12 sessions</h2>
 
       <ul class="meeting-list" role="list">
+<li class="meeting-item">
+  <div class="meeting-date">October 29, 2026</div>
+  <div class="meeting-title"><a href="/research-groups/drg/2026-10-29-drg-11-capture-the-flag-game-deployment-and-first-captu">DRG#11 Capture the Flag Game - Deployment and First Capture</a></div>
+  <div class="meeting-topics"><span class="meeting-topic">Yakrobot Capture the Flag game deployment on GitHub</span><span class="meeting-topic">Simulator access for players when physical robots are unavailable</span><span class="meeting-topic">First successful flag capture transaction on Sepolia testnet</span><span class="meeting-topic">Technical timing glitches and resolution</span><span class="meeting-topic">Related Devcon projects and resources</span></div>
+  <p class="meeting-participants">Participants: anurajenp, sn37</p>
+  <p class="meeting-summary">The group opened by renegotiating the recurring meeting time due to European/US daylight-saving shifts and overlap with a separate &quot;fiction&quot; meeting. Anuraj then demoed a web-based &quot;capture the flag&quot; game that lets people remotely drive real robots via crypto wallet signatures, explaining the architecture (Cloudflare worker, relayer, on-chain records, MuJoCo WebAssembly simulator). The session closed with planning to onboard several members&#x27; robots ahead of DevCon (Nov 3–6, Mumbai) and extensive brainstorming of richer game mechanics.</p>
+  <ul class="meeting-insights">
+    <li><strong>Anuraj:</strong> Europe moved clocks back an hour; the meeting stayed at 16:30 UTC, but US clocks shift the following week, which would push the local time to ~08:30 Pacific.</li>
+    <li><strong>shreeram:</strong> 08:30 is too early (child drop-off); can&#x27;t join before ~09:30 but is fine catching up via notes/channel.</li>
+    <li><strong>Spencer</strong> and <strong>Andre:</strong> prefer a later slot; both attend the overlapping &quot;fiction&quot; meeting and don&#x27;t want a conflict. Andre suggested Tuesday/Wednesday to spread meetings across the week.</li>
+    <li>Tentative plan: move to <strong>Wednesday at 17:30 UTC</strong> (keeps ~19:30 for Finland/Israel, ~09:30 Pacific). Anuraj will post a poll and check with absentees (Rafa, Mayer, Jenna). <strong>The &quot;Capture the Flag&quot; robot game (Anuraj&#x27;s demo)</strong></li>
+    <li>Inspired by the <strong>Yoink</strong> game on <strong>Farcaster</strong>, where a virtual flag could be &quot;yoinked&quot; between wallets via on-chain transactions, with a leaderboard by capture count.</li>
+    <li>In Anuraj&#x27;s version, users visit a web page listing available robots, sign an <strong>EIP-712 signature</strong> with a crypto wallet (e.g. MetaMask), and gain control (&quot;capture the flag&quot;) of a real robot for a lease period (currently 5 minutes).</li>
+  </ul>
+  <div class="meeting-links">
+    <div class="meeting-links-label">Links discussed</div>
+    <ul class="meeting-links-list">
+      <li><a href="https://github.com/pi-drg/yakrobot-capture-flag" target="_blank" rel="noopener noreferrer">github.com</a></li>
+      <li><a href="https://sepolia.basescan.org/tx/0x011d387991ba20a50d78e3e58311c58f99e6c505740c8e262988a52ba76c1004" target="_blank" rel="noopener noreferrer">sepolia.basescan.org</a></li>
+      <li><a href="https://sepolia.basescan.org/address/0x06c375fb163cbe612919823bc93b4813d6c06bf4" target="_blank" rel="noopener noreferrer">sepolia.basescan.org</a></li>
+      <li><a href="https://github.com/horsefacts/yoink-devcon" target="_blank" rel="noopener noreferrer">github.com</a></li>
+    </ul>
+  </div>
+  <a href="https://discord.com/channels/1082444651946049567/1565243638202499112" class="meeting-discord" target="_blank" rel="noopener noreferrer">View discussion in Discord →</a>
+</li>
+
 <li class="meeting-item">
   <div class="meeting-date">October 20, 2026</div>
   <div class="meeting-title"><a href="/research-groups/drg/2026-10-20-drg-meeting-time-adjustment-discussion-for-daylight-sav">DRG Meeting Time Adjustment Discussion for Daylight Savings</a></div>
