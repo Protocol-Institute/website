@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DRG#11 Capture the Flag Game - Deployment and First Capture — Distributed Robotics Group</title>
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .meeting-list { list-style: none; }
+    .meeting-item { padding: 2.5rem 0; border-bottom: 1px solid #E0DDD8; }
+    .meeting-item:first-child { border-top: 1px solid #E0DDD8; }
+    .meeting-date { font-size: 0.8rem; letter-spacing: 0.04em; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1A1A1A; margin-bottom: 0.5rem; line-height: 1.3; }
+    .meeting-title a { color: inherit; text-decoration: none; }
+    .meeting-title a:hover { text-decoration: underline; }
+    .meeting-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 0.9rem; }
+    .meeting-topic { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #2A6B6B; border: 1px solid #2A6B6B; padding: 0.15em 0.6em; white-space: nowrap; }
+    .meeting-summary { color: #3A3A3A; margin: 0.8rem 0; line-height: 1.7; }
+    .meeting-abstract { color: #3A3A3A; margin: 0.5rem 0 0; line-height: 1.65; font-size: 0.9rem; }
+    .meeting-insights { margin: 0.8rem 0; padding-left: 1.2rem; }
+    .meeting-insights li { color: #3A3A3A; margin-bottom: 0.4rem; font-size: 0.9rem; line-height: 1.6; }
+    .meeting-links { margin: 0.8rem 0; }
+    .meeting-links-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8A8A8A; margin-bottom: 0.4rem; }
+    .meeting-links-list { list-style: none; padding: 0; }
+    .meeting-links-list li { font-size: 0.85rem; margin-bottom: 0.2rem; }
+    .meeting-links-list a { color: #2A6B6B; word-break: break-all; }
+    .meeting-links-list a:hover { text-decoration: underline; }
+    .meeting-participants { font-size: 0.8rem; color: #8A8A8A; margin: 0.5rem 0; }
+    .meeting-discord { display: inline-block; margin-top: 0.6rem; font-size: 0.85rem; color: #2A6B6B; }
+    .meeting-discord:hover { text-decoration: underline; }
+    .section-label { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #8A8A8A; margin: 2.5rem 0 0; border-top: 1px solid #E0DDD8; padding-top: 2rem; }
+    .back-link { font-size: 0.85rem; color: #2A6B6B; }
+    .back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="about-body">
+        <p style="margin-bottom:1.5rem"><a href="/research-groups/drg" class="back-link">&#8592; Distributed Robotics Group</a></p>
+      </div>
+
+      <div class="page-header">
+        <p class="meeting-date" style="margin-top:0.25rem;font-size:0.9rem">October 29, 2026</p>
+        <h1>DRG#11 Capture the Flag Game - Deployment and First Capture</h1>
+      </div>
+
+      <div class="meeting-detail">
+        <div class="meeting-topics"><span class="meeting-topic">Yakrobot Capture the Flag game deployment on GitHub</span><span class="meeting-topic">Simulator access for players when physical robots are unavailable</span><span class="meeting-topic">First successful flag capture transaction on Sepolia testnet</span><span class="meeting-topic">Technical timing glitches and resolution</span><span class="meeting-topic">Related Devcon projects and resources</span></div>
+        <p class="meeting-participants">Participants: anurajenp, sn37</p>
+        <p class="meeting-summary">The DRG#11 meeting focused on the deployment and initial testing of a Capture the Flag game built on distributed robotics. Anurajenp deployed a new project page with links to both physical robot gameplay and a simulator alternative for when robots are unavailable. The team successfully conducted the first flag capture transaction on the Sepolia testnet, with the capture transaction hash documented on-chain. The meeting highlighted a technical timing glitch that was subsequently resolved, after which the team was ready to continue gameplay. Related projects and resources were shared among participants to support ongoing development and gameplay.</p>
+        <ul class="meeting-insights">
+<li>A new Capture the Flag game page has been deployed with simulator functionality, allowing participants to play even when physical robots are not available.</li>
+<li>The first flag capture was successfully executed on the Sepolia testnet, with anurajenp achieving the initial capture and demonstrating the game&#x27;s blockchain integration.</li>
+<li>Technical timing issues were encountered but subsequently resolved, enabling the team to proceed with further gameplay attempts.</li>
+<li>The project references external resources including horsefacts&#x27; yoink-devcon project, suggesting integration with broader Devcon initiatives.</li>
+        </ul>
+        <div class="meeting-links">
+<div class="meeting-links-label">Links discussed</div>
+<ul class="meeting-links-list">
+<li><a href="https://github.com/pi-drg/yakrobot-capture-flag" rel="noopener noreferrer" target="_blank">github.com</a></li>
+<li><a href="https://sepolia.basescan.org/tx/0x011d387991ba20a50d78e3e58311c58f99e6c505740c8e262988a52ba76c1004" rel="noopener noreferrer" target="_blank">sepolia.basescan.org</a></li>
+<li><a href="https://sepolia.basescan.org/address/0x06c375fb163cbe612919823bc93b4813d6c06bf4" rel="noopener noreferrer" target="_blank">sepolia.basescan.org</a></li>
+<li><a href="https://github.com/horsefacts/yoink-devcon" rel="noopener noreferrer" target="_blank">github.com</a></li>
+</ul>
+</div>
+        <a class="meeting-discord" href="https://discord.com/channels/1082444651946049567/1565243638202499112" rel="noopener noreferrer" target="_blank">View discussion in Discord →</a>
+        <div class="meeting-audio-summary">
+          <p class="section-label">Session Recording Summary · 61m 49s · <a href="https://pub-fb4a559f683a4e3b876823eb2bfe12a3.r2.dev/recordings/SIG-DRG/2026-10-29/1082444651946049567_1442955803471646792_1793291632779/summary.md" rel="noopener noreferrer" target="_blank">Full notes ↗</a></p>
+          <p class="meeting-abstract"><strong>Reading:</strong> Not clearly identified in the discussion. This session was not a reading discussion but a project/demo working session focused on a blockchain-based &quot;capture the flag&quot; robot game that Anuraj built, plus meeting-time logistics and planning for an upcoming conference (DevCon in Mumbai).</p><p class="meeting-summary">The group opened by renegotiating the recurring meeting time due to European/US daylight-saving shifts and overlap with a separate &quot;fiction&quot; meeting. Anuraj then demoed a web-based &quot;capture the flag&quot; game that lets people remotely drive real robots via crypto wallet signatures, explaining the architecture (Cloudflare worker, relayer, on-chain records, MuJoCo WebAssembly simulator). The session closed with planning to onboard several members&#x27; robots ahead of DevCon (Nov 3–6, Mumbai) and extensive brainstorming of richer game mechanics.</p><ul class="meeting-insights">
+<li><strong>Anuraj:</strong> Europe moved clocks back an hour; the meeting stayed at 16:30 UTC, but US clocks shift the following week, which would push the local time to ~08:30 Pacific.</li>
+<li><strong>shreeram:</strong> 08:30 is too early (child drop-off); can&#x27;t join before ~09:30 but is fine catching up via notes/channel.</li>
+<li><strong>Spencer</strong> and <strong>Andre:</strong> prefer a later slot; both attend the overlapping &quot;fiction&quot; meeting and don&#x27;t want a conflict. Andre suggested Tuesday/Wednesday to spread meetings across the week.</li>
+<li>Tentative plan: move to <strong>Wednesday at 17:30 UTC</strong> (keeps ~19:30 for Finland/Israel, ~09:30 Pacific). Anuraj will post a poll and check with absentees (Rafa, Mayer, Jenna). <strong>The &quot;Capture the Flag&quot; robot game (Anuraj&#x27;s demo)</strong></li>
+<li>Inspired by the <strong>Yoink</strong> game on <strong>Farcaster</strong>, where a virtual flag could be &quot;yoinked&quot; between wallets via on-chain transactions, with a leaderboard by capture count.</li>
+<li>In Anuraj&#x27;s version, users visit a web page listing available robots, sign an <strong>EIP-712 signature</strong> with a crypto wallet (e.g. MetaMask), and gain control (&quot;capture the flag&quot;) of a real robot for a lease period (currently 5 minutes).</li>
+</ul><p class="meeting-abstract"><strong>Questions &amp; Disagreements:</strong> - <strong>Meeting time</strong> was the main open point: no single slot works for everyone (shreeram is hard-blocked before ~09:30). Resolution deferred to a poll.
+- <strong>Spencer</strong> asked whether a user with two wallets could quickly switch between them to game the system and whether that can be prevented; <strong>Anuraj</strong> said this is controlled by the wallet vendor and he can&#x27;t change it much, and doesn&#x27;t think it …</p><p class="meeting-participants">Participants: Anuraj, Spencer Norwick, Chris Caine Lee, shreeram, Andre Comeau, Giovanni Merlino</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
