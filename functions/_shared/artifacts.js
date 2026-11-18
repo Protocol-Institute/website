@@ -7,8 +7,8 @@ export const isArtifactKind = k => ARTIFACT_KINDS.includes(k);
 // Value for the CHECK-constrained artifact_type column.
 export const storedArtifactType = k => (k === 'book' ? 'text' : k);
 
-// Projects carry an optional stand-alone summary of 50-75 words (migration 063).
-export const SHORT_ABSTRACT_MIN = 50, SHORT_ABSTRACT_MAX = 75;
+// Projects carry an optional stand-alone summary of 25-75 words (migration 063; floor was 50 until Session 67).
+export const SHORT_ABSTRACT_MIN = 25, SHORT_ABSTRACT_MAX = 75;
 export function wordCount(text) { return (text || '').trim().split(/\s+/).filter(Boolean).length; }
 /** null if fine (or empty), else an error message. */
 export function shortAbstractError(text) {

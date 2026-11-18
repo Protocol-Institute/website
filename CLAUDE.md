@@ -85,7 +85,7 @@ network/            /network — PIN partner orgs. Body is static/network: one `
 consulting/         /consulting — consultant directory (data from Google Form)
 research/           /research — Challenges + Projects, unified (2 tab views, shared watching mechanism + value formula in js/research.js); see research/PLAN.md
 projects/
-  edit/             **Short abstract (Session 62, migration 063):** `projects.short_abstract`, a stand-alone 50–75 word summary (API enforces the range when non-empty; empty allowed), used by the /pitch roadmap appendix with the description's first paragraph as fallback. /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
+  edit/             **Short abstract (Session 62, migration 063):** `projects.short_abstract`, a stand-alone 25–75 word summary (API enforces the range when non-empty; empty allowed), used by the /pitch roadmap appendix with the description's first paragraph as fallback. /projects/edit?slug= edits; /projects/submit (a _redirects 200 rewrite to this page) creates — one form for both.
                     Program/edition tag picker; ?program=&edition=&artifact= deep-link presets. "Add a project" links use /projects/submit
   project/          /projects/project?slug= — individual project detail (programs, watching, team join/approve, challenge-response linking, edit button).
                     Optional 16:9 image under the header (projects.image_key, migration 048) — set from the editor, which crops in the
@@ -103,7 +103,7 @@ pitch/              /pitch — **Protocol Institute 2027 Prospectus** (was "Inst
                     (numbered 1-3 by first mention; write `{{appendix:team}}` etc. inside a sentence for the link — the PDF adds page numbers), while
                     `{{research-groups}}` stays inline; `{{group-count}}` `{{roadmap-count}}`; `{{date}}` = Pacific build date, applied *after* hashing so an
                     unchanged document keeps its date. Team appendix = `team_core`; leads appendix excludes team_core and NOT_FUNDING_LEADS; a curly-quote
-                    pass runs over the result. **Length gate:** every roadmap project's `short_abstract` must be 50-75 words and every listed bio 30-75, or
+                    pass runs over the result. **Length gate:** every roadmap project's `short_abstract` must be 25-75 words and every listed bio 30-75, or
                     the build fails naming them and the previous version stays live (`--skip-checks` overrides). **Rebuilds:** on any write to an input — page
                     saves (functions/api/pages) and member/program/project/affiliation writes (functions/api/_middleware.js -> requestPitchRebuild in
                     _shared/pitch.js, Pages secret GITHUB_DISPATCH_TOKEN, a repo-only Actions PAT expiring 2027-11-01, registered in admin/keys.md) — plus

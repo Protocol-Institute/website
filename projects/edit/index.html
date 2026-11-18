@@ -44,7 +44,7 @@
 
           <div class="form-group">
             <label class="form-label" for="f-short-abstract">Short abstract</label>
-            <p class="form-hint">A stand-alone summary of 50–75 words — it must make sense without the description. Used where a project appears in a short entry, such as the Institute overview. <span id="f-short-count"></span></p>
+            <p class="form-hint">A stand-alone summary of 25–75 words — it must make sense without the description. Used where a project appears in a short entry, such as the Institute overview. <span id="f-short-count"></span></p>
             <textarea class="form-textarea" id="f-short-abstract" rows="4" maxlength="700"></textarea>
           </div>
 
@@ -177,12 +177,12 @@
     return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   }
   const $ = id => document.getElementById(id);
-  // Short abstract: 50-75 words (enforced again by the API); the count is a guide, empty is allowed.
+  // Short abstract: 25-75 words (enforced again by the API); the count is a guide, empty is allowed.
   function updateShortCount() {
     const n = $('f-short-abstract').value.trim().split(/\s+/).filter(Boolean).length;
     const el = $('f-short-count');
     el.textContent = n ? n + ' words' : '';
-    el.style.color = !n || (n >= 50 && n <= 75) ? '#2A6B6B' : '#b4432a';
+    el.style.color = !n || (n >= 25 && n <= 75) ? '#2A6B6B' : '#b4432a';
   }
   $('f-short-abstract').addEventListener('input', updateShortCount);
   const description = PIMdEditor.attach($('f-description'), { onSave: () => save() });

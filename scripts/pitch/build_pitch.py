@@ -91,7 +91,7 @@ def bio_excerpt(text, limit=700) -> str:
 # Length rule for the short entries the overview is built from: roadmap project abstracts and the
 # biographies of the people listed. Violations are collected while rendering and stop the build
 # (see main), so a bad edit never publishes; the previous good document stays up.
-WORDS_MIN, WORDS_MAX = 50, 75      # project short abstracts
+WORDS_MIN, WORDS_MAX = 25, 75      # project short abstracts
 BIO_WORDS_MIN = 30                 # biographies: same ceiling, lower floor
 PROBLEMS: list[str] = []
 
