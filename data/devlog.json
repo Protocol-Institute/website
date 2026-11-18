@@ -2541,6 +2541,44 @@
           "html": "Applied <code>057_symposium_no_shows.sql</code> to prod after a full D1 export. Proposals 5, 32 and 85 are <code>is_shortlisted = 0</code>, which hides them from <code>/api/symposium/proposals</code> and so from the programme; rows, comments and votes are kept. The API now returns 58 items. The file shares the number 057 with <code>057_static_page_blocks.sql</code>, which matters only if something ever replays migrations by number. The PDF programme in R2 is not regenerated automatically and still lists these talks."
         }
       ]
+    },
+    {
+      "id": 67,
+      "sort_key": 67.0,
+      "label": "Session 67",
+      "title": "Blygger hackathon ships; redirects past the Pages cap; member GitHub usernames",
+      "date": "2026-11-18",
+      "time_pt": "",
+      "tracks": [
+        "static-site",
+        "member-directory",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "Sprints: first instance live (91fdd10, migration 065)",
+          "html": "The Blygger hackathon, built in Session 65 on the shared sprint tables (<code>edition_sprints</code>, <code>sprint_progress</code>, <code>sprint_repo_sync</code>), shipped two days before kickoff. It was tested first on a local clone of production D1 with the window moved back to Nov 10, so real commits existed. The sync matched an independent count from the GitHub API exactly (344 commits over 9 days on <code>Protocol-Institute/pibot</code>), which covered pagination past 100 and the repo-changed path. A fork whose only new commits were upstream work scored 0, confirming the ahead-of-parent rule. The declare modal refused <code>blygger</code>-owned, private and non-GitHub repos and a second project from the same lead. Sync still runs on page view in <code>waitUntil</code>; a scheduled Action stays the fallback if that proves flaky. <code>GITHUB_READ_TOKEN</code> (fine-grained, public repositories read-only, no permissions) is a Pages secret; Pages secrets take effect only on a new deployment, so <code>./deploy.sh</code> redeployed the same commit. Not yet observed in production: a real sync after kickoff and the final sync after the close. PiBoWriMo still moves onto these tables in December."
+        },
+        {
+          "title": "_redirects: rules past the dynamic cap are silently dropped (042ca26, incident 2026-11-18-01)",
+          "html": "Pages allows 100 dynamic rules, and wrangler's parser counts a rule as static only if no splat or placeholder rule precedes it. The <code>/sigs/*</code> splat added in Session 57 sat near the top, so every later rule was dynamic; PR #20's recording redirects took the file past the cap on Nov 6 and the last 59 lines were skipped with no deploy-time error. <code>/projects/submit</code> (Add a Project), the Humboldt and cogergo redirects and about 20 recording 301s returned 404 for 12 days. Only <code>wrangler pages dev</code> warns (\"Maximum number of dynamic rules\"). The splat block now sits at the end of the file, with a comment at the top saying all splats must stay last. The file now holds about 150 rules, all static except the final few, which leaves room under the 2,000 static limit."
+        },
+        {
+          "title": "Member GitHub usernames (c7b8913, migration 066)",
+          "html": "<code>members.github_username</code> and the same column on <code>membership_requests</code>: optional, public (added to the <code>/api/members</code> and profile field allowlists), asked at join, in the profile editor and in both admin pages. Every write path (self-update, sign-up, admin approve, admin edit) goes through <code>functions/_shared/github-user.js</code>, which reduces <code>@name</code> or a profile URL to the bare name and rejects anything outside GitHub's username rule. Venkat wants the field for all members, not only sprint participants. The hackathon modal pre-fills it with the repo owner only when GitHub reports the owner as a User (not an Organization) and the member has none. It shows a ticked, editable \"save to profile\" box rather than saving silently, because declarations are honor-system and owning a repo is not proof of identity. <code>checkRepo</code> now returns <code>owner</code> and <code>owner_is_user</code>, and runs when the repo field changes, so errors appear before submit. No backfill was possible: no member website is a GitHub URL, and the one GitHub project lead points at an organisation. Also fixed: hackathon auto-approvals were noted as \"PiBoWriMo\" in <code>admin_notes</code>."
+        },
+        {
+          "title": "Home page banner for the hackathon",
+          "html": "The PiBoWriMo banner gave way to a Blygger one, and PiBoWriMo moved into the links list with a bold \"Concludes November 30!\". Content is D1 <code>managed_pages static/home</code> (edited directly; it isn't a prospectus input, so no rebuild). The Luma cover's wordmark was cropped to a transparent PNG at R2 <code>blygger-logo.png</code>, and <code>.home-banner--blygger</code> uses the cover's colours instead of the PiBoWriMo artwork, which the base <code>.home-banner</code> rule hard-codes. Two traps: <code>.md a.home-banner</code> forces white text on any managed-content banner, so the modifier must outrank it (<code>.md a.home-banner.home-banner--blygger</code>). And a <code>?v=</code> token already used by another page is already cached with the old stylesheet: the hackathon page had loaded <code>style.css?v=67</code> before the change, so the home page needed v=68 and then v=69. Bump past the highest token in use anywhere, not just the page's own."
+        },
+        {
+          "title": "Small changes",
+          "html": "The short-abstract floor dropped from 50 to 25 words in the shared validator (<code>functions/_shared/artifacts.js</code>), the editor's hint and counter, and the prospectus build gate (<code>53f92ce</code>; the rebuild it triggered passed). The declare modal now notes that details can be added under My Dashboard later (<code>fc887ca</code>). By design it creates the same project record as the full form, with state, type and artifact preset."
+        }
+      ]
     }
   ]
 }
