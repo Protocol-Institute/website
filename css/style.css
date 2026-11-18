@@ -810,7 +810,7 @@ a.project-theme-tag:hover { background: #EEF4F3; }
 }
 .home-banner:hover .home-banner-cta { background: #FAFAF7; color: #1F2559; }
 /* Blygger Hackathon: the Luma cover's colours, with its wordmark in place of artwork. */
-.home-banner--blygger { min-height: 0; background: #F6F4EE; color: #1B1D22; border: 1px solid #E2DFD5; }
+.home-banner--blygger, .md a.home-banner.home-banner--blygger { min-height: 0; background: #F6F4EE; color: #1B1D22; border: 1px solid #E2DFD5; }
 .home-banner--blygger::before { content: none; }
 .home-banner-logo { display: block; width: min(15rem, 70%); height: auto; margin-bottom: 0.9rem; }
 .home-banner--blygger .home-banner-text { color: #4A4B50; max-width: 26rem; }
