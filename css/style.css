@@ -809,6 +809,13 @@ a.project-theme-tag:hover { background: #EEF4F3; }
   background: rgba(24,29,76,0.35); transition: background 0.2s ease, color 0.2s ease;
 }
 .home-banner:hover .home-banner-cta { background: #FAFAF7; color: #1F2559; }
+/* Blygger Hackathon: the Luma cover's colours, with its wordmark in place of artwork. */
+.home-banner--blygger { min-height: 0; background: #F6F4EE; color: #1B1D22; border: 1px solid #E2DFD5; }
+.home-banner--blygger::before { content: none; }
+.home-banner-logo { display: block; width: min(15rem, 70%); height: auto; margin-bottom: 0.9rem; }
+.home-banner--blygger .home-banner-text { color: #4A4B50; max-width: 26rem; }
+.home-banner--blygger .home-banner-cta { border-color: #D95A1F; background: transparent; color: #D95A1F; }
+.home-banner--blygger:hover .home-banner-cta { background: #D95A1F; color: #FAFAF7; }
 /* The same banner as an event page's header (events/pibowrimo-2026): not a link,
    no button, and the h1 keeps the banner's type rather than .page-header h1's. */
 .page-header--banner { padding-top: 0.5rem; border-bottom: none; }
