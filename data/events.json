@@ -1,5 +1,18 @@
 [
   {
+    "id": "blygger-hackathon-2026",
+    "title": "Blygger Hackathon 2026",
+    "type": "hackathon",
+    "date_start": "2026-11-20",
+    "date_end": "2026-11-27",
+    "date_display": "November 20–27, 2026",
+    "location": "Online (Zoom and Discord)",
+    "short_description": "The Blygger protocol developer launch: an online kickoff followed by a week of asynchronous hacking, with a commit leaderboard.",
+    "image": null,
+    "resources_url": null,
+    "status": "upcoming"
+  },
+  {
     "id": "pibowrimo-2026",
     "title": "PiBoWriMo 2026",
     "type": "writing-month",

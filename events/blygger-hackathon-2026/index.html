@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blygger Hackathon 2026 — The Protocol Institute</title>
+  <meta name="description" content="The Blygger protocol developer launch and hackathon: an online kickoff on November 20, 2026, followed by a week of asynchronous hacking. Declare a project with its GitHub repo and appear on the commit leaderboard.">
+  <link rel="icon" href="/assets/logo-static.png" type="image/png">
+  <link rel="stylesheet" href="/css/style.css?v=67">
+</head>
+<body>
+
+<div class="interior-wrapper">
+
+  <header id="site-header"></header>
+
+  <main class="interior-main">
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Blygger Hackathon 2026</h1>
+        <p class="sig-meta">November 20&ndash;27, 2026 &middot; Online. Kickoff on Zoom at 17:00 UTC (9am Pacific), November 20.</p>
+        <p class="sig-meta" id="sprint-byline" hidden></p>
+      </div>
+
+      <div class="event-body" id="sprint" data-program="blygger-hackathon" data-edition="2026-11">
+
+        <!-- Body copy is D1 managed_pages programs/blygger-hackathon/about; this is the fallback. -->
+        <div class="md" id="sprint-about">
+          <p>The <a href="https://blygger.org">Blygger protocol</a> has been developing since its launch in September, with more than 30 active blygs and a dozen developers building clients, mods and integrations and contributing to the protocol itself. This hackathon is its developer launch.</p>
+          <p>We begin with an hour-long introductory session on Zoom at 17:00 UTC (9am Pacific) on Friday, November 20, followed by a week of asynchronous hacking on the Protocol Institute Discord, with members of the Blygger community on hand to help.</p>
+          <p>You could contribute to an existing project, build an extension, a domain-specific application or an entire new client, or propose changes to the spec. No coding experience is necessary: good design instincts and enough technical literacy to direct a coding agent will do.</p>
+        </div>
+
+        <div class="bwm-actions">
+          <a href="https://luma.com/iijbw30r" class="form-btn" target="_blank" rel="noopener noreferrer">Register for the kickoff &rarr;</a>
+          <button type="button" id="sprint-add" class="form-btn">Declare a project</button>
+          <a href="https://discord.gg/Aj5FbGsNYV" class="form-btn form-btn--secondary" target="_blank" rel="noopener noreferrer">Join us on Discord &rarr;</a>
+        </div>
+        <p id="sprint-flash" class="lb-msg" role="status"></p>
+
+        <h2 class="bwm-index-heading">Projects <span id="sprint-count"></span></h2>
+        <p class="sig-meta" id="sprint-window">&nbsp;</p>
+        <p class="form-hint">One public GitHub repo per participant. Rankings count commits on its default branch from kickoff until the end of November 27, Pacific time, leaving out merge commits and bots. Contributing to someone else&rsquo;s project? Fork it and declare your fork, which counts only your own work; to track a branch, link to it directly (<code>github.com/you/repo/tree/branch</code>). The counts run on the honor system.</p>
+        <div class="lb-table-wrap">
+          <table class="lb-table">
+            <thead><tr><th>#</th><th>Project</th><th class="lb-num" id="sprint-unit">Commits</th><th class="lb-num">Days</th><th class="lb-num lb-hide-sm">Last commit</th></tr></thead>
+            <tbody id="sprint-body"><tr><td colspan="5" class="entity-empty">Loading&hellip;</td></tr></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="event-back">
+        <a href="/events/">&larr; All events</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer"></footer>
+</div>
+
+<dialog class="pi-modal" id="add-modal" aria-labelledby="add-title">
+  <button type="button" class="pi-modal-close" data-close aria-label="Close">&times;</button>
+  <h2 class="pi-modal-title" id="add-title">Declare a project</h2>
+  <p class="form-hint" id="add-gate" hidden></p>
+  <form id="add-form" class="lb-form" hidden>
+    <div class="form-group">
+      <label class="form-label" for="add-name">Project name</label>
+      <input class="form-input" type="text" id="add-name" required maxlength="200">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="add-repo">GitHub repo</label>
+      <input class="form-input" type="url" id="add-repo" placeholder="https://github.com/you/your-project" required>
+      <p class="form-hint">Public, and yours alone in this hackathon. Your project page will link here, and you can change it later.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="add-desc">What are you building?</label>
+      <textarea class="form-input" id="add-desc" rows="4" required></textarea>
+      <p class="form-hint">Markdown is fine. The first paragraph is used as the summary in listings.</p>
+    </div>
+    <button type="submit" class="form-btn" id="add-submit">Declare project</button>
+    <p id="add-msg" class="lb-msg" role="status"></p>
+  </form>
+</dialog>
+
+<script src="/js/main.js?v=58"></script>
+<script src="/js/research.js?v=54"></script>
+<script src="/js/markdown.js?v=58"></script>
+<script src="/js/sprint.js?v=1"></script>
+</body>
+</html>

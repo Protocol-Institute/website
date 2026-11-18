@@ -110,6 +110,7 @@
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_symposium_26"> Protocol Symposium 2026 proposer or participant</label>
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_guest_speaker"> Guest speaker at a PI event</label>
             <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_pibowrimo"> PiBoWriMo 2026 participant (approved immediately)</label>
+            <label class="form-checkbox"><input type="checkbox" name="tag" value="tag_blygger_hackathon"> Blygger Hackathon 2026 participant (approved immediately)</label>
           </div>
         </div>
 
@@ -170,6 +171,7 @@
         <p style="font-size:1.05rem;color:#1A5A3A;margin-bottom:1rem;">Your application has been approved.</p>
         <p style="color:#5A5A5A;margin-bottom:1rem;">You're now logged in and can view members-only parts of the site. You can edit your profile further and add a profile picture under <strong>Edit Profile</strong> — accessible from the profile menu in the navigation.</p>
         <p id="approved-pibowrimo" style="display:none;margin-top:1.25rem;"><a class="form-btn" href="/projects/submit?program=pibowrimo">Create your PiBoWriMo project →</a></p>
+        <p id="approved-blygger-hackathon" style="display:none;margin-top:1.25rem;"><a class="form-btn" href="/events/blygger-hackathon-2026/">Declare your hackathon project →</a></p>
         <p style="margin-top:1.25rem;"><a href="/members">View the member directory →</a></p>
       </div>
 
@@ -379,6 +381,7 @@ PIMdEditor.attach(document.getElementById('bio-input'));
 
       if (data.auto_approved) {
         if (tags.includes('tag_pibowrimo')) document.getElementById('approved-pibowrimo').style.display = '';
+        if (tags.includes('tag_blygger_hackathon')) document.getElementById('approved-blygger-hackathon').style.display = '';
         showApproved();
       } else {
         showPending(userEmail);

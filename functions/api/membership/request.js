@@ -75,15 +75,15 @@ export async function onRequestPost({ request, env }) {
     applicant_notes || null
   ).run();
 
-  // Auto-approve if the email is a known CRM contact, or the applicant claims PiBoWriMo
-  // (self-attested, open-tag program — see migration 061)
+  // Auto-approve if the email is a known CRM contact, or the applicant claims a sprint
+  // (self-attested, open-tag programs — see migrations 061, 065)
   try {
     const crm = await env.DB.prepare(
       'SELECT affiliations FROM crm_contacts WHERE email = ?'
     ).bind(email).first();
-    const viaPibowrimo = validEvents.includes('tag_pibowrimo');
+    const viaSprint = validEvents.includes('tag_pibowrimo') || validEvents.includes('tag_blygger_hackathon');
 
-    if (crm || viaPibowrimo) {
+    if (crm || viaSprint) {
       const aff = crm ? (crm.affiliations || '') : '';
       const tagSet = new Set(validEvents);
       for (const [label, col] of Object.entries(CRM_TAG_MAP)) {
