@@ -1,13 +1,13 @@
 # Legacy URL redirects
+#
+# KEEP EVERY SPLAT (*) OR :PLACEHOLDER RULE AT THE END OF THIS FILE. Pages counts a
+# rule as static only if no dynamic rule comes before it, and allows just 100 dynamic
+# rules: one splat near the top made every later rule dynamic, and everything past
+# the 100th was silently dropped (Session 67: /projects/submit, Humboldt, cogergo...).
+# `wrangler pages dev` prints "Maximum number of dynamic rules" when this happens.
 /calendar    /events    301
 /calendar/   /events    301
 /home        /           301
-
-# Special Interest Groups renamed Research Groups (Session 57) — every old
-# /sigs URL (index, group pages, About pages, meeting pages) keeps working.
-# The calendar feeds stay at /calendar/sigs/*.ics so subscriptions don't break.
-/sigs        /research-groups          301
-/sigs/*      /research-groups/:splat   301
 
 # Team and Consulting pages consolidated into filtered Members view
 /team        /members?filter=team        301
@@ -179,3 +179,9 @@
 # stray copy; it is now its own repo and Pages project.
 /cogergo    https://cogergo.protocol-institute.org/    301
 /cogergo/*  https://cogergo.protocol-institute.org/:splat    301
+
+# Special Interest Groups renamed Research Groups (Session 57) — every old
+# /sigs URL (index, group pages, About pages, meeting pages) keeps working.
+# The calendar feeds stay at /calendar/sigs/*.ics so subscriptions don't break.
+/sigs        /research-groups          301
+/sigs/*      /research-groups/:splat   301
