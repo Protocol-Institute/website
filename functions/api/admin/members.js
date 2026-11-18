@@ -8,9 +8,10 @@
 import { EVENT_TAGS as TAG_COLUMNS } from '../../_shared/tags.js';
 import { sendWelcomeEmail } from '../../_shared/welcome.js';
 import { getSession } from '../../_shared/session.js';
+import { normalizeGithubUser } from '../../_shared/github-user.js';
 
 const EDITABLE_FIELDS = new Set([
-  'email', 'name', 'bio', 'website', 'photo_r2_key', 'city', 'discord_handle',
+  'email', 'name', 'bio', 'website', 'photo_r2_key', 'city', 'discord_handle', 'github_username',
   'tier', 'community_lead_title', 'team_title',
   'is_consultant', 'is_public', 'is_admin', 'is_team', 'welcome_sent',
   ...TAG_COLUMNS,
@@ -53,7 +54,7 @@ export async function onRequestGet({ request, env }) {
       `SELECT email, slug, name, bio, website, photo_r2_key,
               tier, community_lead_title, team_title,
               is_consultant, is_public, is_admin, is_team, welcome_sent,
-              city, discord_handle, type,
+              city, discord_handle, github_username, type,
               ${TAG_COLUMNS.join(', ')}
        FROM members ORDER BY name ASC`
     ).all();
@@ -81,6 +82,11 @@ export async function onRequestPatch({ request, env }) {
     return Response.json({ error: 'slug and updates required' }, { status: 400 });
   }
 
+  if ('github_username' in updates) {
+    const gh = normalizeGithubUser(updates.github_username);
+    if (gh.error) return Response.json({ error: gh.error }, { status: 400 });
+    updates.github_username = gh.value;
+  }
   const safe = Object.entries(updates).filter(([k]) => EDITABLE_FIELDS.has(k));
   if (!safe.length) return Response.json({ error: 'No valid fields to update' }, { status: 400 });
 
@@ -145,17 +151,17 @@ export async function onRequestPost({ request, env }) {
       (email, slug, name, bio, website, photo_r2_key,
        is_consultant, is_team,
        consulting_expertise, consulting_contact, consulting_portfolio,
-       city, discord_handle, owner_email,
+       city, discord_handle, github_username, owner_email,
        member_since, membership_expires,
        ${TAG_COLUMNS.join(', ')})
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${TAG_COLUMNS.map(() => '?').join(', ')})
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${TAG_COLUMNS.map(() => '?').join(', ')})
   `).bind(
     email, memberSlug, req.name, req.bio || null, req.website || null,
     req.photo_url || null,
     (req.request_consultant && consultant_approved !== false) ? 1 : 0,
     req.request_team ? 1 : 0,
     req.consulting_expertise || null, req.consulting_contact || null, req.consulting_portfolio || null,
-    req.city || null, req.discord_handle || null, email,
+    req.city || null, req.discord_handle || null, req.github_username || null, email,
     today, expires,
     ...tagValues
   ).run();

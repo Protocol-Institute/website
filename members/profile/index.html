@@ -98,6 +98,7 @@
     const links = [];
     if (m.website) links.push(`<a href="${esc(m.website)}" target="_blank" rel="noopener noreferrer">Website →</a>`);
     if (m.discord_handle) links.push('Discord: ' + esc(m.discord_handle));
+    if (m.github_username) links.push(`GitHub: <a href="https://github.com/${encodeURIComponent(m.github_username)}" target="_blank" rel="noopener noreferrer">${esc(m.github_username)}</a>`);
     document.getElementById('pf-links').innerHTML = links.join(' &nbsp;·&nbsp; ');
 
     const isMe = !!(me && me.member && me.member.slug === m.slug);

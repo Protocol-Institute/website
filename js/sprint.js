@@ -143,16 +143,47 @@
     else if (state && state.mine && state.mine.project) gate = `You have declared <a href="/projects/project?slug=${encodeURIComponent(state.mine.project.slug)}">${esc(state.mine.project.title)}</a>. It is one repo per participant. To change repos, edit that project&rsquo;s link.`;
     $('add-gate').hidden = !gate; $('add-form').hidden = !!gate;
     if (gate) $('add-gate').innerHTML = gate;
+    $('add-github').hidden = true;
     setMsg($('add-msg'), '');
     modal.showModal();
   });
+
+  const checkRepo = url => fetch(`${api}?check_repo=${encodeURIComponent(url)}`).then(r => r.json());
+
+  // A personal repo's owner is usually the member, so offer it for their profile if they
+  // have no GitHub username yet (migration 066). Editable, and saved only if ticked.
+  $('add-repo').addEventListener('change', async () => {
+    const url = $('add-repo').value.trim();
+    $('add-github').hidden = true;
+    if (!url || !me || !me.member || me.member.github_username) return;
+    const check = await checkRepo(url).catch(() => ({}));
+    if (url !== $('add-repo').value.trim()) return;
+    setMsg($('add-msg'), check.error || '', !!check.error);
+    if (check.ok && check.owner_is_user) {
+      $('add-github-user').value = check.owner;
+      $('add-github-save').checked = true;
+      $('add-github').hidden = false;
+    }
+  });
+
+  async function saveGithub() {
+    const username = $('add-github-user').value.trim();
+    if ($('add-github').hidden || !$('add-github-save').checked || !username) return '';
+    const res = await fetch('/api/members/update', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields: { github_username: username } }),
+    }).catch(() => null);
+    const out = res ? await res.json().catch(() => ({})) : {};
+    if (res && res.ok) { me.member.github_username = username; return ''; }
+    return ` Your GitHub username was not saved (${out.error || 'network error'}); you can add it from Edit Profile.`;
+  }
 
   $('add-form').addEventListener('submit', async ev => {
     ev.preventDefault();
     const btn = $('add-submit'), title = $('add-name').value.trim(), url = $('add-repo').value.trim();
     btn.disabled = true; setMsg($('add-msg'), '');
     try {
-      const check = await fetch(`${api}?check_repo=${encodeURIComponent(url)}`).then(r => r.json());
+      const check = await checkRepo(url);
       if (check.error) throw new Error(check.error);
       const res = await fetch('/api/projects', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -164,9 +195,11 @@
       });
       const out = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(res.status === 401 ? 'Your session has expired. Please log in again.' : (out.error || 'Could not save'));
+      const githubNote = await saveGithub();
       $('add-form').reset();
+      $('add-github').hidden = true;
       modal.close();
-      $('sprint-flash').innerHTML = `Added <a href="/projects/project?slug=${encodeURIComponent(out.slug)}">${esc(title)}</a>. Commits to your repo will count from kickoff.`;
+      $('sprint-flash').innerHTML = `Added <a href="/projects/project?slug=${encodeURIComponent(out.slug)}">${esc(title)}</a>. Commits to your repo will count from kickoff.${esc(githubNote)}`;
       await load();
     } catch (e) {
       setMsg($('add-msg'), e.message, true);

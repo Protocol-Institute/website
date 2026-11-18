@@ -11,7 +11,7 @@ export async function onRequestGet({ request, env }) {
     const member = await env.DB.prepare(`
       SELECT slug, name, bio, website, type, photo_r2_key,
              tier, community_lead_title, is_team, team_title, team_cofounder,
-             city, discord_handle
+             city, discord_handle, github_username
       FROM members
       WHERE slug = ? AND is_public = 1
     `).bind(slug).first();

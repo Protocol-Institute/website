@@ -2,9 +2,11 @@
 // Body: { target_email?: string, fields: {...} }
 // Updates own profile; admins can update any member record and admin-only fields
 
+import { normalizeGithubUser } from '../../_shared/github-user.js';
+
 const SELF_EDITABLE = new Set([
   'name', 'bio', 'website', 'photo_r2_key',
-  'city', 'discord_handle',
+  'city', 'discord_handle', 'github_username',
   'is_consultant', // self-service opt-in; admin can revoke via ADMIN_EDITABLE
   // Event/credential tags — self-service (team tags excluded)
   'tag_sop23', 'tag_sop24', 'tag_sop25', 'tag_ps25',
@@ -88,6 +90,12 @@ export async function onRequestPatch({ request, env }) {
 
   if (!authorized) {
     return Response.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  if ('github_username' in fields) {
+    const gh = normalizeGithubUser(fields.github_username);
+    if (gh.error) return Response.json({ error: gh.error }, { status: 400 });
+    fields.github_username = gh.value ?? '';
   }
 
   // Filter to allowed fields

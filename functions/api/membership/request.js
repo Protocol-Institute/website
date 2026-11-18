@@ -4,6 +4,7 @@
 // or the applicant lists PiBoWriMo as a qualifying event.
 
 import { EVENT_TAGS } from '../../_shared/tags.js';
+import { normalizeGithubUser } from '../../_shared/github-user.js';
 import { sendWelcomeEmail } from '../../_shared/welcome.js';
 
 const CRM_TAG_MAP = {
@@ -29,6 +30,7 @@ export async function onRequestPost({ request, env }) {
   const website        = (body.website || '').trim();
   const city           = (body.city || '').trim();
   const discord_handle = (body.discord_handle || '').trim();
+  const github = normalizeGithubUser(body.github_username);
   const qualifying_events = Array.isArray(body.qualifying_events) ? body.qualifying_events : [];
   const request_consultant   = body.request_consultant ? 1 : 0;
   const consulting_expertise = (body.consulting_expertise || '').trim();
@@ -39,6 +41,9 @@ export async function onRequestPost({ request, env }) {
 
   if (!email || !email.includes('@')) return Response.json({ error: 'Valid email required' }, { status: 400 });
   if (!name) return Response.json({ error: 'Name required' }, { status: 400 });
+
+  if (github.error) return Response.json({ error: github.error }, { status: 400 });
+  const github_username = github.value;
 
   const validEvents = qualifying_events.filter(t => EVENT_TAGS.includes(t));
   if (validEvents.length === 0) return Response.json({ error: 'At least one qualifying event required' }, { status: 400 });
@@ -61,14 +66,14 @@ export async function onRequestPost({ request, env }) {
   // Insert pending request
   await env.DB.prepare(`
     INSERT INTO membership_requests
-      (email, name, bio, website, city, discord_handle,
+      (email, name, bio, website, city, discord_handle, github_username,
        qualifying_events, request_consultant, photo_url,
        consulting_expertise, consulting_contact, consulting_portfolio,
        applicant_notes, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
   `).bind(
     email, name, bio || null, website || null,
-    city || null, discord_handle || null,
+    city || null, discord_handle || null, github_username,
     JSON.stringify(validEvents),
     request_consultant, photo_url || null,
     consulting_expertise || null, consulting_contact || null, consulting_portfolio || null,
@@ -111,22 +116,22 @@ export async function onRequestPost({ request, env }) {
           (email, slug, name, bio, website, photo_r2_key,
            is_consultant, is_team, is_early_voter,
            consulting_expertise, consulting_contact, consulting_portfolio,
-           city, discord_handle, owner_email,
+           city, discord_handle, github_username, owner_email,
            member_since, membership_expires,
            ${EVENT_TAGS.join(', ')})
-        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
+        VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ${EVENT_TAGS.map(() => '?').join(', ')})
       `).bind(
         email, memberSlug, name, bio || null, website || null, photo_url || null,
         request_consultant, isEarlyVoter,
         consulting_expertise || null, consulting_contact || null, consulting_portfolio || null,
-        city || null, discord_handle || null, email,
+        city || null, discord_handle || null, github_username, email,
         today, expires,
         ...tagValues
       ).run();
 
       await env.DB.prepare(
         `UPDATE membership_requests SET status = 'approved', reviewed_at = ?, admin_notes = ? WHERE email = ?`
-      ).bind(new Date().toISOString(), crm ? 'Auto-approved: matched CRM' : 'Auto-approved: PiBoWriMo', email).run();
+      ).bind(new Date().toISOString(), crm ? 'Auto-approved: matched CRM' : `Auto-approved: ${validEvents.includes('tag_blygger_hackathon') ? 'Blygger Hackathon' : 'PiBoWriMo'}`, email).run();
 
       await sendWelcomeEmail(env, email, name.split(' ')[0]);
       return Response.json({ ok: true, auto_approved: true });

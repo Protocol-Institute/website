@@ -122,7 +122,10 @@ members/            /members — member directory (D1-backed, PIN auth). Filters
                     "Co-founder" badge (.cofounder-badge) beside the title on cards and profiles. Core order: Venkat, Rafael, Timber, Tim
   join/             /members/join — login + registration flow. Auto-approves CRM contacts and anyone ticking the PiBoWriMo qualifying
                     event (`tag_pibowrimo`, self-attested, migration 061); the latter get a create-project button
-  edit/             /members/edit?slug= — profile editor (no slug = your own); reached from the Edit link on /members/profile
+  edit/             /members/edit?slug= — profile editor (no slug = your own); reached from the Edit link on /members/profile.
+                    Optional public `github_username` (migration 066) here, at /members/join and in admin; every write goes through
+                    functions/_shared/github-user.js, which reduces @name or a profile URL to the bare name. The hackathon's declare
+                    form offers the owner of a personal repo (not an org's) when the member has none, ticked "save to profile"
   profile/          /members/profile?slug= — public member page: bio + projects (research, then Operations). Query-param URL on
                     purpose: a /members/<slug> rewrite would collide with join/edit/dashboard
   dashboard/        /members/dashboard — includes "Programs you host" (from /api/members/me hosted_programs)

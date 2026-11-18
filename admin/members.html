@@ -128,6 +128,7 @@
         <div class="request-field"><strong>Events:</strong> ${esc(eventLabels)}</div>
         ${r.city ? `<div class="request-field"><strong>City:</strong> ${esc(r.city)}</div>` : ''}
         ${r.discord_handle ? `<div class="request-field"><strong>Discord:</strong> ${esc(r.discord_handle)}</div>` : ''}
+        ${r.github_username ? `<div class="request-field"><strong>GitHub:</strong> ${esc(r.github_username)}</div>` : ''}
         ${r.request_consultant ? `<div class="request-field" style="color:#2A6B6B;"><strong>⟶ Requesting consultant listing</strong></div>
         <div class="request-field" style="padding-left:1rem;">
           <label style="font-size:0.85rem;cursor:pointer;">
@@ -266,6 +267,10 @@
         <div>
           <label class="form-label">Discord handle</label>
           <input class="form-input" data-field="discord_handle" value="${esc(m.discord_handle || '')}">
+        </div>
+        <div>
+          <label class="form-label">GitHub username</label>
+          <input class="form-input" data-field="github_username" value="${esc(m.github_username || '')}">
         </div>
         <div>
           <label class="form-label">Photo R2 key</label>

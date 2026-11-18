@@ -17,7 +17,7 @@ export async function onRequestGet({ request, env }) {
     SELECT slug, name, bio, website, type, photo_r2_key,
            tier, community_lead_title,
            is_team, is_consultant, team_title, team_sort, team_core, team_cofounder,
-           city, discord_handle,
+           city, discord_handle, github_username,
            tag_sop23, tag_sop24, tag_sop25, tag_ps25,
            tag_datus_nusas, tag_khlongs_subaks, tag_town_hall,
            tag_sig, tag_protocol_kit, tag_protocolized_writer,

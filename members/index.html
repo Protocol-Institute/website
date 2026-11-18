@@ -157,6 +157,7 @@
     const metaParts = [
       m.city ? escHtml(m.city) : '',
       m.discord_handle ? `Discord: ${escHtml(m.discord_handle)}` : '',
+      m.github_username ? `GitHub: ${escHtml(m.github_username)}` : '',
     ].filter(Boolean);
 
     return `<li class="member-item" id="${escHtml(m.slug)}" data-tier="${escHtml(m.tier || 'member')}"

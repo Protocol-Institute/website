@@ -171,8 +171,10 @@ export async function refreshStale(env, sprint, projects, syncRows, now = Date.n
   }
 }
 
-// For the add-project form: can this URL be declared? { ok } or { error }. An unreachable
-// GitHub doesn't block anyone; the sync reports a bad repo on the row later.
+// For the add-project form: can this URL be declared? { ok, owner, owner_is_user } or { error }.
+// owner_is_user lets the form offer the owner as the member's GitHub username (migration 066);
+// it is null when GitHub couldn't be asked. An unreachable GitHub doesn't block anyone; the sync
+// reports a bad repo on the row later.
 export async function checkRepo(env, sprint, url, leadSlug, claimed) {
   const parsed = parseRepoUrl(url);
   if (!parsed) return { error: 'Enter a GitHub repository URL, like https://github.com/you/your-project' };
@@ -185,11 +187,17 @@ export async function checkRepo(env, sprint, url, leadSlug, claimed) {
   if (claimed.some(p => p.claim === 'ok' && p.repo.toLowerCase() === parsed.repo.toLowerCase())) {
     return { error: 'Another project has already declared that repo. Fork it and use your fork.' };
   }
+  let owner = parsed.repo.split('/')[0], ownerIsUser = null;
   try {
     const res = await gh(env, `/repos/${parsed.repo}`, { left: 1 });
     if (res.status === 404) return { error: 'That repo could not be read. It needs to be public.' };
+    if (res.ok) {
+      const meta = await res.json();
+      owner = meta.owner.login;
+      ownerIsUser = meta.owner.type === 'User';
+    }
   } catch (e) {
     if (!(e instanceof RateLimited)) console.error('repo check failed', e);
   }
-  return { ok: true };
+  return { ok: true, owner, owner_is_user: ownerIsUser };
 }
