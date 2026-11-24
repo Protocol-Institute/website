@@ -129,6 +129,7 @@ here, the application is approved immediately without admin review.
 | POST | `/api/auth/logout` | No (reads cookie) | Delete session, clear cookie |
 | GET | `/api/members/me` | Session cookie | Return own profile or pending state |
 | POST | `/api/membership/request` | No (session set at step 2) | Submit membership application |
+| GET | `/api/host/session`, `/api/host/people/{slug}`, `/api/host/groups` | Host API secret | Who is signed in, for subdomain apps (see below) |
 
 ---
 
@@ -178,6 +179,57 @@ Current gated pages:
   avoid email enumeration.
 - The session table key prefix `session:` prevents PIN rows and session rows from
   colliding.
+
+---
+
+## Host API for subdomain apps
+
+Apps on Institute subdomains use the Institute login instead of keeping their own. The first
+one is the blyg at blyg.protocol-institute.org, where members with a posting role publish under
+their own byline. cogergo and bdfx read `pi-members` directly today and could move to this API
+later. The browser sends `pi_session` to every subdomain, because the cookie is scoped to
+`.protocol-institute.org`. The app passes it on to this API instead of validating it against
+`auth_pins` itself.
+
+**Server-to-server only.** Every call carries `Authorization: Bearer <HOST_API_SECRET>`. Without
+it, or when the secret is unset or shorter than 32 characters, every endpoint answers 401.
+Responses carry `Vary: Cookie` and `Cache-Control: private, no-store`. They never include an
+email address.
+
+| Method | Path | Returns |
+|---|---|---|
+| GET | `/api/host/session` | `200 { person }` for an approved member whose forwarded `Cookie` holds a valid `pi_session`; otherwise `401`, with the same body whether the cookie is missing, expired, forged or a pending applicant's |
+| GET | `/api/host/people/{slug}` | `200 { person }`, or `404` |
+| GET | `/api/host/groups` | `200 { groups: [{ ref, title }] }`, the groups an app can grant rights to |
+
+`person` is `{ id, name, url, photo, type, operator, groups }`:
+- `id` is the member slug.
+- `url` is the public profile page, or `null` when `is_public = 0`.
+- `operator` is the slug of the human who manages an AI record (from `owner_email`).
+- `groups` lists the member's groups:
+  - `admin` (`is_admin`);
+  - `tier:<tier>`;
+  - `role:<name>` (table `member_roles`, migration 067);
+  - `hosts:<program>` (`program_hosts`).
+
+**Roles** are names an admin gives a member, added by hand:
+
+```sql
+INSERT INTO member_roles (member_slug, role) VALUES ('venkatesh-rao', 'blyg-author');
+```
+
+The site gives a role no meaning. Each app decides what it allows. The blyg's owner, for
+example, maps `role:blyg-author` to posting rights in its settings.
+
+**What an app must do.** Call `/api/host/session` when someone signs in to the app, then issue
+the app's own host-only session cookie. Re-check with `/api/host/people/{slug}` at least every
+15 minutes, so that logging out of the Institute site or losing a role takes effect there.
+Every subdomain is same-site with every other, so `SameSite=Lax` does not protect one from
+another. An app therefore checks `Origin` on every state-changing request.
+
+**The secret.** One value, shared by the site and each app that uses the API. It is set with
+`wrangler pages secret put HOST_API_SECRET` here and as a Worker secret in each app. It is
+registered in `../admin/keys.md` and the PI `.env.keys` per the key protocol in `CLAUDE.md`.
 
 ---
 
