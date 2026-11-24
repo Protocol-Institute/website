@@ -1239,3 +1239,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - The short-abstract floor dropped from 50 to 25 words in the shared validator (`functions/_shared/artifacts.js`), the editor's hint and counter, and the prospectus build gate (`53f92ce`; the rebuild it triggered passed). The declare modal now notes that details can be added under My Dashboard later (`fc887ca`). By design it creates the same project record as the full form, with state, type and artifact preset.
 
 ---
+
+## Session 68: Email DNS audit: Google DKIM and DMARC added
+
+*2026-11-23*
+
+**Tracks:** operations
+
+- Resend sends login PINs, welcome and rejection emails from `noreply@protocol-institute.org` (`functions/api/auth/send-pin.js`, `functions/_shared/welcome.js`), signed by `resend._domainkey` with SPF on the `send.` subdomain, which is why the apex SPF lists only Google. The SIG mailing-list design from Session 12 (a `sigs@` sender, one Resend Audience per group, D1 subscription columns, a host compose UI) was never built. It names 4 groups and predates the programs model (7 research groups plus other kinds), so it should be redesigned around `programs` before anyone builds it.
+
+- MX (aspmx.l.google.com set) and SPF (`include:_spf.google.com ~all`) were right, but there was no DKIM key at any common selector and no `_dmarc` record. So Workspace mail was signed under gappssmtp.com, which never aligns with the From domain, and receivers had no policy and sent no reports. Venkat published `google._domainkey` (checked: it parses as a 2048-bit RSA key on both the authoritative NS and 8.8.8.8) and `_dmarc` at `p=none` with reports to `team@`, then started authentication in the Admin console. The policy is report-only on purpose: tighten to quarantine only after reports show both Google and Resend aligning. DNS for this zone can only be edited in the dashboard; no token has DNS scope.
+
+- `humboldt@protocol-institute.org` is in none of `members`, `membership_requests`, `crm_contacts` or `auth_pins`. The `humboldt` member stays on `vgururao@gmail.com` (the Session 27 merge) by Venkat's choice.
+
+---

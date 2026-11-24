@@ -2579,6 +2579,34 @@
           "html": "The short-abstract floor dropped from 50 to 25 words in the shared validator (<code>functions/_shared/artifacts.js</code>), the editor's hint and counter, and the prospectus build gate (<code>53f92ce</code>; the rebuild it triggered passed). The declare modal now notes that details can be added under My Dashboard later (<code>fc887ca</code>). By design it creates the same project record as the full form, with state, type and artifact preset."
         }
       ]
+    },
+    {
+      "id": 68,
+      "sort_key": 68.0,
+      "label": "Session 68",
+      "title": "Email DNS audit: Google DKIM and DMARC added",
+      "date": "2026-11-23",
+      "time_pt": "",
+      "tracks": [
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": false,
+      "items": [
+        {
+          "title": "Resend scope: transactional only",
+          "html": "Resend sends login PINs, welcome and rejection emails from <code>noreply@protocol-institute.org</code> (<code>functions/api/auth/send-pin.js</code>, <code>functions/_shared/welcome.js</code>), signed by <code>resend._domainkey</code> with SPF on the <code>send.</code> subdomain, which is why the apex SPF lists only Google. The SIG mailing-list design from Session 12 (a <code>sigs@</code> sender, one Resend Audience per group, D1 subscription columns, a host compose UI) was never built. It names 4 groups and predates the programs model (7 research groups plus other kinds), so it should be redesigned around <code>programs</code> before anyone builds it."
+        },
+        {
+          "title": "Google Workspace DKIM and DMARC were missing; now published",
+          "html": "MX (aspmx.l.google.com set) and SPF (<code>include:_spf.google.com ~all</code>) were right, but there was no DKIM key at any common selector and no <code>_dmarc</code> record. So Workspace mail was signed under gappssmtp.com, which never aligns with the From domain, and receivers had no policy and sent no reports. Venkat published <code>google._domainkey</code> (checked: it parses as a 2048-bit RSA key on both the authoritative NS and 8.8.8.8) and <code>_dmarc</code> at <code>p=none</code> with reports to <code>team@</code>, then started authentication in the Admin console. The policy is report-only on purpose: tighten to quarantine only after reports show both Google and Resend aligning. DNS for this zone can only be edited in the dashboard; no token has DNS scope."
+        },
+        {
+          "title": "Humboldt login email",
+          "html": "<code>humboldt@protocol-institute.org</code> is in none of <code>members</code>, <code>membership_requests</code>, <code>crm_contacts</code> or <code>auth_pins</code>. The <code>humboldt</code> member stays on <code>vgururao@gmail.com</code> (the Session 27 merge) by Venkat's choice."
+        }
+      ]
     }
   ]
 }
