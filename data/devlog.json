@@ -2607,6 +2607,35 @@
           "html": "<code>humboldt@protocol-institute.org</code> is in none of <code>members</code>, <code>membership_requests</code>, <code>crm_contacts</code> or <code>auth_pins</code>. The <code>humboldt</code> member stays on <code>vgururao@gmail.com</code> (the Session 27 merge) by Venkat's choice."
         }
       ]
+    },
+    {
+      "id": 69,
+      "sort_key": 69.0,
+      "label": "Session 69",
+      "title": "Merged the Commerce in the Thicket page and the c3po SIG update",
+      "date": "2026-11-27",
+      "time_pt": "",
+      "tracks": [
+        "content",
+        "operations"
+      ],
+      "costs_usd": {},
+      "vector_counts": {},
+      "deployed": true,
+      "items": [
+        {
+          "title": "/commerce-in-the-thicket/ (PR #25, from the Blygger project)",
+          "html": "A static interior page, with no managed_pages key and no migration, that links the PDF of <em>Commerce in the Thicket</em>, the briefing for the AI-Native Marketing Hackathon (Q1 2027). The PDF is built in <code>blygger/blygger-spec</code> <code>analysis/</code> and uploaded to R2 under a <strong>versioned key</strong> (<code>commerce-in-the-thicket-v5.pdf</code>). Each new version gets a new key, and the page link is updated to match, so a re-upload never meets the edge-cache staleness that hit the symposium PDF. The blyg at blyg.protocol-institute.org will link to this page. Before the merge the bare PDF URL served an edge-cached 404, left by a fetch made before the upload, while <code>?x=1</code> returned 200. It expired within minutes, so no purge was needed. The lesson: if a new asset 404s publicly but <code>r2 object get</code> finds it, suspect a cached 404 before suspecting the upload."
+        },
+        {
+          "title": "c3po PR #23 merged after the full checklist",
+          "html": "The PR was opened 2026-11-08 and force-pushed 2026-11-22, so its title understates its content. It adds 10 session pages across all 7 research groups (Oct 29 to Nov 13). All 17 added links resolve, no <code>sigs/</code> paths appear, header counts equal meeting-item counts for every group, index pages were patched (one deleted line each, not rewritten from the fallback template), the newest meeting is 9 days older than the push, and no main commit touched <code>research-groups/</code> since its base. It sat unmerged 19 days, the delivery lag the c3po status item warns about."
+        },
+        {
+          "title": "Host API PR #24 deferred",
+          "html": "Also from the Blygger project: server-to-server <code>/api/host/*</code> endpoints behind a <code>HOST_API_SECRET</code> bearer, plus migration 067 <code>member_roles</code>. It touches production D1 and needs a new secret, so it gets its own reviewed session."
+        }
+      ]
     }
   ]
 }

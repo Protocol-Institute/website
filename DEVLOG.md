@@ -1253,3 +1253,17 @@ A build log for protocol-institute.org — how the static site was built, what i
 - `humboldt@protocol-institute.org` is in none of `members`, `membership_requests`, `crm_contacts` or `auth_pins`. The `humboldt` member stays on `vgururao@gmail.com` (the Session 27 merge) by Venkat's choice.
 
 ---
+
+## Session 69: Merged the Commerce in the Thicket page and the c3po SIG update
+
+*2026-11-27*
+
+**Tracks:** content, operations
+
+- A static interior page, with no managed_pages key and no migration, that links the PDF of *Commerce in the Thicket*, the briefing for the AI-Native Marketing Hackathon (Q1 2027). The PDF is built in `blygger/blygger-spec` `analysis/` and uploaded to R2 under a **versioned key** (`commerce-in-the-thicket-v5.pdf`). Each new version gets a new key, and the page link is updated to match, so a re-upload never meets the edge-cache staleness that hit the symposium PDF. The blyg at blyg.protocol-institute.org will link to this page. Before the merge the bare PDF URL served an edge-cached 404, left by a fetch made before the upload, while `?x=1` returned 200. It expired within minutes, so no purge was needed. The lesson: if a new asset 404s publicly but `r2 object get` finds it, suspect a cached 404 before suspecting the upload.
+
+- The PR was opened 2026-11-08 and force-pushed 2026-11-22, so its title understates its content. It adds 10 session pages across all 7 research groups (Oct 29 to Nov 13). All 17 added links resolve, no `sigs/` paths appear, header counts equal meeting-item counts for every group, index pages were patched (one deleted line each, not rewritten from the fallback template), the newest meeting is 9 days older than the push, and no main commit touched `research-groups/` since its base. It sat unmerged 19 days, the delivery lag the c3po status item warns about.
+
+- Also from the Blygger project: server-to-server `/api/host/*` endpoints behind a `HOST_API_SECRET` bearer, plus migration 067 `member_roles`. It touches production D1 and needs a new secret, so it gets its own reviewed session.
+
+---

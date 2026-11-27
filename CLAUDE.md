@@ -92,6 +92,8 @@ projects/
                     browser and uploads via functions/api/projects/[slug]/image.js (lead/admin, R2 projects/<slug>/<ts>.jpg)
 workshops/          /workshops — Corporate Workshops offering
 symposium-2025/     /symposium-2025 — 2025 symposium archive
+commerce-in-the-thicket/  /commerce-in-the-thicket — static page for the AI-Native Marketing Hackathon briefing PDF (Session 69, from the
+                    Blygger project). PDF in R2 under a versioned key (commerce-in-the-thicket-v5.pdf; -v6 next): bump the link per version
 support/            /support — body is managed_pages static/support (admin-editable markdown, Session 57)
 pitch/              /pitch — **Protocol Institute 2027 Prospectus** (was "Institute overview"; renamed Session 62, URL unchanged). Unlisted, noindex.
                     Read = researcher or above (`tag_sig`, tier `community_lead`/`team`, `is_team`, `is_admin`, via pi_session; functions/_shared/pitch.js),
